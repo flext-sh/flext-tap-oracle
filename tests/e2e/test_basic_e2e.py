@@ -49,7 +49,7 @@ class TestBasicE2E:
     ) -> None:
         """Test basic Oracle database connection."""
         result = await connection_service.test_connection()
-        assert result.is_success, f"Connection failed: {result.error}"
+        assert result.success, f"Connection failed: {result.error}"
 
     def test_tap_module_import(self) -> None:
         """Test that tap module can be imported."""

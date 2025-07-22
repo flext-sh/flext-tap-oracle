@@ -101,7 +101,9 @@ class TestTapOracleEnterprise:
     def test_tap_config_validation_errors(self) -> None:
         """Test configuration validation errors."""
         # Missing required fields for database connection
-        with pytest.raises(ValidationError, match="Host is required for database connections"):
+        with pytest.raises(
+            ValidationError, match="Host is required for database connections"
+        ):
             TapOracleConfig(connection_type="database")
 
         # Invalid connection type
@@ -181,7 +183,7 @@ class TestTapOracleEnterprise:
         ) as mock_async_bridge:
             # Mock successful connection test result
             mock_result = Mock()
-            mock_result.is_success = True
+            mock_result.success = True
             mock_async_bridge.return_value = mock_result
 
             # Test successful connection
@@ -220,7 +222,7 @@ class TestTapOracleEnterprise:
         ) as mock_async_bridge:
             # Mock successful connection test result
             mock_result = Mock()
-            mock_result.is_success = True
+            mock_result.success = True
             mock_async_bridge.return_value = mock_result
 
             result = tap.test_connection()
@@ -312,7 +314,7 @@ class TestTapOracleEnterprise:
             mock_table_metadata.append(mock_table)
 
         mock_result = Mock()
-        mock_result.is_success = True
+        mock_result.success = True
         mock_result.data = mock_table_metadata
 
         # Mock the schema service
@@ -345,7 +347,7 @@ class TestTapOracleEnterprise:
             mock_table_metadata.append(mock_table)
 
         mock_result = Mock()
-        mock_result.is_success = True
+        mock_result.success = True
         mock_result.data = mock_table_metadata
 
         # Mock the schema service
@@ -382,7 +384,7 @@ class TestTapOracleEnterprise:
             mock_table_metadata.append(mock_table)
 
         mock_result = Mock()
-        mock_result.is_success = True
+        mock_result.success = True
         mock_result.data = mock_table_metadata
 
         # Mock the schema service
@@ -460,13 +462,11 @@ class TestTapOracleEnterprise:
     ) -> None:
         """Test performance configuration validation."""
         # Test with extreme values
-        database_config.update(
-            {
-                "batch_size": 50,  # Very small - should warn
-                "max_parallel_streams": 8,  # Maximum allowed value, larger than pool size
-                "connection_pool_size": 6,
-            }
-        )
+        database_config.update({
+            "batch_size": 50,  # Very small - should warn
+            "max_parallel_streams": 8,  # Maximum allowed value, larger than pool size
+            "connection_pool_size": 6,
+        })
 
         # Should not raise errors but may log warnings
         config = TapOracleConfig(**database_config)
@@ -488,7 +488,7 @@ class TestTapOracleEnterprise:
         ) as mock_async_bridge:
             # Mock successful connection test result
             mock_result = Mock()
-            mock_result.is_success = True
+            mock_result.success = True
             mock_async_bridge.return_value = mock_result
 
             # 1. Test connection to all sources

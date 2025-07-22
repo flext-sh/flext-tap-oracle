@@ -13,12 +13,30 @@ from typing import TYPE_CHECKING, Any
 from singer_sdk import Tap
 from singer_sdk import typing as th
 
-from flext_db_oracle import (
-    OracleConnectionService,
-    OracleQueryService,
-    OracleSchemaService,
-    run_async_in_sync_context,
-)
+# ARCHITECTURAL FIX: Use interfaces instead of concrete implementations
+# Following Clean Architecture - NO direct imports from concrete layers
+
+# Oracle interfaces - to be injected via DI
+if TYPE_CHECKING:
+    from collections.abc import Callable
+    from typing import Protocol
+
+    from flext_core.domain.shared_types import ServiceResult
+
+    class OracleConnectionServiceProtocol(Protocol):
+        """Interface for Oracle connection service."""
+        async def connect(self) -> ServiceResult[Any]: ...
+        async def disconnect(self) -> ServiceResult[bool]: ...
+        async def test_connection(self) -> ServiceResult[Any]: ...
+
+    class OracleQueryServiceProtocol(Protocol):
+        """Interface for Oracle query service."""
+        async def execute_query(self, query: str) -> ServiceResult[Any]: ...
+
+    class OracleSchemaServiceProtocol(Protocol):
+        """Interface for Oracle schema service."""
+        async def get_tables(self) -> ServiceResult[Any]: ...
+        async def get_schema_tables(self, schema: str) -> ServiceResult[Any]: ...
 from flext_observability.logging import get_logger
 from flext_tap_oracle.config import TapOracleConfig
 from flext_tap_oracle.streams import (
@@ -28,9 +46,17 @@ from flext_tap_oracle.streams import (
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from flext_db_oracle import (
-        OracleConfig,
-    )
+    # Oracle configuration interface - to be injected via DI
+    class OracleConfigProtocol(Protocol):
+        """Interface for Oracle configuration."""
+        host: str
+        port: int
+        service_name: str
+        username: str
+        password: str
+        schema: str | None
+        pool_max_size: int
+        query_timeout: int
 
 
 # Simple performance tracking decorator
@@ -208,10 +234,14 @@ class TapOracle(Tap):
         self._tap_config: TapOracleConfig | None = None
         # Modern Oracle DB Services (using flext-infrastructure.databases.flext-db-oracle
         # with parameterization)
-        self._oracle_config: OracleConfig | None = None
-        self._connection_service: OracleConnectionService | None = None
-        self._query_service: OracleQueryService | None = None
-        self._schema_service: OracleSchemaService | None = None
+        # DI services - to be injected via dependency container
+        self._oracle_config: OracleConfigProtocol | None = None
+        self._connection_service: OracleConnectionServiceProtocol | None = None
+        self._query_service: OracleQueryServiceProtocol | None = None
+        self._schema_service: OracleSchemaServiceProtocol | None = None
+
+        # Async/sync bridge function - to be injected via DI
+        self._run_async_in_sync: Callable[[Any], Any] | None = None
 
     @property
     def tap_config(self) -> TapOracleConfig:
@@ -264,41 +294,65 @@ class TapOracle(Tap):
         return self._tap_config
 
     @property
-    def connection_service(self) -> OracleConnectionService:
-        """Get modern Oracle DB connection service with full parameterization."""
-        if not hasattr(self, "_connection_service") or self._connection_service is None:
-            if not hasattr(self, "_oracle_config") or self._oracle_config is None:
-                # Use the enhanced configuration conversion
-                self._oracle_config = self.tap_config.to_oracle_config()
-                logger.info(
-                    "Created Oracle DB config with parameterization: "
-                    "pool_size=%d, timeout=%d",
-                    self._oracle_config.pool_max_size,
-                    self._oracle_config.query_timeout,
-                )
+    def connection_service(self) -> OracleConnectionServiceProtocol:
+        """Get Oracle connection service via DI injection.
 
-            self._connection_service = OracleConnectionService(self._oracle_config)
-            self._query_service = OracleQueryService(self._connection_service)
-            self._schema_service = OracleSchemaService(self._query_service)
-
-            logger.info(
-                "Initialized Oracle DB services with "
-                "flext-infrastructure.databases.flext-db-oracle parameterization",
-            )
+        Note: In proper DI implementation, services should be injected via constructor
+        or dependency container. This property serves as a temporary compatibility layer.
+        """
+        if self._connection_service is None:
+            self._raise_missing_services_error()
         return self._connection_service
 
+    def inject_oracle_services(
+        self,
+        connection_service: OracleConnectionServiceProtocol,
+        query_service: OracleQueryServiceProtocol,
+        schema_service: OracleSchemaServiceProtocol,
+        async_sync_bridge: Callable[[Any], Any],
+    ) -> None:
+        """Inject Oracle services via DI.
+
+        This method implements Dependency Injection pattern following Clean Architecture.
+        All concrete Oracle implementations are injected from outside.
+        """
+        self._connection_service = connection_service
+        self._query_service = query_service
+        self._schema_service = schema_service
+        self._run_async_in_sync = async_sync_bridge
+
+        logger.info(
+            "Oracle services injected via DI following Clean Architecture principles"
+        )
+
+    def _raise_missing_bridge_error(self) -> None:
+        """Raise error for missing async/sync bridge injection."""
+        msg = "Async/sync bridge not injected. Use inject_oracle_services() first."
+        raise RuntimeError(msg)
+
+    def _raise_missing_services_error(self) -> None:
+        """Raise error for missing Oracle services injection."""
+        msg = (
+            "Oracle connection service not injected. "
+            "Services must be injected via DI container following Clean Architecture."
+        )
+        raise RuntimeError(msg)
+
     def test_connection_modern(self) -> bool:
-        """Test connection using modern Oracle DB services with async/sync bridge."""
+        """Test connection using injected Oracle services with async/sync bridge."""
         try:
-            # Use the modern async/sync bridge
-            result = run_async_in_sync_context(
+            if self._run_async_in_sync is None:
+                self._raise_missing_bridge_error()
+
+            # Use the injected async/sync bridge
+            result = self._run_async_in_sync(
                 self.connection_service.test_connection(),
             )
         except Exception:
-            logger.exception("Modern Oracle DB connection test failed")
+            logger.exception("Oracle connection test failed")
             return False
         else:
-            return result.is_success
+            return result.success
 
     @track_performance("tap_oracle.discover_streams")
     def discover_streams(self) -> list[Any]:
@@ -347,8 +401,11 @@ class TapOracle(Tap):
                 # Initialize services if not already done
                 _ = self.connection_service
 
-            # Get table list using modern services with async/sync bridge
-            tables = run_async_in_sync_context(self._get_discoverable_tables())
+            # Get table list using injected services with async/sync bridge
+            if self._run_async_in_sync is None:
+                self._raise_missing_bridge_error()
+
+            tables = self._run_async_in_sync(self._get_discoverable_tables())
 
             # Create stream for each table
             for table_name in tables:
@@ -386,7 +443,7 @@ class TapOracle(Tap):
             result = await self._schema_service.get_schema_tables(
                 self.tap_config.get_effective_schema(),
             )
-            if not result.is_success:
+            if not result.success:
                 logger.error("Failed to get table names: %s", result.error)
                 return []
 
@@ -441,17 +498,20 @@ class TapOracle(Tap):
         return success
 
     def _test_database_connection(self) -> bool:
-        """Test Oracle database connection using modern async/sync bridge."""
+        """Test Oracle database connection using injected async/sync bridge."""
         try:
-            # Use modern async/sync bridge
-            result = run_async_in_sync_context(
+            if self._run_async_in_sync is None:
+                self._raise_missing_bridge_error()
+
+            # Use injected async/sync bridge
+            result = self._run_async_in_sync(
                 self.connection_service.test_connection(),
             )
         except Exception:
             logger.exception("Database connection test failed")
             return False
         else:
-            return result.is_success
+            return result.success
 
     async def run_async(self) -> None:
         """Run the tap with async support for high performance."""

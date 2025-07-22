@@ -11,32 +11,35 @@ from typing import TYPE_CHECKING, Annotated, Any, Literal, TypedDict
 
 from pydantic import Field, StringConstraints
 
-# Import ALL Oracle types from flext-core (our single source of truth)
-# Runtime imports for proper type availability
+# ARCHITECTURAL FIX: Oracle-specific types defined locally (not in flext-core)
+# flext-core is abstract and should NEVER contain concrete technology types
 
+# Import only generic types from flext-core
 if TYPE_CHECKING:
     from flext_core.domain.shared_types import (
         NonEmptyStr,
-        OracleArraySize,
-        OracleFetchSize,
-        # Core Oracle types
-        OracleHost,
-        OraclePassword,
-        OraclePort,
-        OracleQueryTimeout,
-        OracleSchema,
-        OracleServiceName,
-        OracleSID,
-        OracleUsername,
         PositiveInt,
-        # Singer Oracle types
-        SingerBatchSize,
-        SingerMaxRecords,
-        SingerParallelStreams,
-        SingerReplicationMethod,
-        SingerStateInterval,
         TimeoutSeconds,
     )
+
+# Oracle-specific types defined locally (CLEAN ARCHITECTURE COMPLIANCE)
+OracleHost = Annotated[str, StringConstraints(min_length=1, max_length=255)]
+OraclePort = Annotated[int, Field(ge=1, le=65535)]
+OracleUsername = Annotated[str, StringConstraints(min_length=1, max_length=128)]
+OraclePassword = Annotated[str, StringConstraints(min_length=1, max_length=256)]
+OracleServiceName = Annotated[str, StringConstraints(min_length=1, max_length=64)]
+OracleSID = Annotated[str, StringConstraints(min_length=1, max_length=64)]
+OracleSchema = Annotated[str, StringConstraints(min_length=1, max_length=64)]
+OracleQueryTimeout = Annotated[int, Field(ge=1, le=3600)]
+OracleFetchSize = Annotated[int, Field(ge=1, le=10000)]
+OracleArraySize = Annotated[int, Field(ge=1, le=10000)]
+
+# Singer-specific types defined locally
+SingerBatchSize = Annotated[int, Field(ge=1, le=100000)]
+SingerMaxRecords = Annotated[int, Field(ge=1)]
+SingerParallelStreams = Annotated[int, Field(ge=1, le=100)]
+SingerReplicationMethod = Literal["FULL_TABLE", "INCREMENTAL", "LOG_BASED"]
+SingerStateInterval = Annotated[int, Field(ge=1, le=10000)]
 
 # ==============================================================================
 # TAP-SPECIFIC TYPES - Only types unique to tap operations

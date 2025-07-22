@@ -59,7 +59,7 @@ class TestOracleE2E:
     ) -> None:
         """Test that we can connect to Oracle database."""
         result = await connection_service.test_connection()
-        assert result.is_success, f"Connection failed: {result.error}"
+        assert result.success, f"Connection failed: {result.error}"
 
     @pytest.mark.asyncio
     async def test_create_test_data(self, query_service: OracleQueryService) -> None:
@@ -86,7 +86,7 @@ class TestOracleE2E:
 
         # Create table
         result = await query_service.execute_query(create_table_sql)
-        assert result.is_success, f"Failed to create table: {result.error}"
+        assert result.success, f"Failed to create table: {result.error}"
 
         # Insert test data
         insert_sql = """
@@ -154,7 +154,7 @@ class TestOracleE2E:
                 "active": row[6],
             }
             result = await query_service.execute_query(insert_sql, params)
-            assert result.is_success, f"Failed to insert row {row}: {result.error}"
+            assert result.success, f"Failed to insert row {row}: {result.error}"
 
     def test_tap_discovery(self) -> None:
         """Test tap stream discovery."""
@@ -370,7 +370,7 @@ class TestOracleE2E:
                 "active": row[6],
             }
             result = await query_service.execute_query(insert_sql, params)
-            assert result.is_success, (
+            assert result.success, (
                 f"Failed to insert incremental row {row}: {result.error}"
             )
 

@@ -18,8 +18,12 @@ from flext_core import (
     FlextFramework,
 )
 from flext_core.base import BaseComponentConfig
+from flext_core.config.unified_config import (
+    BaseConfigMixin,
+    LoggingConfigMixin,
+    PerformanceConfigMixin,
+)
 from flext_core.domain.constants import (
-    ConfigDefaults,
     LogLevels,
 )
 
@@ -29,8 +33,6 @@ from .constants import OracleTapConstants
 # Define Oracle-specific type aliases for tap-oracle
 # Oracle-specific types for this tap implementation
 if TYPE_CHECKING:
-    from flext_core.domain.types import EnvironmentLiteral
-
     # Use proper types for type checking
     NonEmptyStr = str
     OracleBatchSize = int
@@ -93,53 +95,31 @@ logger = get_logger(__name__)
 # ==============================================================================
 
 
-class OracleTapSettings(BaseSettings):
+class OracleTapSettings(
+    BaseConfigMixin,
+    LoggingConfigMixin,
+    PerformanceConfigMixin,
+    BaseSettings,
+):
     """Modern Oracle Tap Settings using flext-core BaseSettings patterns.
 
     Provides environment variable integration, validation, and dependency injection
     using standardized flext-core patterns for enterprise configuration management.
     """
 
-    # Project identification
-    project_name: str = Field(default="flext-data.taps.flext-tap-oracle")
+    # Project identification (inherits from BaseConfigMixin but override with Tap-specific values)
+    project_name: str = Field(
+        default="flext-data.taps.flext-tap-oracle",
+        description="Project name",
+    )
     project_version: str = Field(default=FlextFramework.VERSION)
-    environment: EnvironmentLiteral = Field(default="development")
 
-    # Oracle Database connection (environment variables)
-    oracle_host: OracleHost | None = Field(
-        default=None,
-        description="Oracle database host",
-    )
-    oracle_port: OraclePort = Field(default=1521, description="Oracle database port")
-    oracle_service_name: OracleServiceName | None = Field(
-        default=None,
-        description="Oracle service name",
-    )
-    oracle_username: OracleUsername | None = Field(
-        default=None,
-        description="Oracle username",
-    )
-    oracle_password: OraclePassword | None = Field(
-        default=None,
-        description="Oracle password",
-    )
+    # Oracle connection, performance, and logging now inherited from mixins
+    # Additional Tap-specific Oracle settings
     oracle_schema: OracleSchema | None = Field(
         default=None,
-        description="Oracle schema name",
+        description="Oracle schema name for extraction",
     )
-
-    # Performance settings
-    default_batch_size: OracleBatchSize = Field(
-        default=ConfigDefaults.DEFAULT_BATCH_SIZE,
-        description="Default batch size for extraction",
-    )
-    default_timeout: OracleQueryTimeout = Field(
-        default=ConfigDefaults.DEFAULT_TIMEOUT,
-        description="Default query timeout",
-    )
-
-    # Logging
-    log_level: str = Field(default=LogLevels.INFO, description="Default log level")
 
     # Model configuration for environment variables
     class Config:
@@ -163,8 +143,8 @@ class OracleTapSettings(BaseSettings):
             username=self.oracle_username,
             password=self.oracle_password,
             schema_name=self.oracle_schema,
-            batch_size=self.default_batch_size,
-            query_timeout=self.default_timeout,
+            batch_size=self.batch_size,
+            query_timeout=int(self.oracle_query_timeout),
             log_level=self.log_level,
             project_name=self.project_name,
             project_version=self.project_version,
@@ -246,6 +226,8 @@ class Config(BaseComponentConfig):
     )
 
     # Performance configuration using standardized Oracle batch size
+    # Batch size inherited from PerformanceConfigMixin (as batch_size field)
+    # Override with Oracle-specific constraints
     batch_size: OracleBatchSize = Field(
         default=OracleTapConstants.DEFAULT_BATCH_SIZE,
         description="Batch size for data extraction",
@@ -361,13 +343,17 @@ class Config(BaseComponentConfig):
         """Validate required fields for database connections."""
         if self.connection_type in {"database", "hybrid"}:
             if not self.host:
-                raise ValueError("Host is required for database connections")
+                msg = "Host is required for database connections"
+                raise ValueError(msg)
             if not self.service_name:
-                raise ValueError("Service name is required for database connections")
+                msg = "Service name is required for database connections"
+                raise ValueError(msg)
             if not self.username:
-                raise ValueError("Username is required for database connections")
+                msg = "Username is required for database connections"
+                raise ValueError(msg)
             if not self.password:
-                raise ValueError("Password is required for database connections")
+                msg = "Password is required for database connections"
+                raise ValueError(msg)
         return self
 
     @field_validator("host")
