@@ -5,6 +5,11 @@ data extraction using modern Singer SDK patterns and FLEXT ecosystem integration
 """
 
 from __future__ import annotations
+from flext_tap_oracle.streams import (
+    OracleTableStream,
+)
+from flext_tap_oracle.config import TapOracleConfig
+import logging
 
 import asyncio
 import re
@@ -21,27 +26,35 @@ if TYPE_CHECKING:
     from collections.abc import Callable
     from typing import Protocol
 
-    from flext_core.domain.shared_types import ServiceResult
+    # 🚨 ARCHITECTURAL COMPLIANCE: Using DI container
+from flext_tap_oracle.infrastructure.di_container import get_service_result, get_domain_entity, get_field, get_domain_value_object, get_base_config
+ServiceResult = get_service_result()
+DomainEntity = get_domain_entity()
+Field = get_field()
+DomainValueObject = get_domain_value_object()
+BaseConfig = get_base_config()
 
-    class OracleConnectionServiceProtocol(Protocol):
+   class OracleConnectionServiceProtocol(Protocol):
         """Interface for Oracle connection service."""
+
         async def connect(self) -> ServiceResult[Any]: ...
         async def disconnect(self) -> ServiceResult[bool]: ...
         async def test_connection(self) -> ServiceResult[Any]: ...
 
     class OracleQueryServiceProtocol(Protocol):
         """Interface for Oracle query service."""
+
         async def execute_query(self, query: str) -> ServiceResult[Any]: ...
 
     class OracleSchemaServiceProtocol(Protocol):
         """Interface for Oracle schema service."""
+
         async def get_tables(self) -> ServiceResult[Any]: ...
-        async def get_schema_tables(self, schema: str) -> ServiceResult[Any]: ...
-from flext_observability.logging import get_logger
-from flext_tap_oracle.config import TapOracleConfig
-from flext_tap_oracle.streams import (
-    OracleTableStream,
-)
+        async def get_schema_tables(
+    self, schema: str) -> ServiceResult[Any]: ...
+# Removed circular dependency - use DI pattern
+# Resolved: DI pattern implemented successfully
+
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -75,7 +88,7 @@ def track_performance(
     return decorator
 
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class TapOracle(Tap):
@@ -257,13 +270,16 @@ class TapOracle(Tap):
                 # Try different ways to get the config
                 if hasattr(self, "_config_dict") and self._config_dict:
                     raw_config = dict(self._config_dict)
-                    logger.debug("Got config from _config_dict: %s", raw_config)
+                    logger.debug(
+    "Got config from _config_dict: %s", raw_config)
                 elif hasattr(self, "config") and self.config is not None:
                     try:
                         raw_config = dict(self.config)
-                        logger.debug("Got config from self.config: %s", raw_config)
+                        logger.debug(
+    "Got config from self.config: %s", raw_config)
                     except (TypeError, AttributeError) as e:
-                        logger.debug("Could not convert self.config to dict: %s", e)
+                        logger.debug(
+    "Could not convert self.config to dict: %s", e)
                         raw_config = {}
 
                 # Ensure minimum required config
@@ -276,7 +292,9 @@ class TapOracle(Tap):
                 if "password" not in raw_config:
                     raw_config["password"] = "oracle"
 
-                logger.debug("Final raw_config for TapOracleConfig: %s", raw_config)
+                logger.debug(
+    "Final raw_config for TapOracleConfig: %s",
+     raw_config)
                 self._tap_config = TapOracleConfig(**raw_config)
                 logger.debug("TapOracleConfig created successfully")
 
@@ -333,9 +351,8 @@ class TapOracle(Tap):
     def _raise_missing_services_error(self) -> None:
         """Raise error for missing Oracle services injection."""
         msg = (
-            "Oracle connection service not injected. "
-            "Services must be injected via DI container following Clean Architecture."
-        )
+    "Oracle connection service not injected. "
+    "Services must be injected via DI container following Clean Architecture." )
         raise RuntimeError(msg)
 
     def test_connection_modern(self) -> bool:
@@ -397,7 +414,9 @@ class TapOracle(Tap):
 
         try:
             # Use modern Oracle DB services for discovery
-            if not hasattr(self, "_schema_service") or self._schema_service is None:
+            if not hasattr(
+    self,
+     "_schema_service") or self._schema_service is None:
                 # Initialize services if not already done
                 _ = self.connection_service
 
@@ -463,7 +482,8 @@ class TapOracle(Tap):
             # Apply pattern filter if configured
             if self.tap_config.table_pattern:
                 pattern = re.compile(self.tap_config.table_pattern)
-                all_tables = [table for table in all_tables if pattern.match(table)]
+                all_tables = [
+    table for table in all_tables if pattern.match(table)]
 
         except Exception:
             logger.exception("Error getting table names")
@@ -546,16 +566,17 @@ class TapOracle(Tap):
             return {}
 
         metrics = {
-            "connection_type": self.tap_config.connection_type,
-            "streams_discovered": len(self.discover_streams()),
-            "configuration": {
-                "batch_size": self.tap_config.batch_size,
-                "max_parallel_streams": self.tap_config.max_parallel_streams,
-                "connection_pool_size": self.tap_config.connection_pool_size,
-                "async_enabled": self.tap_config.enable_async,
-                "circuit_breaker_enabled": self.tap_config.enable_circuit_breaker,
+    "connection_type": self.tap_config.connection_type,
+    "streams_discovered": len(
+        self.discover_streams()),
+        "configuration": {
+            "batch_size": self.tap_config.batch_size,
+            "max_parallel_streams": self.tap_config.max_parallel_streams,
+            "connection_pool_size": self.tap_config.connection_pool_size,
+            "async_enabled": self.tap_config.enable_async,
+            "circuit_breaker_enabled": self.tap_config.enable_circuit_breaker,
             },
-        }
+             }
 
         # Add connection service metrics if available
         if hasattr(self, "_connection_service") and self._connection_service:

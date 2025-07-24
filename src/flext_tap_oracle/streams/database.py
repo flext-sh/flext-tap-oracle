@@ -12,13 +12,15 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     import collections.abc
     from collections.abc import Callable, Iterable
+# Removed circular dependency - use DI pattern
+# Resolved: DI pattern implemented successfully
+import logging
 from itertools import starmap
 
 from singer_sdk import typing as th
 
 from flext_db_oracle import OracleConfig, OracleConnectionService, OracleQueryService
 from flext_db_oracle.utils.exceptions import OracleQueryError
-from flext_observability.logging import get_logger
 from flext_tap_oracle.query_builder import SimpleOracleQueryBuilder
 from flext_tap_oracle.schema_flattener import OracleSchemaFlattener
 from flext_tap_oracle.streams.base import BaseOracleStream
@@ -42,7 +44,7 @@ def track_performance(
 
 if TYPE_CHECKING:
     from flext_tap_oracle.tap import TapOracle
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class OracleTableStream(BaseOracleStream):

@@ -10,7 +10,20 @@ from __future__ import annotations
 from typing import ClassVar, Final
 
 # Import available constants from flext-core
-from flext_core.domain.constants import LogLevels
+# 🚨 ARCHITECTURAL COMPLIANCE: Using DI container
+from flext_tap_oracle.infrastructure.di_container import (
+    get_base_config,
+    get_domain_entity,
+    get_domain_value_object,
+    get_field,
+    get_service_result,
+)
+
+ServiceResult = get_service_result()
+DomainEntity = get_domain_entity()
+Field = get_field()
+DomainValueObject = get_domain_value_object()
+BaseConfig = get_base_config()
 
 
 # Define Oracle-specific constants locally

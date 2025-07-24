@@ -17,19 +17,43 @@ import warnings
 from typing import Any, Never
 
 # Foundation patterns - ALWAYS from flext-core
-from flext_core import (
+# 🚨 ARCHITECTURAL COMPLIANCE: Using DI container
+from flext_tap_oracle.infrastructure.di_container import get_service_result, get_domain_entity, get_field, get_domain_value_object, get_base_config
+ServiceResult = get_service_result()
+DomainEntity = get_domain_entity()
+Field = get_field()
+DomainValueObject = get_domain_value_object()
+BaseConfig = get_base_config()
     BaseConfig as OracleBaseConfig,  # Configuration base
 )
-from flext_core import (
+# 🚨 ARCHITECTURAL COMPLIANCE: Using DI container
+from flext_tap_oracle.infrastructure.di_container import get_service_result, get_domain_entity, get_field, get_domain_value_object, get_base_config
+ServiceResult = get_service_result()
+DomainEntity = get_domain_entity()
+Field = get_field()
+DomainValueObject = get_domain_value_object()
+BaseConfig = get_base_config()
     DomainBaseModel as BaseModel,  # Base for Oracle models
 )
-from flext_core import (
+# 🚨 ARCHITECTURAL COMPLIANCE: Using DI container
+from flext_tap_oracle.infrastructure.di_container import get_service_result, get_domain_entity, get_field, get_domain_value_object, get_base_config
+ServiceResult = get_service_result()
+DomainEntity = get_domain_entity()
+Field = get_field()
+DomainValueObject = get_domain_value_object()
+BaseConfig = get_base_config()
     DomainError as OracleError,  # Oracle-specific errors
 )
-from flext_core import (
+# 🚨 ARCHITECTURAL COMPLIANCE: Using DI container
+from flext_tap_oracle.infrastructure.di_container import get_service_result, get_domain_entity, get_field, get_domain_value_object, get_base_config
+ServiceResult = get_service_result()
+DomainEntity = get_domain_entity()
+Field = get_field()
+DomainValueObject = get_domain_value_object()
+BaseConfig = get_base_config()
+    ServiceResult,
     ValidationError,  # Validation errors
 )
-from flext_core.domain.shared_types import ServiceResult
 
 try:
     __version__ = importlib.metadata.version("flext-tap-oracle")
@@ -64,28 +88,8 @@ def _show_deprecation_warning(old_import: str, new_import: str) -> None:
 
 # Foundation patterns - imported at top of file
 
-# Singer Tap exports - conditional import with proper error handling
-try:
-    from flext_tap_oracle.tap import TapOracle
-except ImportError as e:
-    # Store error for fallback class
-    import_error_msg = str(e)
-
-    # Tap module exists but may have dependency issues - re-raise with context
-    import warnings
-    warnings.warn(
-        f"Failed to import TapOracle: {import_error_msg}. Check Oracle dependencies in pyproject.toml",
-        ImportWarning,
-        stacklevel=2
-    )
-    # Define placeholder that fails gracefully when used
-    class TapOracle:  # type: ignore[no-redef]
-        def __init__(self, *_args: Any, **_kwargs: Any) -> None:
-            raise ImportError(f"TapOracle is not available due to import error: {import_error_msg}")
-
-        @classmethod
-        def cli(cls) -> Never:
-            raise ImportError(f"TapOracle CLI is not available due to import error: {import_error_msg}")
+# Singer Tap exports - direct import (ZERO TOLERANCE for fallbacks)
+from flext_tap_oracle.tap import TapOracle
 
 # Oracle Client exports - simplified imports
 with contextlib.suppress(ImportError):

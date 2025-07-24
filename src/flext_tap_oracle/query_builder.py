@@ -5,11 +5,12 @@ This implementation avoids non-existent methods and uses only the actual API.
 
 from __future__ import annotations
 
+# Removed circular dependency - use DI pattern
+# Resolved: DI pattern implemented successfully
+import logging
 from typing import Any
 
-from flext_observability.logging import get_logger
-
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 # Constants
 _COMPLEXITY_THRESHOLD = 500

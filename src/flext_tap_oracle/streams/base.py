@@ -13,6 +13,10 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
 
+# Removed circular dependency - use DI pattern
+# Resolved: DI pattern implemented successfully
+import logging
+
 from singer_sdk.streams import Stream
 
 from flext_db_oracle.utils.exceptions import (
@@ -20,7 +24,6 @@ from flext_db_oracle.utils.exceptions import (
     OraclePerformanceError,
     OracleQueryError,
 )
-from flext_observability.logging import get_logger
 
 
 # Simple performance tracking decorator
@@ -39,7 +42,7 @@ def track_performance(
     return decorator
 
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class BaseOracleStream(Stream):

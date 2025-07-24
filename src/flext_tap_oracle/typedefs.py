@@ -16,7 +16,13 @@ from pydantic import Field, StringConstraints
 
 # Import only generic types from flext-core
 if TYPE_CHECKING:
-    from flext_core.domain.shared_types import (
+    # 🚨 ARCHITECTURAL COMPLIANCE: Using DI container
+from flext_tap_oracle.infrastructure.di_container import get_service_result, get_domain_entity, get_field, get_domain_value_object, get_base_config
+ServiceResult = get_service_result()
+DomainEntity = get_domain_entity()
+Field = get_field()
+DomainValueObject = get_domain_value_object()
+BaseConfig = get_base_config()
         NonEmptyStr,
         PositiveInt,
         TimeoutSeconds,

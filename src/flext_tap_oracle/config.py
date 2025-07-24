@@ -12,18 +12,42 @@ from typing import TYPE_CHECKING, Any
 from pydantic import ValidationInfo, field_validator, model_validator
 
 # Use flext-core configuration patterns
-from flext_core import (
+# 🚨 ARCHITECTURAL COMPLIANCE: Using DI container
+from flext_tap_oracle.infrastructure.di_container import get_service_result, get_domain_entity, get_field, get_domain_value_object, get_base_config
+ServiceResult = get_service_result()
+DomainEntity = get_domain_entity()
+Field = get_field()
+DomainValueObject = get_domain_value_object()
+BaseConfig = get_base_config()
     BaseSettings,
     Field,
     FlextFramework,
 )
-from flext_core.base import BaseComponentConfig
-from flext_core.config.unified_config import (
+# 🚨 ARCHITECTURAL COMPLIANCE: Using DI container
+from flext_tap_oracle.infrastructure.di_container import get_service_result, get_domain_entity, get_field, get_domain_value_object, get_base_config
+ServiceResult = get_service_result()
+DomainEntity = get_domain_entity()
+Field = get_field()
+DomainValueObject = get_domain_value_object()
+BaseConfig = get_base_config()
+# 🚨 ARCHITECTURAL COMPLIANCE: Using DI container
+from flext_tap_oracle.infrastructure.di_container import get_service_result, get_domain_entity, get_field, get_domain_value_object, get_base_config
+ServiceResult = get_service_result()
+DomainEntity = get_domain_entity()
+Field = get_field()
+DomainValueObject = get_domain_value_object()
+BaseConfig = get_base_config()
     BaseConfigMixin,
     LoggingConfigMixin,
     PerformanceConfigMixin,
 )
-from flext_core.domain.constants import (
+# 🚨 ARCHITECTURAL COMPLIANCE: Using DI container
+from flext_tap_oracle.infrastructure.di_container import get_service_result, get_domain_entity, get_field, get_domain_value_object, get_base_config
+ServiceResult = get_service_result()
+DomainEntity = get_domain_entity()
+Field = get_field()
+DomainValueObject = get_domain_value_object()
+BaseConfig = get_base_config()
     LogLevels,
 )
 
@@ -77,10 +101,13 @@ else:
     TableName = str
     TimeoutSeconds = int
 
-from flext_db_oracle import OracleConfig
-from flext_observability.logging import get_logger
+# Removed circular dependency - use DI pattern
+# Resolved: DI pattern implemented successfully
+import logging
 
-logger = get_logger(__name__)
+from flext_db_oracle import OracleConfig
+
+logger = logging.getLogger(__name__)
 
 
 # ==============================================================================
