@@ -1,315 +1,412 @@
-# FLEXT TAP ORACLE - Oracle Database Data Extraction
-# ===================================================
-# Singer tap for Oracle Database with enterprise connectivity
-# Python 3.13 + Singer SDK + Oracle DB + Zero Tolerance Quality Gates
+# =============================================================================
+# FLEXT-TAP-ORACLE - PROJECT MAKEFILE
+# =============================================================================
+# Enterprise Singer Tap for Oracle Database with Clean Architecture + DDD + Zero Tolerance Quality
+# Python 3.13 + Singer SDK + Oracle Client + Database Integration
+# =============================================================================
 
-.PHONY: help check validate test lint type-check security format format-check fix
-.PHONY: install dev-install setup pre-commit build clean
-.PHONY: coverage coverage-html test-unit test-integration
-.PHONY: deps-update deps-audit deps-tree
-.PHONY: discover run validate-config singer-check
+# Project Configuration
+PROJECT_NAME := flext-tap-oracle
+PROJECT_TYPE := meltano-plugin
+PYTHON_VERSION := 3.13
+POETRY := poetry
+SRC_DIR := src
+TESTS_DIR := tests
+DOCS_DIR := docs
 
-# ============================================================================
-# 🎯 HELP & INFORMATION
-# ============================================================================
+# Quality Gates Configuration
+MIN_COVERAGE := 90
+MYPY_STRICT := true
+RUFF_CONFIG := pyproject.toml
+PEP8_LINE_LENGTH := 79
 
-help: ## Show this help message
-	@echo "🔍 FLEXT TAP ORACLE - Oracle Database Data Extraction"
-	@echo "===================================================="
-	@echo "🎯 Clean Architecture + DDD + Python 3.13 + Singer Oracle Integration"
+# Singer Configuration
+TAP_CONFIG := config.json
+TAP_CATALOG := catalog.json
+TAP_STATE := state.json
+
+# Export environment variables
+export PYTHON_VERSION
+export MIN_COVERAGE
+export MYPY_STRICT
+export TAP_CONFIG
+export TAP_CATALOG
+
+# =============================================================================
+# HELP & INFORMATION
+# =============================================================================
+
+.PHONY: help
+help: ## Show available commands
+	@echo "$(PROJECT_NAME) - Singer Tap for Oracle Database"
+	@echo "================================================"
 	@echo ""
-	@echo "📦 Singer tap for Oracle Database data extraction with enterprise features"
-	@echo "🔒 Zero tolerance quality gates for data extraction"
-	@echo "🧪 90%+ test coverage requirement for Oracle integration"
+	@echo "📋 AVAILABLE COMMANDS:"
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  %-18s %s\\n", $$1, $$2}' $(MAKEFILE_LIST)
 	@echo ""
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
+	@echo "🔧 PROJECT INFO:"
+	@echo "  Type: $(PROJECT_TYPE)"
+	@echo "  Python: $(PYTHON_VERSION)"
+	@echo "  Coverage: $(MIN_COVERAGE)%"
+	@echo "  Line Length: $(PEP8_LINE_LENGTH)"
 
-# ============================================================================
-# 🎯 CORE QUALITY GATES - ZERO TOLERANCE
-# ============================================================================
+.PHONY: info
+info: ## Show project information
+	@echo "Project Information"
+	@echo "=================="
+	@echo "Name: $(PROJECT_NAME)"
+	@echo "Type: $(PROJECT_TYPE)"
+	@echo "Python Version: $(PYTHON_VERSION)"
+	@echo "Source Directory: $(SRC_DIR)"
+	@echo "Tests Directory: $(TESTS_DIR)"
+	@echo "Quality Standards: Zero Tolerance"
+	@echo "Architecture: Clean Architecture + DDD + Singer SDK"
 
-validate: lint type-check security test ## STRICT compliance validation (all must pass)
-	@echo "✅ ALL QUALITY GATES PASSED - FLEXT TAP ORACLE COMPLIANT"
+# =============================================================================
+# INSTALLATION & SETUP
+# =============================================================================
 
-check: lint type-check test ## Essential quality checks (pre-commit standard)
-	@echo "✅ Essential checks passed"
+.PHONY: install
+install: ## Install project dependencies
+	@echo "📦 Installing $(PROJECT_NAME) dependencies..."
+	@$(POETRY) install
 
-lint: ## Ruff linting (17 rule categories, ALL enabled)
-	@echo "🔍 Running ruff linter (ALL rules enabled)..."
-	@poetry run ruff check src/ tests/ --fix --unsafe-fixes
-	@echo "✅ Linting complete"
+.PHONY: install-dev
+install-dev: ## Install development dependencies
+	@echo "📦 Installing development dependencies..."
+	@$(POETRY) install --with dev,test,docs
 
-type-check: ## MyPy strict mode type checking (zero errors tolerated)
-	@echo "🛡️ Running MyPy strict type checking..."
-	@poetry run mypy src/ tests/ --strict
-	@echo "✅ Type checking complete"
+.PHONY: setup
+setup: ## Complete project setup
+	@echo "🚀 Setting up $(PROJECT_NAME)..."
+	@make install-dev
+	@make pre-commit-install
+	@echo "✅ Setup complete"
 
-security: ## Security scans (bandit + pip-audit + secrets)
-	@echo "🔒 Running security scans..."
-	@poetry run bandit -r src/ --severity-level medium --confidence-level medium
-	@poetry run pip-audit --ignore-vuln PYSEC-2022-42969
-	@poetry run detect-secrets scan --all-files
-	@echo "✅ Security scans complete"
+.PHONY: pre-commit-install
+pre-commit-install: ## Install pre-commit hooks
+	@echo "🔧 Installing pre-commit hooks..."
+	@$(POETRY) run pre-commit install
+	@$(POETRY) run pre-commit autoupdate
 
-format: ## Format code with ruff
+# =============================================================================
+# QUALITY GATES & VALIDATION
+# =============================================================================
+
+.PHONY: validate
+validate: ## Run complete validation (quality gate)
+	@echo "🔍 Running complete validation for $(PROJECT_NAME)..."
+	@make lint
+	@make type-check
+	@make security
+	@make test
+	@make pep8-check
+	@echo "✅ Validation complete"
+
+.PHONY: check
+check: ## Quick health check
+	@echo "🏥 Running health check..."
+	@make lint
+	@make type-check
+	@echo "✅ Health check complete"
+
+.PHONY: lint
+lint: ## Run code linting
+	@echo "🧹 Running linting..."
+	@$(POETRY) run ruff check $(SRC_DIR) $(TESTS_DIR)
+
+.PHONY: format
+format: ## Format code
 	@echo "🎨 Formatting code..."
-	@poetry run ruff format src/ tests/
-	@echo "✅ Formatting complete"
+	@$(POETRY) run ruff format $(SRC_DIR) $(TESTS_DIR)
 
-format-check: ## Check formatting without fixing
+.PHONY: format-check
+format-check: ## Check code formatting
 	@echo "🎨 Checking code formatting..."
-	@poetry run ruff format src/ tests/ --check
-	@echo "✅ Format check complete"
+	@$(POETRY) run ruff format --check $(SRC_DIR) $(TESTS_DIR)
 
-fix: format lint ## Auto-fix all issues (format + imports + lint)
-	@echo "🔧 Auto-fixing all issues..."
-	@poetry run ruff check src/ tests/ --fix --unsafe-fixes
-	@echo "✅ All auto-fixes applied"
+.PHONY: type-check
+type-check: ## Run type checking
+	@echo "🔍 Running type checking..."
+	@$(POETRY) run mypy $(SRC_DIR) --strict
 
-# ============================================================================
-# 🧪 TESTING - 90% COVERAGE MINIMUM
-# ============================================================================
+.PHONY: security
+security: ## Run security scanning
+	@echo "🔒 Running security scanning..."
+	@$(POETRY) run bandit -r $(SRC_DIR)
+	@$(POETRY) run pip-audit
 
-test: ## Run tests with coverage (90% minimum required)
+.PHONY: pep8-check
+pep8-check: ## Check PEP8 compliance
+	@echo "📏 Checking PEP8 compliance..."
+	@$(POETRY) run ruff check $(SRC_DIR) $(TESTS_DIR) --select E,W
+	@echo "✅ PEP8 check complete"
+
+.PHONY: fix
+fix: ## Auto-fix code issues
+	@echo "🔧 Auto-fixing code issues..."
+	@$(POETRY) run ruff check $(SRC_DIR) $(TESTS_DIR) --fix
+	@make format
+
+# =============================================================================
+# TESTING
+# =============================================================================
+
+.PHONY: test
+test: ## Run all tests with coverage
 	@echo "🧪 Running tests with coverage..."
-	@poetry run pytest tests/ -v --cov=src/flext_tap_oracle --cov-report=term-missing --cov-fail-under=90
-	@echo "✅ Tests complete"
+	@$(POETRY) run pytest $(TESTS_DIR) --cov=$(SRC_DIR) --cov-report=term-missing --cov-fail-under=$(MIN_COVERAGE)
 
+.PHONY: test-unit
 test-unit: ## Run unit tests only
 	@echo "🧪 Running unit tests..."
-	@poetry run pytest tests/unit/ -v
-	@echo "✅ Unit tests complete"
+	@$(POETRY) run pytest $(TESTS_DIR) -m "not integration" -v
 
+.PHONY: test-integration
 test-integration: ## Run integration tests only
 	@echo "🧪 Running integration tests..."
-	@poetry run pytest tests/integration/ -v
-	@echo "✅ Integration tests complete"
+	@$(POETRY) run pytest $(TESTS_DIR) -m integration -v
 
-coverage: ## Generate detailed coverage report
+.PHONY: test-singer
+test-singer: ## Run Singer-specific tests
+	@echo "🧪 Running Singer protocol tests..."
+	@$(POETRY) run pytest $(TESTS_DIR) -m singer -v
+
+.PHONY: test-fast
+test-fast: ## Run tests without coverage
+	@echo "🧪 Running fast tests..."
+	@$(POETRY) run pytest $(TESTS_DIR) -v
+
+.PHONY: coverage
+coverage: ## Generate coverage report
 	@echo "📊 Generating coverage report..."
-	@poetry run pytest tests/ --cov=src/flext_tap_oracle --cov-report=term-missing --cov-report=html
-	@echo "✅ Coverage report generated in htmlcov/"
+	@$(POETRY) run pytest $(TESTS_DIR) --cov=$(SRC_DIR) --cov-report=html --cov-report=xml
 
-coverage-html: coverage ## Generate HTML coverage report
-	@echo "📊 Opening coverage report..."
-	@python -m webbrowser htmlcov/index.html
+.PHONY: coverage-html
+coverage-html: ## Generate HTML coverage report
+	@echo "📊 Generating HTML coverage report..."
+	@$(POETRY) run pytest $(TESTS_DIR) --cov=$(SRC_DIR) --cov-report=html
+	@echo "📊 Coverage report: htmlcov/index.html"
 
-# ============================================================================
-# 🚀 DEVELOPMENT SETUP
-# ============================================================================
+# =============================================================================
+# SINGER TAP OPERATIONS
+# =============================================================================
 
-setup: install pre-commit ## Complete development setup
-	@echo "🎯 Development setup complete!"
+.PHONY: discover
+discover: ## Run tap discovery mode
+	@echo "🔍 Running tap discovery..."
+	@$(POETRY) run tap-oracle --config $(TAP_CONFIG) --discover > $(TAP_CATALOG)
+	@echo "✅ Catalog generated: $(TAP_CATALOG)"
 
-install: ## Install dependencies with Poetry
-	@echo "📦 Installing dependencies..."
-	@poetry install --all-extras --with dev,test,docs,security
-	@echo "✅ Dependencies installed"
+.PHONY: run
+run: ## Run tap extraction
+	@echo "🎯 Running tap extraction..."
+	@$(POETRY) run tap-oracle --config $(TAP_CONFIG) --catalog $(TAP_CATALOG) --state $(TAP_STATE)
 
-dev-install: install ## Install in development mode
-	@echo "🔧 Setting up development environment..."
-	@poetry install --all-extras --with dev,test,docs,security
-	@poetry run pre-commit install
-	@echo "✅ Development environment ready"
-
-pre-commit: ## Setup pre-commit hooks
-	@echo "🎣 Setting up pre-commit hooks..."
-	@poetry run pre-commit install
-	@poetry run pre-commit run --all-files || true
-	@echo "✅ Pre-commit hooks installed"
-
-# ============================================================================
-# 🎵 SINGER TAP OPERATIONS
-# ============================================================================
-
-discover: ## Run discovery mode
-	@echo "🔍 Running Oracle discovery..."
-	@poetry run tap-oracle --config config.json --discover > catalog.json
-	@echo "✅ Oracle schema discovery complete - catalog.json generated"
-
-run: ## Run Oracle data extraction
-	@echo "📊 Running Oracle data extraction..."
-	@poetry run tap-oracle --config config.json --catalog catalog.json
-	@echo "✅ Oracle data extraction complete"
-
+.PHONY: validate-config
 validate-config: ## Validate tap configuration
-	@echo "🔍 Validating Oracle tap configuration..."
-	@poetry run tap-oracle --config config.json --test
-	@echo "✅ Oracle tap configuration valid"
+	@echo "🔍 Validating tap configuration..."
+	@$(POETRY) run python -c "import json; json.load(open('$(TAP_CONFIG)'))"
+	@echo "✅ Configuration valid"
 
-singer-check: ## Check Singer specification compliance
-	@echo "🎵 Checking Singer specification compliance..."
-	@poetry run tap-oracle --config config.json --discover | poetry run singer-check-tap
-	@echo "✅ Singer specification compliance verified"
+.PHONY: catalog
+catalog: discover ## Alias for discover
 
-test-connection: ## Test Oracle database connection
-	@echo "🔗 Testing Oracle database connection..."
-	@poetry run python -c "\
-from flext_tap_oracle.client import OracleClient; \
-import json; \
-\
-with open('config.json', 'r') as f: \
-    config = json.load(f); \
-\
-client = OracleClient(**config['oracle']); \
-try: \
-    with client.get_connection() as conn: \
-        with conn.cursor() as cursor: \
-            cursor.execute('SELECT 1 FROM dual'); \
-            result = cursor.fetchone(); \
-            print(f'✅ Oracle connection successful: {result}'); \
-except Exception as e: \
-    print(f'❌ Oracle connection failed: {e}'); \
-"
+.PHONY: sync
+sync: run ## Alias for run
 
-extract-sample: ## Extract sample data from Oracle
-	@echo "📊 Extracting sample Oracle data..."
-	@poetry run tap-oracle --config config.json --catalog catalog.json | head -100
-	@echo "✅ Sample data extraction complete"
+# =============================================================================
+# ORACLE OPERATIONS
+# =============================================================================
 
-# ============================================================================
-# 📦 BUILD & DISTRIBUTION
-# ============================================================================
+.PHONY: oracle-test
+oracle-test: ## Test Oracle database connection
+	@echo "🔗 Testing Oracle connection..."
+	@$(POETRY) run python -c "from flext_tap_oracle.client import test_connection; test_connection()"
 
-build: clean ## Build distribution packages
-	@echo "🔨 Building distribution..."
-	@poetry build
-	@echo "✅ Build complete - packages in dist/"
+.PHONY: oracle-query
+oracle-query: ## Run test Oracle query
+	@echo "🔍 Running test Oracle query..."
+	@$(POETRY) run python -c "from flext_tap_oracle.client import test_query; test_query()"
 
-# ============================================================================
-# 🧹 CLEANUP
-# ============================================================================
+.PHONY: oracle-performance
+oracle-performance: ## Run Oracle performance test
+	@echo "⚡ Running Oracle performance test..."
+	@$(POETRY) run python -c "from flext_tap_oracle.performance import run_performance_test; run_performance_test()"
 
-clean: ## Remove all artifacts
-	@echo "🧹 Cleaning up..."
+# =============================================================================
+# BUILD & DISTRIBUTION
+# =============================================================================
+
+.PHONY: build
+build: ## Build distribution packages
+	@echo "🏗️ Building $(PROJECT_NAME)..."
+	@$(POETRY) build
+
+.PHONY: build-clean
+build-clean: ## Clean build and rebuild
+	@echo "🏗️ Clean build..."
+	@make clean
+	@make build
+
+.PHONY: publish-test
+publish-test: ## Publish to test PyPI
+	@echo "📦 Publishing to test PyPI..."
+	@$(POETRY) publish --repository testpypi
+
+.PHONY: publish
+publish: ## Publish to PyPI
+	@echo "📦 Publishing to PyPI..."
+	@$(POETRY) publish
+
+# =============================================================================
+# DOCUMENTATION
+# =============================================================================
+
+.PHONY: docs
+docs: ## Build documentation
+	@echo "📚 Building documentation..."
+	@$(POETRY) run mkdocs build
+
+.PHONY: docs-serve
+docs-serve: ## Serve documentation locally
+	@echo "📚 Serving documentation..."
+	@$(POETRY) run mkdocs serve
+
+.PHONY: docs-deploy
+docs-deploy: ## Deploy documentation
+	@echo "📚 Deploying documentation..."
+	@$(POETRY) run mkdocs gh-deploy
+
+# =============================================================================
+# DEPENDENCY MANAGEMENT
+# =============================================================================
+
+.PHONY: deps-update
+deps-update: ## Update dependencies
+	@echo "🔄 Updating dependencies..."
+	@$(POETRY) update
+
+.PHONY: deps-show
+deps-show: ## Show dependency tree
+	@echo "📋 Showing dependency tree..."
+	@$(POETRY) show --tree
+
+.PHONY: deps-audit
+deps-audit: ## Audit dependencies for security
+	@echo "🔍 Auditing dependencies..."
+	@$(POETRY) run pip-audit
+
+.PHONY: deps-export
+deps-export: ## Export requirements.txt
+	@echo "📄 Exporting requirements..."
+	@$(POETRY) export -f requirements.txt --output requirements.txt
+	@$(POETRY) export -f requirements.txt --dev --output requirements-dev.txt
+
+# =============================================================================
+# DEVELOPMENT TOOLS
+# =============================================================================
+
+.PHONY: shell
+shell: ## Open Python shell with project loaded
+	@echo "🐍 Opening Python shell..."
+	@$(POETRY) run python
+
+.PHONY: notebook
+notebook: ## Start Jupyter notebook
+	@echo "📓 Starting Jupyter notebook..."
+	@$(POETRY) run jupyter lab
+
+.PHONY: pre-commit
+pre-commit: ## Run pre-commit hooks
+	@echo "🔍 Running pre-commit hooks..."
+	@$(POETRY) run pre-commit run --all-files
+
+# =============================================================================
+# MAINTENANCE & CLEANUP
+# =============================================================================
+
+.PHONY: clean
+clean: ## Clean build artifacts and cache
+	@echo "🧹 Cleaning build artifacts..."
 	@rm -rf build/
 	@rm -rf dist/
 	@rm -rf *.egg-info/
-	@rm -rf .coverage
+	@rm -rf .pytest_cache/
 	@rm -rf htmlcov/
-	@rm -rf catalog.json
-	@rm -rf state.json
-	@find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
-	@find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true
-	@find . -type d -name ".mypy_cache" -exec rm -rf {} + 2>/dev/null || true
-	@find . -type d -name ".ruff_cache" -exec rm -rf {} + 2>/dev/null || true
+	@rm -rf .coverage
+	@rm -rf .mypy_cache/
+	@rm -rf .ruff_cache/
+	@rm -rf $(TAP_CATALOG)
+	@rm -rf $(TAP_STATE)
+	@find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
 	@find . -type f -name "*.pyc" -delete 2>/dev/null || true
-	@echo "✅ Cleanup complete"
 
-# ============================================================================
-# 📊 DEPENDENCY MANAGEMENT
-# ============================================================================
+.PHONY: clean-all
+clean-all: clean ## Deep clean including virtual environment
+	@echo "🧹 Deep cleaning..."
+	@rm -rf .venv/
 
-deps-update: ## Update all dependencies
-	@echo "🔄 Updating dependencies..."
-	@poetry update
-	@echo "✅ Dependencies updated"
+.PHONY: reset
+reset: clean-all ## Reset project to clean state
+	@echo "🔄 Resetting project..."
+	@make setup
 
-deps-audit: ## Audit dependencies for vulnerabilities
-	@echo "🔍 Auditing dependencies..."
-	@poetry run pip-audit
-	@echo "✅ Dependency audit complete"
+# =============================================================================
+# DIAGNOSTICS & TROUBLESHOOTING
+# =============================================================================
 
-deps-tree: ## Show dependency tree
-	@echo "🌳 Dependency tree:"
-	@poetry show --tree
+.PHONY: diagnose
+diagnose: ## Run project diagnostics
+	@echo "🔬 Running project diagnostics..."
+	@echo "Python version: $$(python --version)"
+	@echo "Poetry version: $$($(POETRY) --version)"
+	@echo "Singer SDK status: $$($(POETRY) run python -c 'import singer_sdk; print(singer_sdk.__version__)')"
+	@echo "Project info:"
+	@$(POETRY) show --no-dev
+	@echo "Environment status:"
+	@$(POETRY) env info
 
-deps-outdated: ## Show outdated dependencies
-	@echo "📋 Outdated dependencies:"
-	@poetry show --outdated
+.PHONY: doctor
+doctor: ## Check project health
+	@echo "👩‍⚕️ Checking project health..."
+	@make diagnose
+	@make check
+	@echo "✅ Health check complete"
 
-# ============================================================================
-# 🔧 ENVIRONMENT CONFIGURATION
-# ============================================================================
+# =============================================================================
+# CONVENIENCE ALIASES
+# =============================================================================
 
-# Python settings
-PYTHON := python3.13
-export PYTHONPATH := $(PWD)/src:$(PYTHONPATH)
-export PYTHONDONTWRITEBYTECODE := 1
-export PYTHONUNBUFFERED := 1
+.PHONY: t
+t: test ## Alias for test
 
-# Oracle settings
-export ORACLE_HOST := localhost
-export ORACLE_PORT := 1521
-export ORACLE_SERVICE_NAME := ORCL
+.PHONY: l
+l: lint ## Alias for lint
 
-# Singer settings
-export SINGER_CONFIG := config.json
-export SINGER_CATALOG := catalog.json
-export SINGER_STATE := state.json
+.PHONY: f
+f: format ## Alias for format
 
-# Poetry settings
-export POETRY_VENV_IN_PROJECT := false
-export POETRY_CACHE_DIR := $(HOME)/.cache/pypoetry
+.PHONY: tc
+tc: type-check ## Alias for type-check
 
-# Quality gate settings
-export MYPY_CACHE_DIR := .mypy_cache
-export RUFF_CACHE_DIR := .ruff_cache
+.PHONY: c
+c: clean ## Alias for clean
 
-# ============================================================================
-# 📝 PROJECT METADATA
-# ============================================================================
+.PHONY: i
+i: install ## Alias for install
 
-# Project information
-PROJECT_NAME := flext-tap-oracle
-PROJECT_VERSION := $(shell poetry version -s)
-PROJECT_DESCRIPTION := FLEXT TAP Oracle - Oracle Database Data Extraction
+.PHONY: v
+v: validate ## Alias for validate
+
+.PHONY: d
+d: discover ## Alias for discover
+
+.PHONY: r
+r: run ## Alias for run
+
+# =============================================================================
+# Default target
+# =============================================================================
 
 .DEFAULT_GOAL := help
-
-# ============================================================================
-# 🎯 ORACLE SPECIFIC COMMANDS
-# ============================================================================
-
-oracle-tables: ## List Oracle tables available for extraction
-	@echo "📋 Listing Oracle tables..."
-	@poetry run python scripts/list_oracle_tables.py
-
-oracle-schema-info: ## Show Oracle schema information
-	@echo "🗂️ Oracle schema information..."
-	@poetry run python scripts/oracle_schema_info.py
-
-oracle-test-query: ## Test Oracle query execution
-	@echo "🔍 Testing Oracle query execution..."
-	@poetry run python scripts/oracle_test_query.py
-
-oracle-performance-test: ## Test Oracle connection performance
-	@echo "⚡ Testing Oracle performance..."
-	@poetry run python -c "\
-import time; \
-from flext_tap_oracle.client import OracleClient; \
-import json; \
-with open('config.json', 'r') as f: \
-    config = json.load(f); \
-client = OracleClient(**config['oracle']); \
-start_time = time.time(); \
-for i in range(10): \
-    query = f'SELECT {i}, SYSDATE FROM dual'; \
-    for row in client.execute_query(query): \
-        pass; \
-end_time = time.time(); \
-print(f'Executed 10 queries in {end_time - start_time:.2f} seconds'); \
-print(f'Average query time: {(end_time - start_time) / 10:.3f} seconds'); \
-"
-
-# ============================================================================
-# 🎯 FLEXT ECOSYSTEM INTEGRATION
-# ============================================================================
-
-ecosystem-check: ## Verify FLEXT ecosystem compatibility
-	@echo "🌐 Checking FLEXT ecosystem compatibility..."
-	@echo "📦 Singer Tap project: $(PROJECT_NAME) v$(PROJECT_VERSION)"
-	@echo "🏗️ Architecture: Clean Architecture + DDD"
-	@echo "🐍 Python: 3.13"
-	@echo "🎵 Framework: Singer SDK Oracle"
-	@echo "📊 Quality: Zero tolerance enforcement"
-	@echo "✅ Ecosystem compatibility verified"
-
-workspace-info: ## Show workspace integration info
-	@echo "🏢 FLEXT Workspace Integration"
-	@echo "==============================="
-	@echo "📁 Project Path: $(PWD)"
-	@echo "🏆 Role: Oracle Database Data Extraction (Singer Tap)"
-	@echo "🔗 Dependencies: flext-core, flext-observability"
-	@echo "📦 Provides: Oracle data extraction via Singer protocol"
-	@echo "🎯 Standards: Enterprise Oracle integration patterns"

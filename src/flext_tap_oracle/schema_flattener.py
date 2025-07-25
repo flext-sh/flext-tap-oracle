@@ -8,13 +8,13 @@ and dynamic schema generation with Singer SDK compliance.
 from __future__ import annotations
 
 import json
+from typing import Any
 
 # Removed circular dependency - use DI pattern
 # Resolved: DI pattern implemented successfully
-import logging
-from typing import Any
+from flext_core.patterns.logging import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class OracleSchemaFlattener:

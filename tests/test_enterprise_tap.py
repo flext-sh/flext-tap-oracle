@@ -43,7 +43,7 @@ class TestTapOracleEnterprise:
     def mock_oracle_connection(self) -> Generator[Mock]:
         """Mock Oracle connection for testing."""
         with patch(
-            "flext_tap_oracle.tap.OracleConnectionService"
+            "flext_db_oracle.application.FlextDbOracleConnectionService"
         ) as mock_connection_class:
             mock_connection = Mock()
             mock_connection.connect.return_value = None
@@ -199,7 +199,7 @@ class TestTapOracleEnterprise:
     ) -> None:
         """Test database connection testing with failure."""
         with patch(
-            "flext_tap_oracle.tap.OracleConnectionService"
+            "flext_db_oracle.application.FlextDbOracleConnectionService"
         ) as mock_connection_class:
             mock_connection_class.side_effect = Exception("Connection failed")
 
@@ -444,7 +444,7 @@ class TestTapOracleEnterprise:
     ) -> None:
         """Test error handling during stream discovery."""
         with patch(
-            "flext_tap_oracle.tap.OracleConnectionService"
+            "flext_db_oracle.application.FlextDbOracleConnectionService"
         ) as mock_connection_class:
             mock_connection_class.side_effect = Exception("Connection failed")
 

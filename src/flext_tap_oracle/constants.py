@@ -9,22 +9,6 @@ from __future__ import annotations
 
 from typing import ClassVar, Final
 
-# Import available constants from flext-core
-# 🚨 ARCHITECTURAL COMPLIANCE: Using DI container
-from flext_tap_oracle.infrastructure.di_container import (
-    get_base_config,
-    get_domain_entity,
-    get_domain_value_object,
-    get_field,
-    get_service_result,
-)
-
-ServiceResult = get_service_result()
-DomainEntity = get_domain_entity()
-Field = get_field()
-DomainValueObject = get_domain_value_object()
-BaseConfig = get_base_config()
-
 
 # Define Oracle-specific constants locally
 class ConnectionProtocols:
@@ -89,11 +73,11 @@ class SSLModes:
 class StandardLogLevels:
     """Standard logging levels."""
 
-    DEBUG: Final = LogLevels.DEBUG
-    INFO: Final = LogLevels.INFO
-    WARNING: Final = LogLevels.WARNING
-    ERROR: Final = LogLevels.ERROR
-    CRITICAL: Final = LogLevels.CRITICAL
+    DEBUG: Final = "DEBUG"
+    INFO: Final = "INFO"
+    WARNING: Final = "WARNING"
+    ERROR: Final = "ERROR"
+    CRITICAL: Final = "CRITICAL"
 
 
 class OracleTapConstants:

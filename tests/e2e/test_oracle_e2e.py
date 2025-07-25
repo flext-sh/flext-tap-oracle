@@ -12,7 +12,8 @@ import subprocess
 
 import pytest
 
-from flext_db_oracle import OracleConfig, OracleConnectionService, OracleQueryService
+from flext_db_oracle import FlextDbOracleConfig as OracleConfig
+from flext_db_oracle.application import FlextDbOracleConnectionService as OracleConnectionService, FlextDbOracleQueryService as OracleQueryService
 
 
 class TestOracleE2E:

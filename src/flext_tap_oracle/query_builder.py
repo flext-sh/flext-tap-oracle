@@ -1,23 +1,24 @@
-"""This module provides basic query building capabilities using ONLY the real flext-infrastructure.databases.flext-db-oracle execute_query API.
+"""Oracle query building capabilities using ONLY the real flext-db-oracle execute API.
 
 This implementation avoids non-existent methods and uses only the actual API.
 """
 
 from __future__ import annotations
 
-# Removed circular dependency - use DI pattern
-# Resolved: DI pattern implemented successfully
-import logging
 from typing import Any
 
-logger = logging.getLogger(__name__)
+# Removed circular dependency - use DI pattern
+# Resolved: DI pattern implemented successfully
+from flext_core.patterns.logging import get_logger
+
+logger = get_logger(__name__)
 
 # Constants
 _COMPLEXITY_THRESHOLD = 500
 
 
 class SimpleOracleQueryBuilder:
-    """Simple Oracle query builder using ONLY real flext-infrastructure.databases.flext-db-oracle API.
+    """Simple Oracle query builder using ONLY real flext-db-oracle API.
 
     This uses the actual execute_query method that exists in
     flext-infrastructure.databases.flext-db-oracle

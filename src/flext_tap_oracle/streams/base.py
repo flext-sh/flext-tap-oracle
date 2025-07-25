@@ -10,20 +10,18 @@ import time
 from abc import abstractmethod
 from typing import TYPE_CHECKING, Any
 
+# MIGRATED: Singer SDK imports centralized via flext-meltano
+from flext_meltano import Stream
+
+from flext_core.patterns.logging import get_logger
+from flext_db_oracle.utils.exceptions import (
+    FlextDbOracleConnectionError as OracleConnectionError,
+    FlextDbOraclePerformanceError as OraclePerformanceError,
+    FlextDbOracleQueryError as OracleQueryError,
+)
+
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
-
-# Removed circular dependency - use DI pattern
-# Resolved: DI pattern implemented successfully
-import logging
-
-from singer_sdk.streams import Stream
-
-from flext_db_oracle.utils.exceptions import (
-    OracleConnectionError,
-    OraclePerformanceError,
-    OracleQueryError,
-)
 
 
 # Simple performance tracking decorator
@@ -42,7 +40,7 @@ def track_performance(
     return decorator
 
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class BaseOracleStream(Stream):
@@ -56,7 +54,7 @@ class BaseOracleStream(Stream):
     - Async support for high-performance operations
     """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, *args: Any, **kwargs: object) -> None:
         """Initialize the base Oracle stream."""
         super().__init__(*args, **kwargs)
 

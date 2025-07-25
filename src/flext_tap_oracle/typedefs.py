@@ -7,26 +7,18 @@ consistency and eliminate code duplication across Oracle projects.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Annotated, Any, Literal, TypedDict
+from typing import Annotated, Any, Literal, TypedDict
 
 from pydantic import Field, StringConstraints
 
 # ARCHITECTURAL FIX: Oracle-specific types defined locally (not in flext-core)
 # flext-core is abstract and should NEVER contain concrete technology types
+# Import from flext-core for foundational patterns (standardized)
 
-# Import only generic types from flext-core
-if TYPE_CHECKING:
-    # 🚨 ARCHITECTURAL COMPLIANCE: Using DI container
-from flext_tap_oracle.infrastructure.di_container import get_service_result, get_domain_entity, get_field, get_domain_value_object, get_base_config
-ServiceResult = get_service_result()
-DomainEntity = get_domain_entity()
-Field = get_field()
-DomainValueObject = get_domain_value_object()
-BaseConfig = get_base_config()
-        NonEmptyStr,
-        PositiveInt,
-        TimeoutSeconds,
-    )
+# Define missing type aliases
+PositiveInt = Annotated[int, Field(gt=0)]
+NonEmptyStr = Annotated[str, StringConstraints(min_length=1)]
+TimeoutSeconds = Annotated[int, Field(ge=1, le=3600)]
 
 # Oracle-specific types defined locally (CLEAN ARCHITECTURE COMPLIANCE)
 OracleHost = Annotated[str, StringConstraints(min_length=1, max_length=255)]

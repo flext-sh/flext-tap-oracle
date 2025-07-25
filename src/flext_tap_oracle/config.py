@@ -9,105 +9,32 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from pydantic import ValidationInfo, field_validator, model_validator
+from pydantic import Field, ValidationInfo, field_validator, model_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# Use flext-core configuration patterns
-# 🚨 ARCHITECTURAL COMPLIANCE: Using DI container
-from flext_tap_oracle.infrastructure.di_container import get_service_result, get_domain_entity, get_field, get_domain_value_object, get_base_config
-ServiceResult = get_service_result()
-DomainEntity = get_domain_entity()
-Field = get_field()
-DomainValueObject = get_domain_value_object()
-BaseConfig = get_base_config()
-    BaseSettings,
-    Field,
-    FlextFramework,
-)
-# 🚨 ARCHITECTURAL COMPLIANCE: Using DI container
-from flext_tap_oracle.infrastructure.di_container import get_service_result, get_domain_entity, get_field, get_domain_value_object, get_base_config
-ServiceResult = get_service_result()
-DomainEntity = get_domain_entity()
-Field = get_field()
-DomainValueObject = get_domain_value_object()
-BaseConfig = get_base_config()
-# 🚨 ARCHITECTURAL COMPLIANCE: Using DI container
-from flext_tap_oracle.infrastructure.di_container import get_service_result, get_domain_entity, get_field, get_domain_value_object, get_base_config
-ServiceResult = get_service_result()
-DomainEntity = get_domain_entity()
-Field = get_field()
-DomainValueObject = get_domain_value_object()
-BaseConfig = get_base_config()
-    BaseConfigMixin,
-    LoggingConfigMixin,
-    PerformanceConfigMixin,
-)
-# 🚨 ARCHITECTURAL COMPLIANCE: Using DI container
-from flext_tap_oracle.infrastructure.di_container import get_service_result, get_domain_entity, get_field, get_domain_value_object, get_base_config
-ServiceResult = get_service_result()
-DomainEntity = get_domain_entity()
-Field = get_field()
-DomainValueObject = get_domain_value_object()
-BaseConfig = get_base_config()
-    LogLevels,
-)
-
-# Import tap-specific constants with flext-core integration
-from .constants import OracleTapConstants
-
-# Define Oracle-specific type aliases for tap-oracle
-# Oracle-specific types for this tap implementation
-if TYPE_CHECKING:
-    # Use proper types for type checking
-    NonEmptyStr = str
-    OracleBatchSize = int
-    OracleConnectionDict = dict[str, Any]
-    OracleHost = str
-    OraclePassword = str
-    OraclePort = int
-    OracleQueryTimeout = int
-    OracleSchema = str
-    OracleServiceName = str
-    OracleSID = str
-    OracleTapCompleteConfig = dict[str, Any]
-    OracleUsername = str
-    PositiveInt = int
-    SingerParallelStreams = int
-    SingerPrimaryKey = list[str]
-    SingerReplicationKey = str
-    SingerReplicationMethod = str
-    SingerStreamName = str
-    TableName = str
-    TimeoutSeconds = int
-else:
-    # Use simple types at runtime to avoid import errors
-    NonEmptyStr = str
-    OracleBatchSize = int
-    OracleConnectionDict = dict
-    OracleHost = str
-    OraclePassword = str
-    OraclePort = int
-    OracleQueryTimeout = int
-    OracleSchema = str
-    OracleServiceName = str
-    OracleSID = str
-    OracleTapCompleteConfig = dict
-    OracleUsername = str
-    PositiveInt = int
-    SingerParallelStreams = int
-    SingerPrimaryKey = list
-    SingerReplicationKey = str
-    SingerReplicationMethod = str
-    SingerStreamName = str
-    TableName = str
-    TimeoutSeconds = int
-
-# Removed circular dependency - use DI pattern
-# Resolved: DI pattern implemented successfully
-import logging
-
+from flext_core import get_logger
 from flext_db_oracle import OracleConfig
+from flext_tap_oracle.constants import OracleTapConstants
 
-logger = logging.getLogger(__name__)
+if TYPE_CHECKING:
+    from flext_tap_oracle.typedefs import (
+        NonEmptyStr,
+        OracleBatchSize,
+        OracleHost,
+        OraclePassword,
+        OraclePort,
+        OracleQueryTimeout,
+        OracleSchema,
+        OracleServiceName,
+        OracleSID,
+        OracleUsername,
+        PositiveInt,
+        SingerParallelStreams,
+        TableName,
+        TimeoutSeconds,
+    )
+
+logger = get_logger(__name__)
 
 
 # ==============================================================================
@@ -122,48 +49,83 @@ logger = logging.getLogger(__name__)
 # ==============================================================================
 
 
-class OracleTapSettings(
-    BaseConfigMixin,
-    LoggingConfigMixin,
-    PerformanceConfigMixin,
-    BaseSettings,
-):
+class OracleTapSettings(BaseSettings):
     """Modern Oracle Tap Settings using flext-core BaseSettings patterns.
 
     Provides environment variable integration, validation, and dependency injection
     using standardized flext-core patterns for enterprise configuration management.
     """
 
-    # Project identification (inherits from BaseConfigMixin but override with Tap-specific values)
+    model_config = SettingsConfigDict(
+        env_prefix="TAP_ORACLE_",
+        env_file=".env",
+        case_sensitive=False,
+        extra="ignore",
+    )
+
+    # Project identification
     project_name: str = Field(
         default="flext-data.taps.flext-tap-oracle",
         description="Project name",
     )
-    project_version: str = Field(default=FlextFramework.VERSION)
+    project_version: str = Field(default="0.7.0")
 
-    # Oracle connection, performance, and logging now inherited from mixins
-    # Additional Tap-specific Oracle settings
+    # Oracle connection settings
+    oracle_host: str | None = Field(
+        default=None,
+        description="Oracle database host",
+    )
+    oracle_port: int = Field(
+        default=1521,
+        description="Oracle database port",
+    )
+    oracle_service_name: str | None = Field(
+        default=None,
+        description="Oracle service name",
+    )
+    oracle_username: str | None = Field(
+        default=None,
+        description="Oracle username",
+    )
+    oracle_password: str | None = Field(
+        default=None,
+        description="Oracle password",
+    )
     oracle_schema: OracleSchema | None = Field(
         default=None,
         description="Oracle schema name for extraction",
     )
+    oracle_query_timeout: int = Field(
+        default=300,
+        description="Oracle query timeout in seconds",
+    )
 
-    # Model configuration for environment variables
-    class Config:
-        """Model configuration for environment variables."""
+    # Performance settings
+    batch_size: int = Field(
+        default=1000,
+        description="Batch size for data extraction",
+    )
 
-        env_prefix = "TAP_ORACLE_"
-        env_file = ".env"
-        case_sensitive = False
+    # Logging settings
+    log_level: str = Field(
+        default="INFO",
+        description="Logging level",
+    )
 
-    def to_tap_config(self) -> TapOracleConfig:
+    # Environment
+    environment: str = Field(
+        default="development",
+        description="Environment name",
+    )
+
+    def to_tap_config(self) -> Config:
         """Convert settings to TapOracleConfig.
 
         Returns:
             TapOracleConfig instance with environment values
 
         """
-        return TapOracleConfig(
+        return Config(
             host=self.oracle_host,
             port=self.oracle_port,
             service_name=self.oracle_service_name,
@@ -179,13 +141,19 @@ class OracleTapSettings(
         )
 
 
-class Config(BaseComponentConfig):
+class Config(BaseSettings):
     """Configuration for the Oracle Tap with comprehensive validation.
 
     Supports multiple Oracle connection types and provides enterprise-grade
     configuration management with validation, secrets handling, and
     environment variable integration.
     """
+
+    model_config = SettingsConfigDict(
+        env_prefix="TAP_ORACLE_",
+        case_sensitive=False,
+        extra="forbid",  # Prevent unknown configuration keys
+    )
 
     # Connection type and basic settings
     connection_type: str = Field(
@@ -200,7 +168,7 @@ class Config(BaseComponentConfig):
         description="Project name",
     )
     project_version: str = Field(
-        default=FlextFramework.VERSION,
+        default="0.7.0",
         description="Project version",
     )
     environment: str = Field(
@@ -318,7 +286,7 @@ class Config(BaseComponentConfig):
 
     # Logging and observability using flext-core constants
     log_level: str = Field(
-        default=LogLevels.INFO,
+        default="INFO",
         description="Logging level",
     )
     enable_sql_logging: bool = Field(
@@ -344,14 +312,6 @@ class Config(BaseComponentConfig):
         default=None,
         description="Path to SSL CA certificate file",
     )
-
-    # Configuration inherits from BaseConfig but customizes prefix
-    class Config:
-        """Model configuration for environment variables."""
-
-        env_prefix = "TAP_ORACLE_"
-        case_sensitive = False
-        extra = "forbid"  # Prevent unknown configuration keys
 
     @field_validator("connection_type")
     @classmethod
@@ -501,7 +461,7 @@ class Config(BaseComponentConfig):
         """
         return self.schema_name or self.username or "UNKNOWN"
 
-    def to_connection_config(self) -> OracleConnectionDict:
+    def to_connection_config(self) -> dict[str, Any]:
         """Convert to connection configuration using flext-core composite types.
 
         Returns:
@@ -517,7 +477,7 @@ class Config(BaseComponentConfig):
             "schema": self.get_effective_schema(),
         }
 
-    def to_complete_config(self) -> OracleTapCompleteConfig:
+    def to_complete_config(self) -> dict[str, Any]:
         """Convert to complete Oracle Tap configuration using composite types.
 
         Returns:
@@ -557,7 +517,7 @@ class Config(BaseComponentConfig):
         }
 
     def to_oracle_config(self) -> OracleConfig:
-        """Convert to modern flext-infrastructure.databases.flext-db-oracle OracleConfig.
+        """Convert to OracleConfig.
 
         Returns:
             OracleConfig instance with proper parameterization
@@ -621,7 +581,7 @@ class Config(BaseComponentConfig):
         """
         try:
             # This will trigger all field validators
-            self.__class__(**self.dict())
+            self.__class__(**self.model_dump())
 
             # Validate Oracle Database configuration completeness
             if not all([self.host, self.service_name, self.username, self.password]):
@@ -645,8 +605,3 @@ class Config(BaseComponentConfig):
 
 # TapOracleConfig alias for backward compatibility
 TapOracleConfig = Config
-
-# CRITICAL: Rebuild models after all forward references are resolved
-# This fixes Pydantic "not fully defined" errors at runtime
-TapOracleConfig.model_rebuild()
-# TapOracleStreamConfig.model_rebuild()  # Stream config handled by base Singer classes

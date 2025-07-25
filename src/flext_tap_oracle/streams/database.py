@@ -1,26 +1,32 @@
-"""This module provides Oracle Database table and view streaming capabilities using the flext-infrastructure.databases.
+"""Oracle Database table and view streaming capabilities using the flext-db-oracle.
 
 This implementation uses the actual foundation for zero code duplication.
 """
 
+# MIGRATED: Singer SDK imports centralized via flext-meltano
 from __future__ import annotations
 
 import asyncio
 import time
 from typing import TYPE_CHECKING, Any
 
+from flext_core.patterns.logging import get_logger
+
 if TYPE_CHECKING:
     import collections.abc
     from collections.abc import Callable, Iterable
 # Removed circular dependency - use DI pattern
 # Resolved: DI pattern implemented successfully
-import logging
 from itertools import starmap
 
-from singer_sdk import typing as th
+from flext_meltano import th
 
-from flext_db_oracle import OracleConfig, OracleConnectionService, OracleQueryService
-from flext_db_oracle.utils.exceptions import OracleQueryError
+from flext_db_oracle import FlextDbOracleConfig as OracleConfig
+from flext_db_oracle.application import (
+    FlextDbOracleConnectionService as OracleConnectionService,
+    FlextDbOracleQueryService as OracleQueryService,
+)
+from flext_db_oracle.utils.exceptions import FlextDbOracleQueryError as OracleQueryError
 from flext_tap_oracle.query_builder import SimpleOracleQueryBuilder
 from flext_tap_oracle.schema_flattener import OracleSchemaFlattener
 from flext_tap_oracle.streams.base import BaseOracleStream
@@ -44,7 +50,7 @@ def track_performance(
 
 if TYPE_CHECKING:
     from flext_tap_oracle.tap import TapOracle
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class OracleTableStream(BaseOracleStream):
@@ -64,7 +70,7 @@ class OracleTableStream(BaseOracleStream):
         schema: str | None = None,
         oracle_config: dict[str, Any] | None = None,
         primary_keys: list[str] | None = None,
-        **kwargs: Any,
+        **kwargs: object,
     ) -> None:
         """Initialize Oracle table stream.
 
@@ -121,7 +127,7 @@ class OracleTableStream(BaseOracleStream):
 
     @property
     def oracle_query_service(self) -> OracleQueryService:
-        """Get modern Oracle query service using flext-infrastructure.databases.flext-db-oracle.
+        """Get modern Oracle query service using flext-db-oracle.
 
         Returns:
             OracleQueryService instance for query execution
@@ -154,7 +160,7 @@ class OracleTableStream(BaseOracleStream):
 
     @property
     def query_service(self) -> OracleQueryService:
-        """Get Oracle query service using flext-infrastructure.databases.flext-db-oracle (NO DIRECT CONNECTION).
+        """Get Oracle query service using flext-db-oracle (NO DIRECT CONNECTION).
 
         Returns:
             OracleQueryService instance from the tap's connection service
@@ -594,7 +600,7 @@ class OracleViewStream(OracleTableStream):
         name: str,
         view_name: str,
         schema: str | None = None,
-        **kwargs: Any,
+        **kwargs: object,
     ) -> None:
         """Initialize Oracle view stream.
 

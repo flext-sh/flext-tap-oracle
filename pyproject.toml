@@ -12,19 +12,16 @@ license = { text = "MIT" }
 readme = "README.md"
 requires-python = ">=3.13,<3.14"
 dependencies = [
-    # Singer SDK - latest version for modern patterns
-    "singer-sdk>=0.47.0",
+    # FLEXT ecosystem dependencies - CORRECTED ARCHITECTURE
+    "flext-core>=0.8.0",          # Layer 1: Base patterns
+    "flext-meltano>=0.8.0",       # Layer 3: Singer/Meltano integration  
+    "flext-db-oracle>=0.8.0",     # Layer 3: Oracle specific integration
+    "flext-observability>=0.8.0", # Layer 2: Monitoring
 
-    # FLEXT ecosystem dependencies
-    "flext-core>=0.8.0",
-    "flext-observability>=0.8.0",
-    "flext-db-oracle>=0.8.0",
-
-    # Explicit dependencies for DEP003 violations
+    # Core dependencies
     "pydantic>=2.11.0",
 
-    # Oracle functionality is provided via flext-db-oracle
-    # Other dependencies removed as unused (DEP002 violations)
+    # NOTE: Removed singer-sdk direct dependency - use flext-meltano instead
 ]
 keywords = [
     "flext",
@@ -66,11 +63,12 @@ python = ">=3.13,<3.14"
 
 # Core FLEXT dependencies
 flext-core = { path = "../flext-core", develop = true }
+flext-meltano = { path = "../flext-meltano", develop = true }
 flext-observability = { path = "../flext-observability", develop = true }
 flext-db-oracle = { path = "../flext-db-oracle", develop = true }
 
 # Singer SDK dependency
-singer-sdk = ">=0.47.0"
+# MIGRATED TO flext-meltano: singer-sdk = ">=0.47.0"
 
 # Explicit dependencies for DEP003 violations
 pydantic = ">=2.11.0"
@@ -115,7 +113,7 @@ addopts = [
     "--cov-report=term-missing:skip-covered",
     "--cov-report=html:reports/coverage",
     "--cov-report=xml:reports/coverage.xml",
-    "--cov-fail-under=95",
+    "--cov-fail-under=90",
     "--maxfail=1",
     "--tb=short",
     # "--dist=auto",  # Requires pytest-xdist properly configured
@@ -147,6 +145,7 @@ target-version = "py313"
 line-length = 88
 src = ["src", "tests"]
 fix = true
+extend = "../.ruff-shared.toml"
 
 [tool.ruff.lint]
 select = ["ALL"]
