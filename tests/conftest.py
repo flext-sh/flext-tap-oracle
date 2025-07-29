@@ -11,6 +11,8 @@ from typing import TYPE_CHECKING, Any
 
 import pytest
 
+from flext_tap_oracle.tap import TapOracle
+
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator, Generator
 
@@ -54,10 +56,8 @@ def oracle_tap_config() -> dict[str, Any]:
 
 
 @pytest.fixture
-def oracle_tap(oracle_tap_config: dict[str, Any]) -> Any:
+def oracle_tap(oracle_tap_config: dict[str, Any]) -> object:
     """Oracle tap instance for testing."""
-    from flext_tap_oracle.tap import TapOracle
-
     return TapOracle(config=oracle_tap_config)
 
 

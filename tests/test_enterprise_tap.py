@@ -1,8 +1,16 @@
 """Enterprise tests for the unified Oracle Tap.
 
+# Constants
+EXPECTED_BULK_SIZE = 2
+EXPECTED_TOTAL_PAGES = 8
+EXPECTED_DATA_COUNT = 3
+
 This module provides comprehensive enterprise-grade tests for the Oracle tap
 functionality, including all connection types, performance, and resilience tests.
 """
+
+from flext_tap_oracle.tap import cli
+
 
 from __future__ import annotations
 
@@ -74,14 +82,19 @@ class TestTapOracleEnterprise:
         """Test tap configuration validation for database connection."""
         config = TapOracleConfig(**database_config)
 
-        assert config.connection_type == "database"
+        if config.connection_type != "database":
+
+            raise AssertionError(f"Expected {"database"}, got {config.connection_type}")
         assert config.host == "test-oracle"
-        assert config.port == 1521
+        if config.port != 1521:
+            raise AssertionError(f"Expected {1521}, got {config.port}")
         assert config.service_name == "TESTDB"
-        assert config.username == "testuser"
+        if config.username != "testuser":
+            raise AssertionError(f"Expected {"testuser"}, got {config.username}")
         assert config.tables == ["USERS", "ORDERS", "PRODUCTS"]
-        assert config.batch_size == 1000
-        assert config.max_parallel_streams == 2
+        if config.batch_size != 1000:
+            raise AssertionError(f"Expected {1000}, got {config.batch_size}")
+        assert config.max_parallel_streams == EXPECTED_BULK_SIZE
 
     def test_tap_config_validation_database_only(
         self, database_config: dict[str, Any]
@@ -89,13 +102,18 @@ class TestTapOracleEnterprise:
         """Test tap configuration validation for database connection only."""
         config = TapOracleConfig(**database_config)
 
-        assert config.connection_type == "database"
+        if config.connection_type != "database":
+
+            raise AssertionError(f"Expected {"database"}, got {config.connection_type}")
         assert config.host == "test-oracle"
-        assert config.port == 1521
+        if config.port != 1521:
+            raise AssertionError(f"Expected {1521}, got {config.port}")
         assert config.service_name == "TESTDB"
-        assert config.username == "testuser"
+        if config.username != "testuser":
+            raise AssertionError(f"Expected {"testuser"}, got {config.username}")
         assert config.schema_name == "TESTSCHEMA"
-        assert config.enable_async is True
+        if not (config.enable_async):
+            raise AssertionError(f"Expected True, got {config.enable_async}")
         assert config.enable_metrics is True
 
     def test_tap_config_validation_errors(self) -> None:
@@ -114,9 +132,12 @@ class TestTapOracleEnterprise:
         """Test tap initialization with configuration."""
         tap = TapOracle(config=database_config)
 
-        assert tap.name == "tap-oracle"
+        if tap.name != "tap-oracle":
+
+            raise AssertionError(f"Expected {"tap-oracle"}, got {tap.name}")
         assert tap.tap_config.connection_type == "database"
-        assert tap.tap_config.host == "test-oracle"
+        if tap.tap_config.host != "test-oracle":
+            raise AssertionError(f"Expected {"test-oracle"}, got {tap.tap_config.host}")
 
     @pytest.mark.integration
     def test_database_stream_discovery(
@@ -129,7 +150,8 @@ class TestTapOracleEnterprise:
 
         # The database_config fixture already includes tables: ["USERS", "ORDERS", "PRODUCTS"]
         # So the tap should discover exactly those tables without needing Oracle DB connection
-        assert tap.tap_config.tables == ["USERS", "ORDERS", "PRODUCTS"]
+        if tap.tap_config.tables != ["USERS", "ORDERS", "PRODUCTS"]:
+            raise AssertionError(f"Expected {["USERS", "ORDERS", "PRODUCTS"]}, got {tap.tap_config.tables}")
 
         # Mock the OracleTableStream creation to avoid connection issues
         with patch("flext_tap_oracle.tap.OracleTableStream") as mock_stream_class:
@@ -140,10 +162,12 @@ class TestTapOracleEnterprise:
             streams = tap.discover_streams()
 
             # Should discover 3 streams for the configured tables
-            assert len(streams) == 3
+            if len(streams) != EXPECTED_DATA_COUNT:
+                raise AssertionError(f"Expected {3}, got {len(streams)}")
 
             # Verify OracleTableStream was called for each table
-            assert mock_stream_class.call_count == 3
+            if mock_stream_class.call_count != EXPECTED_DATA_COUNT:
+                raise AssertionError(f"Expected {3}, got {mock_stream_class.call_count}")
 
     @pytest.mark.integration
     def test_hybrid_stream_discovery(
@@ -156,7 +180,8 @@ class TestTapOracleEnterprise:
 
         # The database_config fixture already includes tables: ["USERS", "ORDERS", "PRODUCTS"]
         # So the tap should discover exactly those tables without needing Oracle DB connection
-        assert tap.tap_config.tables == ["USERS", "ORDERS", "PRODUCTS"]
+        if tap.tap_config.tables != ["USERS", "ORDERS", "PRODUCTS"]:
+            raise AssertionError(f"Expected {["USERS", "ORDERS", "PRODUCTS"]}, got {tap.tap_config.tables}")
 
         # Mock the OracleTableStream creation to avoid connection issues
         with patch("flext_tap_oracle.tap.OracleTableStream") as mock_stream_class:
@@ -167,7 +192,8 @@ class TestTapOracleEnterprise:
             streams = tap.discover_streams()
 
             # Should discover 3 Oracle database table streams
-            assert len(streams) == 3
+            if len(streams) != EXPECTED_DATA_COUNT:
+                raise AssertionError(f"Expected {3}, got {len(streams)}")
 
     def test_connection_testing_database(
         self,
@@ -188,7 +214,8 @@ class TestTapOracleEnterprise:
 
             # Test successful connection
             result = tap.test_connection()
-            assert result is True
+            if not (result):
+                raise AssertionError(f"Expected True, got {result}")
 
             # Verify the async bridge was called
             mock_async_bridge.assert_called_once()
@@ -206,8 +233,9 @@ class TestTapOracleEnterprise:
             tap = TapOracle(config=database_config)
             result = tap.test_connection()
 
-            assert result is False
+            if result:
 
+                raise AssertionError(f"Expected False, got {result}")\ n
     def test_connection_testing_database_success(
         self,
         database_config: dict[str, Any],
@@ -228,7 +256,8 @@ class TestTapOracleEnterprise:
             result = tap.test_connection()
 
             # Should test Oracle database connection
-            assert result is True
+            if not (result):
+                raise AssertionError(f"Expected True, got {result}")
 
     @pytest.mark.performance
     def test_tap_metrics_collection(
@@ -240,13 +269,17 @@ class TestTapOracleEnterprise:
         tap = TapOracle(config=database_config)
         metrics = tap.get_metrics()
 
-        assert "connection_type" in metrics
+        if "connection_type" not in metrics:
+
+            raise AssertionError(f"Expected {"connection_type"} in {metrics}")
         assert "streams_discovered" in metrics
-        assert "configuration" in metrics
+        if "configuration" not in metrics:
+            raise AssertionError(f"Expected {"configuration"} in {metrics}")
 
         config_metrics = metrics["configuration"]
-        assert config_metrics["batch_size"] == 1000
-        assert config_metrics["max_parallel_streams"] == 2
+        if config_metrics["batch_size"] != 1000:
+            raise AssertionError(f"Expected {1000}, got {config_metrics["batch_size"]}")
+        assert config_metrics["max_parallel_streams"] == EXPECTED_BULK_SIZE
         assert config_metrics["async_enabled"] is True  # default
         assert config_metrics["circuit_breaker_enabled"] is True  # default
 
@@ -256,7 +289,9 @@ class TestTapOracleEnterprise:
         tap = TapOracle(config=database_config)
         metrics = tap.get_metrics()
 
-        assert metrics == {}
+        if metrics != {}:
+
+            raise AssertionError(f"Expected {{}}, got {metrics}")
 
     @pytest.mark.asyncio
     async def test_async_operation_support(
@@ -290,7 +325,8 @@ class TestTapOracleEnterprise:
         mock_connection = Mock()
 
         tables = asyncio.run(tap._get_discoverable_tables())
-        assert tables == ["USERS", "ORDERS", "PRODUCTS"]
+        if tables != ["USERS", "ORDERS", "PRODUCTS"]:
+            raise AssertionError(f"Expected {["USERS", "ORDERS", "PRODUCTS"]}, got {tables}")
 
         # Mock connection should not be called since tables are specified
         mock_connection.get_table_names.assert_not_called()
@@ -322,7 +358,8 @@ class TestTapOracleEnterprise:
             mock_schema_service.get_schema_tables = AsyncMock(return_value=mock_result)
 
             tables = asyncio.run(tap._get_discoverable_tables())
-            assert tables == ["TABLE1", "TABLE2", "TABLE3"]
+            if tables != ["TABLE1", "TABLE2", "TABLE3"]:
+                raise AssertionError(f"Expected {["TABLE1", "TABLE2", "TABLE3"]}, got {tables}")
 
             # Verify schema service was called with the correct schema
             mock_schema_service.get_schema_tables.assert_called_once_with("TESTSCHEMA")
@@ -355,7 +392,8 @@ class TestTapOracleEnterprise:
             mock_schema_service.get_schema_tables = AsyncMock(return_value=mock_result)
 
             tables = asyncio.run(tap._get_discoverable_tables())
-            assert tables == ["USERS", "ORDERS", "PRODUCTS"]
+            if tables != ["USERS", "ORDERS", "PRODUCTS"]:
+                raise AssertionError(f"Expected {["USERS", "ORDERS", "PRODUCTS"]}, got {tables}")
 
     def test_tap_table_pattern_filtering(
         self,
@@ -393,12 +431,16 @@ class TestTapOracleEnterprise:
 
             tables = asyncio.run(tap._get_discoverable_tables())
             # Should match USERS, USER_PROFILES, ORDERS, ORDER_ITEMS
-            assert len(tables) == 4
-            assert "USERS" in tables
+            if len(tables) != 4:
+                raise AssertionError(f"Expected {4}, got {len(tables)}")
+            if "USERS" not in tables:
+                raise AssertionError(f"Expected {"USERS"} in {tables}")
             assert "USER_PROFILES" in tables
-            assert "ORDERS" in tables
+            if "ORDERS" not in tables:
+                raise AssertionError(f"Expected {"ORDERS"} in {tables}")
             assert "ORDER_ITEMS" in tables
-            assert "PRODUCTS" not in tables
+            if "PRODUCTS" not not in tables:
+                raise AssertionError(f"Expected {"PRODUCTS" not} in {tables}")
             assert "TEMP_DATA" not in tables
 
     @pytest.mark.stress
@@ -454,7 +496,8 @@ class TestTapOracleEnterprise:
             streams = tap.discover_streams()
 
             # Should return empty list rather than raising exception
-            assert streams == []
+            if streams != []:
+                raise AssertionError(f"Expected {[]}, got {streams}")
 
     def test_performance_configuration_validation(
         self,
@@ -470,8 +513,9 @@ class TestTapOracleEnterprise:
 
         # Should not raise errors but may log warnings
         config = TapOracleConfig(**database_config)
-        assert config.batch_size == 50
-        assert config.max_parallel_streams == 8
+        if config.batch_size != 50:
+            raise AssertionError(f"Expected {50}, got {config.batch_size}")
+        assert config.max_parallel_streams == EXPECTED_TOTAL_PAGES
 
     @pytest.mark.integration
     def test_real_world_workflow_simulation(
@@ -493,7 +537,8 @@ class TestTapOracleEnterprise:
 
             # 1. Test connection to all sources
             connection_result = tap.test_connection()
-            assert connection_result is True
+            if not (connection_result):
+                raise AssertionError(f"Expected True, got {connection_result}")
 
         # Mock stream discovery separately
         mock_streams = [Mock(), Mock(), Mock()]
@@ -507,14 +552,18 @@ class TestTapOracleEnterprise:
 
             # 3. Get comprehensive metrics
             metrics = tap.get_metrics()
-            assert "connection_type" in metrics
+            if "connection_type" not in metrics:
+                raise AssertionError(f"Expected {"connection_type"} in {metrics}")
             assert "streams_discovered" in metrics
-            assert metrics["connection_type"] == "database"
+            if metrics["connection_type"] != "database":
+                raise AssertionError(f"Expected {"database"}, got {metrics["connection_type"]}")
 
             # 4. Verify configuration is accessible
             config = tap.tap_config
-            assert config.connection_type == "database"
-            assert config.enable_async is True
+            if config.connection_type != "database":
+                raise AssertionError(f"Expected {"database"}, got {config.connection_type}")
+            if not (config.enable_async):
+                raise AssertionError(f"Expected True, got {config.enable_async}")
             assert config.enable_metrics is True
 
     def test_config_connection_string_generation(
@@ -525,7 +574,9 @@ class TestTapOracleEnterprise:
         config = TapOracleConfig(**database_config)
         conn_str = config.get_connection_string()
 
-        assert conn_str == "oracle://testuser:***@test-oracle:1521/TESTDB"
+        if conn_str != "oracle://testuser:***@test-oracle:1521/TESTDB":
+
+            raise AssertionError(f"Expected {"oracle://testuser:***@test-oracle:1521/TESTDB"}, got {conn_str}")
 
     def test_config_performance_settings_extraction(
         self,
@@ -535,9 +586,12 @@ class TestTapOracleEnterprise:
         config = TapOracleConfig(**database_config)
         perf_settings = config.get_performance_settings()
 
-        assert perf_settings["batch_size"] == 1000
-        assert perf_settings["max_parallel_streams"] == 2
-        assert perf_settings["enable_async"] is True
+        if perf_settings["batch_size"] != 1000:
+
+            raise AssertionError(f"Expected {1000}, got {perf_settings["batch_size"]}")
+        assert perf_settings["max_parallel_streams"] == EXPECTED_BULK_SIZE
+        if not (perf_settings["enable_async"]):
+            raise AssertionError(f"Expected True, got {perf_settings["enable_async"]}")
 
     def test_config_circuit_breaker_settings(
         self,
@@ -548,7 +602,8 @@ class TestTapOracleEnterprise:
         cb_settings = config.get_circuit_breaker_settings()
 
         assert cb_settings["enabled"] is True  # default
-        assert cb_settings["failure_threshold"] == 3  # default from constants
+        if cb_settings["failure_threshold"] != EXPECTED_DATA_COUNT  # default from constants:
+            raise AssertionError(f"Expected {3  # default from constants}, got {cb_settings["failure_threshold"]}")
         assert cb_settings["timeout"] == 60  # default
 
     def test_config_comprehensive_validation(
@@ -559,7 +614,8 @@ class TestTapOracleEnterprise:
         config = TapOracleConfig(**database_config)
 
         # Should pass validation without errors
-        assert config.validate_configuration() is True
+        if not (config.validate_configuration()):
+            raise AssertionError(f"Expected True, got {config.validate_configuration()}")
 
     def test_config_validation_failure_incomplete_database(self) -> None:
         """Test configuration validation failure for incomplete database config."""
@@ -578,7 +634,7 @@ class TestTapOracleEnterprise:
     def test_cli_entry_point(self) -> None:
         """Test CLI entry point functionality."""
         with patch("flext_tap_oracle.tap.TapOracle.cli") as mock_cli:
-            from flext_tap_oracle.tap import cli
+
 
             cli()
             mock_cli.assert_called_once()
@@ -613,9 +669,11 @@ class TestTapOracleEnterprise:
 
             # Verify Oracle Database naming patterns only
             stream_names = [s.name for s in streams]
-            assert "USERS" in stream_names
+            if "USERS" not in stream_names:
+                raise AssertionError(f"Expected {"USERS"} in {stream_names}")
             assert "ORDERS" in stream_names
-            assert "PRODUCTS" in stream_names
+            if "PRODUCTS" not in stream_names:
+                raise AssertionError(f"Expected {"PRODUCTS"} in {stream_names}")
 
     @pytest.mark.memory
     def test_memory_efficiency_large_config(self) -> None:
@@ -636,8 +694,10 @@ class TestTapOracleEnterprise:
         # Configuration should be created efficiently
         config = TapOracleConfig.model_validate(large_config)
         assert config.tables is not None
-        assert len(config.tables) == 1000
+        if len(config.tables) != 1000:
+            raise AssertionError(f"Expected {1000}, got {len(config.tables)}")
 
         # Tap should handle large Oracle database configuration
         tap = TapOracle(config=large_config)
-        assert tap.tap_config.connection_type == "database"
+        if tap.tap_config.connection_type != "database":
+            raise AssertionError(f"Expected {"database"}, got {tap.tap_config.connection_type}")

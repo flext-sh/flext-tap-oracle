@@ -10,10 +10,11 @@ import time
 from abc import abstractmethod
 from typing import TYPE_CHECKING, Any
 
-# MIGRATED: Singer SDK imports centralized via flext-meltano
 from flext_meltano import Stream
 
-from flext_core.patterns.logging import get_logger
+# MIGRATED: Singer SDK imports centralized via flext-meltano
+# Import FlextLogger from flext-core
+from flext_core import FlextLogger
 from flext_db_oracle.utils.exceptions import (
     FlextDbOracleConnectionError as OracleConnectionError,
     FlextDbOraclePerformanceError as OraclePerformanceError,
@@ -40,7 +41,7 @@ def track_performance(
     return decorator
 
 
-logger = get_logger(__name__)
+logger = FlextLogger.get_logger(__name__)
 
 
 class BaseOracleStream(Stream):
@@ -54,7 +55,7 @@ class BaseOracleStream(Stream):
     - Async support for high-performance operations
     """
 
-    def __init__(self, *args: Any, **kwargs: object) -> None:
+    def __init__(self, *args: object, **kwargs: object) -> None:
         """Initialize the base Oracle stream."""
         super().__init__(*args, **kwargs)
 
@@ -185,7 +186,7 @@ class BaseOracleStream(Stream):
 
             # Reset circuit breaker on successful completion
             self._reset_circuit_breaker()
-        except Exception as e:
+        except (RuntimeError, ValueError, TypeError) as e:
             self._record_circuit_breaker_failure()
 
             # Enhance error with stream context

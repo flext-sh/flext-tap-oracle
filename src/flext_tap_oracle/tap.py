@@ -236,7 +236,7 @@ class TapOracle(Tap):
         ),
     ).to_dict()
 
-    def __init__(self, *args: Any, **kwargs: object) -> None:
+    def __init__(self, *args: object, **kwargs: object) -> None:
         """Initialize the Oracle tap."""
         super().__init__(*args, **kwargs)
         self._tap_config: TapOracleConfig | None = None
@@ -285,7 +285,7 @@ class TapOracle(Tap):
                 self._tap_config = TapOracleConfig(**raw_config)
                 logger.debug("TapOracleConfig created successfully")
 
-            except Exception:
+            except (RuntimeError, ValueError, TypeError):
                 logger.exception("Failed to create TapOracleConfig")
                 # Create minimal config to prevent crash
                 self._tap_config = TapOracleConfig(
@@ -352,7 +352,7 @@ class TapOracle(Tap):
             result = self._run_async_in_sync(
                 self.connection_service.test_connection(),
             )
-        except Exception:
+        except (RuntimeError, ValueError, TypeError):
             logger.exception("Oracle connection test failed")
             return False
         else:
@@ -423,7 +423,7 @@ class TapOracle(Tap):
 
             logger.info("Discovered %d Oracle database streams", len(streams))
 
-        except Exception:
+        except (RuntimeError, ValueError, TypeError):
             logger.exception("Failed to discover database streams")
 
         return streams
@@ -469,7 +469,7 @@ class TapOracle(Tap):
                 pattern = re.compile(self.tap_config.table_pattern)
                 all_tables = [table for table in all_tables if pattern.match(table)]
 
-        except Exception:
+        except (RuntimeError, ValueError, TypeError):
             logger.exception("Error getting table names")
             return []
         else:
@@ -511,7 +511,7 @@ class TapOracle(Tap):
             result = self._run_async_in_sync(
                 self.connection_service.test_connection(),
             )
-        except Exception:
+        except (RuntimeError, ValueError, TypeError):
             logger.exception("Database connection test failed")
             return False
         else:

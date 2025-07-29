@@ -3,6 +3,11 @@
 These tests verify core functionality without complex dependencies.
 """
 
+from flext_tap_oracle.tap import TapOracle
+from flext_tap_oracle.streams import OracleTableStream
+from flext_tap_oracle.config import TapOracleConfig
+
+
 from __future__ import annotations
 
 import os
@@ -54,19 +59,20 @@ class TestBasicE2E:
 
     def test_tap_module_import(self) -> None:
         """Test that tap module can be imported."""
-        from flext_tap_oracle.tap import TapOracle
+
 
         assert TapOracle is not None
-        assert TapOracle.name == "tap-oracle"
+        if TapOracle.name != "tap-oracle":
+            raise AssertionError(f"Expected {"tap-oracle"}, got {TapOracle.name}")
 
     def test_stream_module_import(self) -> None:
         """Test that stream modules can be imported."""
-        from flext_tap_oracle.streams import OracleTableStream
+
 
         assert OracleTableStream is not None
 
     def test_config_module_import(self) -> None:
         """Test that config module can be imported."""
-        from flext_tap_oracle.config import TapOracleConfig
+
 
         assert TapOracleConfig is not None

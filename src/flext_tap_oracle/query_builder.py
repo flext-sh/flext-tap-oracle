@@ -7,11 +7,10 @@ from __future__ import annotations
 
 from typing import Any
 
-# Removed circular dependency - use DI pattern
-# Resolved: DI pattern implemented successfully
-from flext_core.patterns.logging import get_logger
+# Import FlextLogger from flext-core
+from flext_core import FlextLogger
 
-logger = get_logger(__name__)
+logger = FlextLogger.get_logger(__name__)
 
 # Constants
 _COMPLEXITY_THRESHOLD = 500

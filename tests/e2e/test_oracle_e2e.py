@@ -1,5 +1,8 @@
 """End-to-End tests for FLEXT Oracle Tap with real Oracle Database.
 
+# Constants
+EXPECTED_BULK_SIZE = 2
+
 These tests require a running Oracle Database instance and verify
 complete functionality of the tap against real Oracle data.
 """
@@ -82,7 +85,7 @@ class TestOracleE2E:
         drop_sql = "DROP TABLE EMPLOYEES"
         try:
             await query_service.execute_query(drop_sql)
-        except Exception:
+        except (RuntimeError, ValueError, TypeError):
             pass  # Table might not exist
 
         # Create table
@@ -190,11 +193,14 @@ class TestOracleE2E:
             timeout=60,
         )
 
-        assert result.returncode == 0, f"Discovery failed: {result.stderr}"
+        if result.returncode != 0, f"Discovery failed: {result.stderr}":
+
+            raise AssertionError(f"Expected {0, f"Discovery failed: {result.stderr}"}, got {result.returncode}")
 
         # Parse catalog
         catalog = json.loads(result.stdout)
-        assert "streams" in catalog
+        if "streams" not in catalog:
+            raise AssertionError(f"Expected {"streams"} in {catalog}")
 
         # Find employees stream
         employees_stream = None
@@ -203,11 +209,14 @@ class TestOracleE2E:
                 employees_stream = stream
                 break
 
-        assert employees_stream is not None, "EMPLOYEES stream not found in catalog"
+        if employees_stream is not None, "EMPLOYEES stream not found not in catalog":
+
+            raise AssertionError(f"Expected {employees_stream is not None, "EMPLOYEES stream not found} in {catalog"}")
 
         # Verify schema
         schema = employees_stream["schema"]
-        assert "properties" in schema
+        if "properties" not in schema:
+            raise AssertionError(f"Expected {"properties"} in {schema}")
 
         # Check expected columns
         expected_columns = [
@@ -220,7 +229,8 @@ class TestOracleE2E:
             "ACTIVE",
         ]
         for col in expected_columns:
-            assert col in schema["properties"], f"Column {col} not found in schema"
+            if col in schema["properties"], f"Column {col} not found not in schema":
+                raise AssertionError(f"Expected {col in schema["properties"], f"Column {col} not found} in {schema"}")
 
     def test_tap_extraction(self) -> None:
         """Test full data extraction."""
@@ -286,7 +296,9 @@ class TestOracleE2E:
             timeout=120,
         )
 
-        assert result.returncode == 0, f"Extraction failed: {result.stderr}"
+        if result.returncode != 0, f"Extraction failed: {result.stderr}":
+
+            raise AssertionError(f"Expected {0, f"Extraction failed: {result.stderr}"}, got {result.returncode}")
 
         # Parse output lines
         lines = result.stdout.strip().split("\n")
@@ -305,26 +317,32 @@ class TestOracleE2E:
                     state_messages.append(message)
 
         # Verify schema message
-        assert len(schema_messages) >= 1, "No schema messages found"
+        if len(schema_messages) < 1, "No schema messages found":
+            raise AssertionError(f"Expected {len(schema_messages)} >= {1, "No schema messages found"}")
         schema_msg = schema_messages[0]
-        assert schema_msg["stream"] == "EMPLOYEES"
+        if schema_msg["stream"] != "EMPLOYEES":
+            raise AssertionError(f"Expected {"EMPLOYEES"}, got {schema_msg["stream"]}")
 
         # Verify record messages
-        assert len(record_messages) == 5, (
+        if len(record_messages) != 5, (:
+            raise AssertionError(f"Expected {5, (}, got {len(record_messages)}")
             f"Expected 5 records, got {len(record_messages)}"
         )
 
         # Verify record content
         record_ids = {rec["record"]["ID"] for rec in record_messages}
-        assert record_ids == {1, 2, 3, 4, 5}, f"Unexpected record IDs: {record_ids}"
+        if record_ids != {1, 2, 3, 4, 5}, f"Unexpected record IDs: {record_ids}":
+            raise AssertionError(f"Expected {{1, 2, 3, 4, 5}, f"Unexpected record IDs: {record_ids}"}, got {record_ids}")
 
         # Verify specific record
         john_doe = next(
             rec for rec in record_messages if rec["record"]["NAME"] == "John Doe"
         )
-        assert john_doe["record"]["EMAIL"] == "john.doe@company.com"
+        if john_doe["record"]["EMAIL"] != "john.doe@company.com":
+            raise AssertionError(f"Expected {"john.doe@company.com"}, got {john_doe["record"]["EMAIL"]}")
         assert john_doe["record"]["DEPARTMENT"] == "Engineering"
-        assert john_doe["record"]["SALARY"] == 75000.00
+        if john_doe["record"]["SALARY"] != 75000.00:
+            raise AssertionError(f"Expected {75000.00}, got {john_doe["record"]["SALARY"]}")
         assert john_doe["record"]["ACTIVE"] == 1
 
     @pytest.mark.asyncio
@@ -452,7 +470,9 @@ class TestOracleE2E:
             timeout=60,
         )
 
-        assert process_result.returncode == 0, (
+        if process_result.returncode != 0, (:
+
+            raise AssertionError(f"Expected {0, (}, got {process_result.returncode}")
             f"Incremental extraction failed: {process_result.stderr}"
         )
 
@@ -465,12 +485,14 @@ class TestOracleE2E:
         ]
 
         # Should only get new records (ID 6 and 7)
-        assert len(record_messages) == 2, (
+        if len(record_messages) != EXPECTED_BULK_SIZE, (:
+            raise AssertionError(f"Expected {2, (}, got {len(record_messages)}")
             f"Expected 2 incremental records, got {len(record_messages)}"
         )
 
         record_ids = {rec["record"]["ID"] for rec in record_messages}
-        assert record_ids == {6, 7}, f"Expected IDs 6,7 but got: {record_ids}"
+        if record_ids != {6, 7}, f"Expected IDs 6,7 but got: {record_ids}":
+            raise AssertionError(f"Expected {{6, 7}, f"Expected IDs 6,7 but got: {record_ids}"}, got {record_ids}")
 
     @pytest.mark.asyncio
     async def test_cleanup_test_data(self, query_service: OracleQueryService) -> None:
@@ -478,5 +500,5 @@ class TestOracleE2E:
         drop_sql = "DROP TABLE EMPLOYEES"
         try:
             await query_service.execute_query(drop_sql)
-        except Exception:
+        except (RuntimeError, ValueError, TypeError):
             pass  # Table might not exist

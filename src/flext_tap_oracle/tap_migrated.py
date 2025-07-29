@@ -12,7 +12,8 @@ from typing import TYPE_CHECKING, Any
 # MIGRATED: Singer SDK imports centralized via flext-meltano
 from flext_meltano.singer import FlextMeltanoTap
 
-from flext_core.patterns.logging import get_logger
+# Import FlextLogger from flext-core
+from flext_core import FlextLogger
 
 # Oracle-specific dependencies from Layer 3 (flext-db-oracle)
 if TYPE_CHECKING:
@@ -21,7 +22,7 @@ if TYPE_CHECKING:
     from flext_core import FlextResult
     from flext_db_oracle import FlextOracleConnectionService
 
-logger = get_logger(__name__)
+logger = FlextLogger.get_logger(__name__)
 
 
 class FlextTapOracle:

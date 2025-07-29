@@ -8,19 +8,19 @@ from __future__ import annotations
 
 import asyncio
 import time
+from itertools import starmap
 from typing import TYPE_CHECKING, Any
 
-from flext_core.patterns.logging import get_logger
-
 if TYPE_CHECKING:
-    import collections.abc
+    import collections
     from collections.abc import Callable, Iterable
-# Removed circular dependency - use DI pattern
-# Resolved: DI pattern implemented successfully
-from itertools import starmap
+
+    from flext_tap_oracle.tap import TapOracle
 
 from flext_meltano import th
 
+# Import FlextLogger from flext-core
+from flext_core import FlextLogger
 from flext_db_oracle import FlextDbOracleConfig as OracleConfig
 from flext_db_oracle.application import (
     FlextDbOracleConnectionService as OracleConnectionService,
@@ -48,9 +48,7 @@ def track_performance(
     return decorator
 
 
-if TYPE_CHECKING:
-    from flext_tap_oracle.tap import TapOracle
-logger = get_logger(__name__)
+logger = FlextLogger.get_logger(__name__)
 
 
 class OracleTableStream(BaseOracleStream):
@@ -255,7 +253,7 @@ class OracleTableStream(BaseOracleStream):
                 len(schema.get("properties", {})),
                 "enabled" if self._schema_flattener.enabled else "disabled",
             )
-        except Exception:
+        except (RuntimeError, ValueError, TypeError):
             logger.exception(
                 "Failed to discover schema for %s.%s",
                 self.schema_name,
@@ -343,7 +341,7 @@ class OracleTableStream(BaseOracleStream):
                 self._total_rows_extracted,
                 elapsed,
             )
-        except Exception as e:
+        except (RuntimeError, ValueError, TypeError) as e:
             logger.exception(
                 "Failed to extract from %s.%s",
                 self.schema_name,
@@ -546,7 +544,7 @@ class OracleTableStream(BaseOracleStream):
                 self.schema_name,
                 self.table_name,
             )
-        except Exception:
+        except (RuntimeError, ValueError, TypeError):
             logger.exception(
                 "Failed to get column metadata for %s.%s",
                 self.schema_name,

@@ -10,11 +10,10 @@ from __future__ import annotations
 import json
 from typing import Any
 
-# Removed circular dependency - use DI pattern
-# Resolved: DI pattern implemented successfully
-from flext_core.patterns.logging import get_logger
+# Import FlextLogger from flext-core
+from flext_core import FlextLogger
 
-logger = get_logger(__name__)
+logger = FlextLogger.get_logger(__name__)
 
 
 class OracleSchemaFlattener:
@@ -249,7 +248,7 @@ class OracleSchemaFlattener:
 
         return flattened
 
-    def _flatten_value(self, key: str, value: Any, depth: int) -> dict[str, Any]:
+    def _flatten_value(self, key: str, value: object, depth: int) -> dict[str, Any]:
         """Flatten a single data value.
 
         Args:
@@ -292,7 +291,7 @@ class OracleSchemaFlattener:
         self,
         nested: dict[str, Any],
         flattened_key: str,
-        value: Any,
+        value: object,
     ) -> None:
         """Set a nested value in the reconstructed structure.
 
@@ -353,7 +352,7 @@ class OracleSchemaFlattener:
                         field_name,
                     )
                     return False
-        except Exception:
+        except (RuntimeError, ValueError, TypeError):
             logger.exception("Schema compatibility validation failed")
             return False
         else:

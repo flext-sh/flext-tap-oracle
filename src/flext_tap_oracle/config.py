@@ -326,7 +326,7 @@ class Config(BaseSettings):
         return v
 
     @model_validator(mode="after")
-    def validate_database_connection_fields(self) -> Any:
+    def validate_database_connection_fields(self) -> object:
         """Validate required fields for database connections."""
         if self.connection_type in {"database", "hybrid"}:
             if not self.host:
@@ -587,7 +587,7 @@ class Config(BaseSettings):
             if not all([self.host, self.service_name, self.username, self.password]):
                 self._raise_config_incomplete_error()
 
-        except Exception:
+        except (RuntimeError, ValueError, TypeError):
             logger.exception("Configuration validation failed")
             raise
         else:
