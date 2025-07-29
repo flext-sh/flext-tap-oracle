@@ -190,6 +190,9 @@ ignore = [
     "PERF203", # try-except in loop (Singer SDK patterns)
     "PERF401", # manual list comprehension
 
+    # Exception handling
+    "TRY300", # try-consider-else (Oracle API patterns)
+
     # Security - Oracle integration patterns
     "S105", # possible-hardcoded-password (config patterns)
     "S106", # possible-hardcoded-password (test secrets)

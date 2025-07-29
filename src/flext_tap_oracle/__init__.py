@@ -1,13 +1,8 @@
-"""FLEXT Tap Oracle - Wrapper for flext-meltano consolidated implementation.
+"""FLEXT Tap Oracle - Oracle Database Singer Tap Implementation.
 
-CONSOLIDATION: This project is now a library wrapper that imports the real
-Singer/Meltano/DBT consolidated implementations from flext-meltano to eliminate
-code duplication across the FLEXT ecosystem.
-
-This follows the architectural principle:
-- flext-* projects are LIBRARIES, not services
-- tap/target/dbt/ext are Meltano plugins
-- Real implementations are in flext-meltano
+This project implements Oracle Database specific logic using generic flext-meltano interfaces
+and flext-db-oracle for database connectivity. No implementation should be duplicated from
+other FLEXT projects.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -15,14 +10,23 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-# Import consolidated implementations from flext-meltano
-# MIGRATED: Singer SDK imports centralized via flext-meltano
-from flext_meltano.taps.oracle import TapOracle, TapOracleConfig
+# Import generic interfaces from flext-meltano
+from flext_meltano import Stream, Tap, singer_typing as th
 
-__version__ = "0.8.0-wrapper"
+# Import specific Oracle implementations from this project
+from .config import Config, TapOracleConfig
+from .oracle_stream import OracleStream
+from .tap import TapOracle
+
+__version__ = "0.8.0"
 
 __all__ = [
+    "Config",
+    "OracleStream",
+    "Stream",
+    "Tap",
     "TapOracle",
     "TapOracleConfig",
     "__version__",
+    "th",
 ]
