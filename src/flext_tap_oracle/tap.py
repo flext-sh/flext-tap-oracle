@@ -32,14 +32,23 @@ class TapOracle(Tap):
     config_jsonschema = th.PropertiesList(
         # Basic Oracle connection
         th.Property(
-            "host", th.StringType, required=True, description="Oracle database host",
+            "host",
+            th.StringType,
+            required=True,
+            description="Oracle database host",
         ),
         th.Property(
-            "port", th.IntegerType, default=1521, description="Oracle database port",
+            "port",
+            th.IntegerType,
+            default=1521,
+            description="Oracle database port",
         ),
         th.Property("service_name", th.StringType, description="Oracle service name"),
         th.Property(
-            "username", th.StringType, required=True, description="Oracle username",
+            "username",
+            th.StringType,
+            required=True,
+            description="Oracle username",
         ),
         th.Property(
             "password",
@@ -160,7 +169,9 @@ class TapOracle(Tap):
                 )
                 return tables
             logger.warning(
-                "No tables found in Oracle schema %s: %s", schema_name, result.error,
+                "No tables found in Oracle schema %s: %s",
+                schema_name,
+                result.error,
             )
             return []
 
@@ -200,7 +211,9 @@ class TapOracle(Tap):
                     "properties": properties,
                 }
             logger.warning(
-                "Could not get schema for table %s: %s", table_name, result.error,
+                "Could not get schema for table %s: %s",
+                table_name,
+                result.error,
             )
             # Return minimal schema as fallback
             return {

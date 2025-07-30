@@ -26,10 +26,12 @@ class TapOracleConfig(BaseModel):
     # Tap-specific configuration
     tables: list[str] | None = Field(None, description="List of tables to extract")
     exclude_tables: list[str] | None = Field(
-        None, description="List of tables to exclude",
+        None,
+        description="List of tables to exclude",
     )
     replication_method: str = Field(
-        default="FULL_TABLE", description="Replication method",
+        default="FULL_TABLE",
+        description="Replication method",
     )
     batch_size: int = Field(default=10000, description="Batch size for data extraction")
     environment: str = Field(default="development", description="Environment")
