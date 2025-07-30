@@ -6,7 +6,7 @@ class from flext-meltano with Oracle-specific data extraction logic.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from flext_meltano import Stream
 
@@ -14,6 +14,8 @@ from flext_core import get_logger
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping
+
+    from flext_meltano import Tap
 
     from flext_db_oracle import FlextDbOracleApi
 
@@ -25,10 +27,10 @@ class OracleStream(Stream):
 
     def __init__(
         self,
-        tap: Any,
+        tap: Tap,
         name: str,
         table_name: str,
-        schema: dict[str, Any],
+        schema: dict[str, object],
         oracle_api: FlextDbOracleApi,
     ) -> None:
         """Initialize Oracle stream with real Oracle connectivity."""
@@ -36,7 +38,7 @@ class OracleStream(Stream):
         self.table_name = table_name
         self.oracle_api = oracle_api
 
-    def get_records(self, _context: Mapping[str, Any] | None) -> Iterable[dict[str, Any]]:
+    def get_records(self, _context: Mapping[str, object] | None) -> Iterable[dict[str, object]]:
         """Extract records from Oracle table using real flext-db-oracle API."""
         try:
             # Connect to Oracle database first

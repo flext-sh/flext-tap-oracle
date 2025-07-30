@@ -6,8 +6,6 @@ using the generic Tap and Stream classes from flext-meltano.
 
 from __future__ import annotations
 
-from typing import Any
-
 # Import generic interfaces from flext-meltano
 from flext_meltano import Tap, singer_typing as th
 
@@ -52,9 +50,9 @@ class TapOracle(Tap):
     def __init__(
         self,
         *,
-        config: dict[str, Any] | None = None,
-        catalog: dict[str, Any] | None = None,
-        state: dict[str, Any] | None = None,
+        config: dict[str, object] | None = None,
+        catalog: dict[str, object] | None = None,
+        state: dict[str, object] | None = None,
         parse_env_config: bool = False,
         validate_config: bool = True,
     ) -> None:
@@ -136,7 +134,7 @@ class TapOracle(Tap):
             logger.exception("Failed to discover Oracle tables")
             return []
 
-    def _get_table_schema(self, table_name: str) -> dict[str, Any]:
+    def _get_table_schema(self, table_name: str) -> dict[str, object]:
         """Get schema for a specific table using real Oracle API."""
         try:
             connected_api = self.oracle_api.connect()

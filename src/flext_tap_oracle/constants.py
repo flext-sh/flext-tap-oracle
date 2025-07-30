@@ -1,13 +1,14 @@
-"""Oracle Tap Constants - Maximum flext-core integration with zero duplication.
+"""Oracle Tap Constants extending flext-core platform constants.
 
-This module provides Oracle Tap specific constants using flext-core patterns.
-All Oracle DB constants are inherited from flext-core to ensure consistency
-and eliminate code duplication across Oracle projects.
+Oracle Tap-specific constants that extend flext-core patterns.
 """
 
 from __future__ import annotations
 
 from typing import ClassVar, Final
+
+# Import flext-core constants for inheritance
+from flext_core.constants import FlextConstants
 
 
 # Define Oracle-specific constants locally
@@ -80,8 +81,8 @@ class StandardLogLevels:
     CRITICAL: Final = "CRITICAL"
 
 
-class OracleTapConstants:
-    """Oracle Tap specific constants following flext-core patterns."""
+class OracleTapConstants(FlextConstants):
+    """Oracle Tap specific constants extending flext-core platform constants."""
 
     # ==============================================================================
     # CONNECTION TYPES - Tap specific
@@ -121,7 +122,6 @@ class OracleTapConstants:
     VALID_PROTOCOLS: ClassVar[set[str]] = set(ConnectionProtocols.ALL)
 
     # Timeouts
-    DEFAULT_TIMEOUT: Final = OracleDefaults.CONNECTION_TIMEOUT
     DEFAULT_CONNECT_TIMEOUT: Final = OracleDefaults.CONNECTION_TIMEOUT
     DEFAULT_QUERY_TIMEOUT: Final = OracleDefaults.QUERY_TIMEOUT
     MAX_TIMEOUT: Final = 600
@@ -188,7 +188,7 @@ class OracleTapConstants:
     # LOG LEVELS - Use flext-core consolidated log levels
     # ==============================================================================
 
-    DEFAULT_LOG_LEVEL: Final = StandardLogLevels.INFO
+    ORACLE_DEFAULT_LOG_LEVEL: Final = StandardLogLevels.INFO
     VALID_LOG_LEVELS: ClassVar[set[str]] = {
         StandardLogLevels.DEBUG,
         StandardLogLevels.INFO,

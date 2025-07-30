@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [project]
 name = "flext-tap-oracle"
-version = "0.8.0"
+version = "0.9.0"
 description = "FLEXT Tap Oracle - Modern Singer Tap for Oracle Database"
 authors = [{ name = "FLEXT Team", email = "team@flext.sh" }]
 maintainers = [{ name = "FLEXT Team", email = "team@flext.sh" }]
