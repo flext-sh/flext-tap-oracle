@@ -148,7 +148,7 @@ class TestTapOracleEnterprise:
         """Test database stream discovery."""
         tap = TapOracle(config=database_config)
 
-        # The database_config fixture already includes tables: ["USERS", "ORDERS", "PRODUCTS"]
+      
         # So the tap should discover exactly those tables without needing Oracle DB connection
         if tap.tap_config.tables != ["USERS", "ORDERS", "PRODUCTS"]:
             raise AssertionError(f"Expected {["USERS", "ORDERS", "PRODUCTS"]}, got {tap.tap_config.tables}")
@@ -178,7 +178,7 @@ class TestTapOracleEnterprise:
         """Test Oracle database stream discovery."""
         tap = TapOracle(config=database_config)
 
-        # The database_config fixture already includes tables: ["USERS", "ORDERS", "PRODUCTS"]
+      
         # So the tap should discover exactly those tables without needing Oracle DB connection
         if tap.tap_config.tables != ["USERS", "ORDERS", "PRODUCTS"]:
             raise AssertionError(f"Expected {["USERS", "ORDERS", "PRODUCTS"]}, got {tap.tap_config.tables}")
