@@ -38,7 +38,9 @@ class OracleStream(Stream):
         self.table_name = table_name
         self.oracle_api = oracle_api
 
-    def get_records(self, _context: Mapping[str, object] | None) -> Iterable[dict[str, object]]:
+    def get_records(
+        self, _context: Mapping[str, object] | None,
+    ) -> Iterable[dict[str, object]]:
         """Extract records from Oracle table using real flext-db-oracle API."""
         try:
             # Connect to Oracle database first
@@ -61,7 +63,9 @@ class OracleStream(Stream):
                         record = dict(zip(column_names, row_tuple, strict=False))
                     else:
                         # Fallback: create generic column names
-                        record = {f"col_{i}": value for i, value in enumerate(row_tuple)}
+                        record = {
+                            f"col_{i}": value for i, value in enumerate(row_tuple)
+                        }
 
                     yield record
             else:
@@ -72,5 +76,7 @@ class OracleStream(Stream):
                 )
 
         except Exception:
-            logger.exception("Failed to extract records from Oracle table %s", self.table_name)
+            logger.exception(
+                "Failed to extract records from Oracle table %s", self.table_name,
+            )
             # Don't yield anything on error - let the tap handle it

@@ -31,20 +31,48 @@ class TapOracle(Tap):
     name = "tap-oracle"
     config_jsonschema = th.PropertiesList(
         # Basic Oracle connection
-        th.Property("host", th.StringType, required=True, description="Oracle database host"),
-        th.Property("port", th.IntegerType, default=1521, description="Oracle database port"),
+        th.Property(
+            "host", th.StringType, required=True, description="Oracle database host",
+        ),
+        th.Property(
+            "port", th.IntegerType, default=1521, description="Oracle database port",
+        ),
         th.Property("service_name", th.StringType, description="Oracle service name"),
-        th.Property("username", th.StringType, required=True, description="Oracle username"),
-        th.Property("password", th.StringType, secret=True, required=True, description="Oracle password"),
+        th.Property(
+            "username", th.StringType, required=True, description="Oracle username",
+        ),
+        th.Property(
+            "password",
+            th.StringType,
+            secret=True,
+            required=True,
+            description="Oracle password",
+        ),
         th.Property("schema_name", th.StringType, description="Oracle schema name"),
-
         # Performance settings
-        th.Property("batch_size", th.IntegerType, default=10000, description="Batch size for data extraction"),
-        th.Property("query_timeout", th.IntegerType, default=300, description="Query timeout in seconds"),
-
+        th.Property(
+            "batch_size",
+            th.IntegerType,
+            default=10000,
+            description="Batch size for data extraction",
+        ),
+        th.Property(
+            "query_timeout",
+            th.IntegerType,
+            default=300,
+            description="Query timeout in seconds",
+        ),
         # Stream configuration
-        th.Property("tables", th.ArrayType(th.StringType), description="List of tables to extract"),
-        th.Property("exclude_tables", th.ArrayType(th.StringType), description="List of tables to exclude"),
+        th.Property(
+            "tables",
+            th.ArrayType(th.StringType),
+            description="List of tables to extract",
+        ),
+        th.Property(
+            "exclude_tables",
+            th.ArrayType(th.StringType),
+            description="List of tables to exclude",
+        ),
     ).to_dict()
 
     def __init__(
@@ -125,9 +153,15 @@ class TapOracle(Tap):
 
             if result.is_success and result.data:
                 tables = result.data
-                logger.info("Discovered %d tables in Oracle schema %s", len(tables), schema_name or "default")
+                logger.info(
+                    "Discovered %d tables in Oracle schema %s",
+                    len(tables),
+                    schema_name or "default",
+                )
                 return tables
-            logger.warning("No tables found in Oracle schema %s: %s", schema_name, result.error)
+            logger.warning(
+                "No tables found in Oracle schema %s: %s", schema_name, result.error,
+            )
             return []
 
         except Exception:
@@ -156,14 +190,18 @@ class TapOracle(Tap):
                     singer_type = self._map_oracle_type_to_singer(oracle_type)
 
                     properties[column_name] = {
-                        "type": singer_type if not is_nullable else ["null", singer_type],
+                        "type": singer_type
+                        if not is_nullable
+                        else ["null", singer_type],
                     }
 
                 return {
                     "type": "object",
                     "properties": properties,
                 }
-            logger.warning("Could not get schema for table %s: %s", table_name, result.error)
+            logger.warning(
+                "Could not get schema for table %s: %s", table_name, result.error,
+            )
             # Return minimal schema as fallback
             return {
                 "type": "object",
@@ -188,7 +226,9 @@ class TapOracle(Tap):
 
         if oracle_type_upper.startswith(("NUMBER", "DECIMAL", "NUMERIC")):
             return "number"
-        if oracle_type_upper.startswith(("VARCHAR", "CHAR", "CLOB", "NVARCHAR", "NCHAR")):
+        if oracle_type_upper.startswith(
+            ("VARCHAR", "CHAR", "CLOB", "NVARCHAR", "NCHAR"),
+        ):
             return "string"
         if oracle_type_upper.startswith("DATE"):
             return "string"  # Date as ISO string
