@@ -6,8 +6,11 @@ using the generic Tap and Stream classes from flext-meltano.
 
 from __future__ import annotations
 
+from typing import ClassVar
+
 # Import generic interfaces from flext-meltano
 from flext_meltano import Tap, singer_typing as th
+from flext_meltano.common_schemas import create_oracle_tap_schema
 
 from flext_core import get_logger
 from flext_db_oracle import FlextDbOracleApi
@@ -29,59 +32,28 @@ class TapOracle(Tap):
     """
 
     name = "tap-oracle"
-    config_jsonschema = th.PropertiesList(
-        # Basic Oracle connection
-        th.Property(
-            "host",
-            th.StringType,
-            required=True,
-            description="Oracle database host",
-        ),
-        th.Property(
-            "port",
-            th.IntegerType,
-            default=1521,
-            description="Oracle database port",
-        ),
-        th.Property("service_name", th.StringType, description="Oracle service name"),
-        th.Property(
-            "username",
-            th.StringType,
-            required=True,
-            description="Oracle username",
-        ),
-        th.Property(
-            "password",
-            th.StringType,
-            secret=True,
-            required=True,
-            description="Oracle password",
-        ),
-        th.Property("schema_name", th.StringType, description="Oracle schema name"),
-        # Performance settings
-        th.Property(
-            "batch_size",
-            th.IntegerType,
-            default=10000,
-            description="Batch size for data extraction",
-        ),
-        th.Property(
-            "query_timeout",
-            th.IntegerType,
-            default=300,
-            description="Query timeout in seconds",
-        ),
-        # Stream configuration
-        th.Property(
-            "tables",
-            th.ArrayType(th.StringType),
-            description="List of tables to extract",
-        ),
-        th.Property(
-            "exclude_tables",
-            th.ArrayType(th.StringType),
-            description="List of tables to exclude",
-        ),
+    # REAL DRY: Use centralized Oracle schema from flext-meltano instead of duplicating
+    config_jsonschema = create_oracle_tap_schema(
+        # Oracle-specific additional properties for tap-oracle
+        additional_properties=th.PropertiesList(
+            th.Property(
+                "query_timeout",
+                th.IntegerType,
+                default=300,
+                description="Query timeout in seconds",
+            ),
+            # Stream configuration
+            th.Property(
+                "tables",
+                th.ArrayType(th.StringType),
+                description="List of tables to extract",
+            ),
+            th.Property(
+                "exclude_tables",
+                th.ArrayType(th.StringType),
+                description="List of tables to exclude",
+            ),
+        )
     ).to_dict()
 
     def __init__(
@@ -94,6 +66,7 @@ class TapOracle(Tap):
         validate_config: bool = True,
     ) -> None:
         """Initialize Oracle tap with Singer SDK interface."""
+        # Call parent constructor directly - simpler and type-safe
         super().__init__(
             config=config,
             catalog=catalog,
@@ -103,6 +76,7 @@ class TapOracle(Tap):
         )
         self._typed_config: TapOracleConfig | None = None
         self._oracle_api: FlextDbOracleApi | None = None
+
 
     @property
     def typed_config(self) -> TapOracleConfig:
@@ -147,120 +121,153 @@ class TapOracle(Tap):
         return streams
 
     def _get_table_list(self) -> list[str]:
-        """Get list of tables to process using real Oracle API."""
-        # If specific tables configured, use those
+        """Get list of tables to process using flext-db-oracle API with Railway Pattern."""
+        # If specific tables configured, use those - Early Return Pattern
         if self.typed_config.tables:
             return list(self.typed_config.tables)
 
-        # Otherwise discover all tables in schema using real Oracle API
+        # Otherwise discover all tables using flext-db-oracle with context manager
+        return self._discover_tables_from_oracle()
+
+    def _discover_tables_from_oracle(self) -> list[str]:
+        """Discover tables from Oracle using flext-db-oracle patterns - Single Responsibility."""
+        schema_name = self.typed_config.schema_name
+
+        # Use context manager pattern from flext-db-oracle for proper resource management
         try:
-            connected_api = self.oracle_api.connect()
-            schema_name = self.typed_config.schema_name
+            with self.oracle_api as connected_api:
+                # Use flext-db-oracle API which returns FlextResult
+                tables_result = connected_api.get_tables(schema=schema_name)
 
-            # Use real Oracle API to get table names
-            result = connected_api.get_tables(schema=schema_name)
-
-            if result.is_success and result.data:
-                tables = result.data
-                logger.info(
-                    "Discovered %d tables in Oracle schema %s",
-                    len(tables),
-                    schema_name or "default",
-                )
-                return tables
-            logger.warning(
-                "No tables found in Oracle schema %s: %s",
-                schema_name,
-                result.error,
-            )
-            return []
+                return self._process_tables_result(tables_result, schema_name)
 
         except Exception:
             logger.exception("Failed to discover Oracle tables")
             return []
 
+    def _process_tables_result(self, tables_result: object, schema_name: str | None) -> list[str]:
+        """Process tables result using Railway-oriented programming - Single Responsibility."""
+        if (hasattr(tables_result, "is_success") and tables_result.is_success and
+                hasattr(tables_result, "data") and tables_result.data):
+            tables = tables_result.data
+            # Ensure we return a list of strings
+            if isinstance(tables, list):
+                logger.info(
+                    "Discovered %d tables in Oracle schema %s",
+                    len(tables),
+                    schema_name or "default",
+                )
+                return [str(table) for table in tables]
+
+        # Handle failure case
+        error_msg = getattr(tables_result, "error", "Unknown error")
+        logger.warning(
+            "No tables found in Oracle schema %s: %s",
+            schema_name,
+            error_msg,
+        )
+        return []
+
     def _get_table_schema(self, table_name: str) -> dict[str, object]:
-        """Get schema for a specific table using real Oracle API."""
+        """Get schema for a specific table using flext-db-oracle patterns."""
         try:
-            connected_api = self.oracle_api.connect()
-            schema_name = self.typed_config.schema_name
+            # Use context manager pattern from flext-db-oracle
+            with self.oracle_api as connected_api:
+                schema_result = connected_api.get_columns(
+                    table_name,
+                    schema=self.typed_config.schema_name
+                )
 
-            # Get column information from Oracle using real API
-            result = connected_api.get_columns(table_name, schema=schema_name)
-
-            if result.is_success and result.data:
-                properties = {}
-
-                # Convert Oracle column info to Singer schema format
-                for column_info in result.data:
-                    column_name = column_info.get("column_name", "unknown")
-                    oracle_type = column_info.get("data_type", "VARCHAR2")
-                    is_nullable = column_info.get("nullable", "Y") == "Y"
-
-                    # Map Oracle types to Singer types
-                    singer_type = self._map_oracle_type_to_singer(oracle_type)
-
-                    properties[column_name] = {
-                        "type": singer_type
-                        if not is_nullable
-                        else ["null", singer_type],
-                    }
-
-                return {
-                    "type": "object",
-                    "properties": properties,
-                }
-            logger.warning(
-                "Could not get schema for table %s: %s",
-                table_name,
-                result.error,
-            )
-            # Return minimal schema as fallback
-            return {
-                "type": "object",
-                "properties": {
-                    "data": {"type": "string"},
-                },
-            }
+                return self._process_schema_result(schema_result, table_name)
 
         except Exception:
             logger.exception("Failed to get schema for table %s", table_name)
-            # Return minimal schema as fallback
-            return {
-                "type": "object",
-                "properties": {
-                    "data": {"type": "string"},
-                },
+            return self._get_fallback_schema()
+
+    def _process_schema_result(self, schema_result: object, table_name: str) -> dict[str, object]:
+        """Process schema result using Railway Pattern - Single Responsibility."""
+        if (hasattr(schema_result, "is_success") and schema_result.is_success and
+                hasattr(schema_result, "data") and schema_result.data):
+            return self._build_singer_schema(schema_result.data)
+
+        # Handle failure case
+        error_msg = getattr(schema_result, "error", "Unknown error")
+        logger.warning("Could not get schema for table %s: %s", table_name, error_msg)
+        return self._get_fallback_schema()
+
+    def _build_singer_schema(self, columns_data: list[dict[str, object]]) -> dict[str, object]:
+        """Build Singer schema from Oracle columns data - Single Responsibility."""
+        properties = {}
+
+        # Convert Oracle column info to Singer schema format
+        for column_info in columns_data:
+            column_name = column_info.get("column_name", "unknown")
+            oracle_type = column_info.get("data_type", "VARCHAR2")
+            is_nullable = column_info.get("nullable", "Y") == "Y"
+
+            # Use improved type mapper
+            singer_type = self._map_oracle_type_to_singer(str(oracle_type))
+
+            properties[column_name] = {
+                "type": [singer_type] if not is_nullable else ["null", singer_type],
             }
 
-    def _map_oracle_type_to_singer(self, oracle_type: str) -> str:
-        """Map Oracle data types to Singer types."""
-        oracle_type_upper = oracle_type.upper()
+        return {
+            "type": "object",
+            "properties": properties,
+        }
 
-        if oracle_type_upper.startswith(("NUMBER", "DECIMAL", "NUMERIC")):
-            return "number"
-        if oracle_type_upper.startswith(
-            ("VARCHAR", "CHAR", "CLOB", "NVARCHAR", "NCHAR"),
-        ):
-            return "string"
-        if oracle_type_upper.startswith("DATE"):
-            return "string"  # Date as ISO string
-        if oracle_type_upper.startswith("TIMESTAMP"):
-            return "string"  # Timestamp as ISO string
-        if oracle_type_upper.startswith(("BLOB", "RAW")):
-            return "string"  # Binary as base64 string
-        return "string"  # Default to string for unknown types
+    def _get_fallback_schema(self) -> dict[str, object]:
+        """Get fallback schema when Oracle schema discovery fails - DRY Pattern."""
+        return {
+            "type": "object",
+            "properties": {
+                "data": {"type": "string"},
+            },
+        }
+
+    def _map_oracle_type_to_singer(self, oracle_type: str) -> str:
+        """Map Oracle data types to Singer types using Strategy Pattern."""
+        return self._get_oracle_type_mapper().map_to_singer(oracle_type)
+
+    def _get_oracle_type_mapper(self) -> _OracleTypeMapper:
+        """Get Oracle type mapper - Factory Method Pattern."""
+        return _OracleTypeMapper()
 
     def test_connection(self) -> bool:
-        """Test Oracle database connection."""
+        """Test Oracle database connection using flext-db-oracle."""
         try:
-            # Test connection using oracle_api
+            # Use flext-db-oracle API with proper Railway Pattern
             result = self.oracle_api.test_connection()
+            return hasattr(result, "is_success") and result.is_success
         except Exception:
             logger.exception("Oracle connection test failed")
             return False
-        else:
-            return result.is_success
+
+
+class _OracleTypeMapper:
+    """Oracle to Singer type mapper using Strategy Pattern - Single Responsibility."""
+
+    # Strategy mapping table using flext-db-oracle constants knowledge
+    _TYPE_MAPPING_RULES: ClassVar[list[tuple[tuple[str, ...], str]]] = [
+        (("NUMBER", "DECIMAL", "NUMERIC"), "number"),
+        (("VARCHAR", "CHAR", "CLOB", "NVARCHAR", "NCHAR"), "string"),
+        (("DATE",), "string"),  # Date as ISO string
+        (("TIMESTAMP",), "string"),  # Timestamp as ISO string
+        (("BLOB", "RAW"), "string"),  # Binary as base64 string
+    ]
+
+    def map_to_singer(self, oracle_type: str) -> str:
+        """Map Oracle data type to Singer type using Strategy Pattern."""
+        oracle_type_upper = oracle_type.upper()
+
+        # Apply mapping rules in order
+        for oracle_prefixes, singer_type in self._TYPE_MAPPING_RULES:
+            if oracle_type_upper.startswith(oracle_prefixes):
+                return singer_type
+
+        # Default strategy for unknown types
+        return "string"
 
 
 # CLI entry point

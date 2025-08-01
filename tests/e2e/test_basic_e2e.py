@@ -3,12 +3,11 @@
 These tests verify core functionality without complex dependencies.
 """
 
-from flext_tap_oracle.tap import TapOracle
-from flext_tap_oracle.streams import OracleTableStream
-from flext_tap_oracle.config import TapOracleConfig
-
-
 from __future__ import annotations
+
+from flext_tap_oracle.tap import TapOracle
+from flext_tap_oracle.oracle_stream import OracleStream
+from flext_tap_oracle.config import TapOracleConfig
 
 import os
 

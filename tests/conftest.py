@@ -557,38 +557,16 @@ def mock_oracle_connection() -> type[object]:
             query: str,
             parameters: dict[str, Any] | None = None,
         ) -> list[dict[str, Any]]:
-            """Execute query and return mock results."""
+            """Execute query and return mock results using Strategy Pattern."""
+            return self._get_query_strategy(query).execute()
+
+        def _get_query_strategy(self, query: str) -> _MockQueryStrategy:
+            """Get appropriate query strategy - Factory Method Pattern."""
             if "all_tables" in query:
-                return [
-                    {
-                        "table_name": "EMPLOYEES",
-                        "owner": "TAP_SCHEMA",
-                        "table_type": "TABLE",
-                    },
-                    {
-                        "table_name": "DEPARTMENTS",
-                        "owner": "TAP_SCHEMA",
-                        "table_type": "TABLE",
-                    },
-                ]
+                return _TablesQueryStrategy()
             if "all_tab_columns" in query:
-                return [
-                    {
-                        "column_name": "ID",
-                        "data_type": "NUMBER",
-                        "data_length": 22,
-                        "nullable": "N",
-                        "column_id": 1,
-                    },
-                    {
-                        "column_name": "NAME",
-                        "data_type": "VARCHAR2",
-                        "data_length": 100,
-                        "nullable": "N",
-                        "column_id": 2,
-                    },
-                ]
-            return [{"id": 1, "name": "Test Record"}]
+                return _ColumnsQueryStrategy()
+            return _DefaultQueryStrategy()
 
         async def get_table_schema(self, table_name: str) -> dict[str, Any]:
             """Get table schema information."""
@@ -602,3 +580,61 @@ def mock_oracle_connection() -> type[object]:
             }
 
     return MockOracleConnection
+
+
+class _MockQueryStrategy:
+    """Base class for mock query strategies - Strategy Pattern."""
+
+    def execute(self) -> list[dict[str, Any]]:
+        """Execute mock query and return results."""
+        raise NotImplementedError
+
+
+class _TablesQueryStrategy(_MockQueryStrategy):
+    """Strategy for tables query - Single Responsibility."""
+
+    def execute(self) -> list[dict[str, Any]]:
+        """Return mock table data."""
+        return [
+            {
+                "table_name": "EMPLOYEES",
+                "owner": "TAP_SCHEMA",
+                "table_type": "TABLE",
+            },
+            {
+                "table_name": "DEPARTMENTS",
+                "owner": "TAP_SCHEMA",
+                "table_type": "TABLE",
+            },
+        ]
+
+
+class _ColumnsQueryStrategy(_MockQueryStrategy):
+    """Strategy for columns query - Single Responsibility."""
+
+    def execute(self) -> list[dict[str, Any]]:
+        """Return mock column data."""
+        return [
+            {
+                "column_name": "ID",
+                "data_type": "NUMBER",
+                "data_length": 22,
+                "nullable": "N",
+                "column_id": 1,
+            },
+            {
+                "column_name": "NAME",
+                "data_type": "VARCHAR2",
+                "data_length": 100,
+                "nullable": "N",
+                "column_id": 2,
+            },
+        ]
+
+
+class _DefaultQueryStrategy(_MockQueryStrategy):
+    """Default strategy for generic queries - Single Responsibility."""
+
+    def execute(self) -> list[dict[str, Any]]:
+        """Return mock default data."""
+        return [{"id": 1, "name": "Test Record"}]
