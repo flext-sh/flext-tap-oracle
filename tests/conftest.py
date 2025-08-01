@@ -7,7 +7,7 @@ using real Oracle connections and Singer SDK patterns.
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -18,6 +18,21 @@ if TYPE_CHECKING:
 
 
 # Test environment setup
+@pytest.fixture(scope="session", autouse=True)
+def oracle_shared_container_environment():
+    """Setup Oracle environment variables for shared container (pytest-oracle-xe)."""
+    # Set Oracle environment variables for shared container on port 10521
+    os.environ.update({
+        "FLEXT_TAP_ORACLE_HOST": "localhost",
+        "FLEXT_TAP_ORACLE_PORT": "10521",
+        "FLEXT_TAP_ORACLE_USERNAME": "system",
+        "FLEXT_TAP_ORACLE_PASSWORD": "oracle",
+        "FLEXT_TAP_ORACLE_SERVICE_NAME": "XE",
+        "FLEXT_TAP_ORACLE_SCHEMA_NAME": "FLEXT_TEST",
+    })
+    yield
+
+
 @pytest.fixture(autouse=True)
 def set_test_environment() -> Generator[None]:
     """Set test environment variables."""
@@ -35,7 +50,7 @@ def set_test_environment() -> Generator[None]:
 
 # Oracle connection fixtures
 @pytest.fixture
-def oracle_tap_config() -> dict[str, Any]:
+def oracle_tap_config() -> dict[str, object]:
     """Oracle tap configuration for testing."""
     return {
         "host": "localhost",
@@ -56,14 +71,14 @@ def oracle_tap_config() -> dict[str, Any]:
 
 
 @pytest.fixture
-def oracle_tap(oracle_tap_config: dict[str, Any]) -> object:
+def oracle_tap(oracle_tap_config: dict[str, object]) -> object:
     """Oracle tap instance for testing."""
     return TapOracle(config=oracle_tap_config)
 
 
 # Singer protocol fixtures
 @pytest.fixture
-def singer_catalog() -> dict[str, Any]:
+def singer_catalog() -> dict[str, object]:
     """Singer catalog for testing."""
     return {
         "streams": [
@@ -127,7 +142,7 @@ def singer_catalog() -> dict[str, Any]:
 
 
 @pytest.fixture
-def singer_state() -> dict[str, Any]:
+def singer_state() -> dict[str, object]:
     """Singer state for testing."""
     return {
         "bookmarks": {
@@ -144,7 +159,7 @@ def singer_state() -> dict[str, Any]:
 
 
 @pytest.fixture
-def sample_oracle_tables() -> list[dict[str, Any]]:
+def sample_oracle_tables() -> list[dict[str, object]]:
     """Sample Oracle table definitions for testing."""
     return [
         {
@@ -224,7 +239,7 @@ def sample_oracle_tables() -> list[dict[str, Any]]:
 
 
 @pytest.fixture
-def sample_oracle_data() -> dict[str, list[dict[str, Any]]]:
+def sample_oracle_data() -> dict[str, list[dict[str, object]]]:
     """Sample Oracle data for testing."""
     return {
         "employees": [
@@ -272,7 +287,7 @@ def sample_oracle_data() -> dict[str, list[dict[str, Any]]]:
 
 # Stream configuration fixtures
 @pytest.fixture
-def stream_config() -> dict[str, Any]:
+def stream_config() -> dict[str, object]:
     """Stream configuration for testing."""
     return {
         "selected": True,
@@ -285,7 +300,7 @@ def stream_config() -> dict[str, Any]:
 
 
 @pytest.fixture
-def discovery_config() -> dict[str, Any]:
+def discovery_config() -> dict[str, object]:
     """Discovery configuration for testing."""
     return {
         "include_views": False,
@@ -342,7 +357,7 @@ def oracle_queries() -> dict[str, str]:
 
 # Singer message fixtures
 @pytest.fixture
-def singer_schema_message() -> dict[str, Any]:
+def singer_schema_message() -> dict[str, object]:
     """Singer schema message for testing."""
     return {
         "type": "SCHEMA",
@@ -361,7 +376,7 @@ def singer_schema_message() -> dict[str, Any]:
 
 
 @pytest.fixture
-def singer_record_messages() -> list[dict[str, Any]]:
+def singer_record_messages() -> list[dict[str, object]]:
     """Singer record messages for testing."""
     return [
         {
@@ -390,7 +405,7 @@ def singer_record_messages() -> list[dict[str, Any]]:
 
 
 @pytest.fixture
-def singer_state_message() -> dict[str, Any]:
+def singer_state_message() -> dict[str, object]:
     """Singer state message for testing."""
     return {
         "type": "STATE",
@@ -408,7 +423,7 @@ def singer_state_message() -> dict[str, Any]:
 
 # Performance test fixtures
 @pytest.fixture
-def performance_test_config() -> dict[str, Any]:
+def performance_test_config() -> dict[str, object]:
     """Performance test configuration."""
     return {
         "large_table_rows": 100000,
@@ -421,7 +436,7 @@ def performance_test_config() -> dict[str, Any]:
 
 # Error handling fixtures
 @pytest.fixture
-def error_scenarios() -> list[dict[str, Any]]:
+def error_scenarios() -> list[dict[str, object]]:
     """Error scenarios for testing."""
     return [
         {
@@ -475,12 +490,12 @@ def mock_oracle_tap() -> type[object]:
     """Mock Oracle tap for testing."""
 
     class MockOracleTap:
-        def __init__(self, config: dict[str, Any]) -> None:
+        def __init__(self, config: dict[str, object]) -> None:
             self.config = config
             self._catalog = None
-            self._state: dict[str, Any] = {}
+            self._state: dict[str, object] = {}
 
-        async def discover(self) -> dict[str, Any]:
+        async def discover(self) -> dict[str, object]:
             """Discover schema using mock data."""
             return {
                 "streams": [
@@ -500,9 +515,9 @@ def mock_oracle_tap() -> type[object]:
 
         async def sync(
             self,
-            catalog: dict[str, Any],
-            state: dict[str, Any],
-        ) -> AsyncGenerator[dict[str, Any]]:
+            catalog: dict[str, object],
+            state: dict[str, object],
+        ) -> AsyncGenerator[dict[str, object]]:
             """Sync data using mock extraction."""
             for stream in catalog["streams"]:
                 if stream.get("metadata", [{}])[0].get("metadata", {}).get("selected"):
@@ -540,7 +555,7 @@ def mock_oracle_connection() -> type[object]:
     """Mock Oracle connection for testing."""
 
     class MockOracleConnection:
-        def __init__(self, config: dict[str, Any]) -> None:
+        def __init__(self, config: dict[str, object]) -> None:
             self.config = config
             self.connected = False
 
@@ -555,8 +570,8 @@ def mock_oracle_connection() -> type[object]:
         async def execute_query(
             self,
             query: str,
-            parameters: dict[str, Any] | None = None,
-        ) -> list[dict[str, Any]]:
+            parameters: dict[str, object] | None = None,
+        ) -> list[dict[str, object]]:
             """Execute query and return mock results using Strategy Pattern."""
             return self._get_query_strategy(query).execute()
 
@@ -568,7 +583,7 @@ def mock_oracle_connection() -> type[object]:
                 return _ColumnsQueryStrategy()
             return _DefaultQueryStrategy()
 
-        async def get_table_schema(self, table_name: str) -> dict[str, Any]:
+        async def get_table_schema(self, table_name: str) -> dict[str, object]:
             """Get table schema information."""
             return {
                 "table_name": table_name,
@@ -585,7 +600,7 @@ def mock_oracle_connection() -> type[object]:
 class _MockQueryStrategy:
     """Base class for mock query strategies - Strategy Pattern."""
 
-    def execute(self) -> list[dict[str, Any]]:
+    def execute(self) -> list[dict[str, object]]:
         """Execute mock query and return results."""
         raise NotImplementedError
 
@@ -593,7 +608,7 @@ class _MockQueryStrategy:
 class _TablesQueryStrategy(_MockQueryStrategy):
     """Strategy for tables query - Single Responsibility."""
 
-    def execute(self) -> list[dict[str, Any]]:
+    def execute(self) -> list[dict[str, object]]:
         """Return mock table data."""
         return [
             {
@@ -612,7 +627,7 @@ class _TablesQueryStrategy(_MockQueryStrategy):
 class _ColumnsQueryStrategy(_MockQueryStrategy):
     """Strategy for columns query - Single Responsibility."""
 
-    def execute(self) -> list[dict[str, Any]]:
+    def execute(self) -> list[dict[str, object]]:
         """Return mock column data."""
         return [
             {
@@ -635,6 +650,6 @@ class _ColumnsQueryStrategy(_MockQueryStrategy):
 class _DefaultQueryStrategy(_MockQueryStrategy):
     """Default strategy for generic queries - Single Responsibility."""
 
-    def execute(self) -> list[dict[str, Any]]:
+    def execute(self) -> list[dict[str, object]]:
         """Return mock default data."""
         return [{"id": 1, "name": "Test Record"}]

@@ -77,7 +77,6 @@ class TapOracle(Tap):
         self._typed_config: TapOracleConfig | None = None
         self._oracle_api: FlextDbOracleApi | None = None
 
-
     @property
     def typed_config(self) -> TapOracleConfig:
         """Get typed Oracle configuration."""
@@ -145,10 +144,16 @@ class TapOracle(Tap):
             logger.exception("Failed to discover Oracle tables")
             return []
 
-    def _process_tables_result(self, tables_result: object, schema_name: str | None) -> list[str]:
+    def _process_tables_result(
+        self, tables_result: object, schema_name: str | None
+    ) -> list[str]:
         """Process tables result using Railway-oriented programming - Single Responsibility."""
-        if (hasattr(tables_result, "is_success") and tables_result.is_success and
-                hasattr(tables_result, "data") and tables_result.data):
+        if (
+            hasattr(tables_result, "is_success")
+            and tables_result.is_success
+            and hasattr(tables_result, "data")
+            and tables_result.data
+        ):
             tables = tables_result.data
             # Ensure we return a list of strings
             if isinstance(tables, list):
@@ -174,8 +179,7 @@ class TapOracle(Tap):
             # Use context manager pattern from flext-db-oracle
             with self.oracle_api as connected_api:
                 schema_result = connected_api.get_columns(
-                    table_name,
-                    schema=self.typed_config.schema_name
+                    table_name, schema=self.typed_config.schema_name
                 )
 
                 return self._process_schema_result(schema_result, table_name)
@@ -184,10 +188,16 @@ class TapOracle(Tap):
             logger.exception("Failed to get schema for table %s", table_name)
             return self._get_fallback_schema()
 
-    def _process_schema_result(self, schema_result: object, table_name: str) -> dict[str, object]:
+    def _process_schema_result(
+        self, schema_result: object, table_name: str
+    ) -> dict[str, object]:
         """Process schema result using Railway Pattern - Single Responsibility."""
-        if (hasattr(schema_result, "is_success") and schema_result.is_success and
-                hasattr(schema_result, "data") and schema_result.data):
+        if (
+            hasattr(schema_result, "is_success")
+            and schema_result.is_success
+            and hasattr(schema_result, "data")
+            and schema_result.data
+        ):
             return self._build_singer_schema(schema_result.data)
 
         # Handle failure case
@@ -195,7 +205,9 @@ class TapOracle(Tap):
         logger.warning("Could not get schema for table %s: %s", table_name, error_msg)
         return self._get_fallback_schema()
 
-    def _build_singer_schema(self, columns_data: list[dict[str, object]]) -> dict[str, object]:
+    def _build_singer_schema(
+        self, columns_data: list[dict[str, object]]
+    ) -> dict[str, object]:
         """Build Singer schema from Oracle columns data - Single Responsibility."""
         properties = {}
 

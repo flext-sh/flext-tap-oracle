@@ -30,10 +30,14 @@ else:
     # Import generated classes for clean usage
     FlextTapOracleError = oracle_exceptions["FlextTapOracleError"]
     FlextTapOracleValidationError = oracle_exceptions["FlextTapOracleValidationError"]
-    FlextTapOracleConfigurationError = oracle_exceptions["FlextTapOracleConfigurationError"]
+    FlextTapOracleConfigurationError = oracle_exceptions[
+        "FlextTapOracleConfigurationError"
+    ]
     FlextTapOracleConnectionError = oracle_exceptions["FlextTapOracleConnectionError"]
     FlextTapOracleProcessingError = oracle_exceptions["FlextTapOracleProcessingError"]
-    FlextTapOracleAuthenticationError = oracle_exceptions["FlextTapOracleAuthenticationError"]
+    FlextTapOracleAuthenticationError = oracle_exceptions[
+        "FlextTapOracleAuthenticationError"
+    ]
     FlextTapOracleTimeoutError = oracle_exceptions["FlextTapOracleTimeoutError"]
 
 

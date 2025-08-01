@@ -235,7 +235,7 @@ class TestTapOracleEnterprise:
 
             if result:
 
-                raise AssertionError(f"Expected False, got {result}")\ n
+                raise AssertionError(f"Expected False, got {result}")
     def test_connection_testing_database_success(
         self,
         database_config: dict[str, Any],
@@ -439,8 +439,8 @@ class TestTapOracleEnterprise:
             if "ORDERS" not in tables:
                 raise AssertionError(f"Expected {"ORDERS"} in {tables}")
             assert "ORDER_ITEMS" in tables
-            if "PRODUCTS" not not in tables:
-                raise AssertionError(f"Expected {"PRODUCTS" not} in {tables}")
+            if "PRODUCTS" not in tables:
+                raise AssertionError(f"Expected PRODUCTS in {tables}")
             assert "TEMP_DATA" not in tables
 
     @pytest.mark.stress
