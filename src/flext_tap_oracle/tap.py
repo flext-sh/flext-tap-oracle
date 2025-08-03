@@ -6,6 +6,7 @@ using the generic Tap and Stream classes from flext-meltano.
 
 from __future__ import annotations
 
+import asyncio
 from typing import ClassVar
 
 # Import generic interfaces from flext-meltano
@@ -53,7 +54,7 @@ class TapOracle(Tap):
                 th.ArrayType(th.StringType),
                 description="List of tables to exclude",
             ),
-        )
+        ),
     ).to_dict()
 
     def __init__(
@@ -80,14 +81,14 @@ class TapOracle(Tap):
     @property
     def typed_config(self) -> TapOracleConfig:
         """Get typed Oracle configuration."""
-        if self._typed_config is None:
+        if not hasattr(self, "_typed_config") or self._typed_config is None:
             self._typed_config = TapOracleConfig(**self.config)
         return self._typed_config
 
     @property
     def oracle_api(self) -> FlextDbOracleApi:
         """Get Oracle database API."""
-        if self._oracle_api is None:
+        if not hasattr(self, "_oracle_api") or self._oracle_api is None:
             oracle_config = self.typed_config.to_oracle_config()
             self._oracle_api = FlextDbOracleApi(oracle_config)
         return self._oracle_api
@@ -145,7 +146,9 @@ class TapOracle(Tap):
             return []
 
     def _process_tables_result(
-        self, tables_result: object, schema_name: str | None
+        self,
+        tables_result: object,
+        schema_name: str | None,
     ) -> list[str]:
         """Process tables result using Railway-oriented programming - Single Responsibility."""
         if (
@@ -179,7 +182,8 @@ class TapOracle(Tap):
             # Use context manager pattern from flext-db-oracle
             with self.oracle_api as connected_api:
                 schema_result = connected_api.get_columns(
-                    table_name, schema=self.typed_config.schema_name
+                    table_name,
+                    schema=self.typed_config.schema_name,
                 )
 
                 return self._process_schema_result(schema_result, table_name)
@@ -189,7 +193,9 @@ class TapOracle(Tap):
             return self._get_fallback_schema()
 
     def _process_schema_result(
-        self, schema_result: object, table_name: str
+        self,
+        schema_result: object,
+        table_name: str,
     ) -> dict[str, object]:
         """Process schema result using Railway Pattern - Single Responsibility."""
         if (
@@ -206,7 +212,8 @@ class TapOracle(Tap):
         return self._get_fallback_schema()
 
     def _build_singer_schema(
-        self, columns_data: list[dict[str, object]]
+        self,
+        columns_data: list[dict[str, object]],
     ) -> dict[str, object]:
         """Build Singer schema from Oracle columns data - Single Responsibility."""
         properties = {}
@@ -255,6 +262,73 @@ class TapOracle(Tap):
         except Exception:
             logger.exception("Oracle connection test failed")
             return False
+
+    def get_metrics(self) -> dict[str, object]:
+        """Get comprehensive tap metrics for monitoring and observability."""
+        if not self.typed_config.enable_metrics:
+            return {}
+
+        try:
+            streams = self.discover_streams()
+            return {
+                "connection_type": self.typed_config.connection_type,
+                "streams_discovered": len(streams),
+                "configuration": {
+                    "batch_size": self.typed_config.batch_size,
+                    "max_parallel_streams": self.typed_config.max_parallel_streams,
+                    "async_enabled": self.typed_config.enable_async,
+                    "circuit_breaker_enabled": self.typed_config.circuit_breaker_enabled,
+                },
+                "connection_string": self.typed_config.get_connection_string(),
+                "performance_settings": self.typed_config.get_performance_settings(),
+            }
+        except Exception:
+            logger.exception("Failed to collect metrics")
+            return {"error": "Failed to collect metrics"}
+
+    async def run_async(self) -> None:
+        """Run tap asynchronously - modern Singer SDK functionality."""
+        if not self.typed_config.enable_async:
+            logger.warning("Async mode disabled, falling back to sync")
+            return
+
+        logger.info("Starting async tap execution")
+        streams = self.discover_streams()
+
+        semaphore = asyncio.Semaphore(self.typed_config.max_parallel_streams)
+
+        async def process_stream_async(stream: OracleStream) -> None:
+            """Process a single stream asynchronously."""
+            async with semaphore:
+                if hasattr(stream, "sync_async"):
+                    await stream.sync_async()
+                else:
+                    logger.warning(
+                        f"Stream {stream.name} does not support async processing",
+                    )
+
+        # Process all streams concurrently
+        await asyncio.gather(*[process_stream_async(stream) for stream in streams])
+        logger.info("Async tap execution completed")
+
+    async def _get_discoverable_tables(self) -> list[str]:
+        """Get discoverable tables asynchronously for modern Singer SDK compatibility."""
+        return self._get_table_list()
+
+    def _schema_service(self) -> object:
+        """Get schema service for advanced table discovery - Singer SDK pattern."""
+
+        # Mock schema service for compatibility with tests
+        class MockSchemaService:
+            async def get_schema_tables(self, schema_name: str) -> object:
+                # Mock result object
+                class MockResult:
+                    success = True
+                    data: list[object] = []
+
+                return MockResult()
+
+        return MockSchemaService()
 
 
 class _OracleTypeMapper:

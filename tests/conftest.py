@@ -19,18 +19,19 @@ if TYPE_CHECKING:
 
 # Test environment setup
 @pytest.fixture(scope="session", autouse=True)
-def oracle_shared_container_environment():
+def oracle_shared_container_environment() -> None:
     """Setup Oracle environment variables for shared container (pytest-oracle-xe)."""
     # Set Oracle environment variables for shared container on port 10521
-    os.environ.update({
-        "FLEXT_TAP_ORACLE_HOST": "localhost",
-        "FLEXT_TAP_ORACLE_PORT": "10521",
-        "FLEXT_TAP_ORACLE_USERNAME": "system",
-        "FLEXT_TAP_ORACLE_PASSWORD": "oracle",
-        "FLEXT_TAP_ORACLE_SERVICE_NAME": "XE",
-        "FLEXT_TAP_ORACLE_SCHEMA_NAME": "FLEXT_TEST",
-    })
-    yield
+    os.environ.update(
+        {
+            "FLEXT_TAP_ORACLE_HOST": "localhost",
+            "FLEXT_TAP_ORACLE_PORT": "10521",
+            "FLEXT_TAP_ORACLE_USERNAME": "system",
+            "FLEXT_TAP_ORACLE_PASSWORD": "oracle",
+            "FLEXT_TAP_ORACLE_SERVICE_NAME": "XE",
+            "FLEXT_TAP_ORACLE_SCHEMA_NAME": "FLEXT_TEST",
+        },
+    )
 
 
 @pytest.fixture(autouse=True)
@@ -519,7 +520,12 @@ def mock_oracle_tap() -> type[object]:
             state: dict[str, object],
         ) -> AsyncGenerator[dict[str, object]]:
             """Sync data using mock extraction."""
-            for stream in catalog["streams"]:
+            if not isinstance(catalog, dict) or "streams" not in catalog:
+                return
+            streams = catalog["streams"]
+            if not isinstance(streams, list):
+                return
+            for stream in streams:
                 if stream.get("metadata", [{}])[0].get("metadata", {}).get("selected"):
                     yield {
                         "type": "SCHEMA",

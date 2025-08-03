@@ -5,16 +5,15 @@ These tests verify core functionality without complex dependencies.
 
 from __future__ import annotations
 
-from flext_tap_oracle.tap import TapOracle
-from flext_tap_oracle.oracle_stream import OracleStream
-from flext_tap_oracle.config import TapOracleConfig
-
 import os
 
 import pytest
+from pydantic import SecretStr
 
-from flext_db_oracle import FlextDbOracleConfig as OracleConfig
-from flext_db_oracle.application import FlextDbOracleConnectionService as OracleConnectionService
+from flext_db_oracle import FlextDbOracleConfig as OracleConfig, FlextDbOracleApi as OracleConnectionService
+from flext_tap_oracle.config import TapOracleConfig
+from flext_tap_oracle.oracle_stream import OracleStream
+from flext_tap_oracle.tap import TapOracle
 
 
 class TestBasicE2E:
@@ -29,16 +28,16 @@ class TestBasicE2E:
             sid=None,
             service_name=os.getenv("ORACLE_SERVICE_NAME", "TESTDB"),
             username=os.getenv("ORACLE_USERNAME", "flext_test"),
-            password=os.getenv("ORACLE_PASSWORD", "flext_test"),
-            protocol="tcp",
-            pool_min_size=1,
-            pool_max_size=10,
+            password=SecretStr(os.getenv("ORACLE_PASSWORD", "flext_test")),
+            # Use correct field names from FlextOracleConfig
+            pool_min=1,
+            pool_max=10,
             pool_increment=1,
-            query_timeout=300,
-            fetch_size=10000,
-            connect_timeout=60,
-            retry_attempts=3,
-            retry_delay=1,
+            timeout=300,
+            encoding="UTF-8",
+            # Additional fields for extended config
+            autocommit=False,
+            ssl_server_dn_match=True,
         )
 
     @pytest.fixture(scope="class")
@@ -53,8 +52,8 @@ class TestBasicE2E:
         self, connection_service: OracleConnectionService
     ) -> None:
         """Test basic Oracle database connection."""
-        result = await connection_service.test_connection()
-        assert result.success, f"Connection failed: {result.error}"
+        result = connection_service.test_connection()
+        assert result.is_success, f"Connection failed: {result.error}"
 
     def test_tap_module_import(self) -> None:
         """Test that tap module can be imported."""
@@ -68,7 +67,7 @@ class TestBasicE2E:
         """Test that stream modules can be imported."""
 
 
-        assert OracleTableStream is not None
+        assert OracleStream is not None
 
     def test_config_module_import(self) -> None:
         """Test that config module can be imported."""

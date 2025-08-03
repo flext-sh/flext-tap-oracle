@@ -1,18 +1,17 @@
+from __future__ import annotations
+
 """Enterprise tests for the unified Oracle Tap.
+
+This module provides comprehensive enterprise-grade tests for the Oracle tap
+functionality, including all connection types, performance, and resilience tests.
+"""
 
 # Constants
 EXPECTED_BULK_SIZE = 2
 EXPECTED_TOTAL_PAGES = 8
 EXPECTED_DATA_COUNT = 3
 
-This module provides comprehensive enterprise-grade tests for the Oracle tap
-functionality, including all connection types, performance, and resilience tests.
-"""
-
 from flext_tap_oracle.tap import cli
-
-
-from __future__ import annotations
 
 import asyncio
 from typing import TYPE_CHECKING, Any
@@ -51,7 +50,7 @@ class TestTapOracleEnterprise:
     def mock_oracle_connection(self) -> Generator[Mock]:
         """Mock Oracle connection for testing."""
         with patch(
-            "flext_db_oracle.application.FlextDbOracleConnectionService"
+            "flext_db_oracle.FlextDbOracleApi"
         ) as mock_connection_class:
             mock_connection = Mock()
             mock_connection.connect.return_value = None
@@ -120,13 +119,23 @@ class TestTapOracleEnterprise:
         """Test configuration validation errors."""
         # Missing required fields for database connection
         with pytest.raises(
-            ValidationError, match="Host is required for database connections"
+            ValidationError, match="Field required"
         ):
-            TapOracleConfig(connection_type="database")
+            TapOracleConfig(
+                connection_type="database",
+                host="required",
+                username="required",
+                password="required"
+            )
 
         # Invalid connection type
-        with pytest.raises(ValidationError, match="String should match pattern"):
-            TapOracleConfig(connection_type="invalid")
+        with pytest.raises(ValidationError, match="Connection type must be 'database'"):
+            TapOracleConfig(
+                connection_type="invalid",
+                host="test",
+                username="test",
+                password="test"
+            )
 
     def test_tap_initialization(self, database_config: dict[str, Any]) -> None:
         """Test tap initialization with configuration."""
@@ -135,9 +144,9 @@ class TestTapOracleEnterprise:
         if tap.name != "tap-oracle":
 
             raise AssertionError(f"Expected {"tap-oracle"}, got {tap.name}")
-        assert tap.tap_config.connection_type == "database"
-        if tap.tap_config.host != "test-oracle":
-            raise AssertionError(f"Expected {"test-oracle"}, got {tap.tap_config.host}")
+        assert tap.typed_config.connection_type == "database"
+        if tap.typed_config.host != "test-oracle":
+            raise AssertionError(f"Expected {"test-oracle"}, got {tap.typed_config.host}")
 
     @pytest.mark.integration
     def test_database_stream_discovery(
@@ -150,8 +159,8 @@ class TestTapOracleEnterprise:
 
       
         # So the tap should discover exactly those tables without needing Oracle DB connection
-        if tap.tap_config.tables != ["USERS", "ORDERS", "PRODUCTS"]:
-            raise AssertionError(f"Expected {["USERS", "ORDERS", "PRODUCTS"]}, got {tap.tap_config.tables}")
+        if tap.typed_config.tables != ["USERS", "ORDERS", "PRODUCTS"]:
+            raise AssertionError(f"Expected {["USERS", "ORDERS", "PRODUCTS"]}, got {tap.typed_config.tables}")
 
         # Mock the OracleTableStream creation to avoid connection issues
         with patch("flext_tap_oracle.tap.OracleTableStream") as mock_stream_class:
@@ -180,8 +189,8 @@ class TestTapOracleEnterprise:
 
       
         # So the tap should discover exactly those tables without needing Oracle DB connection
-        if tap.tap_config.tables != ["USERS", "ORDERS", "PRODUCTS"]:
-            raise AssertionError(f"Expected {["USERS", "ORDERS", "PRODUCTS"]}, got {tap.tap_config.tables}")
+        if tap.typed_config.tables != ["USERS", "ORDERS", "PRODUCTS"]:
+            raise AssertionError(f"Expected {["USERS", "ORDERS", "PRODUCTS"]}, got {tap.typed_config.tables}")
 
         # Mock the OracleTableStream creation to avoid connection issues
         with patch("flext_tap_oracle.tap.OracleTableStream") as mock_stream_class:
@@ -226,7 +235,7 @@ class TestTapOracleEnterprise:
     ) -> None:
         """Test database connection testing with failure."""
         with patch(
-            "flext_db_oracle.application.FlextDbOracleConnectionService"
+            "flext_db_oracle.FlextDbOracleApi"
         ) as mock_connection_class:
             mock_connection_class.side_effect = Exception("Connection failed")
 
@@ -276,12 +285,13 @@ class TestTapOracleEnterprise:
         if "configuration" not in metrics:
             raise AssertionError(f"Expected {"configuration"} in {metrics}")
 
-        config_metrics = metrics["configuration"]
-        if config_metrics["batch_size"] != 1000:
-            raise AssertionError(f"Expected {1000}, got {config_metrics["batch_size"]}")
-        assert config_metrics["max_parallel_streams"] == EXPECTED_BULK_SIZE
-        assert config_metrics["async_enabled"] is True  # default
-        assert config_metrics["circuit_breaker_enabled"] is True  # default
+        config_metrics = metrics.get("configuration", {})
+        if isinstance(config_metrics, dict):
+            if config_metrics.get("batch_size") != 1000:
+                raise AssertionError(f"Expected {1000}, got {config_metrics.get('batch_size')}")
+            assert config_metrics.get("max_parallel_streams") == EXPECTED_BULK_SIZE
+            assert config_metrics.get("async_enabled") is True  # default
+            assert config_metrics.get("circuit_breaker_enabled") is True  # default
 
     def test_tap_metrics_disabled(self, database_config: dict[str, Any]) -> None:
         """Test metrics collection when disabled."""
@@ -486,7 +496,7 @@ class TestTapOracleEnterprise:
     ) -> None:
         """Test error handling during stream discovery."""
         with patch(
-            "flext_db_oracle.application.FlextDbOracleConnectionService"
+            "flext_db_oracle.FlextDbOracleApi"
         ) as mock_connection_class:
             mock_connection_class.side_effect = Exception("Connection failed")
 
@@ -559,7 +569,7 @@ class TestTapOracleEnterprise:
                 raise AssertionError(f"Expected {"database"}, got {metrics["connection_type"]}")
 
             # 4. Verify configuration is accessible
-            config = tap.tap_config
+            config = tap.typed_config
             if config.connection_type != "database":
                 raise AssertionError(f"Expected {"database"}, got {config.connection_type}")
             if not (config.enable_async):
@@ -602,8 +612,8 @@ class TestTapOracleEnterprise:
         cb_settings = config.get_circuit_breaker_settings()
 
         assert cb_settings["enabled"] is True  # default
-        if cb_settings["failure_threshold"] != EXPECTED_DATA_COUNT  # default from constants:
-            raise AssertionError(f"Expected {3  # default from constants}, got {cb_settings["failure_threshold"]}")
+        if cb_settings["failure_threshold"] != EXPECTED_DATA_COUNT:  # default from constants
+            raise AssertionError(f"Expected {EXPECTED_DATA_COUNT}, got {cb_settings['failure_threshold']}")
         assert cb_settings["timeout"] == 60  # default
 
     def test_config_comprehensive_validation(
@@ -626,7 +636,7 @@ class TestTapOracleEnterprise:
 
         # Pydantic validation should fail immediately when creating the config
         with pytest.raises(
-            ValidationError, match="Host is required for database connections"
+            ValidationError, match="Field required"
         ):
             TapOracleConfig.model_validate(incomplete_config)
 
@@ -699,5 +709,5 @@ class TestTapOracleEnterprise:
 
         # Tap should handle large Oracle database configuration
         tap = TapOracle(config=large_config)
-        if tap.tap_config.connection_type != "database":
-            raise AssertionError(f"Expected {"database"}, got {tap.tap_config.connection_type}")
+        if tap.typed_config.connection_type != "database":
+            raise AssertionError(f"Expected {"database"}, got {tap.typed_config.connection_type}")

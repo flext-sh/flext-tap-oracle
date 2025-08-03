@@ -277,33 +277,10 @@ show_column_numbers = true
 show_error_context = true
 pretty = true
 
-# Disable specific checks for tests
-
 [tool.pydantic-mypy]
 init_forbid_extra = true
 init_typed = true
 warn_required_dynamic_aliases = true
-
-[[tool.mypy.overrides]]
-module = "tests.*"
-disallow_untyped_defs = false
-disallow_incomplete_defs = false
-
-# External library stubs
-[[tool.mypy.overrides]]
-module = [
-    "singer_sdk.*",
-    "oracledb.*",
-    "sqlalchemy.*",
-    "tenacity.*",
-    "httpx.*",
-    "uvloop.*",
-    "orjson.*",
-    "flext_core.*",
-    "flext_observability.*",
-    "flext_db_oracle.*",
-]
-ignore_missing_imports = true
 
 # Coverage configuration
 [tool.coverage.run]
