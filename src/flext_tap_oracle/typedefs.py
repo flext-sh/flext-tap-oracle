@@ -21,7 +21,7 @@ from flext_db_oracle.types import (
 TapReplicationMethod = Literal["FULL_TABLE", "INCREMENTAL"]
 TapEnvironment = Literal["development", "staging", "production"]
 
-__all__ = [
+__all__: list[str] = [
     # Re-export Oracle types
     "TDbOracleColumn",
     "TDbOracleQueryResult",

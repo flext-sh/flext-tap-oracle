@@ -152,8 +152,8 @@ class TapOracle(Tap):
     ) -> list[str]:
         """Process tables result using Railway-oriented programming - Single Responsibility."""
         if (
-            hasattr(tables_result, "is_success")
-            and tables_result.is_success
+            hasattr(tables_result, "success")
+            and tables_result.success
             and hasattr(tables_result, "data")
             and tables_result.data
         ):
@@ -199,8 +199,8 @@ class TapOracle(Tap):
     ) -> dict[str, object]:
         """Process schema result using Railway Pattern - Single Responsibility."""
         if (
-            hasattr(schema_result, "is_success")
-            and schema_result.is_success
+            hasattr(schema_result, "success")
+            and schema_result.success
             and hasattr(schema_result, "data")
             and schema_result.data
         ):
@@ -258,7 +258,7 @@ class TapOracle(Tap):
         try:
             # Use flext-db-oracle API with proper Railway Pattern
             result = self.oracle_api.test_connection()
-            return hasattr(result, "is_success") and result.is_success
+            return hasattr(result, "success") and result.success
         except Exception:
             logger.exception("Oracle connection test failed")
             return False

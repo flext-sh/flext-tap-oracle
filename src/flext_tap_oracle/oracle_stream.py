@@ -53,7 +53,7 @@ class OracleStream(Stream):
             # Execute query using real Oracle API - returns FlextResult[list[tuple[Any, ...]]]
             result = connected_api.query(sql)
 
-            if result.is_success and result.data:
+            if result.success and result.data:
                 # Get column names from schema to convert tuples to dicts
                 column_names = list(self.schema.get("properties", {}).keys())
 

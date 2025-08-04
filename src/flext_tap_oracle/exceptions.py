@@ -81,7 +81,7 @@ class FlextTapOracleStreamError(FlextTapOracleError):
         super().__init__(f"Oracle tap stream: {message}", context=context)
 
 
-__all__ = [
+__all__: list[str] = [
     "FlextTapOracleAuthenticationError",
     "FlextTapOracleConfigurationError",
     "FlextTapOracleConnectionError",

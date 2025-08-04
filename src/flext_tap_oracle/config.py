@@ -136,7 +136,7 @@ class TapOracleConfig(BaseModel):
 # Alias for backward compatibility
 Config = TapOracleConfig
 
-__all__ = [
+__all__: list[str] = [
     "Config",
     "TapOracleConfig",
 ]

@@ -20,7 +20,7 @@ from .tap import TapOracle
 
 __version__ = "0.9.0"
 
-__all__ = [
+__all__: list[str] = [
     "Config",
     "OracleStream",
     "Stream",
