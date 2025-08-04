@@ -304,7 +304,7 @@ class TapOracle(Tap):
                     await stream.sync_async()
                 else:
                     logger.warning(
-                        f"Stream {stream.name} does not support async processing",
+                        "Stream %s does not support async processing", stream.name,
                     )
 
         # Process all streams concurrently
@@ -320,11 +320,11 @@ class TapOracle(Tap):
 
         # Mock schema service for compatibility with tests
         class MockSchemaService:
-            async def get_schema_tables(self, schema_name: str) -> object:
+            async def get_schema_tables(self, _schema_name: str) -> object:
                 # Mock result object
                 class MockResult:
                     success = True
-                    data: list[object] = []
+                    data: ClassVar[list[object]] = []
 
                 return MockResult()
 

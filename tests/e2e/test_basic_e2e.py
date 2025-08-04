@@ -10,7 +10,10 @@ import os
 import pytest
 from pydantic import SecretStr
 
-from flext_db_oracle import FlextDbOracleConfig as OracleConfig, FlextDbOracleApi as OracleConnectionService
+from flext_db_oracle import (
+    FlextDbOracleApi as OracleConnectionService,
+    FlextDbOracleConfig as OracleConfig,
+)
 from flext_tap_oracle.config import TapOracleConfig
 from flext_tap_oracle.oracle_stream import OracleStream
 from flext_tap_oracle.tap import TapOracle
@@ -57,20 +60,14 @@ class TestBasicE2E:
 
     def test_tap_module_import(self) -> None:
         """Test that tap module can be imported."""
-
-
         assert TapOracle is not None
         if TapOracle.name != "tap-oracle":
             raise AssertionError(f"Expected {"tap-oracle"}, got {TapOracle.name}")
 
     def test_stream_module_import(self) -> None:
         """Test that stream modules can be imported."""
-
-
         assert OracleStream is not None
 
     def test_config_module_import(self) -> None:
         """Test that config module can be imported."""
-
-
         assert TapOracleConfig is not None

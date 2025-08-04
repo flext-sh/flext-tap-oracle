@@ -11,8 +11,6 @@ EXPECTED_BULK_SIZE = 2
 EXPECTED_TOTAL_PAGES = 8
 EXPECTED_DATA_COUNT = 3
 
-from flext_tap_oracle.tap import cli
-
 import asyncio
 from typing import TYPE_CHECKING, Any
 from unittest.mock import AsyncMock, Mock, patch
@@ -21,7 +19,7 @@ import pytest
 from pydantic import ValidationError
 
 from flext_tap_oracle.config import TapOracleConfig
-from flext_tap_oracle.tap import TapOracle
+from flext_tap_oracle.tap import TapOracle, cli
 
 if TYPE_CHECKING:
     from collections.abc import Generator
@@ -157,7 +155,7 @@ class TestTapOracleEnterprise:
         """Test database stream discovery."""
         tap = TapOracle(config=database_config)
 
-      
+
         # So the tap should discover exactly those tables without needing Oracle DB connection
         if tap.typed_config.tables != ["USERS", "ORDERS", "PRODUCTS"]:
             raise AssertionError(f"Expected {["USERS", "ORDERS", "PRODUCTS"]}, got {tap.typed_config.tables}")
@@ -187,7 +185,7 @@ class TestTapOracleEnterprise:
         """Test Oracle database stream discovery."""
         tap = TapOracle(config=database_config)
 
-      
+
         # So the tap should discover exactly those tables without needing Oracle DB connection
         if tap.typed_config.tables != ["USERS", "ORDERS", "PRODUCTS"]:
             raise AssertionError(f"Expected {["USERS", "ORDERS", "PRODUCTS"]}, got {tap.typed_config.tables}")

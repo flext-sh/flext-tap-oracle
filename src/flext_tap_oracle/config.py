@@ -11,6 +11,10 @@ from pydantic import BaseModel, Field, SecretStr, field_validator
 # Import Oracle config from flext-db-oracle
 from flext_db_oracle import FlextDbOracleConfig
 
+# Constants
+MAX_PORT_NUMBER = 65535
+MIN_PORT_NUMBER = 1
+
 
 class TapOracleConfig(BaseModel):
     """Oracle Tap configuration extending flext-db-oracle config with modern Singer SDK functionality."""
@@ -78,8 +82,8 @@ class TapOracleConfig(BaseModel):
     @classmethod
     def validate_port(cls, v: int) -> int:
         """Validate port range."""
-        if not 1 <= v <= 65535:
-            msg = "Port must be between 1 and 65535"
+        if not MIN_PORT_NUMBER <= v <= MAX_PORT_NUMBER:
+            msg = f"Port must be between {MIN_PORT_NUMBER} and {MAX_PORT_NUMBER}"
             raise ValueError(msg)
         return v
 
@@ -97,7 +101,8 @@ class TapOracleConfig(BaseModel):
         """Validate complete configuration for Singer tap functionality."""
         try:
             return self._validate_required_fields() and self._validate_port_range()
-        except Exception:
+        except (ValueError, TypeError, AttributeError):
+            # Log specific validation errors for debugging
             return False
 
     def _validate_required_fields(self) -> bool:
@@ -107,7 +112,7 @@ class TapOracleConfig(BaseModel):
 
     def _validate_port_range(self) -> bool:
         """Validate port is within valid range."""
-        return 1 <= self.port <= 65535
+        return MIN_PORT_NUMBER <= self.port <= MAX_PORT_NUMBER
 
     def get_connection_string(self) -> str:
         """Generate connection string for logging (password masked)."""

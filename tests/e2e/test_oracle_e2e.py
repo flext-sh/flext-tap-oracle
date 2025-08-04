@@ -14,9 +14,11 @@ from typing import TYPE_CHECKING
 import pytest
 from pydantic import SecretStr
 
-from flext_db_oracle import FlextDbOracleConfig as OracleConfig
 # Import from the flattened flext-db-oracle structure
-from flext_db_oracle import FlextDbOracleApi as OracleConnectionService
+from flext_db_oracle import (
+    FlextDbOracleApi as OracleConnectionService,
+    FlextDbOracleConfig as OracleConfig,
+)
 
 if TYPE_CHECKING:
     from flext_core import FlextResult
@@ -28,7 +30,7 @@ EXPECTED_BULK_SIZE = 2
 class OracleQueryService:
     def __init__(self, connection_service: OracleConnectionService) -> None:
         self.connection_service = connection_service
-        
+
     async def execute_query(self, sql: str, params: list[object] | None = None) -> FlextResult[object]:
         """Mock execute query method."""
         from flext_core import FlextResult
