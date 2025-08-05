@@ -40,17 +40,29 @@ class OracleStream(Stream):
 
     def get_records(
         self,
-        _context: Mapping[str, object] | None,
+        context: Mapping[str, object] | None,
     ) -> Iterable[dict[str, object]]:
-        """Extract records from Oracle table using real flext-db-oracle API."""
+        """Extract records from Oracle table using real flext-db-oracle API with advanced features."""
         try:
             # Connect to Oracle database first
             connected_api = self.oracle_api.connect()
 
-            # Build real Oracle query using the actual table name
-            sql = f"SELECT * FROM {self.table_name}"
+            # Build advanced Oracle query using tap configuration
+            tap_config = self.tap.typed_config if hasattr(self.tap, "typed_config") else None
 
-            # Execute query using real Oracle API - returns FlextResult[list[tuple[Any, ...]]]
+            if tap_config and hasattr(tap_config, "build_select_query"):
+                # Use advanced query builder with filtering, pagination, column selection
+                sql = tap_config.build_select_query(
+                    table_name=self.table_name,
+                    schema_name=tap_config.schema_name,
+                )
+            else:
+                # Fallback to simple query
+                sql = f"SELECT * FROM {self.table_name}"
+
+            logger.info(f"Executing Oracle query: {sql}")
+
+            # Execute query using real Oracle API - returns FlextResult[list[tuple[object, ...]]]
             result = connected_api.query(sql)
 
             if result.success and result.data:
