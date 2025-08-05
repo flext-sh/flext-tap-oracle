@@ -46,7 +46,9 @@ class OracleStream(Stream):
             connected_api = self.oracle_api.connect()
 
             # Build advanced Oracle query using tap configuration
-            tap_config = self.tap.typed_config if hasattr(self.tap, "typed_config") else None
+            tap_config = (
+                self.tap.typed_config if hasattr(self.tap, "typed_config") else None
+            )
 
             if tap_config and hasattr(tap_config, "build_select_query"):
                 # Use advanced query builder with filtering, pagination, column selection

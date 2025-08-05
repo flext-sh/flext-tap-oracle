@@ -304,7 +304,8 @@ class TapOracle(Tap):
                     await stream.sync_async()
                 else:
                     logger.warning(
-                        "Stream %s does not support async processing", stream.name,
+                        "Stream %s does not support async processing",
+                        stream.name,
                     )
 
         # Process all streams concurrently
