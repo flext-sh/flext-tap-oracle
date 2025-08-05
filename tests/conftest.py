@@ -10,7 +10,6 @@ import os
 from typing import TYPE_CHECKING
 
 import pytest
-
 from flext_tap_oracle.tap import TapOracle
 
 if TYPE_CHECKING:

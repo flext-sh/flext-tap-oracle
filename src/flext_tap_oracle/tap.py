@@ -9,12 +9,12 @@ from __future__ import annotations
 import asyncio
 from typing import ClassVar
 
+from flext_core import get_logger
+from flext_db_oracle import FlextDbOracleApi
+
 # Import generic interfaces from flext-meltano
 from flext_meltano import Tap, singer_typing as th
 from flext_meltano.common_schemas import create_oracle_tap_schema
-
-from flext_core import get_logger
-from flext_db_oracle import FlextDbOracleApi
 
 # Import Oracle-specific configuration and stream implementation
 from flext_tap_oracle.config import TapOracleConfig

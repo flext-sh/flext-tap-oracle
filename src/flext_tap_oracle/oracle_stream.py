@@ -8,16 +8,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from flext_meltano import Stream
-
 from flext_core import get_logger
+from flext_meltano import Stream
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping
 
-    from flext_meltano import Tap
-
     from flext_db_oracle import FlextDbOracleApi
+    from flext_meltano import Tap
 
 logger = get_logger(__name__)
 
