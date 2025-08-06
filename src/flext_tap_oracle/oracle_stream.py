@@ -62,7 +62,7 @@ class OracleStream(Stream):
                 # Fallback to simple query - table name is validated in config
                 sql = f"SELECT * FROM {self.table_name}"  # noqa: S608
 
-            logger.info(f"Executing Oracle query: {sql}")
+            logger.info("Executing Oracle query: %s", sql)
 
             # Execute query using real Oracle API - returns FlextResult[list[tuple[object, ...]]]
             result = connected_api.query(sql)

@@ -17,7 +17,7 @@ from flext_tap_oracle.constants import FlextTapOracleSemanticConstants
 
 class TapOracleConfig(FlextDbOracleConfig):
     """Oracle Tap configuration extending FlextDbOracleConfig.
-    
+
     This configuration class extends the base Oracle database configuration
     with tap-specific settings for Singer protocol implementation.
     """
@@ -29,15 +29,23 @@ class TapOracleConfig(FlextDbOracleConfig):
     stream_prefix: str = FlextTapOracleSemanticConstants.Singer.DEFAULT_STREAM_PREFIX
 
     # Replication settings
-    default_replication_method: str = FlextTapOracleSemanticConstants.Singer.REPLICATION_METHOD_FULL_TABLE
+    default_replication_method: str = (
+        FlextTapOracleSemanticConstants.Singer.REPLICATION_METHOD_FULL_TABLE
+    )
 
     # Performance settings
-    parallel_streams: int = FlextTapOracleSemanticConstants.Performance.DEFAULT_PARALLEL_STREAMS
-    max_parallel_streams: int = FlextTapOracleSemanticConstants.Performance.MAX_PARALLEL_STREAMS
+    parallel_streams: int = (
+        FlextTapOracleSemanticConstants.Performance.DEFAULT_PARALLEL_STREAMS
+    )
+    max_parallel_streams: int = (
+        FlextTapOracleSemanticConstants.Performance.MAX_PARALLEL_STREAMS
+    )
     fetch_size: int = FlextTapOracleSemanticConstants.Performance.DEFAULT_FETCH_SIZE
 
     # Discovery settings
-    discovery_batch_size: int = FlextTapOracleSemanticConstants.Performance.DEFAULT_DISCOVERY_BATCH_SIZE
+    discovery_batch_size: int = (
+        FlextTapOracleSemanticConstants.Performance.DEFAULT_DISCOVERY_BATCH_SIZE
+    )
 
     # Schema settings
     schema_name: str | None = None  # Use default schema if not specified
@@ -50,13 +58,13 @@ class TapOracleConfig(FlextDbOracleConfig):
 
     def to_oracle_config(self) -> FlextDbOracleConfig:
         """Convert to base Oracle config for FlextDbOracleApi.
-        
+
         Returns:
             FlextDbOracleConfig instance compatible with FlextDbOracleApi
 
         """
         # Create base config with all inherited fields
-        oracle_config = FlextDbOracleConfig(
+        return FlextDbOracleConfig(
             host=self.host,
             port=self.port,
             username=self.username,
@@ -71,11 +79,10 @@ class TapOracleConfig(FlextDbOracleConfig):
             ssl_enabled=self.ssl_enabled,
             protocol=self.protocol,
         )
-        return oracle_config
 
     def get_performance_settings(self) -> dict[str, Any]:
         """Get performance-related settings as dictionary.
-        
+
         Returns:
             Dictionary with performance settings
 
@@ -94,14 +101,14 @@ class TapOracleConfig(FlextDbOracleConfig):
     def build_select_query(
         self,
         table_name: str,
-        schema_name: str | None = None
+        schema_name: str | None = None,
     ) -> str:
         """Build optimized SELECT query for Oracle table extraction.
-        
+
         Args:
             table_name: Name of the table to query
             schema_name: Optional schema name
-            
+
         Returns:
             Optimized SQL query string
 
