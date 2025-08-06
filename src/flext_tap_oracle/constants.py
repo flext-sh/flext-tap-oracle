@@ -95,7 +95,7 @@ class FlextTapOracleSemanticConstants(FlextSemanticConstants):
         OPTIMAL_PARALLEL_STREAMS: Final = 4
 
         # Connection pooling - CONSUME from flext-core
-        DEFAULT_POOL_SIZE: Final = FlextSemanticConstants.Infrastructure.DEFAULT_CONNECTION_POOL_SIZE
+        DEFAULT_POOL_SIZE: Final = FlextSemanticConstants.Infrastructure.DEFAULT_POOL_SIZE
         MAX_POOL_SIZE: Final = 20
         MIN_POOL_SIZE: Final = 1
 

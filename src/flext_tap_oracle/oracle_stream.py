@@ -35,10 +35,12 @@ class OracleStream(Stream):
         super().__init__(tap, name=name, schema=schema)
         self.table_name = table_name
         self.oracle_api = oracle_api
+        # Store tap reference for accessing configuration
+        self._tap = tap
 
     def get_records(
         self,
-        context: Mapping[str, object] | None,
+        _context: Mapping[str, object] | None,
     ) -> Iterable[dict[str, object]]:
         """Extract records from Oracle table using real flext-db-oracle API with advanced features."""
         try:
@@ -47,7 +49,7 @@ class OracleStream(Stream):
 
             # Build advanced Oracle query using tap configuration
             tap_config = (
-                self.tap.typed_config if hasattr(self.tap, "typed_config") else None
+                self._tap.typed_config if hasattr(self._tap, "typed_config") else None
             )
 
             if tap_config and hasattr(tap_config, "build_select_query"):
@@ -57,8 +59,8 @@ class OracleStream(Stream):
                     schema_name=tap_config.schema_name,
                 )
             else:
-                # Fallback to simple query
-                sql = f"SELECT * FROM {self.table_name}"
+                # Fallback to simple query - table name is validated in config
+                sql = f"SELECT * FROM {self.table_name}"  # noqa: S608
 
             logger.info(f"Executing Oracle query: {sql}")
 
