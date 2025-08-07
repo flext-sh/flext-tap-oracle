@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import Any
 
 # Import base configuration from flext-db-oracle
-from flext_db_oracle import FlextDbOracleConfig
+from flext_db_oracle import FlextDbOracleApi, FlextDbOracleConfig
 
 # Import constants for defaults
 from flext_tap_oracle.constants import FlextTapOracleSemanticConstants
@@ -105,6 +105,9 @@ class TapOracleConfig(FlextDbOracleConfig):
     ) -> str:
         """Build optimized SELECT query for Oracle table extraction.
 
+        This method delegates to flext-db-oracle for consistent SQL generation
+        and adds Singer-specific optimizations.
+
         Args:
             table_name: Name of the table to query
             schema_name: Optional schema name
@@ -113,23 +116,34 @@ class TapOracleConfig(FlextDbOracleConfig):
             Optimized SQL query string
 
         """
-        # Use provided schema or default from config
-        effective_schema = schema_name or self.schema_name
+        # Create Oracle API instance for SQL building (no connection needed)
+        oracle_api = FlextDbOracleApi()
 
-        # Build fully qualified table name
-        if effective_schema:
-            full_table_name = f"{effective_schema}.{table_name}"
-        else:
-            full_table_name = table_name
+        # Use flext-db-oracle to build base SELECT query
+        base_query_result = oracle_api.build_select(
+            table_name=table_name,
+            columns=None,  # SELECT * equivalent
+            conditions=None,
+            schema=schema_name or self.schema_name,
+        )
 
-        # Build query with Oracle-specific optimizations
-        query = f"SELECT * FROM {full_table_name}"
+        if base_query_result.is_failure:
+            # No fallback - delegate SQL construction to flext-db-oracle only
+            # Singer taps should not construct SQL directly
+            msg = f"Failed to build Oracle query via flext-db-oracle: {base_query_result.error}"
+            raise ValueError(msg)
 
-        # Add fetch size hint for performance
+        base_query = base_query_result.data
+        if base_query is None:
+            msg = "Failed to build Oracle query: base query is None"
+            raise ValueError(msg)
+
+        # Add Singer-specific Oracle performance hints
         if self.fetch_size and self.fetch_size > 0:
-            query = f"{query} /*+ FIRST_ROWS({self.fetch_size}) */"
+            # Add Oracle hint for Singer tap performance optimization
+            base_query = f"{base_query} /*+ FIRST_ROWS({self.fetch_size}) */"
 
-        return query
+        return base_query
 
 
 # Legacy alias for backward compatibility
