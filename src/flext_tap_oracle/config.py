@@ -1,150 +1,203 @@
-"""Oracle tap configuration module for FLEXT Tap Oracle using flext-db-oracle infrastructure.
+"""Oracle Tap Configuration - COMPOSIÇÃO SEM DUPLICAÇÃO.
 
-This module provides configuration management for Oracle data extraction
-using the flext-db-oracle infrastructure.
+Este módulo implementa configuração do Oracle Tap usando COMPOSIÇÃO das
+configurações existentes do flext-core, flext-meltano e flext-db-oracle.
+
+PRINCÍPIO: COMPOR, não duplicar. Usar o que já existe.
+
+Copyright (c) 2025 FLEXT Contributors
+SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
 
-from typing import Any
+import re
+from typing import Self
 
-# Import base configuration from flext-db-oracle
-from flext_db_oracle import FlextDbOracleApi, FlextDbOracleConfig
+# Import base configs - NEVER duplicate functionality
+# Import from flext-core SINGLE SOURCE - NO duplications
+from flext_core import FlextConstants, FlextResult
+from flext_db_oracle import FlextDbOracleConfig
+from flext_meltano import FlextMeltanoConfig
+from pydantic import Field, field_validator, model_validator
 
-# Import constants for defaults
-from flext_tap_oracle.constants import FlextTapOracleSemanticConstants
+from flext_tap_oracle.models import FlextOracleTapConfiguration
 
 
-class TapOracleConfig(FlextDbOracleConfig):
-    """Oracle Tap configuration extending FlextDbOracleConfig.
+class FlextOracleTapConfig(FlextMeltanoConfig):
+    """Oracle Tap Configuration usando COMPOSIÇÃO das bases existentes.
 
-    This configuration class extends the base Oracle database configuration
-    with tap-specific settings for Singer protocol implementation.
+    Esta classe COMPÕE funcionalidade das bases existentes:
+    - FlextMeltanoConfig: Configuração base para taps Singer
+    - FlextDbOracleConfig: Configuração Oracle database (via composition)
+    - FlextOracleTapConfiguration: Configurações específicas do tap
+
+    NUNCA duplica funcionalidade existente.
     """
 
-    # Singer-specific configuration
-    tables: list[str] | None = None
-    exclude_tables: list[str] | None = None
-    batch_size: int = FlextTapOracleSemanticConstants.Performance.DEFAULT_BATCH_SIZE
-    stream_prefix: str = FlextTapOracleSemanticConstants.Singer.DEFAULT_STREAM_PREFIX
-
-    # Replication settings
-    default_replication_method: str = (
-        FlextTapOracleSemanticConstants.Singer.REPLICATION_METHOD_FULL_TABLE
+    # Composition: Oracle database configuration
+    oracle_config: FlextDbOracleConfig = Field(
+        ...,
+        description="Oracle database configuration from flext-db-oracle",
     )
 
-    # Performance settings
-    parallel_streams: int = (
-        FlextTapOracleSemanticConstants.Performance.DEFAULT_PARALLEL_STREAMS
-    )
-    max_parallel_streams: int = (
-        FlextTapOracleSemanticConstants.Performance.MAX_PARALLEL_STREAMS
-    )
-    fetch_size: int = FlextTapOracleSemanticConstants.Performance.DEFAULT_FETCH_SIZE
-
-    # Discovery settings
-    discovery_batch_size: int = (
-        FlextTapOracleSemanticConstants.Performance.DEFAULT_DISCOVERY_BATCH_SIZE
+    # Composition: Tap-specific configuration
+    tap_config: FlextOracleTapConfiguration = Field(
+        default_factory=FlextOracleTapConfiguration,
+        description="Tap-specific configuration",
     )
 
-    # Schema settings
-    schema_name: str | None = None  # Use default schema if not specified
+    @field_validator("oracle_config", mode="before")
+    @classmethod
+    def validate_oracle_config(cls, v: object) -> FlextDbOracleConfig:
+        """Validate Oracle configuration using existing validation."""
+        if isinstance(v, dict):
+            return FlextDbOracleConfig.model_validate(v)
+        if isinstance(v, FlextDbOracleConfig):
+            return v
+        msg = "oracle_config must be dict or FlextDbOracleConfig"
+        raise ValueError(msg)
 
-    # Async and advanced features
-    enable_async: bool = False
-    enable_metrics: bool = True
-    connection_type: str = "standard"
-    circuit_breaker_enabled: bool = True
+    @model_validator(mode="after")
+    def validate_tap_oracle_integration(self) -> Self:
+        """Validate integration between Oracle and tap configurations - Python 3.13 enhanced."""
+        # Enhanced validation for Oracle-tap compatibility
+        max_tables = FlextConstants.Limits.MAX_LIST_SIZE
+        if (
+            self.tap_config.tables_filter
+            and len(self.tap_config.tables_filter) > max_tables
+        ):
+            msg = (
+                f"Too many tables specified: {len(self.tap_config.tables_filter)} > {max_tables:,} "
+                f"(Oracle performance limit)"
+            )
+            raise ValueError(msg)
 
-    def to_oracle_config(self) -> FlextDbOracleConfig:
-        """Convert to base Oracle config for FlextDbOracleApi.
+        # Validate Oracle connection limits vs tap parallelism
+        if hasattr(self.oracle_config, "pool_max"):
+            max_connections = getattr(self.oracle_config, "pool_max", 10)
+            if self.tap_config.max_parallel_streams > max_connections:
+                msg = (
+                    f"Parallel streams ({self.tap_config.max_parallel_streams}) exceeds "
+                    f"Oracle connection pool limit ({max_connections})"
+                )
+                raise ValueError(msg)
+
+        # Advanced validation: batch size vs Oracle characteristics
+        max_batch = FlextConstants.Performance.MAX_BATCH_SIZE
+        if self.tap_config.batch_size > max_batch:
+            msg = (
+                f"Batch size too large for Oracle: {self.tap_config.batch_size} > {max_batch:,} "
+                f"(may cause memory issues)"
+            )
+            raise ValueError(msg)
+
+        # Cross-validate stream prefix with Oracle naming conventions
+        if not self._is_valid_oracle_prefix(self.tap_config.stream_prefix):
+            msg = f"Invalid Oracle-compatible stream prefix: {self.tap_config.stream_prefix}"
+            raise ValueError(msg)
+
+        return self
+
+    @staticmethod
+    def _is_valid_oracle_prefix(prefix: str) -> bool:
+        """Validate stream prefix follows Oracle naming conventions - Python 3.13."""
+        max_length = FlextConstants.Limits.MAX_STRING_LENGTH
+        if not prefix or len(prefix) > max_length:
+            return False
+
+        # Oracle identifiers: start with letter, contain letters/digits/underscore - use flext-core pattern
+        return bool(re.match(FlextConstants.Patterns.IDENTIFIER_PATTERN, prefix))
+
+    @property
+    def connection_string(self) -> str:
+        """Get Oracle connection string from composed config."""
+        return self.oracle_config.get_connection_string()
+
+    @property
+    def stream_prefix(self) -> str:
+        """Get stream prefix for Singer streams."""
+        return self.tap_config.stream_prefix
+
+    @property
+    def batch_size(self) -> int:
+        """Get batch size for data extraction."""
+        return self.tap_config.batch_size
+
+    def get_oracle_config(self) -> FlextDbOracleConfig:
+        """Get Oracle database configuration.
 
         Returns:
-            FlextDbOracleConfig instance compatible with FlextDbOracleApi
+            FlextDbOracleConfig for use with flext-db-oracle components
 
         """
-        # Create base config with all inherited fields
-        return FlextDbOracleConfig(
-            host=self.host,
-            port=self.port,
-            username=self.username,
-            password=self.password,
-            service_name=self.service_name,
-            sid=self.sid,
-            pool_min=self.pool_min,
-            pool_max=self.pool_max,
-            pool_increment=self.pool_increment,
-            timeout=self.timeout,
-            encoding=self.encoding,
-            ssl_enabled=self.ssl_enabled,
-            protocol=self.protocol,
+        return self.oracle_config
+
+    def get_tap_config(self) -> FlextOracleTapConfiguration:
+        """Get tap-specific configuration.
+
+        Returns:
+            FlextOracleTapConfiguration for tap operations
+
+        """
+        return self.tap_config
+
+
+# Base FlextModel.from_dict method handles validation correctly
+
+
+# Factory function for easy creation using configuration objects pattern
+def create_oracle_tap_config(
+    oracle_params: dict[str, object],
+    tap_params: dict[str, object] | None = None,
+    meltano_params: dict[str, object] | None = None,
+) -> FlextResult[FlextOracleTapConfig]:
+    """Factory function to create Oracle tap configuration using grouped parameters.
+
+    Args:
+        oracle_params: Oracle database connection parameters (host, port, username, password, etc.)
+        tap_params: Optional tap-specific parameters (batch_size, stream_prefix, etc.)
+        meltano_params: Optional Meltano parameters (project_root, environment, etc.)
+
+    Returns:
+        FlextResult containing validated Oracle tap configuration
+
+    """
+    try:
+        # Apply defaults
+        tap_config = tap_params or {}
+        meltano_config = meltano_params or {}
+
+        # Set default values using semantic constants
+        tap_config.setdefault(
+            "batch_size", FlextConstants.Performance.DEFAULT_BATCH_SIZE
+        )
+        tap_config.setdefault("stream_prefix", "oracle")
+        meltano_config.setdefault("project_root", ".")
+        meltano_config.setdefault(
+            "environment", FlextConstants.Configuration.DEFAULT_ENVIRONMENT
         )
 
-    def get_performance_settings(self) -> dict[str, Any]:
-        """Get performance-related settings as dictionary.
-
-        Returns:
-            Dictionary with performance settings
-
-        """
-        return {
-            "batch_size": self.batch_size,
-            "parallel_streams": self.parallel_streams,
-            "max_parallel_streams": self.max_parallel_streams,
-            "fetch_size": self.fetch_size,
-            "discovery_batch_size": self.discovery_batch_size,
-            "enable_async": self.enable_async,
-            "circuit_breaker_enabled": self.circuit_breaker_enabled,
-            "connection_type": self.connection_type,
+        config_data = {
+            "oracle_config": oracle_params,
+            "tap_config": tap_config,
+            **meltano_config,
         }
 
-    def build_select_query(
-        self,
-        table_name: str,
-        schema_name: str | None = None,
-    ) -> str:
-        """Build optimized SELECT query for Oracle table extraction.
+        config_instance = FlextOracleTapConfig.model_validate(config_data)
+        return FlextResult.ok(config_instance)
 
-        This method delegates to flext-db-oracle for consistent SQL generation
-        and adds Singer-specific optimizations.
-
-        Args:
-            table_name: Name of the table to query
-            schema_name: Optional schema name
-
-        Returns:
-            Optimized SQL query string
-
-        """
-        # Create Oracle API instance for SQL building (no connection needed)
-        oracle_api = FlextDbOracleApi()
-
-        # Use flext-db-oracle to build base SELECT query
-        base_query_result = oracle_api.build_select(
-            table_name=table_name,
-            columns=None,  # SELECT * equivalent
-            conditions=None,
-            schema=schema_name or self.schema_name,
-        )
-
-        if base_query_result.is_failure:
-            # No fallback - delegate SQL construction to flext-db-oracle only
-            # Singer taps should not construct SQL directly
-            msg = f"Failed to build Oracle query via flext-db-oracle: {base_query_result.error}"
-            raise ValueError(msg)
-
-        base_query = base_query_result.data
-        if base_query is None:
-            msg = "Failed to build Oracle query: base query is None"
-            raise ValueError(msg)
-
-        # Add Singer-specific Oracle performance hints
-        if self.fetch_size and self.fetch_size > 0:
-            # Add Oracle hint for Singer tap performance optimization
-            base_query = f"{base_query} /*+ FIRST_ROWS({self.fetch_size}) */"
-
-        return base_query
+    except Exception as e:
+        return FlextResult.fail(f"Oracle tap configuration creation failed: {e}")
 
 
-# Legacy alias for backward compatibility
-Config = TapOracleConfig
+# Backward compatibility aliases
+TapOracleConfig = FlextOracleTapConfig
+Config = FlextOracleTapConfig
+
+__all__: list[str] = [
+    "Config",  # Legacy alias
+    "FlextOracleTapConfig",
+    "TapOracleConfig",  # Legacy alias
+    "create_oracle_tap_config",
+]

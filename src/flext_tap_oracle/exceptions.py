@@ -1,44 +1,39 @@
-"""Oracle tap exception hierarchy using flext-core DRY patterns.
+"""Oracle tap exception hierarchy using flext-core base exceptions.
 
 Copyright (c) 2025 FLEXT Contributors
 SPDX-License-Identifier: MIT
 
-Domain-specific exceptions for Oracle tap operations using factory pattern to eliminate duplication.
+Domain-specific exceptions for Oracle tap operations.
 """
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+# Import base exceptions that actually exist in flext-core
+from flext_core import (
+    FlextError,
+    FlextOperationError,
+    FlextValidationError,
+)
 
-from flext_core.exceptions import create_module_exception_classes
 
-if TYPE_CHECKING:
-    # For type checking, import the actual base types
-    from flext_core.exceptions import (
-        FlextAuthenticationError as FlextTapOracleAuthenticationError,
-        FlextConfigurationError as FlextTapOracleConfigurationError,
-        FlextConnectionError as FlextTapOracleConnectionError,
-        FlextError as FlextTapOracleError,
-        FlextProcessingError as FlextTapOracleProcessingError,
-        FlextTimeoutError as FlextTapOracleTimeoutError,
-        FlextValidationError as FlextTapOracleValidationError,
-    )
-else:
-    # Create all standard exception classes using factory pattern - eliminates 150+ lines of duplication
-    oracle_exceptions = create_module_exception_classes("flext_tap_oracle")
+class FlextTapOracleError(FlextError):
+    """Base error for Oracle tap operations."""
 
-    # Import generated classes for clean usage
-    FlextTapOracleError = oracle_exceptions["FlextTapOracleError"]
-    FlextTapOracleValidationError = oracle_exceptions["FlextTapOracleValidationError"]
-    FlextTapOracleConfigurationError = oracle_exceptions[
-        "FlextTapOracleConfigurationError"
-    ]
-    FlextTapOracleConnectionError = oracle_exceptions["FlextTapOracleConnectionError"]
-    FlextTapOracleProcessingError = oracle_exceptions["FlextTapOracleProcessingError"]
-    FlextTapOracleAuthenticationError = oracle_exceptions[
-        "FlextTapOracleAuthenticationError"
-    ]
-    FlextTapOracleTimeoutError = oracle_exceptions["FlextTapOracleTimeoutError"]
+
+class FlextTapOracleValidationError(FlextValidationError):
+    """Oracle tap validation errors."""
+
+
+class FlextTapOracleConnectionError(FlextOperationError):
+    """Oracle tap connection errors."""
+
+
+class FlextTapOracleConfigurationError(FlextValidationError):
+    """Oracle tap configuration errors."""
+
+
+class FlextTapOracleProcessingError(FlextOperationError):
+    """Oracle tap processing errors."""
 
 
 class FlextTapOracleQueryError(FlextTapOracleError):
@@ -82,13 +77,11 @@ class FlextTapOracleStreamError(FlextTapOracleError):
 
 
 __all__: list[str] = [
-    "FlextTapOracleAuthenticationError",
     "FlextTapOracleConfigurationError",
     "FlextTapOracleConnectionError",
     "FlextTapOracleError",
     "FlextTapOracleProcessingError",
     "FlextTapOracleQueryError",
     "FlextTapOracleStreamError",
-    "FlextTapOracleTimeoutError",
     "FlextTapOracleValidationError",
 ]

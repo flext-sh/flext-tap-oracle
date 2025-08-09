@@ -10,7 +10,8 @@ import os
 from typing import TYPE_CHECKING
 
 import pytest
-from flext_tap_oracle.tap import TapOracle
+from flext_core import FlextResult
+from flext_tap_oracle.base_service import FlextOracleTapService
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator, Generator
@@ -72,8 +73,28 @@ def oracle_tap_config() -> dict[str, object]:
 
 @pytest.fixture
 def oracle_tap(oracle_tap_config: dict[str, object]) -> object:
-    """Oracle tap instance for testing."""
-    return TapOracle(config=oracle_tap_config)
+    """Oracle tap service instance for testing."""
+    from flext_tap_oracle.config import FlextOracleTapConfig
+
+    # Convert dict to proper config and create service
+    config_result = FlextResult.ok(FlextOracleTapConfig.model_validate(oracle_tap_config))
+    if config_result.is_success and config_result.data:
+        return FlextOracleTapService(config=config_result.data)
+
+    # Fallback for test compatibility
+    from flext_tap_oracle.config import create_oracle_tap_config
+    fallback_result = create_oracle_tap_config(
+        oracle_params={
+            "host": str(oracle_tap_config.get("host", "localhost")),
+            "username": str(oracle_tap_config.get("username", "test")),
+            "password": str(oracle_tap_config.get("password", "test")),
+        }
+    )
+    if fallback_result.is_success and fallback_result.data:
+        return FlextOracleTapService(config=fallback_result.data)
+
+    error_msg = "Failed to create oracle tap service for testing"
+    raise RuntimeError(error_msg)
 
 
 # Singer protocol fixtures

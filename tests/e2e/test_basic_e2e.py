@@ -14,9 +14,9 @@ from flext_db_oracle import (
     FlextDbOracleApi as OracleConnectionService,
     FlextDbOracleConfig as OracleConfig,
 )
-from flext_tap_oracle.config import TapOracleConfig
+from flext_tap_oracle.config import FlextOracleTapConfig
 from flext_tap_oracle.oracle_stream import OracleStream
-from flext_tap_oracle.tap import TapOracle
+from flext_tap_oracle.base_service import FlextOracleTapBaseService
 
 
 class TestBasicE2E:
@@ -60,9 +60,9 @@ class TestBasicE2E:
 
     def test_tap_module_import(self) -> None:
         """Test that tap module can be imported."""
-        assert TapOracle is not None
-        if TapOracle.name != "tap-oracle":
-            raise AssertionError(f"Expected {"tap-oracle"}, got {TapOracle.name}")
+        assert FlextOracleTapBaseService is not None
+        if FlextOracleTapBaseService.name != "tap-oracle":
+            raise AssertionError(f"Expected {"tap-oracle"}, got {FlextOracleTapBaseService.name}")
 
     def test_stream_module_import(self) -> None:
         """Test that stream modules can be imported."""
@@ -70,4 +70,4 @@ class TestBasicE2E:
 
     def test_config_module_import(self) -> None:
         """Test that config module can be imported."""
-        assert TapOracleConfig is not None
+        assert FlextOracleTapBaseServiceConfig is not None
