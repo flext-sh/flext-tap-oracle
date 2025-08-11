@@ -1,8 +1,10 @@
-"""Oracle Stream Implementation - MAXIMALLY using FlextDbOracle Infrastructure.
+"""Oracle Tap Streams - Complete Stream Implementation.
 
-This module implements Oracle stream using MAXIMUM functionality from flext-db-oracle,
-eliminating ALL duplications and leveraging existing Oracle metadata management,
-connection pooling, observability, and type mapping capabilities.
+PEP8 CONSOLIDATION: All Oracle stream definition and processing logic consolidated.
+This module consolidates oracle_stream.py following the established FLEXT pattern
+for comprehensive stream management.
+
+MAXIMUM use of flext-db-oracle infrastructure for Oracle stream processing.
 
 Copyright (c) 2025 FLEXT Contributors
 SPDX-License-Identifier: MIT
@@ -71,7 +73,9 @@ class OracleStream(Stream):
                     oracle_config = tap_config.get_oracle_config()
                     connection = FlextDbOracleConnection(oracle_config)
                 else:
-                    msg = "Cannot create metadata manager without valid Oracle connection"
+                    msg = (
+                        "Cannot create metadata manager without valid Oracle connection"
+                    )
                     raise RuntimeError(msg)
 
             self._metadata_manager = FlextDbOracleMetadataManager(connection)
@@ -85,7 +89,8 @@ class OracleStream(Stream):
             container = get_flext_container()
             context_name = f"oracle_stream_{self.table_name}"
             self._observability_manager = FlextDbOracleObservabilityManager(
-                container, context_name,
+                container,
+                context_name,
             )
         return self._observability_manager
 
@@ -97,7 +102,8 @@ class OracleStream(Stream):
         try:
             # Log operation start using proper info logging
             logger.info(
-                "Starting stream extraction for table: %s", self.table_name,
+                "Starting stream extraction for table: %s",
+                self.table_name,
             )
             operation_start_time = perf_counter()
 
@@ -105,7 +111,11 @@ class OracleStream(Stream):
             tap_config = getattr(self._tap, "typed_config", None)
 
             # Build query with proper Oracle identifier escaping
-            if tap_config and hasattr(tap_config, "schema_name") and tap_config.schema_name:
+            if (
+                tap_config
+                and hasattr(tap_config, "schema_name")
+                and tap_config.schema_name
+            ):
                 # Use Oracle identifier quoting to prevent injection
                 schema_name = tap_config.schema_name.replace('"', '""')  # Escape quotes
                 table_name = self.table_name.replace('"', '""')  # Escape quotes
@@ -131,7 +141,8 @@ class OracleStream(Stream):
                 if table_metadata_result.success and table_metadata_result.data:
                     # Convert Oracle results to Singer records using flext-db-oracle metadata
                     yield from self._process_results_with_table_metadata(
-                        result.data, table_metadata_result.data,
+                        result.data,
+                        table_metadata_result.data,
                     )
                 else:
                     # Fallback processing without metadata
@@ -139,10 +150,14 @@ class OracleStream(Stream):
 
                 # Log successful operation using proper info logging
                 operation_time = perf_counter() - operation_start_time
-                record_count = len(result.data) if hasattr(result.data, "__len__") else 0
+                record_count = (
+                    len(result.data) if hasattr(result.data, "__len__") else 0
+                )
                 logger.info(
                     "Stream extraction completed in %.2fs for table %s (records: %d)",
-                    operation_time, self.table_name, record_count,
+                    operation_time,
+                    self.table_name,
+                    record_count,
                 )
             else:
                 logger.warning(
@@ -154,7 +169,8 @@ class OracleStream(Stream):
                 operation_time = perf_counter() - operation_start_time
                 logger.info(
                     "Stream extraction completed with no data in %.2fs for table: %s",
-                    operation_time, self.table_name,
+                    operation_time,
+                    self.table_name,
                 )
 
         except Exception as e:
@@ -164,9 +180,14 @@ class OracleStream(Stream):
             )
             # Log failed operation using flext-db-oracle observability
             if hasattr(self, "_observability_manager") and self._observability_manager:
-                operation_time = perf_counter() - operation_start_time if "operation_start_time" in locals() else 0
+                operation_time = (
+                    perf_counter() - operation_start_time
+                    if "operation_start_time" in locals()
+                    else 0
+                )
                 self.observability_manager.log_error_with_context(
-                    "Stream", f"Stream extraction failed after {operation_time:.2f}s: {e}",
+                    "Stream",
+                    f"Stream extraction failed after {operation_time:.2f}s: {e}",
                     table=self.table_name,
                 )
 
@@ -205,7 +226,8 @@ class OracleStream(Stream):
 
                 # Apply Oracle-specific transformations using flext-db-oracle knowledge
                 record = self._transform_oracle_types_with_table_metadata(
-                    record, table_metadata.columns,
+                    record,
+                    table_metadata.columns,
                 )
 
                 yield record
@@ -217,7 +239,8 @@ class OracleStream(Stream):
                 continue
 
     def _process_results_fallback(
-        self, query_data: object,
+        self,
+        query_data: object,
     ) -> Iterable[dict[str, object]]:
         """Fallback processing without metadata (minimal implementation)."""
         # Use schema properties as column names
@@ -262,7 +285,9 @@ class OracleStream(Stream):
         meta_lookup = {}
         for col_meta in column_metadata:
             col_name = getattr(col_meta, "name", None) or getattr(
-                col_meta, "column_name", None,
+                col_meta,
+                "column_name",
+                None,
             )
             if col_name:
                 meta_lookup[col_name] = col_meta
@@ -277,7 +302,9 @@ class OracleStream(Stream):
             oracle_type = None
             if col_meta:
                 oracle_type = getattr(col_meta, "data_type", None) or getattr(
-                    col_meta, "type", None,
+                    col_meta,
+                    "type",
+                    None,
                 )
 
             # Apply Oracle-specific transformations based on type
@@ -301,7 +328,160 @@ class OracleStream(Stream):
 
         return transformed_record
 
+    # ADDITIONAL ORACLE STREAM METHODS
+
+    def get_table_info(self) -> dict[str, object]:
+        """Get Oracle table information using flext-db-oracle metadata."""
+        try:
+            table_metadata_result = self.metadata_manager.get_table_metadata(
+                self.table_name
+            )
+            if table_metadata_result.success and table_metadata_result.data:
+                table = table_metadata_result.data
+                return {
+                    "table_name": self.table_name,
+                    "stream_name": self.name,
+                    "column_count": len(table.columns)
+                    if hasattr(table, "columns")
+                    else 0,
+                    "oracle_schema": getattr(table, "schema_name", "unknown"),
+                    "table_type": getattr(table, "table_type", "TABLE"),
+                }
+            return {"table_name": self.table_name, "error": "Metadata not available"}
+
+        except Exception as e:
+            logger.exception("Failed to get table info")
+            return {"table_name": self.table_name, "error": str(e)}
+
+    def estimate_row_count(self) -> int | None:
+        """Estimate table row count using Oracle system views."""
+        try:
+            # Validate table name is a valid Oracle identifier before using in SQL
+            if not self.table_name or not self.table_name.replace("_", "").replace("$", "").replace("#", "").isalnum():
+                logger.warning("Invalid table name for count estimation: %s", self.table_name)
+                return None
+
+            # Safe query construction using template - table name pre-validated
+            safe_table_name = self.table_name.replace('"', '""')  # Escape quotes
+            query_template = 'SELECT COUNT(*) FROM "{}"'
+            result = self.oracle_api.query(query_template.format(safe_table_name))
+
+            if result.success and result.data and hasattr(result.data, "__getitem__"):
+                first_row = result.data[0]
+                if isinstance(first_row, (list, tuple)) and first_row:
+                    return int(first_row[0])
+                if isinstance(first_row, dict):
+                    # Get first value from dict
+                    return int(next(iter(first_row.values())))
+
+            return None
+
+        except Exception as e:
+            logger.warning(
+                "Failed to estimate row count for %s: %s", self.table_name, e
+            )
+            return None
+
+    def get_stream_metadata(self) -> dict[str, object]:
+        """Get comprehensive stream metadata."""
+        return {
+            "name": self.name,
+            "table_name": self.table_name,
+            "schema": self.schema,
+            "table_info": self.get_table_info(),
+            "estimated_rows": self.estimate_row_count(),
+        }
+
+
+# FACTORY FUNCTIONS
+
+
+def create_oracle_stream(
+    tap: Tap,
+    name: str,
+    table_name: str,
+    schema: dict[str, object],
+    oracle_api: FlextDbOracleApi,
+) -> OracleStream:
+    """Factory function to create Oracle stream.
+
+    Args:
+        tap: Parent tap instance
+        name: Stream name
+        table_name: Oracle table name
+        schema: Stream schema definition
+        oracle_api: Oracle database API instance
+
+    Returns:
+        Configured Oracle stream instance
+
+    """
+    return OracleStream(
+        tap=tap,
+        name=name,
+        table_name=table_name,
+        schema=schema,
+        oracle_api=oracle_api,
+    )
+
+
+def create_oracle_stream_from_table(
+    tap: Tap,
+    table_metadata: object,  # FlextDbOracleTable
+    oracle_api: FlextDbOracleApi,
+    stream_prefix: str = "oracle",
+) -> OracleStream:
+    """Factory function to create Oracle stream from table metadata.
+
+    Args:
+        tap: Parent tap instance
+        table_metadata: Oracle table metadata from flext-db-oracle
+        oracle_api: Oracle database API instance
+        stream_prefix: Prefix for stream name
+
+    Returns:
+        Configured Oracle stream instance
+
+    """
+    table_name = getattr(table_metadata, "name", "unknown")
+    stream_name = f"{stream_prefix}_{table_name.lower()}"
+
+    # Build basic schema from table metadata
+    schema: dict[str, object] = {"type": "object", "properties": {}}
+    if hasattr(table_metadata, "columns"):
+        for column in table_metadata.columns:
+            col_name = getattr(column, "name", "unknown")
+            col_type = getattr(column, "data_type", "string")
+
+            # Map Oracle types to Singer schema types
+            singer_type = "string"  # Default
+            if col_type.upper().startswith(("NUMBER", "INTEGER")):
+                singer_type = "integer"
+            elif col_type.upper().startswith(("DATE", "TIMESTAMP")):
+                singer_type = "string"  # ISO format
+            elif col_type.upper().startswith("FLOAT"):
+                singer_type = "number"
+
+            properties = schema.get("properties", {})
+            if isinstance(properties, dict):
+                properties[col_name] = {"type": singer_type}
+                schema["properties"] = properties
+
+    return create_oracle_stream(
+        tap=tap,
+        name=stream_name,
+        table_name=table_name,
+        schema=schema,
+        oracle_api=oracle_api,
+    )
+
+
+# Backward compatibility aliases
+FlextOracleStream = OracleStream
 
 __all__ = [
+    "FlextOracleStream",
     "OracleStream",
+    "create_oracle_stream",
+    "create_oracle_stream_from_table",
 ]
