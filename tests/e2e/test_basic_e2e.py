@@ -14,9 +14,9 @@ from flext_db_oracle import (
     FlextDbOracleApi as OracleConnectionService,
     FlextDbOracleConfig as OracleConfig,
 )
-from flext_tap_oracle.config import FlextOracleTapConfig
-from flext_tap_oracle.oracle_stream import OracleStream
-from flext_tap_oracle.base_service import FlextOracleTapBaseService
+from flext_tap_oracle.tap_config import FlextOracleTapConfig as FlextOracleTapBaseServiceConfig
+from flext_tap_oracle.tap_streams import OracleStream
+from flext_tap_oracle.tap_client import FlextOracleTapService as FlextOracleTapBaseService
 
 
 class TestBasicE2E:

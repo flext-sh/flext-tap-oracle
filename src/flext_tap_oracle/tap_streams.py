@@ -119,10 +119,10 @@ class OracleStream(Stream):
                 # Use Oracle identifier quoting to prevent injection
                 schema_name = tap_config.schema_name.replace('"', '""')  # Escape quotes
                 table_name = self.table_name.replace('"', '""')  # Escape quotes
-                sql = f'SELECT * FROM "{schema_name}"."{table_name}"'  # nosec B608 # noqa: S608
+                sql = f'SELECT * FROM "{schema_name}"."{table_name}"'  # nosec B608  # noqa: S608
             else:
                 table_name = self.table_name.replace('"', '""')  # Escape quotes
-                sql = f'SELECT * FROM "{table_name}"'  # nosec B608 # noqa: S608
+                sql = f'SELECT * FROM "{table_name}"'  # nosec B608  # noqa: S608
 
             logger.info("Executing Oracle query via flext-db-oracle: %s", sql[:200])
 
@@ -334,7 +334,7 @@ class OracleStream(Stream):
         """Get Oracle table information using flext-db-oracle metadata."""
         try:
             table_metadata_result = self.metadata_manager.get_table_metadata(
-                self.table_name
+                self.table_name,
             )
             if table_metadata_result.success and table_metadata_result.data:
                 table = table_metadata_result.data
@@ -378,7 +378,7 @@ class OracleStream(Stream):
 
         except Exception as e:
             logger.warning(
-                "Failed to estimate row count for %s: %s", self.table_name, e
+                "Failed to estimate row count for %s: %s", self.table_name, e,
             )
             return None
 

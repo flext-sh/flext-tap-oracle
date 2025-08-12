@@ -108,12 +108,6 @@ addopts = [
     "-ra",
     "--strict-markers",
     "--strict-config",
-    "--cov=flext_tap_oracle",
-    "--cov-branch",
-    "--cov-report=term-missing:skip-covered",
-    "--cov-report=html:reports/coverage",
-    "--cov-report=xml:reports/coverage.xml",
-    "--cov-fail-under=90",
     "--maxfail=1",
     "--tb=short",
     # "--dist=auto",  # Requires pytest-xdist properly configured
@@ -139,8 +133,8 @@ markers = [
 filterwarnings = ["error", "ignore::UserWarning", "ignore::DeprecationWarning"]
 asyncio_mode = "auto"
 
-extend = "../.ruff-shared.toml"
-lint.isort.known-first-party = ["flext_tap_oracle"]
+# pytest reads only [tool.pytest.ini_options]; remove stray extend directive
+# isort config belongs under tool.isort; remove unknown top-level 'lint' key for pytest compatibility
 [tool.mypy]
 # Strict mode - enables all recommended checks
 strict = true

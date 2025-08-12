@@ -15,7 +15,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 # Import CORRECT base service from flext-meltano + logger + FlextResult from flext-core
-from flext_core import FlextDomainService, FlextLoggerFactory, FlextResult
+from flext_core import FlextDomainService, FlextResult, get_logger
 
 # Import Oracle infrastructure - NEVER duplicate
 from flext_db_oracle import (
@@ -25,7 +25,7 @@ from flext_db_oracle import (
 )
 from flext_meltano import FlextMeltanoTapService
 
-logger = FlextLoggerFactory.get_logger(__name__)
+logger = get_logger(__name__)
 
 if TYPE_CHECKING:
     from flext_tap_oracle.tap_config import FlextOracleTapConfig
@@ -111,7 +111,7 @@ class FlextOracleTableFilterService(FlextDomainService[list[str]]):
             # If specific tables are configured, use them
             if tap_configuration.tables_filter:
                 logger.info(
-                    "Using configured table filter: %s", tap_configuration.tables_filter
+                    "Using configured table filter: %s", tap_configuration.tables_filter,
                 )
                 return FlextResult.ok(list(tap_configuration.tables_filter))
 
@@ -258,14 +258,14 @@ class FlextOracleTapService:
             connection_result = self.test_oracle_connection()
             if connection_result.is_failure:
                 return FlextResult.fail(
-                    f"Connection test failed: {connection_result.error}"
+                    f"Connection test failed: {connection_result.error}",
                 )
 
             # Discover tables
             tables_result = self.get_filtered_tables()
             if tables_result.is_failure:
                 return FlextResult.fail(
-                    f"Table discovery failed: {tables_result.error}"
+                    f"Table discovery failed: {tables_result.error}",
                 )
 
             # Prepare initialization status
