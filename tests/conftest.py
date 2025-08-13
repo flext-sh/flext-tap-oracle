@@ -39,7 +39,8 @@ def oracle_shared_container_environment() -> None:
     os.environ.setdefault("ORACLE_USERNAME", os.environ["FLEXT_TAP_ORACLE_USERNAME"])
     os.environ.setdefault("ORACLE_PASSWORD", os.environ["FLEXT_TAP_ORACLE_PASSWORD"])
     os.environ.setdefault(
-        "ORACLE_SERVICE_NAME", os.environ["FLEXT_TAP_ORACLE_SERVICE_NAME"],
+        "ORACLE_SERVICE_NAME",
+        os.environ["FLEXT_TAP_ORACLE_SERVICE_NAME"],
     )
 
 
@@ -79,10 +80,12 @@ def skip_e2e_if_no_oracle(request: pytest.FixtureRequest) -> None:
         return
 
     host = os.environ.get(
-        "ORACLE_HOST", os.environ.get("FLEXT_TAP_ORACLE_HOST", "localhost"),
+        "ORACLE_HOST",
+        os.environ.get("FLEXT_TAP_ORACLE_HOST", "localhost"),
     )
     port_str = os.environ.get(
-        "ORACLE_PORT", os.environ.get("FLEXT_TAP_ORACLE_PORT", "1521"),
+        "ORACLE_PORT",
+        os.environ.get("FLEXT_TAP_ORACLE_PORT", "1521"),
     )
     try:
         port = int(port_str)

@@ -365,7 +365,8 @@ class OracleStream(Stream):
                 .isalnum()
             ):
                 logger.warning(
-                    "Invalid table name for count estimation: %s", self.table_name,
+                    "Invalid table name for count estimation: %s",
+                    self.table_name,
                 )
                 return None
 
