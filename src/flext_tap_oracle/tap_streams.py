@@ -357,8 +357,16 @@ class OracleStream(Stream):
         """Estimate table row count using Oracle system views."""
         try:
             # Validate table name is a valid Oracle identifier before using in SQL
-            if not self.table_name or not self.table_name.replace("_", "").replace("$", "").replace("#", "").isalnum():
-                logger.warning("Invalid table name for count estimation: %s", self.table_name)
+            if (
+                not self.table_name
+                or not self.table_name.replace("_", "")
+                .replace("$", "")
+                .replace("#", "")
+                .isalnum()
+            ):
+                logger.warning(
+                    "Invalid table name for count estimation: %s", self.table_name,
+                )
                 return None
 
             # Safe query construction using template - table name pre-validated
@@ -378,7 +386,9 @@ class OracleStream(Stream):
 
         except Exception as e:
             logger.warning(
-                "Failed to estimate row count for %s: %s", self.table_name, e,
+                "Failed to estimate row count for %s: %s",
+                self.table_name,
+                e,
             )
             return None
 

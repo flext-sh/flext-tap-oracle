@@ -54,9 +54,13 @@ class OracleTapDiscoverParams:
         """Create from Click arguments using flext-cli patterns."""
         args: Mapping[str, object] = kwargs  # kwargs keys are always str
         return cls(
-            config_file=str(args.get("config_file")) if args.get("config_file") is not None else None,
+            config_file=str(args.get("config_file"))
+            if args.get("config_file") is not None
+            else None,
             output_file=(
-                str(args.get("output_file")) if args.get("output_file") is not None else "catalog.json"
+                str(args.get("output_file"))
+                if args.get("output_file") is not None
+                else "catalog.json"
             ),
         )
 
@@ -75,12 +79,20 @@ class OracleTapSyncParams:
         """Create from Click arguments using flext-cli patterns."""
         args: Mapping[str, object] = kwargs
         return cls(
-            config_file=str(args.get("config_file")) if args.get("config_file") is not None else None,
+            config_file=str(args.get("config_file"))
+            if args.get("config_file") is not None
+            else None,
             catalog_file=(
-                str(args.get("catalog_file")) if args.get("catalog_file") is not None else "catalog.json"
+                str(args.get("catalog_file"))
+                if args.get("catalog_file") is not None
+                else "catalog.json"
             ),
-            state_file=str(args.get("state_file")) if args.get("state_file") is not None else None,
-            output_file=str(args.get("output_file")) if args.get("output_file") is not None else None,
+            state_file=str(args.get("state_file"))
+            if args.get("state_file") is not None
+            else None,
+            output_file=str(args.get("output_file"))
+            if args.get("output_file") is not None
+            else None,
         )
 
 
@@ -145,7 +157,9 @@ class OracleTapDiscoverCommand(CLICommand):
                 self.cli_helper.print_error(
                     f"Failed to create tap service: {tap_service_result.error}",
                 )
-                return FlextResult.fail(tap_service_result.error or "Tap service creation failed")
+                return FlextResult.fail(
+                    tap_service_result.error or "Tap service creation failed",
+                )
 
             tap_service = tap_service_result.data
 
@@ -162,7 +176,9 @@ class OracleTapDiscoverCommand(CLICommand):
             schema_name = getattr(config.oracle_config, "schema_name", None) or "USER"
             discovery_build = create_discovery_result(schema_name, tables_result.data)
             if discovery_build.is_failure or discovery_build.data is None:
-                return FlextResult.fail(discovery_build.error or "Failed to build discovery result")
+                return FlextResult.fail(
+                    discovery_build.error or "Failed to build discovery result",
+                )
 
             catalog_dict = discovery_build.data.to_singer_catalog()
 
@@ -171,7 +187,9 @@ class OracleTapDiscoverCommand(CLICommand):
                 import json
 
                 output_path = Path(self.params.output_file)
-                output_path.write_text(json.dumps(catalog_dict, indent=2), encoding="utf-8")
+                output_path.write_text(
+                    json.dumps(catalog_dict, indent=2), encoding="utf-8",
+                )
                 self.cli_helper.print_success(f"Catalog written to {output_path}")
 
             self.cli_helper.print_success("Oracle schema discovery completed")
@@ -244,18 +262,24 @@ class OracleTapSyncCommand(CLICommand):
                 self.cli_helper.print_error(
                     f"Failed to create tap service: {tap_service_result.error}",
                 )
-                return FlextResult.fail(tap_service_result.error or "Tap service creation failed")
+                return FlextResult.fail(
+                    tap_service_result.error or "Tap service creation failed",
+                )
 
             tap_service = tap_service_result.data
 
             # Load catalog and state if provided (not parsed here; placeholder for Singer integration)
             if self.params.catalog_file:
                 Path(self.params.catalog_file).read_text(encoding="utf-8")
-                self.cli_helper.print_info(f"Loaded catalog from {self.params.catalog_file}")
+                self.cli_helper.print_info(
+                    f"Loaded catalog from {self.params.catalog_file}",
+                )
 
             if self.params.state_file:
                 Path(self.params.state_file).read_text(encoding="utf-8")
-                self.cli_helper.print_info(f"Loaded state from {self.params.state_file}")
+                self.cli_helper.print_info(
+                    f"Loaded state from {self.params.state_file}",
+                )
 
             # Execute a basic extraction workflow: get filtered tables as a proxy
             self.cli_helper.print_info("Preparing table list for extraction...")
@@ -270,7 +294,9 @@ class OracleTapSyncCommand(CLICommand):
             self.cli_helper.print_success(
                 f"Prepared sync for {len(table_names)} tables; records extracted: {record_count}",
             )
-            return FlextResult.ok({"records_extracted": record_count, "tables": table_names})
+            return FlextResult.ok(
+                {"records_extracted": record_count, "tables": table_names},
+            )
 
         except Exception as e:
             logger.exception("Oracle sync failed")
@@ -281,6 +307,7 @@ class OracleTapSyncCommand(CLICommand):
 # =============================================================================
 # MODERN CLICK CLI WITH FLEXT-CLI INTEGRATION
 # =============================================================================
+
 
 @click.group(name="tap-oracle")
 @click.version_option(version="0.9.0", prog_name="FLEXT Tap Oracle")
@@ -308,8 +335,16 @@ def cli() -> None:
 
 
 @cli.command()
-@click.option("--config", "-c", "config_file", help="Path to tap configuration JSON file")
-@click.option("--output", "-o", "output_file", help="Output catalog file (default: catalog.json)", default="catalog.json")
+@click.option(
+    "--config", "-c", "config_file", help="Path to tap configuration JSON file",
+)
+@click.option(
+    "--output",
+    "-o",
+    "output_file",
+    help="Output catalog file (default: catalog.json)",
+    default="catalog.json",
+)
 def discover(**kwargs: object) -> None:
     """Discover Oracle database schema and generate Singer catalog.
 
@@ -333,8 +368,15 @@ def discover(**kwargs: object) -> None:
 
 
 @cli.command()
-@click.option("--config", "-c", "config_file", help="Path to tap configuration JSON file")
-@click.option("--catalog", "catalog_file", help="Path to Singer catalog file", default="catalog.json")
+@click.option(
+    "--config", "-c", "config_file", help="Path to tap configuration JSON file",
+)
+@click.option(
+    "--catalog",
+    "catalog_file",
+    help="Path to Singer catalog file",
+    default="catalog.json",
+)
 @click.option("--state", "state_file", help="Path to Singer state file")
 @click.option("--output", "-o", "output_file", help="Output file (default: stdout)")
 def sync(**kwargs: object) -> None:

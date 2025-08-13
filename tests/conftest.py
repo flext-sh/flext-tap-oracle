@@ -38,7 +38,9 @@ def oracle_shared_container_environment() -> None:
     os.environ.setdefault("ORACLE_PORT", os.environ["FLEXT_TAP_ORACLE_PORT"])
     os.environ.setdefault("ORACLE_USERNAME", os.environ["FLEXT_TAP_ORACLE_USERNAME"])
     os.environ.setdefault("ORACLE_PASSWORD", os.environ["FLEXT_TAP_ORACLE_PASSWORD"])
-    os.environ.setdefault("ORACLE_SERVICE_NAME", os.environ["FLEXT_TAP_ORACLE_SERVICE_NAME"])
+    os.environ.setdefault(
+        "ORACLE_SERVICE_NAME", os.environ["FLEXT_TAP_ORACLE_SERVICE_NAME"],
+    )
 
 
 @pytest.fixture(autouse=True)
@@ -76,8 +78,12 @@ def skip_e2e_if_no_oracle(request: pytest.FixtureRequest) -> None:
     if "/e2e/" not in fspath and "\\e2e\\" not in fspath:
         return
 
-    host = os.environ.get("ORACLE_HOST", os.environ.get("FLEXT_TAP_ORACLE_HOST", "localhost"))
-    port_str = os.environ.get("ORACLE_PORT", os.environ.get("FLEXT_TAP_ORACLE_PORT", "1521"))
+    host = os.environ.get(
+        "ORACLE_HOST", os.environ.get("FLEXT_TAP_ORACLE_HOST", "localhost"),
+    )
+    port_str = os.environ.get(
+        "ORACLE_PORT", os.environ.get("FLEXT_TAP_ORACLE_PORT", "1521"),
+    )
     try:
         port = int(port_str)
     except ValueError:
@@ -119,7 +125,7 @@ def oracle_tap(oracle_tap_config: dict[str, object]) -> object:
 
     # Convert dict to proper config and create service
     config_result = FlextResult.ok(
-        FlextOracleTapConfig.model_validate(oracle_tap_config)
+        FlextOracleTapConfig.model_validate(oracle_tap_config),
     )
     if config_result.is_success and config_result.data:
         return FlextOracleTapService(config=config_result.data)
@@ -132,7 +138,7 @@ def oracle_tap(oracle_tap_config: dict[str, object]) -> object:
             "host": str(oracle_tap_config.get("host", "localhost")),
             "username": str(oracle_tap_config.get("username", "test")),
             "password": str(oracle_tap_config.get("password", "test")),
-        }
+        },
     )
     if fallback_result.is_success and fallback_result.data:
         return FlextOracleTapService(config=fallback_result.data)

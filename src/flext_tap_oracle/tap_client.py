@@ -13,7 +13,6 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
-from flext_tap_oracle.typings import FlextTypes
 
 # Import CORRECT base service from flext-meltano + logger + FlextResult from flext-core
 from flext_core import FlextDomainService, FlextResult, get_logger
@@ -112,7 +111,8 @@ class FlextOracleTableFilterService(FlextDomainService[list[str]]):
             # If specific tables are configured, use them
             if tap_configuration.tables_filter:
                 logger.info(
-                    "Using configured table filter: %s", tap_configuration.tables_filter,
+                    "Using configured table filter: %s",
+                    tap_configuration.tables_filter,
                 )
                 return FlextResult.ok(list(tap_configuration.tables_filter))
 

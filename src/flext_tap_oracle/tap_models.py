@@ -58,13 +58,16 @@ class OracleTapStreamInfo(FlextValueObject):
 
     # Stream configuration
     is_selected: bool = Field(
-        default=True, description="Whether stream is selected for extraction",
+        default=True,
+        description="Whether stream is selected for extraction",
     )
     replication_method: Literal["FULL_TABLE", "INCREMENTAL"] = Field(
-        default="FULL_TABLE", description="Replication method for this stream",
+        default="FULL_TABLE",
+        description="Replication method for this stream",
     )
     replication_key: str | None = Field(
-        None, description="Column used for incremental replication",
+        None,
+        description="Column used for incremental replication",
     )
 
     # Runtime information (populated at runtime)
@@ -115,15 +118,18 @@ class OracleTapDiscoveryResult(FlextValueObject):
 
     # Processed stream information
     stream_info: list[OracleTapStreamInfo] = Field(
-        default_factory=list, description="Processed stream information for tap use",
+        default_factory=list,
+        description="Processed stream information for tap use",
     )
 
     # Filtering results
     filtered_tables: list[str] = Field(
-        default_factory=list, description="Table names after applying filters",
+        default_factory=list,
+        description="Table names after applying filters",
     )
     excluded_tables: list[str] = Field(
-        default_factory=list, description="Table names that were excluded",
+        default_factory=list,
+        description="Table names that were excluded",
     )
 
     def get_selected_streams(self) -> list[OracleTapStreamInfo]:
@@ -168,49 +174,64 @@ class OracleTapExecutionStats(FlextValueObject):
 
     # Performance metrics
     avg_records_per_second: float = Field(
-        default=0.0, description="Average records per second",
+        default=0.0,
+        description="Average records per second",
     )
     avg_bytes_per_second: float = Field(
-        default=0.0, description="Average bytes per second",
+        default=0.0,
+        description="Average bytes per second",
     )
     duration_seconds: float = Field(default=0.0, description="Total execution duration")
 
     # Error tracking
     errors_encountered: int = Field(
-        default=0, description="Number of errors encountered",
+        default=0,
+        description="Number of errors encountered",
     )
     failed_streams: list[str] = Field(
-        default_factory=list, description="Names of failed streams",
+        default_factory=list,
+        description="Names of failed streams",
     )
 
     # Oracle-specific metrics
     oracle_connection_time: float = Field(
-        default=0.0, description="Oracle connection time",
+        default=0.0,
+        description="Oracle connection time",
     )
     oracle_query_time: float = Field(default=0.0, description="Total Oracle query time")
     oracle_result_processing_time: float = Field(
-        default=0.0, description="Result processing time",
+        default=0.0,
+        description="Result processing time",
     )
 
     def update_performance_metrics(self) -> OracleTapExecutionStats:
         """Return new instance with updated calculated performance metrics."""
         if self.duration_seconds > 0:
-            return self.model_copy(update={
-                "avg_records_per_second": self.total_records / self.duration_seconds,
-                "avg_bytes_per_second": self.total_bytes / self.duration_seconds,
-            })
+            return self.model_copy(
+                update={
+                    "avg_records_per_second": self.total_records
+                    / self.duration_seconds,
+                    "avg_bytes_per_second": self.total_bytes / self.duration_seconds,
+                },
+            )
         return self
 
     def add_stream_stats(
-        self, records: int, bytes_processed: int, processing_time: float,
+        self,
+        records: int,
+        bytes_processed: int,
+        processing_time: float,
     ) -> OracleTapExecutionStats:
         """Return new instance with added statistics for a processed stream."""
-        updated = self.model_copy(update={
-            "streams_processed": self.streams_processed + 1,
-            "total_records": self.total_records + records,
-            "total_bytes": self.total_bytes + bytes_processed,
-            "oracle_result_processing_time": self.oracle_result_processing_time + processing_time,
-        })
+        updated = self.model_copy(
+            update={
+                "streams_processed": self.streams_processed + 1,
+                "total_records": self.total_records + records,
+                "total_bytes": self.total_bytes + bytes_processed,
+                "oracle_result_processing_time": self.oracle_result_processing_time
+                + processing_time,
+            },
+        )
         return updated.update_performance_metrics()
 
     def mark_stream_error(self, stream_name: str) -> OracleTapExecutionStats:
@@ -218,10 +239,12 @@ class OracleTapExecutionStats(FlextValueObject):
         new_failed_streams = self.failed_streams.copy() if self.failed_streams else []
         if stream_name not in new_failed_streams:
             new_failed_streams.append(stream_name)
-        return self.model_copy(update={
-            "errors_encountered": self.errors_encountered + 1,
-            "failed_streams": new_failed_streams,
-        })
+        return self.model_copy(
+            update={
+                "errors_encountered": self.errors_encountered + 1,
+                "failed_streams": new_failed_streams,
+            },
+        )
 
     def to_summary(self) -> dict[str, object]:
         """Create execution summary."""

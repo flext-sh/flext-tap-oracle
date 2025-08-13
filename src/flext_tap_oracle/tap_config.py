@@ -323,12 +323,14 @@ def create_oracle_tap_config(
 
         # Set default values using semantic constants
         tap_config.setdefault(
-            "batch_size", FlextConstants.Performance.DEFAULT_BATCH_SIZE,
+            "batch_size",
+            FlextConstants.Performance.DEFAULT_BATCH_SIZE,
         )
         tap_config.setdefault("stream_prefix", "oracle")
         meltano_config.setdefault("project_root", ".")
         meltano_config.setdefault(
-            "environment", FlextConstants.Configuration.DEFAULT_ENVIRONMENT,
+            "environment",
+            FlextConstants.Configuration.DEFAULT_ENVIRONMENT,
         )
 
         config_data = {

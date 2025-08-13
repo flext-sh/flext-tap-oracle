@@ -53,7 +53,7 @@ Example:
     ...     "service_name": "ORCL",
     ...     "username": "tap_user",
     ...     "password": "secure_password",
-    ...     "default_replication_method": "INCREMENTAL"
+    ...     "default_replication_method": "INCREMENTAL",
     ... }
     >>>
     >>> # Initialize and run tap
@@ -66,7 +66,9 @@ Example:
     Stream-specific extraction:
 
     >>> # Extract data from specific table
-    >>> extraction_result = tap.extract_stream("employees", bookmark={"updated_at": "2025-01-01"})
+    >>> extraction_result = tap.extract_stream(
+    ...     "employees", bookmark={"updated_at": "2025-01-01"}
+    ... )
     >>> if extraction_result.is_success:
     ...     records = extraction_result.data
     ...     print(f"Extracted {len(records)} records")
