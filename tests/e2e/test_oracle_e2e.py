@@ -6,9 +6,9 @@ complete functionality of the tap against real Oracle data.
 
 from __future__ import annotations
 
+import asyncio
 import json
 import os
-import subprocess
 from typing import TYPE_CHECKING
 
 import pytest
@@ -197,26 +197,36 @@ class TestOracleE2E:
             json.dump(config, f)
 
         # Run discovery
-        result = subprocess.run(
-            [
+        async def _run(cmd_list: list[str], timeout: int = 60) -> tuple[int, str, str]:
+            process = await asyncio.create_subprocess_exec(
+                *cmd_list,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
+            try:
+                stdout, stderr = await asyncio.wait_for(process.communicate(), timeout=timeout)
+            except asyncio.TimeoutError:
+                process.kill()
+                await process.communicate()
+                return 124, "", "Timeout"
+            return process.returncode, stdout.decode(), stderr.decode()
+
+        rc, out, err = asyncio.run(
+            _run([
                 "poetry",
                 "run",
                 "tap-oracle",
                 "--config",
                 "/tmp/tap_config.json",
                 "--discover",
-            ],
-            check=False,
-            capture_output=True,
-            text=True,
-            timeout=60,
+            ], timeout=60),
         )
 
-        if result.returncode != 0:
-            raise AssertionError(f"Discovery failed: {result.stderr}")
+        if rc != 0:
+            raise AssertionError(f"Discovery failed: {err}")
 
         # Parse catalog
-        catalog = json.loads(result.stdout)
+        catalog = json.loads(out)
         if "streams" not in catalog:
             raise AssertionError(f"Expected {"streams"} in {catalog}")
 
@@ -295,8 +305,8 @@ class TestOracleE2E:
             json.dump(catalog, f)
 
         # Run extraction
-        result = subprocess.run(
-            [
+        rc2, out2, err2 = asyncio.run(
+            _run([
                 "poetry",
                 "run",
                 "tap-oracle",
@@ -304,17 +314,13 @@ class TestOracleE2E:
                 "/tmp/tap_config.json",
                 "--catalog",
                 "/tmp/catalog.json",
-            ],
-            check=False,
-            capture_output=True,
-            text=True,
-            timeout=120,
+            ], timeout=120),
         )
 
-        assert result.returncode == 0, f"Extraction failed: {result.stderr}"
+        assert rc2 == 0, f"Extraction failed: {err2}"
 
         # Parse output lines
-        lines = result.stdout.strip().split("\n")
+        lines = out2.strip().split("\n")
         schema_messages = []
         record_messages = []
         state_messages = []
@@ -460,8 +466,8 @@ class TestOracleE2E:
             json.dump(state, f)
 
         # Run incremental extraction
-        process_result = subprocess.run(
-            [
+        rc3, out3, err3 = asyncio.run(
+            _run([
                 "poetry",
                 "run",
                 "tap-oracle",
@@ -471,17 +477,13 @@ class TestOracleE2E:
                 "/tmp/catalog_inc.json",
                 "--state",
                 "/tmp/state.json",
-            ],
-            check=False,
-            capture_output=True,
-            text=True,
-            timeout=60,
+            ], timeout=60),
         )
 
-        assert process_result.returncode == 0, f"Incremental extraction failed: {process_result.stderr}"
+        assert rc3 == 0, f"Incremental extraction failed: {err3}"
 
         # Parse incremental output
-        lines = process_result.stdout.strip().split("\n")
+        lines = out3.strip().split("\n")
         record_messages = [
             json.loads(line)
             for line in lines

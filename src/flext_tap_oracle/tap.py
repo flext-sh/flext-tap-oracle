@@ -12,6 +12,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+import json
 import sys
 import uuid
 from dataclasses import dataclass
@@ -28,6 +29,7 @@ from flext_cli.foundation import (
 from flext_core import FlextResult, get_logger
 from rich.console import Console
 
+from flext_tap_oracle.models import create_discovery_result
 from flext_tap_oracle.tap_client import create_oracle_tap_service
 from flext_tap_oracle.tap_config import FlextOracleTapConfig
 
@@ -171,8 +173,6 @@ class OracleTapDiscoverCommand(CLICommand):
                 return FlextResult.fail(tables_result.error or "Discovery failed")
 
             # Build Singer catalog from tables using tap models
-            from flext_tap_oracle.tap_models import create_discovery_result
-
             schema_name = getattr(config.oracle_config, "schema_name", None) or "USER"
             discovery_build = create_discovery_result(schema_name, tables_result.data)
             if discovery_build.is_failure or discovery_build.data is None:
@@ -184,11 +184,10 @@ class OracleTapDiscoverCommand(CLICommand):
 
             # Output catalog (Singer standard)
             if self.params.output_file:
-                import json
-
                 output_path = Path(self.params.output_file)
                 output_path.write_text(
-                    json.dumps(catalog_dict, indent=2), encoding="utf-8",
+                    json.dumps(catalog_dict, indent=2),
+                    encoding="utf-8",
                 )
                 self.cli_helper.print_success(f"Catalog written to {output_path}")
 
@@ -336,7 +335,10 @@ def cli() -> None:
 
 @cli.command()
 @click.option(
-    "--config", "-c", "config_file", help="Path to tap configuration JSON file",
+    "--config",
+    "-c",
+    "config_file",
+    help="Path to tap configuration JSON file",
 )
 @click.option(
     "--output",
@@ -369,7 +371,10 @@ def discover(**kwargs: object) -> None:
 
 @cli.command()
 @click.option(
-    "--config", "-c", "config_file", help="Path to tap configuration JSON file",
+    "--config",
+    "-c",
+    "config_file",
+    help="Path to tap configuration JSON file",
 )
 @click.option(
     "--catalog",

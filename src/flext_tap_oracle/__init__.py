@@ -183,7 +183,7 @@ from flext_tap_oracle.tap_streams import (
 )
 
 # Models - Data models and types
-from flext_tap_oracle.tap_models import (
+from flext_tap_oracle.models import (
     OracleTapDiscoveryResult,
     OracleTapExecutionStats,
     OracleTapStreamInfo,
@@ -230,6 +230,7 @@ _LEGACY_FACADE_AVAILABLE = False  # Simplified for type checking
 
 
 __version__ = "0.9.0"
+__version_info__ = tuple(int(x) for x in __version__.split(".") if x.isdigit())
 
 __all__: list[str] = [
     # Infrastructure from flext-db-oracle
@@ -327,6 +328,7 @@ __all__: list[str] = [
     "singer_typing",
     "th",
     "__version__",
+    "__version_info__",
 ]
 
 # Note: FlextOracleTapBaseService is conditionally imported above but not exported in __all__
