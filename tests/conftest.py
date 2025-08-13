@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 from flext_core import FlextResult
+
 from flext_tap_oracle.tap_client import FlextOracleTapService
 
 if TYPE_CHECKING:
@@ -33,11 +34,11 @@ def oracle_shared_container_environment() -> None:
         },
     )
     # Align generic ORACLE_* variables used by some tests
-    os.environ.setdefault("ORACLE_HOST", os.environ["FLEXT_TAP_ORACLE_HOST"])  # noqa: PTH123
-    os.environ.setdefault("ORACLE_PORT", os.environ["FLEXT_TAP_ORACLE_PORT"])  # noqa: PTH123
-    os.environ.setdefault("ORACLE_USERNAME", os.environ["FLEXT_TAP_ORACLE_USERNAME"])  # noqa: PTH123
-    os.environ.setdefault("ORACLE_PASSWORD", os.environ["FLEXT_TAP_ORACLE_PASSWORD"])  # noqa: PTH123
-    os.environ.setdefault("ORACLE_SERVICE_NAME", os.environ["FLEXT_TAP_ORACLE_SERVICE_NAME"])  # noqa: PTH123
+    os.environ.setdefault("ORACLE_HOST", os.environ["FLEXT_TAP_ORACLE_HOST"])
+    os.environ.setdefault("ORACLE_PORT", os.environ["FLEXT_TAP_ORACLE_PORT"])
+    os.environ.setdefault("ORACLE_USERNAME", os.environ["FLEXT_TAP_ORACLE_USERNAME"])
+    os.environ.setdefault("ORACLE_PASSWORD", os.environ["FLEXT_TAP_ORACLE_PASSWORD"])
+    os.environ.setdefault("ORACLE_SERVICE_NAME", os.environ["FLEXT_TAP_ORACLE_SERVICE_NAME"])
 
 
 @pytest.fixture(autouse=True)

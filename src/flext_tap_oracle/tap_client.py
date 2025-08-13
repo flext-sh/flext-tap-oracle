@@ -13,6 +13,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+from flext_tap_oracle.typings import FlextTypes
 
 # Import CORRECT base service from flext-meltano + logger + FlextResult from flext-core
 from flext_core import FlextDomainService, FlextResult, get_logger
@@ -343,7 +344,7 @@ class FlextOracleTapService:
 def create_oracle_tap_service(
     config: FlextOracleTapConfig,
 ) -> FlextResult[FlextOracleTapService]:
-    """Factory to create Oracle tap service using COMPOSITION.
+    """Create Oracle tap service using COMPOSITION.
 
     Args:
         config: Oracle tap configuration
@@ -364,7 +365,7 @@ def create_oracle_discovery_service(
     oracle_api: FlextDbOracleApi,
     schema_name: str | None = None,
 ) -> FlextResult[FlextOracleDiscoveryService]:
-    """Factory to create Oracle discovery service.
+    """Create Oracle discovery service.
 
     Args:
         oracle_api: Oracle database API instance

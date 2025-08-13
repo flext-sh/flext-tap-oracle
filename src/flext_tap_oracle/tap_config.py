@@ -305,7 +305,7 @@ def create_oracle_tap_config(
     tap_params: dict[str, object] | None = None,
     meltano_params: dict[str, object] | None = None,
 ) -> FlextResult[FlextOracleTapConfig]:
-    """Factory function to create Oracle tap configuration using grouped parameters.
+    """Create Oracle tap configuration using grouped parameters.
 
     Args:
         oracle_params: Oracle database connection parameters (host, port, username, password, etc.)

@@ -360,7 +360,7 @@ def sync(**kwargs: object) -> None:
 
 
 def main() -> None:
-    """Main CLI entry point using flext-cli patterns."""
+    """Provide CLI entry point using flext-cli patterns."""
     try:
         cli()
     except KeyboardInterrupt:

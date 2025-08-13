@@ -56,6 +56,10 @@ Documentation = "https://github.com/flext-sh/flext/blob/main/README.md"
 tap-oracle = "flext_tap_oracle.tap:cli"
 flext-tap-oracle = "flext_tap_oracle.tap:cli"
 
+[tool.ruff]
+extend = "../.ruff-shared.toml"
+lint.isort.known-first-party = ["flext_tap_oracle"]
+
 # Poetry configuration - using PEP 621 [project] section above
 
 [tool.poetry.dependencies]

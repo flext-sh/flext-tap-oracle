@@ -403,7 +403,7 @@ def create_oracle_stream(
     schema: dict[str, object],
     oracle_api: FlextDbOracleApi,
 ) -> OracleStream:
-    """Factory function to create Oracle stream.
+    """Create Oracle stream.
 
     Args:
         tap: Parent tap instance
@@ -431,7 +431,7 @@ def create_oracle_stream_from_table(
     oracle_api: FlextDbOracleApi,
     stream_prefix: str = "oracle",
 ) -> OracleStream:
-    """Factory function to create Oracle stream from table metadata.
+    """Create Oracle stream from table metadata.
 
     Args:
         tap: Parent tap instance

@@ -181,7 +181,7 @@ def create_connection_error(
     service_name: str | None = None,
     **kwargs: object,
 ) -> FlextTapOracleConnectionError:
-    """Factory function to create Oracle connection errors with context.
+    """Create Oracle connection errors with context.
 
     Args:
         message: Error message
@@ -212,7 +212,7 @@ def create_query_error(
     oracle_error_code: str | None = None,
     **kwargs: object,
 ) -> FlextTapOracleQueryError:
-    """Factory function to create Oracle query errors with context.
+    """Create Oracle query errors with context.
 
     Args:
         message: Error message
@@ -241,7 +241,7 @@ def create_stream_error(
     record_count: int | None = None,
     **kwargs: object,
 ) -> FlextTapOracleStreamError:
-    """Factory function to create Oracle stream errors with context.
+    """Create Oracle stream errors with context.
 
     Args:
         message: Error message
@@ -269,7 +269,7 @@ def create_discovery_error(
     table_count: int | None = None,
     **kwargs: object,
 ) -> FlextTapOracleDiscoveryError:
-    """Factory function to create Oracle discovery errors with context.
+    """Create Oracle discovery errors with context.
 
     Args:
         message: Error message
@@ -295,7 +295,7 @@ def create_configuration_error(
     config_value: object = None,
     **kwargs: object,
 ) -> FlextTapOracleConfigurationError:
-    """Factory function to create Oracle configuration errors with context.
+    """Create Oracle configuration errors with context.
 
     Args:
         message: Error message
@@ -323,7 +323,7 @@ def create_extraction_error(
     records_processed: int | None = None,
     **kwargs: object,
 ) -> FlextTapOracleExtractionError:
-    """Factory function to create Oracle extraction errors with context.
+    """Create Oracle extraction errors with context.
 
     Args:
         message: Error message
