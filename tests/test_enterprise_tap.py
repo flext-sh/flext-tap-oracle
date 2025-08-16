@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Enterprise tests for the unified Oracle Tap.
 
 This module provides comprehensive enterprise-grade tests for the Oracle tap
@@ -71,7 +72,9 @@ class TestFlextOracleTapBaseServiceEnterprise:
             yield mock_connection
 
     def test_tap_config_validation_database(
-        self, database_config: dict[str, Any]
+        self,
+        database_config: dict[str, Any],
+        mock_oracle_connection: Mock,  # noqa: ARG002  # noqa: ARG002
     ) -> None:
         """Test tap configuration validation for database connection."""
         config = FlextOracleTapConfig(**database_config)
@@ -90,7 +93,9 @@ class TestFlextOracleTapBaseServiceEnterprise:
         assert config.max_parallel_streams == EXPECTED_BULK_SIZE
 
     def test_tap_config_validation_database_only(
-        self, database_config: dict[str, Any]
+        self,
+        database_config: dict[str, Any],
+        mock_oracle_connection: Mock,  # noqa: ARG002  # noqa: ARG002
     ) -> None:
         """Test tap configuration validation for database connection only."""
         config = FlextOracleTapConfig(**database_config)
@@ -141,7 +146,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
     def test_database_stream_discovery(
         self,
         database_config: dict[str, Any],
-        mock_oracle_connection: Mock,
+        mock_oracle_connection: Mock,  # noqa: ARG002
     ) -> None:
         """Test database stream discovery."""
         tap = FlextOracleTapBaseService(config=database_config)
@@ -174,7 +179,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
     def test_hybrid_stream_discovery(
         self,
         database_config: dict[str, Any],
-        mock_oracle_connection: Mock,
+        mock_oracle_connection: Mock,  # noqa: ARG002
     ) -> None:
         """Test Oracle database stream discovery."""
         tap = FlextOracleTapBaseService(config=database_config)
@@ -200,7 +205,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
     def test_connection_testing_database(
         self,
         database_config: dict[str, Any],
-        mock_oracle_connection: Mock,
+        mock_oracle_connection: Mock,  # noqa: ARG002
     ) -> None:
         """Test database connection testing."""
         tap = FlextOracleTapBaseService(config=database_config)
@@ -239,7 +244,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
     def test_connection_testing_database_success(
         self,
         database_config: dict[str, Any],
-        mock_oracle_connection: Mock,
+        mock_oracle_connection: Mock,  # noqa: ARG002
     ) -> None:
         """Test Oracle database connection testing."""
         tap = FlextOracleTapBaseService(config=database_config)
@@ -263,7 +268,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
     def test_tap_metrics_collection(
         self,
         database_config: dict[str, Any],
-        mock_oracle_connection: Mock,
+        mock_oracle_connection: Mock,  # noqa: ARG002
     ) -> None:
         """Test comprehensive metrics collection."""
         tap = FlextOracleTapBaseService(config=database_config)
@@ -298,7 +303,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
     async def test_async_operation_support(
         self,
         database_config: dict[str, Any],
-        mock_oracle_connection: Mock,
+        mock_oracle_connection: Mock,  # noqa: ARG002
     ) -> None:
         """Test async operation support."""
         tap = FlextOracleTapBaseService(config=database_config)
@@ -318,7 +323,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
     def test_tap_discoverable_tables_filtering(
         self,
         database_config: dict[str, Any],
-        mock_oracle_connection: Mock,
+        mock_oracle_connection: Mock,  # noqa: ARG002
     ) -> None:
         """Test table filtering during discovery."""
         # Test with specific tables configured
@@ -337,7 +342,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
     def test_tap_discoverable_tables_auto_discovery(
         self,
         database_config: dict[str, Any],
-        mock_oracle_connection: Mock,
+        mock_oracle_connection: Mock,  # noqa: ARG002
     ) -> None:
         """Test automatic table discovery."""
         # Remove tables config to trigger auto-discovery
@@ -372,7 +377,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
     def test_tap_table_exclusion_filtering(
         self,
         database_config: dict[str, Any],
-        mock_oracle_connection: Mock,
+        mock_oracle_connection: Mock,  # noqa: ARG002
     ) -> None:
         """Test table exclusion filtering."""
         # Remove specific tables and add exclusions
@@ -405,7 +410,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
     def test_tap_table_pattern_filtering(
         self,
         database_config: dict[str, Any],
-        mock_oracle_connection: Mock,
+        mock_oracle_connection: Mock,  # noqa: ARG002
     ) -> None:
         """Test table pattern filtering."""
         # Remove specific tables and add pattern
@@ -454,7 +459,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
     def test_concurrent_stream_processing(
         self,
         database_config: dict[str, Any],
-        mock_oracle_connection: Mock,
+        mock_oracle_connection: Mock,  # noqa: ARG002
     ) -> None:
         """Test concurrent stream processing capabilities."""
         # Increase parallelism for stress test
@@ -528,7 +533,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
     def test_real_world_workflow_simulation(
         self,
         database_config: dict[str, Any],
-        mock_oracle_connection: Mock,
+        mock_oracle_connection: Mock,  # noqa: ARG002
     ) -> None:
         """Test complete real-world workflow simulation."""
         tap = FlextOracleTapBaseService(config=database_config)
@@ -650,7 +655,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
     def test_stream_name_generation_patterns(
         self,
         database_config: dict[str, Any],
-        mock_oracle_connection: Mock,
+        mock_oracle_connection: Mock,  # noqa: ARG002
     ) -> None:
         """Test stream name generation patterns."""
         tap = FlextOracleTapBaseService(config=database_config)
