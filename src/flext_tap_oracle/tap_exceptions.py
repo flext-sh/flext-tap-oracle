@@ -12,7 +12,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-# Import base exceptions that actually exist in flext-core
 from flext_core import (
     FlextError,
     FlextOperationError,

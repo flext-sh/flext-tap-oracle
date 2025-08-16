@@ -7,12 +7,17 @@ using real Oracle connections and Singer SDK patterns.
 from __future__ import annotations
 
 import os
+import socket
 from typing import TYPE_CHECKING
 
 import pytest
 from flext_core import FlextResult
 
-from flext_tap_oracle.tap_client import FlextOracleTapService
+from flext_tap_oracle import (
+    FlextOracleTapConfig,
+    FlextOracleTapService,
+    create_oracle_tap_config,
+)
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator, Generator
@@ -60,8 +65,6 @@ def set_test_environment() -> Generator[None]:
 
 
 def _can_connect(host: str, port: int, timeout: float = 0.5) -> bool:
-    import socket
-
     try:
         with socket.create_connection((host, port), timeout=timeout):
             return True
@@ -124,8 +127,6 @@ def oracle_tap_config() -> dict[str, object]:
 @pytest.fixture
 def oracle_tap(oracle_tap_config: dict[str, object]) -> object:
     """Oracle tap service instance for testing."""
-    from flext_tap_oracle.tap_config import FlextOracleTapConfig
-
     # Convert dict to proper config and create service
     config_result = FlextResult.ok(
         FlextOracleTapConfig.model_validate(oracle_tap_config),
@@ -134,7 +135,6 @@ def oracle_tap(oracle_tap_config: dict[str, object]) -> object:
         return FlextOracleTapService(config=config_result.data)
 
     # Fallback for test compatibility
-    from flext_tap_oracle.tap_config import create_oracle_tap_config
 
     fallback_result = create_oracle_tap_config(
         oracle_params={
@@ -590,7 +590,7 @@ def mock_oracle_tap() -> type[object]:
         async def sync(
             self,
             catalog: dict[str, object],
-            state: dict[str, object],
+            state: dict[str, object],  # noqa: ARG002
         ) -> AsyncGenerator[dict[str, object]]:
             """Sync data using mock extraction."""
             if not isinstance(catalog, dict) or "streams" not in catalog:
@@ -649,7 +649,7 @@ def mock_oracle_connection() -> type[object]:
         async def execute_query(
             self,
             query: str,
-            parameters: dict[str, object] | None = None,
+            parameters: dict[str, object] | None = None,  # noqa: ARG002
         ) -> list[dict[str, object]]:
             """Execute query and return mock results using Strategy Pattern."""
             return self._get_query_strategy(query).execute()

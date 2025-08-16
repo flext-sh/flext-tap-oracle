@@ -22,12 +22,11 @@ from flext_db_oracle import (
     FlextDbOracleMetadataManager,
     FlextDbOracleObservabilityManager,
 )
-from flext_meltano import Stream
+from flext_meltano import Stream, Tap
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping
 
-    from flext_meltano import Tap
 
 logger = get_logger(__name__)
 

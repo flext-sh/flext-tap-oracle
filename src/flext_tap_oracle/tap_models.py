@@ -14,10 +14,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-# Import and re-export base models from flext-core - NEVER duplicate
 from flext_core import FlextResult, FlextValueObject
-
-# Import and re-export Oracle models from flext-db-oracle - NEVER duplicate
 from flext_db_oracle import (
     FlextDbOracleColumn,
     FlextDbOracleSchema,
@@ -28,11 +25,7 @@ from flext_db_oracle import (
     TDbOracleSchema,
     TDbOracleTable,
 )
-
-# Import Singer/Meltano types from flext-meltano
 from flext_meltano import PropertiesList, Property, Stream
-
-# Import from tap configuration module (avoiding circular imports)
 from pydantic import Field
 
 # =====================================================

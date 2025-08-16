@@ -15,10 +15,13 @@ from __future__ import annotations
 import re
 from typing import Literal, Self
 
-# Import base configs - NEVER duplicate functionality
-from flext_core import FlextConstants, FlextResult, FlextValueObject, FlextBaseConfigModel
+from flext_core import (
+    FlextBaseConfigModel,
+    FlextConstants,
+    FlextResult,
+    FlextValueObject,
+)
 from flext_db_oracle import FlextDbOracleConfig
-from flext_meltano import FlextMeltanoConfig
 from pydantic import Field, field_validator, model_validator
 
 
@@ -257,39 +260,55 @@ class FlextOracleTapConfig(FlextBaseConfigModel):
 
     def validate_business_rules(self) -> FlextResult[None]:
         """Validate Oracle tap configuration business rules using FlextBaseConfigModel pattern."""
-        # Ensure at least one configuration source is valid
+        # Validate Oracle configuration
+        oracle_validation = self._validate_oracle_config()
+        if not oracle_validation.success:
+            return oracle_validation
+
+        # Validate tap-specific configuration
+        tap_validation = self.tap_config.validate_business_rules()
+        if not tap_validation.success:
+            return tap_validation
+
+        # Cross-validate configurations
+        cross_validation = self._validate_cross_configuration()
+        if not cross_validation.success:
+            return cross_validation
+
+        return FlextResult.ok(None)
+
+    def _validate_oracle_config(self) -> FlextResult[None]:
+        """Validate Oracle configuration."""
         if not self.oracle_config:
             return FlextResult.fail("Oracle database configuration is required")
-        
-        # Validate Oracle connection can be established
+
         try:
             connection_string = self.oracle_config.get_connection_string()
             if not connection_string:
                 return FlextResult.fail("Oracle connection string cannot be generated")
         except Exception as e:
             return FlextResult.fail(f"Oracle configuration validation failed: {e}")
-        
-        # Validate tap-specific configuration
-        tap_validation = self.tap_config.validate_business_rules()
-        if not tap_validation.success:
-            return tap_validation
-        
+
+        return FlextResult.ok(None)
+
+    def _validate_cross_configuration(self) -> FlextResult[None]:
+        """Validate cross-configuration compatibility."""
         # Cross-validate Oracle and tap configurations
-        if hasattr(self.oracle_config, 'pool_max'):
-            max_connections = getattr(self.oracle_config, 'pool_max', 10)
+        if hasattr(self.oracle_config, "pool_max"):
+            max_connections = getattr(self.oracle_config, "pool_max", 10)
             if self.tap_config.max_parallel_streams > max_connections:
                 return FlextResult.fail(
                     f"Parallel streams ({self.tap_config.max_parallel_streams}) exceeds "
-                    f"Oracle connection pool limit ({max_connections})"
+                    f"Oracle connection pool limit ({max_connections})",
                 )
-        
+
         # Validate batch size against Oracle limits
         if self.tap_config.batch_size > FlextConstants.Performance.MAX_BATCH_SIZE:
             return FlextResult.fail(
                 f"Batch size too large for Oracle: {self.tap_config.batch_size} > "
-                f"{FlextConstants.Performance.MAX_BATCH_SIZE:,} (may cause memory issues)"
+                f"{FlextConstants.Performance.MAX_BATCH_SIZE:,} (may cause memory issues)",
             )
-        
+
         return FlextResult.ok(None)
 
     @staticmethod

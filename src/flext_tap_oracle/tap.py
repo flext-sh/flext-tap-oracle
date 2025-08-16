@@ -20,9 +20,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import click
-from flext_cli import CLICommand
-from flext_cli.core.helpers import FlextCliHelper
-from flext_cli.foundation import (
+from flext_cli import (
+    CLICommand,
+    FlextCliHelper,
     create_cli_config as create_flext_cli_config,
     setup_cli as setup_flext_cli,
 )
