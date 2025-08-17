@@ -41,8 +41,8 @@ class OracleTapStreamInfo(FlextValueObject):
     """
 
     def validate_business_rules(self) -> FlextResult[None]:
-        """Validate stream info business rules."""
-        return FlextResult.ok(None)
+      """Validate stream info business rules."""
+      return FlextResult.ok(None)
 
     # Stream identity
     stream_name: str = Field(..., description="Singer stream name")
@@ -51,16 +51,16 @@ class OracleTapStreamInfo(FlextValueObject):
 
     # Stream configuration
     is_selected: bool = Field(
-        default=True,
-        description="Whether stream is selected for extraction",
+      default=True,
+      description="Whether stream is selected for extraction",
     )
     replication_method: Literal["FULL_TABLE", "INCREMENTAL"] = Field(
-        default="FULL_TABLE",
-        description="Replication method for this stream",
+      default="FULL_TABLE",
+      description="Replication method for this stream",
     )
     replication_key: str | None = Field(
-        None,
-        description="Column used for incremental replication",
+      None,
+      description="Column used for incremental replication",
     )
 
     # Runtime information (populated at runtime)
@@ -69,22 +69,22 @@ class OracleTapStreamInfo(FlextValueObject):
     last_extracted: str | None = Field(None, description="Last extraction timestamp")
 
     def to_singer_stream_info(self) -> dict[str, object]:
-        """Convert to Singer stream information format."""
-        return {
-            "tap_stream_id": self.stream_name,
-            "table_name": self.table_name,
-            "schema": self.schema_name,
-            "metadata": {
-                "replication-method": self.replication_method,
-                "replication-key": self.replication_key,
-                "selected": self.is_selected,
-            },
-            "stats": {
-                "estimated_rows": self.estimated_rows,
-                "column_count": self.column_count,
-                "last_extracted": self.last_extracted,
-            },
-        }
+      """Convert to Singer stream information format."""
+      return {
+          "tap_stream_id": self.stream_name,
+          "table_name": self.table_name,
+          "schema": self.schema_name,
+          "metadata": {
+              "replication-method": self.replication_method,
+              "replication-key": self.replication_key,
+              "selected": self.is_selected,
+          },
+          "stats": {
+              "estimated_rows": self.estimated_rows,
+              "column_count": self.column_count,
+              "last_extracted": self.last_extracted,
+          },
+      }
 
 
 class OracleTapDiscoveryResult(FlextValueObject):
@@ -95,8 +95,8 @@ class OracleTapDiscoveryResult(FlextValueObject):
     """
 
     def validate_business_rules(self) -> FlextResult[None]:
-        """Validate discovery result business rules."""
-        return FlextResult.ok(None)
+      """Validate discovery result business rules."""
+      return FlextResult.ok(None)
 
     # Discovery metadata
     schema_name: str = Field(..., description="Oracle schema that was discovered")
@@ -105,47 +105,47 @@ class OracleTapDiscoveryResult(FlextValueObject):
 
     # Raw Oracle metadata
     oracle_tables: list[FlextDbOracleTable] = Field(
-        default_factory=list,
-        description="Raw Oracle table metadata from flext-db-oracle",
+      default_factory=list,
+      description="Raw Oracle table metadata from flext-db-oracle",
     )
 
     # Processed stream information
     stream_info: list[OracleTapStreamInfo] = Field(
-        default_factory=list,
-        description="Processed stream information for tap use",
+      default_factory=list,
+      description="Processed stream information for tap use",
     )
 
     # Filtering results
     filtered_tables: list[str] = Field(
-        default_factory=list,
-        description="Table names after applying filters",
+      default_factory=list,
+      description="Table names after applying filters",
     )
     excluded_tables: list[str] = Field(
-        default_factory=list,
-        description="Table names that were excluded",
+      default_factory=list,
+      description="Table names that were excluded",
     )
 
     def get_selected_streams(self) -> list[OracleTapStreamInfo]:
-        """Get only selected streams."""
-        return [stream for stream in self.stream_info if stream.is_selected]
+      """Get only selected streams."""
+      return [stream for stream in self.stream_info if stream.is_selected]
 
     def get_table_by_name(self, table_name: str) -> FlextDbOracleTable | None:
-        """Get Oracle table metadata by name."""
-        for table in self.oracle_tables:
-            if table.name == table_name:
-                return table
-        return None
+      """Get Oracle table metadata by name."""
+      for table in self.oracle_tables:
+          if table.name == table_name:
+              return table
+      return None
 
     def to_singer_catalog(self) -> dict[str, object]:
-        """Convert to Singer catalog format."""
-        return {
-            "streams": [stream.to_singer_stream_info() for stream in self.stream_info],
-            "metadata": {
-                "schema": self.schema_name,
-                "discovery_timestamp": self.discovery_timestamp,
-                "total_tables": self.total_tables,
-            },
-        }
+      """Convert to Singer catalog format."""
+      return {
+          "streams": [stream.to_singer_stream_info() for stream in self.stream_info],
+          "metadata": {
+              "schema": self.schema_name,
+              "discovery_timestamp": self.discovery_timestamp,
+              "total_tables": self.total_tables,
+          },
+      }
 
 
 class OracleTapExecutionStats(FlextValueObject):
@@ -167,93 +167,93 @@ class OracleTapExecutionStats(FlextValueObject):
 
     # Performance metrics
     avg_records_per_second: float = Field(
-        default=0.0,
-        description="Average records per second",
+      default=0.0,
+      description="Average records per second",
     )
     avg_bytes_per_second: float = Field(
-        default=0.0,
-        description="Average bytes per second",
+      default=0.0,
+      description="Average bytes per second",
     )
     duration_seconds: float = Field(default=0.0, description="Total execution duration")
 
     # Error tracking
     errors_encountered: int = Field(
-        default=0,
-        description="Number of errors encountered",
+      default=0,
+      description="Number of errors encountered",
     )
     failed_streams: list[str] = Field(
-        default_factory=list,
-        description="Names of failed streams",
+      default_factory=list,
+      description="Names of failed streams",
     )
 
     # Oracle-specific metrics
     oracle_connection_time: float = Field(
-        default=0.0,
-        description="Oracle connection time",
+      default=0.0,
+      description="Oracle connection time",
     )
     oracle_query_time: float = Field(default=0.0, description="Total Oracle query time")
     oracle_result_processing_time: float = Field(
-        default=0.0,
-        description="Result processing time",
+      default=0.0,
+      description="Result processing time",
     )
 
     def update_performance_metrics(self) -> OracleTapExecutionStats:
-        """Return new instance with updated calculated performance metrics."""
-        if self.duration_seconds > 0:
-            return self.model_copy(
-                update={
-                    "avg_records_per_second": self.total_records
-                    / self.duration_seconds,
-                    "avg_bytes_per_second": self.total_bytes / self.duration_seconds,
-                },
-            )
-        return self
+      """Return new instance with updated calculated performance metrics."""
+      if self.duration_seconds > 0:
+          return self.model_copy(
+              update={
+                  "avg_records_per_second": self.total_records
+                  / self.duration_seconds,
+                  "avg_bytes_per_second": self.total_bytes / self.duration_seconds,
+              },
+          )
+      return self
 
     def add_stream_stats(
-        self,
-        records: int,
-        bytes_processed: int,
-        processing_time: float,
+      self,
+      records: int,
+      bytes_processed: int,
+      processing_time: float,
     ) -> OracleTapExecutionStats:
-        """Return new instance with added statistics for a processed stream."""
-        updated = self.model_copy(
-            update={
-                "streams_processed": self.streams_processed + 1,
-                "total_records": self.total_records + records,
-                "total_bytes": self.total_bytes + bytes_processed,
-                "oracle_result_processing_time": self.oracle_result_processing_time
-                + processing_time,
-            },
-        )
-        return updated.update_performance_metrics()
+      """Return new instance with added statistics for a processed stream."""
+      updated = self.model_copy(
+          update={
+              "streams_processed": self.streams_processed + 1,
+              "total_records": self.total_records + records,
+              "total_bytes": self.total_bytes + bytes_processed,
+              "oracle_result_processing_time": self.oracle_result_processing_time
+              + processing_time,
+          },
+      )
+      return updated.update_performance_metrics()
 
     def mark_stream_error(self, stream_name: str) -> OracleTapExecutionStats:
-        """Return new instance with marked stream error."""
-        new_failed_streams = self.failed_streams.copy() if self.failed_streams else []
-        if stream_name not in new_failed_streams:
-            new_failed_streams.append(stream_name)
-        return self.model_copy(
-            update={
-                "errors_encountered": self.errors_encountered + 1,
-                "failed_streams": new_failed_streams,
-            },
-        )
+      """Return new instance with marked stream error."""
+      new_failed_streams = self.failed_streams.copy() if self.failed_streams else []
+      if stream_name not in new_failed_streams:
+          new_failed_streams.append(stream_name)
+      return self.model_copy(
+          update={
+              "errors_encountered": self.errors_encountered + 1,
+              "failed_streams": new_failed_streams,
+          },
+      )
 
     def to_summary(self) -> dict[str, object]:
-        """Create execution summary."""
-        return {
-            "execution_id": self.execution_id,
-            "duration_seconds": self.duration_seconds,
-            "streams_processed": self.streams_processed,
-            "total_records": self.total_records,
-            "avg_records_per_second": self.avg_records_per_second,
-            "errors": self.errors_encountered,
-            "success_rate": (
-                (self.streams_processed - len(self.failed_streams))
-                / max(self.streams_processed, 1)
-            )
-            * 100,
-        }
+      """Create execution summary."""
+      return {
+          "execution_id": self.execution_id,
+          "duration_seconds": self.duration_seconds,
+          "streams_processed": self.streams_processed,
+          "total_records": self.total_records,
+          "avg_records_per_second": self.avg_records_per_second,
+          "errors": self.errors_encountered,
+          "success_rate": (
+              (self.streams_processed - len(self.failed_streams))
+              / max(self.streams_processed, 1)
+          )
+          * 100,
+      }
 
 
 # =====================================================
@@ -286,31 +286,31 @@ def create_stream_info_from_oracle_table(
     """Create stream info from Oracle table metadata.
 
     Args:
-        oracle_table: Oracle table metadata from flext-db-oracle
-        stream_prefix: Prefix for stream name
-        replication_method: Default replication method
+      oracle_table: Oracle table metadata from flext-db-oracle
+      stream_prefix: Prefix for stream name
+      replication_method: Default replication method
 
     Returns:
-        FlextResult containing stream info
+      FlextResult containing stream info
 
     """
     try:
-        stream_name = f"{stream_prefix}_{oracle_table.name.lower()}"
+      stream_name = f"{stream_prefix}_{oracle_table.name.lower()}"
 
-        stream_info = OracleTapStreamInfo(
-            stream_name=stream_name,
-            table_name=oracle_table.name,
-            schema_name=getattr(oracle_table, "schema_name", None),
-            replication_method=replication_method,
-            column_count=len(oracle_table.columns)
-            if hasattr(oracle_table, "columns")
-            else None,
-        )
+      stream_info = OracleTapStreamInfo(
+          stream_name=stream_name,
+          table_name=oracle_table.name,
+          schema_name=getattr(oracle_table, "schema_name", None),
+          replication_method=replication_method,
+          column_count=len(oracle_table.columns)
+          if hasattr(oracle_table, "columns")
+          else None,
+      )
 
-        return FlextResult.ok(stream_info)
+      return FlextResult.ok(stream_info)
 
     except Exception as e:
-        return FlextResult.fail(f"Failed to create stream info from Oracle table: {e}")
+      return FlextResult.fail(f"Failed to create stream info from Oracle table: {e}")
 
 
 def create_discovery_result(
@@ -321,35 +321,35 @@ def create_discovery_result(
     """Create discovery result from Oracle tables.
 
     Args:
-        schema_name: Oracle schema name
-        oracle_tables: List of Oracle table metadata
-        stream_prefix: Prefix for stream names
+      schema_name: Oracle schema name
+      oracle_tables: List of Oracle table metadata
+      stream_prefix: Prefix for stream names
 
     Returns:
-        FlextResult containing discovery result
+      FlextResult containing discovery result
 
     """
     try:
-        # Create stream info for each table
-        stream_info = []
-        for table in oracle_tables:
-            stream_result = create_stream_info_from_oracle_table(table, stream_prefix)
-            if stream_result.success and stream_result.data:
-                stream_info.append(stream_result.data)
+      # Create stream info for each table
+      stream_info = []
+      for table in oracle_tables:
+          stream_result = create_stream_info_from_oracle_table(table, stream_prefix)
+          if stream_result.success and stream_result.data:
+              stream_info.append(stream_result.data)
 
-        discovery_result = OracleTapDiscoveryResult(
-            schema_name=schema_name,
-            discovery_timestamp="now",  # Would use actual timestamp
-            total_tables=len(oracle_tables),
-            oracle_tables=oracle_tables,
-            stream_info=stream_info,
-            filtered_tables=[table.name for table in oracle_tables],
-        )
+      discovery_result = OracleTapDiscoveryResult(
+          schema_name=schema_name,
+          discovery_timestamp="now",  # Would use actual timestamp
+          total_tables=len(oracle_tables),
+          oracle_tables=oracle_tables,
+          stream_info=stream_info,
+          filtered_tables=[table.name for table in oracle_tables],
+      )
 
-        return FlextResult.ok(discovery_result)
+      return FlextResult.ok(discovery_result)
 
     except Exception as e:
-        return FlextResult.fail(f"Failed to create discovery result: {e}")
+      return FlextResult.fail(f"Failed to create discovery result: {e}")
 
 
 # =====================================================
