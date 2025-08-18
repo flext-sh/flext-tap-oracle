@@ -8,14 +8,14 @@ functionality, including all connection types, performance, and resilience tests
 from __future__ import annotations
 
 import asyncio
-from typing import TYPE_CHECKING, Any
+from collections.abc import Generator
+from typing import Any
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 from pydantic import ValidationError
 
 from flext_tap_oracle import FlextOracleTapBaseService, FlextOracleTapConfig
-    from collections.abc import Generator
 # Constants
 EXPECTED_BULK_SIZE = 2
 EXPECTED_TOTAL_PAGES = 8
