@@ -42,7 +42,7 @@ class OracleTapStreamInfo(FlextValueObject):
 
     def validate_business_rules(self) -> FlextResult[None]:
         """Validate stream info business rules."""
-        return FlextResult.ok(None)
+        return FlextResult[None].ok(None)
 
     # Stream identity
     stream_name: str = Field(..., description="Singer stream name")
@@ -96,7 +96,7 @@ class OracleTapDiscoveryResult(FlextValueObject):
 
     def validate_business_rules(self) -> FlextResult[None]:
         """Validate discovery result business rules."""
-        return FlextResult.ok(None)
+        return FlextResult[None].ok(None)
 
     # Discovery metadata
     schema_name: str = Field(..., description="Oracle schema that was discovered")
@@ -307,10 +307,10 @@ def create_stream_info_from_oracle_table(
             else None,
         )
 
-        return FlextResult.ok(stream_info)
+        return FlextResult[None].ok(stream_info)
 
     except Exception as e:
-        return FlextResult.fail(f"Failed to create stream info from Oracle table: {e}")
+        return FlextResult[None].fail(f"Failed to create stream info from Oracle table: {e}")
 
 
 def create_discovery_result(
@@ -346,10 +346,10 @@ def create_discovery_result(
             filtered_tables=[table.name for table in oracle_tables],
         )
 
-        return FlextResult.ok(discovery_result)
+        return FlextResult[None].ok(discovery_result)
 
     except Exception as e:
-        return FlextResult.fail(f"Failed to create discovery result: {e}")
+        return FlextResult[None].fail(f"Failed to create discovery result: {e}")
 
 
 # =====================================================

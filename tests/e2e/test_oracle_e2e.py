@@ -29,7 +29,7 @@ class OracleQueryService:
       """Mock execute query method."""
       from flext_core import FlextResult
       # Mock implementation for E2E testing
-      return FlextResult.ok(True)
+      return FlextResult[None].ok(True)
 
 
 class TestOracleE2E:

@@ -125,10 +125,10 @@ class OracleTapDiscoverCommand(CLICommand):
     def validate_business_rules(self) -> FlextResult[None]:
         """Validate business rules for Oracle tap discovery."""
         if self.params.config_file and not Path(self.params.config_file).exists():
-            return FlextResult.fail(
+            return FlextResult[None].fail(
                 f"Configuration file not found: {self.params.config_file}",
             )
-        return FlextResult.ok(None)
+        return FlextResult[None].ok(None)
 
     def execute(self) -> FlextResult[object]:
         """Execute Oracle tap discovery using modern patterns."""
@@ -145,7 +145,7 @@ class OracleTapDiscoverCommand(CLICommand):
         try:
             # Load configuration (required)
             if not self.params.config_file:
-                return FlextResult.fail("Configuration file is required for discovery")
+                return FlextResult[None].fail("Configuration file is required for discovery")
 
             config_data = Path(self.params.config_file).read_text(encoding="utf-8")
             config = FlextOracleTapConfig.model_validate_json(config_data)
@@ -156,7 +156,7 @@ class OracleTapDiscoverCommand(CLICommand):
                 self.cli_helper.print_error(
                     f"Failed to create tap service: {tap_service_result.error}",
                 )
-                return FlextResult.fail(
+                return FlextResult[None].fail(
                     tap_service_result.error or "Tap service creation failed",
                 )
 
@@ -167,13 +167,13 @@ class OracleTapDiscoverCommand(CLICommand):
             tables_result = tap_service.discover_oracle_tables()
             if tables_result.is_failure or tables_result.data is None:
                 self.cli_helper.print_error(f"Discovery failed: {tables_result.error}")
-                return FlextResult.fail(tables_result.error or "Discovery failed")
+                return FlextResult[None].fail(tables_result.error or "Discovery failed")
 
             # Build Singer catalog from tables using tap models
             schema_name = getattr(config.oracle_config, "schema_name", None) or "USER"
             discovery_build = create_discovery_result(schema_name, tables_result.data)
             if discovery_build.is_failure or discovery_build.data is None:
-                return FlextResult.fail(
+                return FlextResult[None].fail(
                     discovery_build.error or "Failed to build discovery result",
                 )
 
@@ -189,12 +189,12 @@ class OracleTapDiscoverCommand(CLICommand):
                 self.cli_helper.print_success(f"Catalog written to {output_path}")
 
             self.cli_helper.print_success("Oracle schema discovery completed")
-            return FlextResult.ok({"catalog": catalog_dict})
+            return FlextResult[None].ok({"catalog": catalog_dict})
 
         except Exception as e:
             logger.exception("Oracle discovery failed")
             self.cli_helper.print_error(f"Discovery error: {e}")
-            return FlextResult.fail(f"Discovery error: {e}")
+            return FlextResult[None].fail(f"Discovery error: {e}")
 
 
 class OracleTapSyncCommand(CLICommand):
@@ -218,18 +218,18 @@ class OracleTapSyncCommand(CLICommand):
     def validate_business_rules(self) -> FlextResult[None]:
         """Validate business rules for Oracle tap sync."""
         if self.params.config_file and not Path(self.params.config_file).exists():
-            return FlextResult.fail(
+            return FlextResult[None].fail(
                 f"Configuration file not found: {self.params.config_file}",
             )
         if self.params.catalog_file and not Path(self.params.catalog_file).exists():
-            return FlextResult.fail(
+            return FlextResult[None].fail(
                 f"Catalog file not found: {self.params.catalog_file}",
             )
         if self.params.state_file and not Path(self.params.state_file).exists():
-            return FlextResult.fail(
+            return FlextResult[None].fail(
                 f"State file not found: {self.params.state_file}",
             )
-        return FlextResult.ok(None)
+        return FlextResult[None].ok(None)
 
     def execute(self) -> FlextResult[object]:
         """Execute Oracle tap sync using modern patterns."""
@@ -247,7 +247,7 @@ class OracleTapSyncCommand(CLICommand):
         try:
             # Load configuration (required)
             if not self.params.config_file:
-                return FlextResult.fail("Configuration file is required for sync")
+                return FlextResult[None].fail("Configuration file is required for sync")
 
             config_data = Path(self.params.config_file).read_text(encoding="utf-8")
             config = FlextOracleTapConfig.model_validate_json(config_data)
@@ -258,7 +258,7 @@ class OracleTapSyncCommand(CLICommand):
                 self.cli_helper.print_error(
                     f"Failed to create tap service: {tap_service_result.error}",
                 )
-                return FlextResult.fail(
+                return FlextResult[None].fail(
                     tap_service_result.error or "Tap service creation failed",
                 )
 
@@ -282,7 +282,7 @@ class OracleTapSyncCommand(CLICommand):
             tables_result = tap_service.get_filtered_tables()
             if tables_result.is_failure:
                 self.cli_helper.print_error(f"Sync failed: {tables_result.error}")
-                return FlextResult.fail(tables_result.error or "Sync failed")
+                return FlextResult[None].fail(tables_result.error or "Sync failed")
 
             table_names = tables_result.data or []
             record_count = 0  # Real extraction requires Singer target integration
@@ -290,14 +290,14 @@ class OracleTapSyncCommand(CLICommand):
             self.cli_helper.print_success(
                 f"Prepared sync for {len(table_names)} tables; records extracted: {record_count}",
             )
-            return FlextResult.ok(
+            return FlextResult[None].ok(
                 {"records_extracted": record_count, "tables": table_names},
             )
 
         except Exception as e:
             logger.exception("Oracle sync failed")
             self.cli_helper.print_error(f"Sync error: {e}")
-            return FlextResult.fail(f"Sync error: {e}")
+            return FlextResult[None].fail(f"Sync error: {e}")
 
 
 # =============================================================================
