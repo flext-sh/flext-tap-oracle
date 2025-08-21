@@ -145,7 +145,9 @@ class OracleTapDiscoverCommand(CLICommand):
         try:
             # Load configuration (required)
             if not self.params.config_file:
-                return FlextResult[None].fail("Configuration file is required for discovery")
+                return FlextResult[None].fail(
+                    "Configuration file is required for discovery"
+                )
 
             config_data = Path(self.params.config_file).read_text(encoding="utf-8")
             config = FlextOracleTapConfig.model_validate_json(config_data)

@@ -285,9 +285,13 @@ class FlextOracleTapConfig(FlextBaseConfigModel):
         try:
             connection_string = self.oracle_config.get_connection_string()
             if not connection_string:
-                return FlextResult[None].fail("Oracle connection string cannot be generated")
+                return FlextResult[None].fail(
+                    "Oracle connection string cannot be generated"
+                )
         except Exception as e:
-            return FlextResult[None].fail(f"Oracle configuration validation failed: {e}")
+            return FlextResult[None].fail(
+                f"Oracle configuration validation failed: {e}"
+            )
 
         return FlextResult[None].ok(None)
 
