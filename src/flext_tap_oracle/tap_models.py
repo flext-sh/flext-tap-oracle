@@ -25,9 +25,8 @@ from flext_db_oracle import (
     TDbOracleSchema,
     TDbOracleTable,
 )
-from pydantic import Field
-
 from flext_meltano import PropertiesList, Property, Stream
+from pydantic import Field
 
 # =====================================================
 # TAP-SPECIFIC MODELS (only what doesn't exist elsewhere)
