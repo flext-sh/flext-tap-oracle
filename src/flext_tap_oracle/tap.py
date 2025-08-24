@@ -145,7 +145,7 @@ class OracleTapDiscoverCommand(CLICommand):
         try:
             # Load configuration (required)
             if not self.params.config_file:
-                return FlextResult[None].fail(
+                return FlextResult[object].fail(
                     "Configuration file is required for discovery"
                 )
 
@@ -158,7 +158,7 @@ class OracleTapDiscoverCommand(CLICommand):
                 self.cli_helper.print_error(
                     f"Failed to create tap service: {tap_service_result.error}",
                 )
-                return FlextResult[None].fail(
+                return FlextResult[object].fail(
                     tap_service_result.error or "Tap service creation failed",
                 )
 
@@ -169,13 +169,13 @@ class OracleTapDiscoverCommand(CLICommand):
             tables_result = tap_service.discover_oracle_tables()
             if tables_result.is_failure or tables_result.data is None:
                 self.cli_helper.print_error(f"Discovery failed: {tables_result.error}")
-                return FlextResult[None].fail(tables_result.error or "Discovery failed")
+                return FlextResult[object].fail(tables_result.error or "Discovery failed")
 
             # Build Singer catalog from tables using tap models
             schema_name = getattr(config.oracle_config, "schema_name", None) or "USER"
             discovery_build = create_discovery_result(schema_name, tables_result.data)
             if discovery_build.is_failure or discovery_build.data is None:
-                return FlextResult[None].fail(
+                return FlextResult[object].fail(
                     discovery_build.error or "Failed to build discovery result",
                 )
 
@@ -191,12 +191,12 @@ class OracleTapDiscoverCommand(CLICommand):
                 self.cli_helper.print_success(f"Catalog written to {output_path}")
 
             self.cli_helper.print_success("Oracle schema discovery completed")
-            return FlextResult[None].ok({"catalog": catalog_dict})
+            return FlextResult[object].ok({"catalog": catalog_dict})
 
         except Exception as e:
             logger.exception("Oracle discovery failed")
             self.cli_helper.print_error(f"Discovery error: {e}")
-            return FlextResult[None].fail(f"Discovery error: {e}")
+            return FlextResult[object].fail(f"Discovery error: {e}")
 
 
 class OracleTapSyncCommand(CLICommand):
@@ -249,7 +249,7 @@ class OracleTapSyncCommand(CLICommand):
         try:
             # Load configuration (required)
             if not self.params.config_file:
-                return FlextResult[None].fail("Configuration file is required for sync")
+                return FlextResult[object].fail("Configuration file is required for sync")
 
             config_data = Path(self.params.config_file).read_text(encoding="utf-8")
             config = FlextOracleTapConfig.model_validate_json(config_data)
@@ -260,7 +260,7 @@ class OracleTapSyncCommand(CLICommand):
                 self.cli_helper.print_error(
                     f"Failed to create tap service: {tap_service_result.error}",
                 )
-                return FlextResult[None].fail(
+                return FlextResult[object].fail(
                     tap_service_result.error or "Tap service creation failed",
                 )
 
@@ -284,7 +284,7 @@ class OracleTapSyncCommand(CLICommand):
             tables_result = tap_service.get_filtered_tables()
             if tables_result.is_failure:
                 self.cli_helper.print_error(f"Sync failed: {tables_result.error}")
-                return FlextResult[None].fail(tables_result.error or "Sync failed")
+                return FlextResult[object].fail(tables_result.error or "Sync failed")
 
             table_names = tables_result.data or []
             record_count = 0  # Real extraction requires Singer target integration
@@ -292,14 +292,14 @@ class OracleTapSyncCommand(CLICommand):
             self.cli_helper.print_success(
                 f"Prepared sync for {len(table_names)} tables; records extracted: {record_count}",
             )
-            return FlextResult[None].ok(
+            return FlextResult[object].ok(
                 {"records_extracted": record_count, "tables": table_names},
             )
 
         except Exception as e:
             logger.exception("Oracle sync failed")
             self.cli_helper.print_error(f"Sync error: {e}")
-            return FlextResult[None].fail(f"Sync error: {e}")
+            return FlextResult[object].fail(f"Sync error: {e}")
 
 
 # =============================================================================

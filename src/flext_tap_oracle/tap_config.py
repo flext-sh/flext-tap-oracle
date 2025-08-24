@@ -400,10 +400,10 @@ def create_oracle_tap_config(
         }
 
         config_instance = FlextOracleTapConfig.model_validate(config_data)
-        return FlextResult[None].ok(config_instance)
+        return FlextResult[FlextOracleTapConfig].ok(config_instance)
 
     except Exception as e:
-        return FlextResult[None].fail(f"Oracle tap configuration creation failed: {e}")
+        return FlextResult[FlextOracleTapConfig].fail(f"Oracle tap configuration creation failed: {e}")
 
 
 # Backward compatibility aliases

@@ -587,7 +587,7 @@ def mock_oracle_tap() -> type[object]:
         async def sync(
             self,
             catalog: dict[str, object],
-            state: dict[str, object],  # noqa: ARG002
+            state: dict[str, object],
         ) -> AsyncGenerator[dict[str, object]]:
             """Sync data using mock extraction."""
             if not isinstance(catalog, dict) or "streams" not in catalog:
@@ -646,7 +646,7 @@ def mock_oracle_connection() -> type[object]:
         async def execute_query(
             self,
             query: str,
-            parameters: dict[str, object] | None = None,  # noqa: ARG002
+            parameters: dict[str, object] | None = None,
         ) -> list[dict[str, object]]:
             """Execute query and return mock results using Strategy Pattern."""
             return self._get_query_strategy(query).execute()

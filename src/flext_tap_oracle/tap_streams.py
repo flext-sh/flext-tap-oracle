@@ -109,10 +109,10 @@ class OracleStream(Stream):
                 # Use Oracle identifier quoting to prevent injection
                 schema_name = tap_config.schema_name.replace('"', '""')  # Escape quotes
                 table_name = self.table_name.replace('"', '""')  # Escape quotes
-                sql = f'SELECT * FROM "{schema_name}"."{table_name}"'  # nosec B608  # noqa: S608
+                sql = f'SELECT * FROM "{schema_name}"."{table_name}"'  # nosec B608
             else:
                 table_name = self.table_name.replace('"', '""')  # Escape quotes
-                sql = f'SELECT * FROM "{table_name}"'  # nosec B608  # noqa: S608
+                sql = f'SELECT * FROM "{table_name}"'  # nosec B608
             logger.info("Executing Oracle query via flext-db-oracle: %s", sql[:200])
             # Execute query using flext-db-oracle API
             result = self.oracle_api.query(sql)

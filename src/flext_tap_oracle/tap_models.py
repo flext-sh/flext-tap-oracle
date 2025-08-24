@@ -307,10 +307,10 @@ def create_stream_info_from_oracle_table(
             else None,
         )
 
-        return FlextResult[None].ok(stream_info)
+        return FlextResult[OracleTapStreamInfo].ok(stream_info)
 
     except Exception as e:
-        return FlextResult[None].fail(
+        return FlextResult[OracleTapStreamInfo].fail(
             f"Failed to create stream info from Oracle table: {e}"
         )
 
@@ -348,10 +348,10 @@ def create_discovery_result(
             filtered_tables=[table.name for table in oracle_tables],
         )
 
-        return FlextResult[None].ok(discovery_result)
+        return FlextResult[OracleTapDiscoveryResult].ok(discovery_result)
 
     except Exception as e:
-        return FlextResult[None].fail(f"Failed to create discovery result: {e}")
+        return FlextResult[OracleTapDiscoveryResult].fail(f"Failed to create discovery result: {e}")
 
 
 # =====================================================
