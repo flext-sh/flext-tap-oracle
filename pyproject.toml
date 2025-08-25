@@ -57,7 +57,7 @@ tap-oracle = "flext_tap_oracle.tap:cli"
 flext-tap-oracle = "flext_tap_oracle.tap:cli"
 
 [tool.ruff]
-extend = "../.config/tools/.ruff-shared.toml"
+extend = "../ruff-shared.toml"
 lint.isort.known-first-party = ["flext_tap_oracle"]
 
 # Poetry configuration - using PEP 621 [project] section above
