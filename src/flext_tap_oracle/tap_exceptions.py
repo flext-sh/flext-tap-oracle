@@ -13,9 +13,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from flext_core import (
-    FlextExceptions.Error,
-    FlextExceptions.OperationError,
-    FlextExceptions.ValidationError,
+    FlextExceptions,
 )
 
 # =====================================================
@@ -23,23 +21,23 @@ from flext_core import (
 # =====================================================
 
 
-class FlextTapOracleError(FlextExceptions.Error):
+class FlextTapOracleError(FlextExceptions):
     """Base error for Oracle tap operations."""
 
 
-class FlextTapOracleValidationError(FlextExceptions.ValidationError):
+class FlextTapOracleValidationError(FlextExceptions):
     """Oracle tap validation errors."""
 
 
-class FlextTapOracleConnectionError(FlextExceptions.OperationError):
+class FlextTapOracleConnectionError(FlextExceptions):
     """Oracle tap connection errors."""
 
 
-class FlextTapOracleConfigurationError(FlextExceptions.ValidationError):
+class FlextTapOracleConfigurationError(FlextExceptions):
     """Oracle tap configuration errors."""
 
 
-class FlextTapOracleProcessingError(FlextExceptions.OperationError):
+class FlextTapOracleProcessingError(FlextExceptions):
     """Oracle tap processing errors."""
 
 

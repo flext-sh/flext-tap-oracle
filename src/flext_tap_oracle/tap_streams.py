@@ -15,7 +15,7 @@ from __future__ import annotations
 from collections.abc import Iterable, Mapping
 from time import perf_counter
 
-from flext_core import get_flext_container, get_logger
+from flext_core import get_logger
 from flext_db_oracle import (
     FlextDbOracleApi,
     FlextDbOracleConnection,
@@ -78,7 +78,7 @@ class OracleStream(Stream):
         """Get flext-db-oracle observability manager with lazy initialization."""
         if self._observability_manager is None:
             # Use REAL constructor - requires FlextContainer and context_name
-            container = get_flext_container()
+            container = FlextContainer.get_global()
             context_name = f"oracle_stream_{self.table_name}"
             self._observability_manager = FlextDbOracleObservabilityManager(
                 container,
