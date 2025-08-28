@@ -390,7 +390,7 @@ def create_oracle_tap_config(
         meltano_config.setdefault("project_root", ".")
         meltano_config.setdefault(
             "environment",
-            FlextConstants.Configuration.DEFAULT_ENVIRONMENT,
+            FlextConstants.Config.DEFAULT_ENVIRONMENT,
         )
 
         config_data = {
@@ -403,7 +403,9 @@ def create_oracle_tap_config(
         return FlextResult[FlextOracleTapConfig].ok(config_instance)
 
     except Exception as e:
-        return FlextResult[FlextOracleTapConfig].fail(f"Oracle tap configuration creation failed: {e}")
+        return FlextResult[FlextOracleTapConfig].fail(
+            f"Oracle tap configuration creation failed: {e}"
+        )
 
 
 # Backward compatibility aliases

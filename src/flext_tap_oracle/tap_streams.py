@@ -15,7 +15,7 @@ from __future__ import annotations
 from collections.abc import Iterable, Mapping
 from time import perf_counter
 
-from flext_core import get_logger
+from flext_core import FlextContainer, get_logger
 from flext_db_oracle import (
     FlextDbOracleApi,
     FlextDbOracleConnection,
@@ -29,6 +29,7 @@ logger = get_logger(__name__)
 
 class OracleStream(Stream):
     """Oracle stream using MAXIMUM flext-db-oracle infrastructure.
+
     This implementation leverages ALL available flext-db-oracle functionality:
     - FlextDbOracleMetadataManager for schema information
     - FlextDbOracleObservabilityManager for monitoring
