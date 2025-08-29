@@ -15,7 +15,7 @@ from __future__ import annotations
 from collections.abc import Iterable, Mapping
 from time import perf_counter
 
-from flext_core import FlextContainer, get_logger
+from flext_core import FlextContainer, FlextLogger
 from flext_db_oracle import (
     FlextDbOracleApi,
     FlextDbOracleConnection,
@@ -24,7 +24,7 @@ from flext_db_oracle import (
 )
 from flext_meltano import Stream, Tap
 
-logger = get_logger(__name__)
+logger = FlextLogger(__name__)
 
 
 class OracleStream(Stream):

@@ -26,14 +26,14 @@ from flext_cli import (
     create_cli_config as create_flext_cli_config,
     setup_cli as setup_flext_cli,
 )
-from flext_core import FlextResult, get_logger
+from flext_core import FlextLogger, FlextResult
 from rich.console import Console
 
 from flext_tap_oracle.models import create_discovery_result
 from flext_tap_oracle.tap_client import create_oracle_tap_service
 from flext_tap_oracle.tap_config import FlextOracleTapConfig
 
-logger = get_logger(__name__)
+logger = FlextLogger(__name__)
 console = Console()
 
 # =============================================================================
@@ -169,7 +169,9 @@ class OracleTapDiscoverCommand(CLICommand):
             tables_result = tap_service.discover_oracle_tables()
             if tables_result.is_failure or tables_result.data is None:
                 self.cli_helper.print_error(f"Discovery failed: {tables_result.error}")
-                return FlextResult[object].fail(tables_result.error or "Discovery failed")
+                return FlextResult[object].fail(
+                    tables_result.error or "Discovery failed"
+                )
 
             # Build Singer catalog from tables using tap models
             schema_name = getattr(config.oracle_config, "schema_name", None) or "USER"
@@ -249,7 +251,9 @@ class OracleTapSyncCommand(CLICommand):
         try:
             # Load configuration (required)
             if not self.params.config_file:
-                return FlextResult[object].fail("Configuration file is required for sync")
+                return FlextResult[object].fail(
+                    "Configuration file is required for sync"
+                )
 
             config_data = Path(self.params.config_file).read_text(encoding="utf-8")
             config = FlextOracleTapConfig.model_validate_json(config_data)

@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from flext_core import FlextResult, FlextValue
+from flext_core import FlextResult, FlextModels.Value
 from flext_db_oracle import (
     FlextDbOracleColumn,
     FlextDbOracleSchema,
@@ -33,7 +33,7 @@ from pydantic import Field
 # =====================================================
 
 
-class OracleTapStreamInfo(FlextValue):
+class OracleTapStreamInfo(FlextModels.Value):
     """Oracle tap stream information - aggregates tap and Oracle metadata.
 
     This model combines Oracle table metadata with tap-specific stream configuration
@@ -87,7 +87,7 @@ class OracleTapStreamInfo(FlextValue):
         }
 
 
-class OracleTapDiscoveryResult(FlextValue):
+class OracleTapDiscoveryResult(FlextModels.Value):
     """Result of Oracle table discovery operation.
 
     Aggregates discovery results with both raw Oracle metadata and
@@ -148,7 +148,7 @@ class OracleTapDiscoveryResult(FlextValue):
         }
 
 
-class OracleTapExecutionStats(FlextValue):
+class OracleTapExecutionStats(FlextModels.Value):
     """Oracle tap execution statistics and metrics.
 
     Tracks runtime statistics for tap execution, performance metrics,

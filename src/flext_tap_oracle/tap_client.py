@@ -12,7 +12,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_core import FlextDomainService, FlextResult, get_logger
+from flext_core import FlextDomainService, FlextLogger, FlextResult
 from flext_db_oracle import (
     FlextDbOracleApi,
     FlextDbOracleMetadataManager,
@@ -22,7 +22,7 @@ from flext_meltano import FlextMeltanoTapService
 
 from flext_tap_oracle.tap_config import FlextOracleTapConfig
 
-logger = get_logger(__name__)
+logger = FlextLogger(__name__)
 # =====================================================
 # DOMAIN SERVICES - Using FlextDomainService[T] pattern
 # =====================================================

@@ -16,16 +16,16 @@ import re
 from typing import Literal, Self
 
 from flext_core import (
-    FlextBaseConfigModel,
+    FlextConfig.BaseConfigModel,
     FlextConstants,
     FlextResult,
-    FlextValue,
+    FlextModels.Value,
 )
 from flext_db_oracle import FlextDbOracleConfig
 from pydantic import Field, field_validator, model_validator
 
 
-class FlextOracleTapConfiguration(FlextValue):
+class FlextOracleTapConfiguration(FlextModels.Value):
     """Oracle tap configuration - ONLY tap-specific settings.
 
     Complementa FlextDbOracleConfig com configurações específicas do tap.
@@ -113,7 +113,7 @@ class FlextOracleTapConfiguration(FlextValue):
         return FlextResult[None].ok(None)
 
 
-class FlextOracleTapStreamMetadata(FlextValue):
+class FlextOracleTapStreamMetadata(FlextModels.Value):
     """Oracle tap stream metadata - ONLY tap-specific fields.
 
     Extends Oracle table metadata with tap-specific information.
@@ -183,11 +183,11 @@ class FlextOracleTapStreamMetadata(FlextValue):
         return FlextResult[None].ok(None)
 
 
-class FlextOracleTapConfig(FlextBaseConfigModel):
+class FlextOracleTapConfig(FlextConfig.BaseConfigModel):
     """Oracle Tap Configuration usando COMPOSIÇÃO das bases existentes.
 
     Esta classe COMPÕE funcionalidade das bases existentes:
-    - FlextBaseConfigModel: Configuração base modernizada do flext-core
+    - FlextConfig.BaseConfigModel: Configuração base modernizada do flext-core
     - FlextDbOracleConfig: Configuração Oracle database (via composition)
     - FlextOracleTapConfiguration: Configurações específicas do tap
 
@@ -259,7 +259,7 @@ class FlextOracleTapConfig(FlextBaseConfigModel):
         return self
 
     def validate_business_rules(self) -> FlextResult[None]:
-        """Validate Oracle tap configuration business rules using FlextBaseConfigModel pattern."""
+        """Validate Oracle tap configuration business rules using FlextConfig.BaseConfigModel pattern."""
         # Validate Oracle configuration
         oracle_validation = self._validate_oracle_config()
         if not oracle_validation.success:
