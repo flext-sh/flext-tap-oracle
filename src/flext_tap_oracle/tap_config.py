@@ -16,7 +16,7 @@ import re
 from typing import Literal, Self
 
 from flext_core import (
-    FlextConfig.BaseConfigModel,
+    FlextConfig.BaseModel,
     FlextConstants,
     FlextResult,
     FlextModels.Value,
@@ -183,11 +183,11 @@ class FlextOracleTapStreamMetadata(FlextModels.Value):
         return FlextResult[None].ok(None)
 
 
-class FlextOracleTapConfig(FlextConfig.BaseConfigModel):
+class FlextOracleTapConfig(FlextConfig.BaseModel):
     """Oracle Tap Configuration usando COMPOSIÇÃO das bases existentes.
 
     Esta classe COMPÕE funcionalidade das bases existentes:
-    - FlextConfig.BaseConfigModel: Configuração base modernizada do flext-core
+    - FlextConfig.BaseModel: Configuração base modernizada do flext-core
     - FlextDbOracleConfig: Configuração Oracle database (via composition)
     - FlextOracleTapConfiguration: Configurações específicas do tap
 
@@ -259,7 +259,7 @@ class FlextOracleTapConfig(FlextConfig.BaseConfigModel):
         return self
 
     def validate_business_rules(self) -> FlextResult[None]:
-        """Validate Oracle tap configuration business rules using FlextConfig.BaseConfigModel pattern."""
+        """Validate Oracle tap configuration business rules using FlextConfig.BaseModel pattern."""
         # Validate Oracle configuration
         oracle_validation = self._validate_oracle_config()
         if not oracle_validation.success:
