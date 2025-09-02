@@ -17,15 +17,11 @@ from typing import Literal
 from flext_core import FlextModels, FlextResult
 from flext_db_oracle import (
     FlextDbOracleColumn,
+    FlextDbOracleQueryResult,
     FlextDbOracleSchema,
     FlextDbOracleTable,
-    TDbOracleColumn,
-    TDbOracleConnectionStatus,
-    TDbOracleQueryResult,
-    TDbOracleSchema,
-    TDbOracleTable,
 )
-from flext_meltano import PropertiesList, Property, Stream
+from flext_meltano import FlextSingerStream as Stream
 from pydantic import Field
 
 # =====================================================
@@ -261,11 +257,10 @@ class OracleTapExecutionStats(FlextModels):
 # =====================================================
 
 # Re-export types from flext-db-oracle with tap-specific aliases
-TapOracleTable = TDbOracleTable
-TapOracleColumn = TDbOracleColumn
-TapOracleSchema = TDbOracleSchema
-TapOracleQueryResult = TDbOracleQueryResult
-TapOracleConnectionStatus = TDbOracleConnectionStatus
+TapOracleTable = FlextDbOracleTable
+TapOracleColumn = FlextDbOracleColumn
+TapOracleSchema = FlextDbOracleSchema
+TapOracleQueryResult = FlextDbOracleQueryResult
 
 # Tap-specific type definitions
 TapReplicationMethod = Literal["FULL_TABLE", "INCREMENTAL"]
@@ -362,22 +357,15 @@ def create_discovery_result(
 
 __all__: list[str] = [
     "FlextDbOracleColumn",
+    "FlextDbOracleQueryResult",
     "FlextDbOracleSchema",
     "FlextDbOracleTable",
     "OracleTapDiscoveryResult",
     "OracleTapExecutionStats",
     "OracleTapStreamInfo",
-    "PropertiesList",
-    "Property",
     "Stream",
-    "TDbOracleColumn",
-    "TDbOracleConnectionStatus",
-    "TDbOracleQueryResult",
-    "TDbOracleSchema",
-    "TDbOracleTable",
     "TapExecutionMode",
     "TapOracleColumn",
-    "TapOracleConnectionStatus",
     "TapOracleQueryResult",
     "TapOracleSchema",
     "TapOracleTable",

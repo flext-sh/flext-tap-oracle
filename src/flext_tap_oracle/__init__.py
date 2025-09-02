@@ -87,8 +87,6 @@ from __future__ import annotations
 
 # Re-export flext-db-oracle infrastructure that this tap uses extensively
 from flext_db_oracle import (
-    # Oracle plugins for extensibility
-    ORACLE_PLUGINS,
     # Core Oracle database functionality
     FlextDbOracleApi,
     # Comprehensive metadata management (USED INSTEAD OF CUSTOM IMPLEMENTATIONS)
@@ -96,53 +94,20 @@ from flext_db_oracle import (
     FlextDbOracleConfig,
     FlextDbOracleConnection,
     # Advanced observability and monitoring (USED INSTEAD OF CUSTOM MONITORING)
-    FlextDbOracleErrorHandler,
-    FlextDbOracleMetadataManager,
     FlextDbOracleObservabilityManager,
+    FlextDbOracleMetadataManager,
     FlextDbOracleOperationTracker,
     FlextDbOracleSchema,
     FlextDbOracleTable,
-    # Oracle-specific types and constants
-    TDbOracleColumn,
-    TDbOracleConnectionStatus,
-    TDbOracleQueryResult,
-    TDbOracleSchema,
-    TDbOracleTable,
-    create_data_validation_plugin,
-    create_performance_monitor_plugin,
-    create_security_audit_plugin,
-    register_all_oracle_plugins,
+    # Oracle query results
+    FlextDbOracleQueryResult,
 )
 
-# === FLEXT-MELTANO COMPLETE INTEGRATION ===
-# Re-export ALL flext-meltano facilities for full ecosystem integration
-# Import singer_typing as th for backward compatibility
+# === FLEXT-MELTANO INTEGRATION ===
+# Import only what exists and is actually used
 from flext_meltano import (
-    BatchSink,
-    FlextMeltanoBaseService,
-    # Bridge integration
     FlextMeltanoBridge,
-    # Configuration and validation
     FlextMeltanoConfig,
-    # Enterprise services from flext-meltano.base
-    FlextMeltanoTapService,
-    # Authentication patterns
-    OAuthAuthenticator,
-    # Typing definitions
-    PropertiesList,
-    Property,
-    Sink,
-    SQLSink,
-    # Core Singer SDK classes (centralized from flext-meltano)
-    Stream,
-    Tap,
-    Target,
-    create_meltano_tap_service,
-    # Testing utilities
-    get_tap_test_class,
-    # Singer typing utilities (centralized)
-    singer_typing,
-    singer_typing as th,
 )
 
 # =====================================================
@@ -173,6 +138,9 @@ from flext_tap_oracle.tap_client import (
     OracleTapService,
 )
 
+# Main alias for external usage
+FlextTapOracle = FlextOracleTapService
+
 # Streams - Oracle stream definitions and processing
 from flext_tap_oracle.tap_streams import (
     OracleStream,
@@ -187,6 +155,10 @@ from flext_tap_oracle.models import (
     OracleTapDiscoveryResult,
     OracleTapExecutionStats,
     OracleTapStreamInfo,
+)
+
+# Factory functions and type aliases from tap_models
+from flext_tap_oracle.tap_models import (
     create_discovery_result,
     create_stream_info_from_oracle_table,
     # Type aliases for backward compatibility
@@ -234,45 +206,29 @@ __version_info__ = tuple(int(x) for x in __version__.split(".") if x.isdigit())
 
 __all__: list[str] = [
     # Infrastructure from flext-db-oracle
-    "ORACLE_PLUGINS",
     "FlextDbOracleApi",
     "FlextDbOracleColumn",
     "FlextDbOracleConfig",
     "FlextDbOracleConnection",
-    "FlextDbOracleErrorHandler",
     "FlextDbOracleMetadataManager",
     "FlextDbOracleObservabilityManager",
     "FlextDbOracleOperationTracker",
     "FlextDbOracleSchema",
     "FlextDbOracleTable",
-    # Types from flext-db-oracle
-    "TDbOracleColumn",
-    "TDbOracleConnectionStatus",
-    "TDbOracleQueryResult",
-    "TDbOracleSchema",
-    "TDbOracleTable",
+    "FlextDbOracleQueryResult",
     # Meltano infrastructure
-    "BatchSink",
-    "FlextMeltanoBaseService",
     "FlextMeltanoBridge",
     "FlextMeltanoConfig",
-    "FlextMeltanoTapService",
-    "OAuthAuthenticator",
-    "PropertiesList",
-    "Property",
-    "Sink",
-    "SQLSink",
-    "Stream",
-    "Tap",
-    "Target",
     # ===== NEW PEP8 CONSOLIDATED STRUCTURE =====
+    # Main Tap Classes
+    "FlextTapOracle",  # Alias for FlextOracleTapService
+    "FlextOracleTapService",  # Main service class
     # Configuration
     "FlextOracleTapConfig",
     "FlextOracleTapConfiguration",
     "FlextOracleTapStreamMetadata",
     "create_oracle_tap_config",
     # Client & Services
-    "FlextOracleTapService",
     "FlextOracleConnectionTestService",
     "FlextOracleDiscoveryService",
     "FlextOracleTableFilterService",
@@ -316,17 +272,6 @@ __all__: list[str] = [
     "TapOracleColumn",  # Type alias
     "TapOracleSchema",  # Type alias
     "TapReplicationMethod",  # Type alias
-    # Factory functions from flext-db-oracle
-    "create_data_validation_plugin",
-    "create_performance_monitor_plugin",
-    "create_security_audit_plugin",
-    "register_all_oracle_plugins",
-    # Factory functions from flext-meltano
-    "create_meltano_tap_service",
-    "get_tap_test_class",
-    # Utilities
-    "singer_typing",
-    "th",
     "__version__",
     "__version_info__",
 ]

@@ -12,13 +12,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_core import FlextDomainService, FlextLogger, FlextResult
+from flext_core import FlextLogger, FlextResult
 from flext_db_oracle import (
     FlextDbOracleApi,
     FlextDbOracleMetadataManager,
     FlextDbOracleTable,
 )
-from flext_meltano import FlextMeltanoTapService
 
 from flext_tap_oracle.tap_config import FlextOracleTapConfig
 
@@ -28,11 +27,12 @@ logger = FlextLogger(__name__)
 # =====================================================
 
 
-class FlextOracleDiscoveryService(FlextDomainService[list[FlextDbOracleTable]]):
-    """Oracle table discovery domain service using FlextDomainService[T]."""
+class FlextOracleDiscoveryService:
+    """Oracle table discovery service - simplified without Pydantic validation."""
 
-    oracle_api: FlextDbOracleApi
-    schema_name: str | None = None
+    def __init__(self, oracle_api: FlextDbOracleApi, schema_name: str | None = None) -> None:
+        self.oracle_api = oracle_api
+        self.schema_name = schema_name
 
     def execute(self) -> FlextResult[list[FlextDbOracleTable]]:
         """Execute Oracle table discovery using flext-db-oracle infrastructure."""
@@ -68,10 +68,11 @@ class FlextOracleDiscoveryService(FlextDomainService[list[FlextDbOracleTable]]):
             )
 
 
-class FlextOracleConnectionTestService(FlextDomainService[bool]):
-    """Oracle connection test domain service using FlextDomainService[T]."""
+class FlextOracleConnectionTestService:
+    """Oracle connection test service - simplified without Pydantic validation."""
 
-    oracle_api: FlextDbOracleApi
+    def __init__(self, oracle_api: FlextDbOracleApi) -> None:
+        self.oracle_api = oracle_api
 
     def execute(self) -> FlextResult[bool]:
         """Execute Oracle connection test using flext-db-oracle infrastructure."""
@@ -95,11 +96,12 @@ class FlextOracleConnectionTestService(FlextDomainService[bool]):
             return FlextResult[bool].fail(f"Connection test error: {e}")
 
 
-class FlextOracleTableFilterService(FlextDomainService[list[str]]):
-    """Oracle table filtering domain service using FlextDomainService[T]."""
+class FlextOracleTableFilterService:
+    """Oracle table filtering service - simplified without Pydantic validation."""
 
-    tap_config: FlextOracleTapConfig
-    discovery_service: FlextOracleDiscoveryService
+    def __init__(self, tap_config: FlextOracleTapConfig, discovery_service: FlextOracleDiscoveryService) -> None:
+        self.tap_config = tap_config
+        self.discovery_service = discovery_service
 
     def execute(self) -> FlextResult[list[str]]:
         """Execute table filtering based on tap configuration."""
@@ -162,8 +164,33 @@ class FlextOracleTapService:
         """Initialize Oracle tap service using COMPOSITION pattern."""
         self._config = config
 
-        # COMPOSITION: Use FlextMeltanoTapService for base functionality
-        self._meltano_service = FlextMeltanoTapService(config)
+        # COMPOSITION: Use FlextTap for base functionality
+        from flext_meltano import (
+            FlextMeltanoTypeAdapters,
+            FlextTap,
+            create_flext_tap_config,
+        )
+
+        # Create tap configuration using FlextMeltano abstractions
+        tap_config_dict = {
+            "host": getattr(config, "host", "localhost"),
+            "port": getattr(config, "port", 1521),
+            "service_name": getattr(config, "service_name", "ORCL"),
+            "username": getattr(config, "username", ""),
+            "password": getattr(config, "password", ""),
+        }
+
+        tap_config_result = create_flext_tap_config(
+            tap_type="tap-oracle",
+            connection_config=tap_config_dict
+        )
+
+        if tap_config_result.failure:
+            msg = f"Failed to create tap config: {tap_config_result.error}"
+            raise ValueError(msg)
+
+        adapter = FlextMeltanoTypeAdapters()
+        self._meltano_service = FlextTap(tap_config_result.value, adapter)
 
         # COMPOSITION: Create Oracle API
         oracle_config = self._config.get_oracle_config()

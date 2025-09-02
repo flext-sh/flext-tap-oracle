@@ -21,10 +21,10 @@ from pathlib import Path
 
 import click
 from flext_cli import (
-    CLICommand,
+    FlextCliCmd,
+    FlextCliConfig,
     FlextCliHelper,
-    create_cli_config as create_flext_cli_config,
-    setup_cli as setup_flext_cli,
+    setup_cli,
 )
 from flext_core import FlextLogger, FlextResult
 from rich.console import Console
@@ -95,7 +95,7 @@ class OracleTapSyncParams:
         )
 
 
-class OracleTapDiscoverCommand(CLICommand):
+class OracleTapDiscoverCommand(FlextCliCmd):
     """Oracle tap discovery command using modern flext-cli patterns.
 
     CLICompleteMixin includes:
@@ -201,7 +201,7 @@ class OracleTapDiscoverCommand(CLICommand):
             return FlextResult[object].fail(f"Discovery error: {e}")
 
 
-class OracleTapSyncCommand(CLICommand):
+class OracleTapSyncCommand(FlextCliCmd):
     """Oracle tap sync command using modern flext-cli patterns."""
 
     def __init__(
@@ -321,16 +321,18 @@ def cli() -> None:
     Built on Clean Architecture patterns with flext-core integration.
     """
     # Initialize flext-cli
-    cli_config_result = create_flext_cli_config(
-        debug=False,
-        profile="oracle-tap",
+    cli_config_result = FlextResult[FlextCliConfig].ok(
+        FlextCliConfig(
+            debug=False,
+            profile="oracle-tap",
+        )
     )
 
     if cli_config_result.is_failure:
         console.print(f"[red]CLI configuration failed: {cli_config_result.error}[/red]")
         return
 
-    setup_result = setup_flext_cli(cli_config_result.data)
+    setup_result = setup_cli(cli_config_result.data)
     if setup_result.is_failure:
         console.print(f"[red]CLI setup failed: {setup_result.error}[/red]")
         return

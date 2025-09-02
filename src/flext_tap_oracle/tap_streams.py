@@ -22,7 +22,7 @@ from flext_db_oracle import (
     FlextDbOracleMetadataManager,
     FlextDbOracleObservabilityManager,
 )
-from flext_meltano import Stream, Tap
+from flext_meltano import FlextTapAbstract as Tap, FlextTapStream as Stream
 
 logger = FlextLogger(__name__)
 
