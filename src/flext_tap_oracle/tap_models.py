@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from flext_core import FlextResult, FlextModels.Value
+from flext_core import FlextModels, FlextResult
 from flext_db_oracle import (
     FlextDbOracleColumn,
     FlextDbOracleSchema,
@@ -33,7 +33,7 @@ from pydantic import Field
 # =====================================================
 
 
-class OracleTapStreamInfo(FlextModels.Value):
+class OracleTapStreamInfo(FlextModels):
     """Oracle tap stream information - aggregates tap and Oracle metadata.
 
     This model combines Oracle table metadata with tap-specific stream configuration
@@ -87,7 +87,7 @@ class OracleTapStreamInfo(FlextModels.Value):
         }
 
 
-class OracleTapDiscoveryResult(FlextModels.Value):
+class OracleTapDiscoveryResult(FlextModels):
     """Result of Oracle table discovery operation.
 
     Aggregates discovery results with both raw Oracle metadata and
@@ -148,7 +148,7 @@ class OracleTapDiscoveryResult(FlextModels.Value):
         }
 
 
-class OracleTapExecutionStats(FlextModels.Value):
+class OracleTapExecutionStats(FlextModels):
     """Oracle tap execution statistics and metrics.
 
     Tracks runtime statistics for tap execution, performance metrics,
@@ -351,7 +351,9 @@ def create_discovery_result(
         return FlextResult[OracleTapDiscoveryResult].ok(discovery_result)
 
     except Exception as e:
-        return FlextResult[OracleTapDiscoveryResult].fail(f"Failed to create discovery result: {e}")
+        return FlextResult[OracleTapDiscoveryResult].fail(
+            f"Failed to create discovery result: {e}"
+        )
 
 
 # =====================================================
