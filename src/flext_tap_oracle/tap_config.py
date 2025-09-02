@@ -24,7 +24,7 @@ from flext_db_oracle import FlextDbOracleConfig
 from pydantic import Field, field_validator, model_validator
 
 
-class FlextOracleTapConfiguration(FlextModels.BaseModel):
+class FlextOracleTapConfiguration(FlextModels.BaseConfig):
     """Oracle tap configuration - ONLY tap-specific settings.
 
     Complementa FlextDbOracleConfig com configurações específicas do tap.
@@ -112,7 +112,7 @@ class FlextOracleTapConfiguration(FlextModels.BaseModel):
         return FlextResult[None].ok(None)
 
 
-class FlextOracleTapStreamMetadata(FlextModels.BaseModel):
+class FlextOracleTapStreamMetadata(FlextModels.BaseConfig):
     """Oracle tap stream metadata - ONLY tap-specific fields.
 
     Extends Oracle table metadata with tap-specific information.
@@ -182,7 +182,7 @@ class FlextOracleTapStreamMetadata(FlextModels.BaseModel):
         return FlextResult[None].ok(None)
 
 
-class FlextOracleTapConfig(FlextModels.BaseModel):
+class FlextOracleTapConfig(FlextModels.BaseConfig):
     """Oracle Tap Configuration usando COMPOSIÇÃO das bases existentes.
 
     Esta classe COMPÕE funcionalidade das bases existentes:
