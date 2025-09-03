@@ -30,7 +30,9 @@ logger = FlextLogger(__name__)
 class FlextOracleDiscoveryService:
     """Oracle table discovery service - simplified without Pydantic validation."""
 
-    def __init__(self, oracle_api: FlextDbOracleApi, schema_name: str | None = None) -> None:
+    def __init__(
+        self, oracle_api: FlextDbOracleApi, schema_name: str | None = None
+    ) -> None:
         self.oracle_api = oracle_api
         self.schema_name = schema_name
 
@@ -99,7 +101,11 @@ class FlextOracleConnectionTestService:
 class FlextOracleTableFilterService:
     """Oracle table filtering service - simplified without Pydantic validation."""
 
-    def __init__(self, tap_config: FlextOracleTapConfig, discovery_service: FlextOracleDiscoveryService) -> None:
+    def __init__(
+        self,
+        tap_config: FlextOracleTapConfig,
+        discovery_service: FlextOracleDiscoveryService,
+    ) -> None:
         self.tap_config = tap_config
         self.discovery_service = discovery_service
 
@@ -181,8 +187,7 @@ class FlextOracleTapService:
         }
 
         tap_config_result = create_flext_tap_config(
-            tap_type="tap-oracle",
-            connection_config=tap_config_dict
+            tap_type="tap-oracle", connection_config=tap_config_dict
         )
 
         if tap_config_result.failure:
