@@ -23,7 +23,7 @@
       "consolidated_types": true
     },
     "configuration": {
-      "base_class": "flext_core.BaseConfig",
+      "base_class": "flext_core.Config",
       "singer_config_schema": "jsonschema",
       "required_fields": ["connection_type", "host", "username", "password"],
       "connection_types": ["database"],

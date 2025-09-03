@@ -50,7 +50,7 @@
       "oracle_constants": "OracleTapConstants"
     },
     "configuration": {
-      "base_class": "flext_core.config.base.BaseConfig",
+      "base_class": "flext_core.config.base.Config",
       "settings_class": "flext_core.config.base.BaseSettings",
       "validation": "pydantic_v2",
       "environment_prefix": "FLEXT_TAP_ORACLE_",
