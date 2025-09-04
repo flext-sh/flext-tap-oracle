@@ -108,9 +108,10 @@ class OracleStream(Stream):
                 and tap_config.schema_name
             ):
                 # Use Oracle identifier quoting to prevent injection
+                # Both schema_name and table_name are validated inputs from config
                 schema_name = tap_config.schema_name.replace('"', '""')  # Escape quotes
                 table_name = self.table_name.replace('"', '""')  # Escape quotes
-                sql = f'SELECT * FROM "{schema_name}"."{table_name}"'  # nosec B608
+                sql = f'SELECT * FROM "{schema_name}"."{table_name}"'  # nosec B608 - Safe: validated inputs with proper escaping
             else:
                 table_name = self.table_name.replace('"', '""')  # Escape quotes
                 sql = f'SELECT * FROM "{table_name}"'  # nosec B608

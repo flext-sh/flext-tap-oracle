@@ -18,6 +18,11 @@ from flext_db_oracle import (
     FlextDbOracleMetadataManager,
     FlextDbOracleTable,
 )
+from flext_meltano import (
+    FlextMeltanoTypeAdapters,
+    FlextTap,
+    create_flext_tap_config,
+)
 
 from flext_tap_oracle.tap_config import FlextOracleTapConfig
 
@@ -171,11 +176,6 @@ class FlextOracleTapService:
         self._config = config
 
         # COMPOSITION: Use FlextTap for base functionality
-        from flext_meltano import (
-            FlextMeltanoTypeAdapters,
-            FlextTap,
-            create_flext_tap_config,
-        )
 
         # Create tap configuration using FlextMeltano abstractions
         tap_config_dict = {
