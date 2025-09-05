@@ -89,18 +89,14 @@ from __future__ import annotations
 from flext_db_oracle import (
     # Core Oracle database functionality
     FlextDbOracleApi,
-    # Comprehensive metadata management (USED INSTEAD OF CUSTOM IMPLEMENTATIONS)
-    FlextDbOracleColumn,
+    FlextDbOracleClient,
     FlextDbOracleConfig,
-    FlextDbOracleConnection,
-    # Advanced observability and monitoring (USED INSTEAD OF CUSTOM MONITORING)
-    FlextDbOracleObservabilityManager,
-    FlextDbOracleMetadataManager,
-    FlextDbOracleOperationTracker,
-    FlextDbOracleSchema,
-    FlextDbOracleTable,
-    # Oracle query results
-    FlextDbOracleQueryResult,
+    FlextDbOracleConstants,
+    FlextDbOracleExceptions,
+    FlextDbOracleModels,
+    FlextDbOracleServices,
+    FlextDbOracleUtilities,
+    # Note: Column, QueryResult, Schema, Table are accessible via FlextDbOracleModels
 )
 
 # === FLEXT-MELTANO INTEGRATION ===
