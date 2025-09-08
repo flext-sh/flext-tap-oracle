@@ -1,3 +1,11 @@
+"""Copyright (c) 2025 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT.
+"""
+
+from __future__ import annotations
+
+from flext_core import FlextTypes
+
 """Oracle Tap Streams - Complete Stream Implementation.
 
 PEP8 CONSOLIDATION: All Oracle stream definition and processing logic consolidated.
@@ -10,7 +18,6 @@ Copyright (c) 2025 FLEXT Contributors
 SPDX-License-Identifier: MIT
 """
 
-from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
 from time import perf_counter
@@ -42,7 +49,7 @@ class OracleStream(Stream):
         tap: Tap,
         name: str,
         table_name: str,
-        schema: dict[str, object],
+        schema: FlextTypes.Core.Dict,
         oracle_api: FlextDbOracleApi,
     ) -> None:
         """Initialize Oracle stream with maximum flext-db-oracle integration."""
@@ -90,7 +97,7 @@ class OracleStream(Stream):
     def get_records(
         self,
         context: Mapping[str, object] | None,
-    ) -> Iterable[dict[str, object]]:
+    ) -> Iterable[FlextTypes.Core.Dict]:
         """Extract records using MAXIMUM flext-db-oracle capabilities."""
         try:
             # Log operation start using proper info logging
@@ -181,7 +188,7 @@ class OracleStream(Stream):
         self,
         query_data: object,  # TDbOracleQueryResult from flext-db-oracle
         table_metadata: object,  # FlextDbOracleTable instance
-    ) -> Iterable[dict[str, object]]:
+    ) -> Iterable[FlextTypes.Core.Dict]:
         """Process results using flext-db-oracle table metadata."""
         # Extract column metadata from FlextDbOracleTable
         if not hasattr(table_metadata, "columns"):
@@ -221,7 +228,7 @@ class OracleStream(Stream):
     def _process_results_fallback(
         self,
         query_data: object,
-    ) -> Iterable[dict[str, object]]:
+    ) -> Iterable[FlextTypes.Core.Dict]:
         """Fallback processing without metadata (minimal implementation)."""
         # Use schema properties as column names
         column_names = list(self.schema.get("properties", {}).keys())
@@ -251,11 +258,11 @@ class OracleStream(Stream):
 
     def _transform_oracle_types_with_table_metadata(
         self,
-        record: dict[str, object],
-        column_metadata: list[object],  # FlextDbOracleColumn instances
-    ) -> dict[str, object]:
+        record: FlextTypes.Core.Dict,
+        column_metadata: FlextTypes.Core.List,  # FlextDbOracleColumn instances
+    ) -> FlextTypes.Core.Dict:
         """Transform Oracle data types using flext-db-oracle type knowledge."""
-        transformed_record: dict[str, object] = {}
+        transformed_record: FlextTypes.Core.Dict = {}
         # Create metadata lookup by column name
         meta_lookup = {}
         for col_meta in column_metadata:
@@ -300,7 +307,7 @@ class OracleStream(Stream):
         return transformed_record
 
     # ADDITIONAL ORACLE STREAM METHODS
-    def get_table_info(self) -> dict[str, object]:
+    def get_table_info(self) -> FlextTypes.Core.Dict:
         """Get Oracle table information using flext-db-oracle metadata."""
         try:
             table_metadata_result = self.metadata_manager.get_table_metadata(
@@ -358,7 +365,7 @@ class OracleStream(Stream):
             )
             return None
 
-    def get_stream_metadata(self) -> dict[str, object]:
+    def get_stream_metadata(self) -> FlextTypes.Core.Dict:
         """Get comprehensive stream metadata."""
         return {
             "name": self.name,
@@ -374,7 +381,7 @@ def create_oracle_stream(
     tap: Tap,
     name: str,
     table_name: str,
-    schema: dict[str, object],
+    schema: FlextTypes.Core.Dict,
     oracle_api: FlextDbOracleApi,
 ) -> OracleStream:
     """Create Oracle stream.
@@ -421,7 +428,7 @@ def create_oracle_stream_from_table(
     stream_name = f"{stream_prefix}_{table_name.lower()}"
 
     # Build basic schema from table metadata
-    schema: dict[str, object] = {"type": "object", "properties": {}}
+    schema: FlextTypes.Core.Dict = {"type": "object", "properties": {}}
     if hasattr(table_metadata, "columns"):
         for column in table_metadata.columns:
             col_name = getattr(column, "name", "unknown")

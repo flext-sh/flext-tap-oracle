@@ -1,3 +1,11 @@
+"""Copyright (c) 2025 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT.
+"""
+
+from __future__ import annotations
+
+from flext_core import FlextTypes
+
 """Oracle Tap Exceptions - Comprehensive Error Handling.
 
 PEP8 CONSOLIDATION: All Oracle tap exception handling consolidated using the
@@ -10,7 +18,6 @@ Copyright (c) 2025 FLEXT Contributors
 SPDX-License-Identifier: MIT
 """
 
-from __future__ import annotations
 
 from flext_core import (
     FlextExceptions,
@@ -389,7 +396,7 @@ def handle_oracle_exception(
 # EXPORTS
 # =====================================================
 
-__all__: list[str] = [
+__all__: FlextTypes.Core.StringList = [
     "FlextTapOracleConfigurationError",
     "FlextTapOracleConnectionError",
     "FlextTapOracleDiscoveryError",

@@ -1,3 +1,11 @@
+"""Copyright (c) 2025 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT.
+"""
+
+from __future__ import annotations
+
+from flext_core import FlextTypes
+
 """Oracle Tap Configuration - Comprehensive Configuration Management.
 
 PEP8 CONSOLIDATION: All Oracle tap configuration logic consolidated into one module.
@@ -10,7 +18,6 @@ Copyright (c) 2025 FLEXT Contributors
 SPDX-License-Identifier: MIT
 """
 
-from __future__ import annotations
 
 import re
 from typing import Literal, Self
@@ -50,12 +57,12 @@ class FlextOracleTapConfiguration(FlextModels.Config):
         description="Prefix for Singer stream names",
     )
 
-    tables_filter: list[str] | None = Field(
+    tables_filter: FlextTypes.Core.StringList | None = Field(
         default=None,
         description="Tables to include (None = all tables)",
     )
 
-    exclude_tables: list[str] | None = Field(
+    exclude_tables: FlextTypes.Core.StringList | None = Field(
         default=None,
         description="Tables to exclude",
     )
@@ -360,9 +367,9 @@ class FlextOracleTapConfig(FlextModels.Config):
 
 # Factory function for easy creation using configuration objects pattern
 def create_oracle_tap_config(
-    oracle_params: dict[str, object],
-    tap_params: dict[str, object] | None = None,
-    meltano_params: dict[str, object] | None = None,
+    oracle_params: FlextTypes.Core.Dict,
+    tap_params: FlextTypes.Core.Dict | None = None,
+    meltano_params: FlextTypes.Core.Dict | None = None,
 ) -> FlextResult[FlextOracleTapConfig]:
     """Create Oracle tap configuration using grouped parameters.
 
@@ -411,7 +418,7 @@ def create_oracle_tap_config(
 TapOracleConfig = FlextOracleTapConfig
 Config = FlextOracleTapConfig
 
-__all__: list[str] = [
+__all__: FlextTypes.Core.StringList = [
     "Config",  # Legacy alias
     "FlextOracleTapConfig",
     "FlextOracleTapConfiguration",

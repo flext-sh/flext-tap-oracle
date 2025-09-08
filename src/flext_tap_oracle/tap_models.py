@@ -1,3 +1,11 @@
+"""Copyright (c) 2025 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT.
+"""
+
+from __future__ import annotations
+
+from flext_core import FlextTypes
+
 """Oracle Tap Models - Specific Data Models for Oracle Tap.
 
 PEP8 CONSOLIDATION: Oracle tap specific data models, re-exporting from flext-db-oracle
@@ -10,7 +18,6 @@ Copyright (c) 2025 FLEXT Contributors
 SPDX-License-Identifier: MIT
 """
 
-from __future__ import annotations
 
 from typing import Literal
 
@@ -64,7 +71,7 @@ class OracleTapStreamInfo(FlextModels):
     column_count: int | None = Field(None, description="Number of columns")
     last_extracted: str | None = Field(None, description="Last extraction timestamp")
 
-    def to_singer_stream_info(self) -> dict[str, object]:
+    def to_singer_stream_info(self) -> FlextTypes.Core.Dict:
         """Convert to Singer stream information format."""
         return {
             "tap_stream_id": self.stream_name,
@@ -112,11 +119,11 @@ class OracleTapDiscoveryResult(FlextModels):
     )
 
     # Filtering results
-    filtered_tables: list[str] = Field(
+    filtered_tables: FlextTypes.Core.StringList = Field(
         default_factory=list,
         description="Table names after applying filters",
     )
-    excluded_tables: list[str] = Field(
+    excluded_tables: FlextTypes.Core.StringList = Field(
         default_factory=list,
         description="Table names that were excluded",
     )
@@ -132,7 +139,7 @@ class OracleTapDiscoveryResult(FlextModels):
                 return table
         return None
 
-    def to_singer_catalog(self) -> dict[str, object]:
+    def to_singer_catalog(self) -> FlextTypes.Core.Dict:
         """Convert to Singer catalog format."""
         return {
             "streams": [stream.to_singer_stream_info() for stream in self.stream_info],
@@ -177,7 +184,7 @@ class OracleTapExecutionStats(FlextModels):
         default=0,
         description="Number of errors encountered",
     )
-    failed_streams: list[str] = Field(
+    failed_streams: FlextTypes.Core.StringList = Field(
         default_factory=list,
         description="Names of failed streams",
     )
@@ -235,7 +242,7 @@ class OracleTapExecutionStats(FlextModels):
             },
         )
 
-    def to_summary(self) -> dict[str, object]:
+    def to_summary(self) -> FlextTypes.Core.Dict:
         """Create execution summary."""
         return {
             "execution_id": self.execution_id,
@@ -355,7 +362,7 @@ def create_discovery_result(
 # EXPORTS
 # =====================================================
 
-__all__: list[str] = [
+__all__: FlextTypes.Core.StringList = [
     "FlextDbOracleColumn",
     "FlextDbOracleQueryResult",
     "FlextDbOracleSchema",

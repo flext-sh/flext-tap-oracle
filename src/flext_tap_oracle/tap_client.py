@@ -1,3 +1,11 @@
+"""Copyright (c) 2025 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT.
+"""
+
+from __future__ import annotations
+
+from flext_core import FlextTypes
+
 """Oracle Tap Client - Complete Tap Implementation with Domain Services.
 
 PEP8 CONSOLIDATION: All Oracle tap client logic consolidated into one module.
@@ -10,7 +18,6 @@ Copyright (c) 2025 FLEXT Contributors
 SPDX-License-Identifier: MIT
 """
 
-from __future__ import annotations
 
 from flext_core import FlextLogger, FlextResult
 from flext_db_oracle import (
@@ -114,7 +121,7 @@ class FlextOracleTableFilterService:
         self.tap_config = tap_config
         self.discovery_service = discovery_service
 
-    def execute(self) -> FlextResult[list[str]]:
+    def execute(self) -> FlextResult[FlextTypes.Core.StringList]:
         """Execute table filtering based on tap configuration."""
         try:
             tap_configuration = self.tap_config.get_tap_config()
@@ -125,13 +132,15 @@ class FlextOracleTableFilterService:
                     "Using configured table filter: %s",
                     tap_configuration.tables_filter,
                 )
-                return FlextResult[list[str]].ok(list(tap_configuration.tables_filter))
+                return FlextResult[FlextTypes.Core.StringList].ok(
+                    list(tap_configuration.tables_filter)
+                )
 
             # Otherwise discover all tables and apply exclusions
             tables_result = self.discovery_service.execute()
             if tables_result.is_failure:
                 error_msg = tables_result.error or "Unknown discovery error"
-                return FlextResult[list[str]].fail(error_msg)
+                return FlextResult[FlextTypes.Core.StringList].fail(error_msg)
 
             if tables_result.data is None:
                 return FlextResult[None].fail("No table data returned")
@@ -144,11 +153,13 @@ class FlextOracleTableFilterService:
                 table_names = [name for name in table_names if name not in excluded]
                 logger.info("Applied exclusions, %d tables remaining", len(table_names))
 
-            return FlextResult[list[str]].ok(table_names)
+            return FlextResult[FlextTypes.Core.StringList].ok(table_names)
 
         except Exception as e:
             logger.exception("Table filtering error")
-            return FlextResult[list[str]].fail(f"Table filtering error: {e}")
+            return FlextResult[FlextTypes.Core.StringList].fail(
+                f"Table filtering error: {e}"
+            )
 
 
 # =====================================================
@@ -248,11 +259,11 @@ class FlextOracleTapService:
         """Validate service using base FlextMeltanoTapService."""
         return self._meltano_service.validate_service()
 
-    def get_health_status(self) -> FlextResult[dict[str, object]]:
+    def get_health_status(self) -> FlextResult[FlextTypes.Core.Dict]:
         """Get health status using base FlextMeltanoTapService."""
         return self._meltano_service.get_health_status()
 
-    def discover_catalog(self) -> FlextResult[dict[str, object]]:
+    def discover_catalog(self) -> FlextResult[FlextTypes.Core.Dict]:
         """Discover catalog using base FlextMeltanoTapService."""
         return self._meltano_service.discover_catalog()
 
@@ -275,12 +286,12 @@ class FlextOracleTapService:
         """Test Oracle connection using domain service."""
         return self._connection_test_service.execute()
 
-    def get_filtered_tables(self) -> FlextResult[list[str]]:
+    def get_filtered_tables(self) -> FlextResult[FlextTypes.Core.StringList]:
         """Get filtered table list using domain service."""
         return self._table_filter_service.execute()
 
     # HIGH-LEVEL ORCHESTRATION METHODS
-    def initialize_tap(self) -> FlextResult[dict[str, object]]:
+    def initialize_tap(self) -> FlextResult[FlextTypes.Core.Dict]:
         """Initialize Oracle tap with connection test and table discovery."""
         try:
             logger.info("Initializing Oracle tap service")
@@ -288,14 +299,14 @@ class FlextOracleTapService:
             # Test connection first
             connection_result = self.test_oracle_connection()
             if connection_result.is_failure:
-                return FlextResult[dict[str, object]].fail(
+                return FlextResult[FlextTypes.Core.Dict].fail(
                     f"Connection test failed: {connection_result.error}",
                 )
 
             # Discover tables
             tables_result = self.get_filtered_tables()
             if tables_result.is_failure:
-                return FlextResult[dict[str, object]].fail(
+                return FlextResult[FlextTypes.Core.Dict].fail(
                     f"Table discovery failed: {tables_result.error}",
                 )
 
@@ -316,13 +327,13 @@ class FlextOracleTapService:
             }
 
             logger.info("Oracle tap initialization completed successfully")
-            return FlextResult[dict[str, object]].ok(status)
+            return FlextResult[FlextTypes.Core.Dict].ok(status)
 
         except Exception as e:
             logger.exception("Oracle tap initialization failed")
-            return FlextResult[dict[str, object]].fail(f"Initialization failed: {e}")
+            return FlextResult[FlextTypes.Core.Dict].fail(f"Initialization failed: {e}")
 
-    def get_tap_status(self) -> FlextResult[dict[str, object]]:
+    def get_tap_status(self) -> FlextResult[FlextTypes.Core.Dict]:
         """Get comprehensive Oracle tap status."""
         try:
             # Get base health status
@@ -352,18 +363,18 @@ class FlextOracleTapService:
                 oracle_status["filtered_tables"] = len(filter_result.data or [])
 
             # Combine status
-            combined_status: dict[str, object] = {
+            combined_status: FlextTypes.Core.Dict = {
                 "oracle_tap": oracle_status,
                 "timestamp": "now",  # Would use actual timestamp in real implementation
             }
             if base_status:
                 combined_status.update(base_status)
 
-            return FlextResult[dict[str, object]].ok(combined_status)
+            return FlextResult[FlextTypes.Core.Dict].ok(combined_status)
 
         except Exception as e:
             logger.exception("Failed to get tap status")
-            return FlextResult[dict[str, object]].fail(f"Status check failed: {e}")
+            return FlextResult[FlextTypes.Core.Dict].fail(f"Status check failed: {e}")
 
 
 # =====================================================
@@ -424,7 +435,7 @@ def create_oracle_discovery_service(
 FlextOracleTapClient = FlextOracleTapService  # Common naming pattern
 OracleTapService = FlextOracleTapService  # Short alias
 
-__all__: list[str] = [
+__all__: FlextTypes.Core.StringList = [
     "FlextOracleConnectionTestService",
     "FlextOracleDiscoveryService",
     "FlextOracleTableFilterService",

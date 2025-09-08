@@ -1,89 +1,17 @@
-"""FLEXT Tap Oracle - Oracle Database Singer Tap for FLEXT ecosystem.
-
-This module implements a comprehensive Oracle Database Singer tap for data extraction
-within the FLEXT ecosystem, following Singer specification and Clean Architecture
-principles. The tap provides reliable, high-performance data extraction from Oracle
-databases with comprehensive schema discovery and change data capture support.
-
-The implementation leverages flext-meltano for Singer framework integration and
-flext-db-oracle for Oracle-specific database operations, avoiding code duplication
-and ensuring consistency across the FLEXT ecosystem.
-
-Architecture (Clean Architecture + Singer Patterns):
-    - Tap Layer: Singer tap implementation with stream discovery and extraction
-    - Application Layer: Data extraction services and stream processing
-    - Domain Layer: Oracle-specific data models and business rules
-    - Infrastructure Layer: Database connectivity via flext-db-oracle
-
-Module Organization (PEP8 Compliant):
-    - tap_config.py: Configuration management and connection settings
-    - tap_client.py: Main tap client implementation with stream processing
-    - tap_streams.py: Oracle stream definitions, discovery, and data extraction
-    - tap_models.py: Data models and schemas specific to Oracle tap operations
-    - tap_exceptions.py: Comprehensive error handling for tap operations
-
-Key Features:
-    - Singer Specification Compliance: Full adherence to Singer tap standards
-    - Schema Discovery: Automatic Oracle schema introspection and catalog generation
-    - Incremental Extraction: Support for incremental data extraction with bookmarks
-    - Change Data Capture: Oracle-specific CDC support with LogMiner integration
-    - Performance Optimization: Bulk operations and Oracle-specific query optimization
-    - Type Safety: Strong typing with proper Oracle data type mapping
-    - Error Handling: Comprehensive error handling with FlextResult patterns
-    - Connection Pooling: Efficient database connection management
-    - Monitoring: Built-in metrics and observability for extraction operations
-
-Oracle-Specific Features:
-    - Advanced Data Types: Support for Oracle-specific types (CLOB, BLOB, XMLType, etc.)
-    - Partition Awareness: Optimized extraction from partitioned tables
-    - RAC Support: Oracle Real Application Clusters compatibility
-    - Flashback Query: Point-in-time data extraction capabilities
-    - PL/SQL Integration: Support for stored procedures and functions
-
-Example:
-    Basic Oracle tap configuration and execution:
-
-    >>> from flext_tap_oracle import FlextTapOracleClient
-    >>> from flext_core import FlextResult
-    >>>
-    >>> # Configure tap with Oracle connection
-    >>> config = {
-    ...     "host": "oracle.example.com",
-    ...     "port": 1521,
-    ...     "service_name": "ORCL",
-    ...     "username": "tap_user",
-    ...     "password": "secure_password",
-    ...     "default_replication_method": "INCREMENTAL",
-    ... }
-    >>>
-    >>> # Initialize and run tap
-    >>> tap = FlextTapOracleClient(config)
-    >>> catalog_result = tap.discover_catalog()
-    >>> if catalog_result.is_success:
-    ...     catalog = catalog_result.data
-    ...     print(f"Discovered {len(catalog.streams)} streams")
-
-    Stream-specific extraction:
-
-    >>> # Extract data from specific table
-    >>> extraction_result = tap.extract_stream(
-    ...     "employees", bookmark={"updated_at": "2025-01-01"}
-    ... )
-    >>> if extraction_result.is_success:
-    ...     records = extraction_result.data
-    ...     print(f"Extracted {len(records)} records")
-
-FLEXT Ecosystem Integration:
-    This tap integrates seamlessly with flext-meltano for Singer orchestration,
-    flext-db-oracle for database operations, and flext-core for consistent error
-    handling and service management patterns.
-
-Copyright (c) 2025 FLEXT Contributors
-SPDX-License-Identifier: MIT
-
+"""Copyright (c) 2025 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT.
 """
 
 from __future__ import annotations
+from flext_core import FlextTypes
+
+
+"""FLEXT Tap Oracle - Oracle Database Singer Tap for FLEXT ecosystem."""
+"""
+Copyright (c) 2025 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
+
 
 # Re-export flext-db-oracle infrastructure that this tap uses extensively
 from flext_db_oracle import (
@@ -200,7 +128,7 @@ _LEGACY_FACADE_AVAILABLE = False  # Simplified for type checking
 __version__ = "0.9.0"
 __version_info__ = tuple(int(x) for x in __version__.split(".") if x.isdigit())
 
-__all__: list[str] = [
+__all__: FlextTypes.Core.StringList = [
     # Infrastructure from flext-db-oracle
     "FlextDbOracleApi",
     "FlextDbOracleColumn",

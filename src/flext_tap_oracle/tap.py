@@ -1,4 +1,10 @@
-#!/usr/bin/env python3
+"""Copyright (c) 2025 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT.
+"""
+
+from __future__ import annotations
+
+# !/usr/bin/env python3
 """FLEXT Tap Oracle - Modern CLI using flext-cli foundation patterns.
 
 Singer Tap interface with modern Click CLI integration using flext-cli patterns
@@ -10,7 +16,6 @@ Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
 """
 
-from __future__ import annotations
 
 import json
 import sys
@@ -318,6 +323,10 @@ def cli() -> None:
 
     Modern CLI using flext-cli foundation with zero boilerplate.
     Built on Clean Architecture patterns with flext-core integration.
+
+    Returns:
+            object: Description of return value.
+
     """
     # Initialize flext-cli
     cli_config_result = FlextResult[FlextCliConfig].ok(
@@ -359,6 +368,9 @@ def discover(**kwargs: object) -> None:
       tap-oracle discover --config config.json --output catalog.json
       tap-oracle discover  # Uses environment variables
 
+    Returns:
+            object: Description of return value.
+
     """
     params = OracleTapDiscoverParams.from_click_args(**kwargs)
 
@@ -395,6 +407,9 @@ def sync(**kwargs: object) -> None:
     Example:
       tap-oracle sync --config config.json --catalog catalog.json
       tap-oracle sync --config config.json --catalog catalog.json --state state.json
+
+    Returns:
+            object: Description of return value.
 
     """
     params = OracleTapSyncParams.from_click_args(**kwargs)
