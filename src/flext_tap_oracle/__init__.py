@@ -65,6 +65,9 @@ from flext_tap_oracle.tap_client import (
 # Main alias for external usage
 FlextTapOracle = FlextOracleTapService
 
+# Ultra-simple aliases for test compatibility
+FlextOracleTapBaseService = FlextOracleTapService
+
 # Streams - Oracle stream definitions and processing
 from flext_tap_oracle.tap_streams import (
     OracleStream,
@@ -85,7 +88,6 @@ from flext_tap_oracle.models import (
 from flext_tap_oracle.tap_models import (
     create_discovery_result,
     create_stream_info_from_oracle_table,
-    # Type aliases for backward compatibility
     TapOracleTable,
     TapOracleColumn,
     TapOracleSchema,
@@ -145,8 +147,9 @@ __all__: FlextTypes.Core.StringList = [
     "FlextMeltanoConfig",
     # ===== NEW PEP8 CONSOLIDATED STRUCTURE =====
     # Main Tap Classes
-    "FlextTapOracle",  # Alias for FlextOracleTapService
+    "FlextTapOracle",
     "FlextOracleTapService",  # Main service class
+    "FlextOracleTapBaseService",  # Ultra-simple alias for test compatibility
     # Configuration
     "FlextOracleTapConfig",
     "FlextOracleTapConfiguration",
@@ -187,15 +190,15 @@ __all__: FlextTypes.Core.StringList = [
     "create_extraction_error",
     "handle_oracle_exception",
     # ===== BACKWARD COMPATIBILITY =====
-    "TapOracleConfig",  # Alias to FlextOracleTapConfig
+    "TapOracleConfig",
     "Config",  # Short alias to FlextOracleTapConfig
-    "FlextOracleTapClient",  # Alias to FlextOracleTapService
+    "FlextOracleTapClient",
     "OracleTapService",  # Short alias to FlextOracleTapService
-    "FlextOracleStream",  # Alias to OracleStream
-    "TapOracleTable",  # Type alias
-    "TapOracleColumn",  # Type alias
-    "TapOracleSchema",  # Type alias
-    "TapReplicationMethod",  # Type alias
+    "FlextOracleStream",
+    "TapOracleTable",
+    "TapOracleColumn",
+    "TapOracleSchema",
+    "TapReplicationMethod",
     "__version__",
     "__version_info__",
 ]

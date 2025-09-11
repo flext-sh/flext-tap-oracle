@@ -39,10 +39,6 @@ from flext_tap_oracle.tap_config import FlextOracleTapConfig
 logger = FlextLogger(__name__)
 console = Console()
 
-# =============================================================================
-# FLEXT-CLI PARAMETER OBJECTS - ELIMINATE ARGUMENT EXPLOSION
-# =============================================================================
-
 
 @dataclass
 class OracleTapDiscoverParams:
@@ -308,11 +304,6 @@ class OracleTapSyncCommand(FlextCliCmd):
             logger.exception("Oracle sync failed")
             self.cli_helper.print_error(f"Sync error: {e}")
             return FlextResult[object].fail(f"Sync error: {e}")
-
-
-# =============================================================================
-# MODERN CLICK CLI WITH FLEXT-CLI INTEGRATION
-# =============================================================================
 
 
 @click.group(name="tap-oracle")

@@ -1,19 +1,14 @@
-"""FLEXT - Enterprise Data Integration Platform."""
-
-"""
-Copyright (c) 2025 FLEXT Team. All rights reserved.
-SPDX-License-Identifier: MIT
-"""
-
-
 #!/usr/bin/env python3
+from __future__ import annotations
+
 """Enterprise tests for the unified Oracle Tap.
 
 This module provides comprehensive enterprise-grade tests for the Oracle tap
 functionality, including all connection types, performance, and resilience tests.
-"""
 
-from __future__ import annotations
+Copyright (c) 2025 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 import asyncio
 from collections.abc import Generator
