@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-from __future__ import annotations
-
 """Enterprise tests for the unified Oracle Tap.
 
 This module provides comprehensive enterprise-grade tests for the Oracle tap
@@ -9,6 +6,8 @@ functionality, including all connection types, performance, and resilience tests
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
 """
+
+from __future__ import annotations
 
 import asyncio
 from collections.abc import Generator

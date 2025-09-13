@@ -1,21 +1,13 @@
-"""Copyright (c) 2025 FLEXT Team. All rights reserved.
-SPDX-License-Identifier: MIT.
-"""
-
-from __future__ import annotations
-
-# !/usr/bin/env python3
 """FLEXT Tap Oracle - Modern CLI using flext-cli foundation patterns.
 
 Singer Tap interface with modern Click CLI integration using flext-cli patterns
 with zero boilerplate and maximum integration with FLEXT ecosystem.
 
-Built on Clean Architecture patterns with flext-core integration.
-
 Copyright (c) 2025 FLEXT Team. All rights reserved.
-SPDX-License-Identifier: MIT
+SPDX-License-Identifier: MIT.
 """
 
+from __future__ import annotations
 
 import json
 import sys
@@ -32,7 +24,6 @@ from flext_cli import (
 from flext_core import FlextLogger, FlextResult
 from rich.console import Console
 
-# from flext_tap_oracle.models import create_discovery_result  # Function doesn't exist
 from flext_tap_oracle.tap_client import create_oracle_tap_service
 from flext_tap_oracle.tap_config import FlextOracleTapConfig
 

@@ -394,12 +394,14 @@ def oracle_queries() -> FlextTypes.Core.Headers:
     """Oracle SQL queries for testing."""
     return {
         "list_tables": """
+
           SELECT table_name, owner, table_type
           FROM all_tables
           WHERE owner = :schema_name
           ORDER BY table_name
       """,
         "table_columns": """
+
           SELECT column_name, data_type, data_length, data_precision,
                  data_scale, nullable, column_id
           FROM all_tab_columns
@@ -408,6 +410,7 @@ def oracle_queries() -> FlextTypes.Core.Headers:
           ORDER BY column_id
       """,
         "primary_keys": """
+
           SELECT cols.column_name
           FROM all_constraints cons
           JOIN all_cons_columns cols ON cons.constraint_name = cols.constraint_name
@@ -417,12 +420,14 @@ def oracle_queries() -> FlextTypes.Core.Headers:
           ORDER BY cols.position
       """,
         "select_with_replication_key": """
+
           SELECT {columns}
           FROM {schema}.{table}
           WHERE {replication_key} >= :bookmark_value
           ORDER BY {replication_key}
       """,
         "full_table_select": """
+
           SELECT {columns}
           FROM {schema}.{table}
           ORDER BY {key_properties}
@@ -566,6 +571,7 @@ def mock_oracle_tap() -> type[object]:
 
     class MockOracleTap:
         def __init__(self, config: FlextTypes.Core.Dict) -> None:
+            """Initialize the instance."""
             self.config = config
             self._catalog = None
             self._state: FlextTypes.Core.Dict = {}
@@ -636,6 +642,7 @@ def mock_oracle_connection() -> type[object]:
 
     class MockOracleConnection:
         def __init__(self, config: FlextTypes.Core.Dict) -> None:
+            """Initialize the instance."""
             self.config = config
             self.connected = False
 

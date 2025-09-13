@@ -1,23 +1,10 @@
-"""Copyright (c) 2025 FLEXT Team. All rights reserved.
+"""Oracle Tap Configuration - Comprehensive Configuration Management.
+
+Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT.
 """
 
 from __future__ import annotations
-
-from flext_core import FlextTypes
-
-"""Oracle Tap Configuration - Comprehensive Configuration Management.
-
-PEP8 CONSOLIDATION: All Oracle tap configuration logic consolidated into one module.
-This module consolidates config.py + relevant parts of models.py following the
-established FLEXT pattern for comprehensive configuration management.
-
-COMPOSIÇÃO SEM DUPLICAÇÃO using flext-core, flext-db-oracle, and flext-meltano.
-
-Copyright (c) 2025 FLEXT Contributors
-SPDX-License-Identifier: MIT
-"""
-
 
 import re
 from typing import Literal, Self
@@ -26,6 +13,7 @@ from flext_core import (
     FlextConstants,
     FlextModels,
     FlextResult,
+    FlextTypes,
 )
 from flext_db_oracle import FlextDbOracleConfig
 from pydantic import Field, field_validator, model_validator

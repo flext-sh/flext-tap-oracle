@@ -1,28 +1,15 @@
-"""Copyright (c) 2025 FLEXT Team. All rights reserved.
-SPDX-License-Identifier: MIT.
-"""
-
-from __future__ import annotations
-
-from flext_core import FlextTypes
-
 """Oracle Tap Streams - Complete Stream Implementation.
-
-PEP8 CONSOLIDATION: All Oracle stream definition and processing logic consolidated.
-This module consolidates oracle_stream.py following the established FLEXT pattern
-for comprehensive stream management.
-
-MAXIMUM use of flext-db-oracle infrastructure for Oracle stream processing.
 
 Copyright (c) 2025 FLEXT Contributors
 SPDX-License-Identifier: MIT
 """
 
+from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
 from time import perf_counter
 
-from flext_core import FlextContainer, FlextLogger
+from flext_core import FlextContainer, FlextLogger, FlextTypes
 from flext_db_oracle import (
     FlextDbOracleApi,
     FlextDbOracleConnection,

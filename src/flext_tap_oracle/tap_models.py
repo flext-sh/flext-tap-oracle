@@ -1,27 +1,14 @@
-"""Copyright (c) 2025 FLEXT Team. All rights reserved.
-SPDX-License-Identifier: MIT.
-"""
-
-from __future__ import annotations
-
-from flext_core import FlextTypes
-
 """Oracle Tap Models - Specific Data Models for Oracle Tap.
-
-PEP8 CONSOLIDATION: Oracle tap specific data models, re-exporting from flext-db-oracle
-to avoid duplication. This module provides a centralized location for all models
-used by the Oracle tap while maximizing reuse of existing infrastructure.
-
-ZERO DUPLICAÇÃO using flext-core + flext-db-oracle base models.
 
 Copyright (c) 2025 FLEXT Contributors
 SPDX-License-Identifier: MIT
 """
 
+from __future__ import annotations
 
 from typing import Literal
 
-from flext_core import FlextModels, FlextResult
+from flext_core import FlextModels, FlextResult, FlextTypes
 from flext_db_oracle import (
     FlextDbOracleColumn,
     FlextDbOracleQueryResult,

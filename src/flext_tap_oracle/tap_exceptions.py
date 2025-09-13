@@ -1,16 +1,4 @@
-"""Copyright (c) 2025 FLEXT Team. All rights reserved.
-SPDX-License-Identifier: MIT.
-"""
-
-from __future__ import annotations
-
-from flext_core import FlextTypes
-
 """Oracle Tap Exceptions - Comprehensive Error Handling.
-
-PEP8 CONSOLIDATION: All Oracle tap exception handling consolidated using the
-factory pattern from flext-core. This module provides Oracle tap specific
-exceptions while leveraging the established FLEXT error handling patterns.
 
 Uses flext-core base exceptions with Oracle tap specific context.
 
@@ -18,10 +6,9 @@ Copyright (c) 2025 FLEXT Contributors
 SPDX-License-Identifier: MIT
 """
 
+from __future__ import annotations
 
-from flext_core import (
-    FlextExceptions,
-)
+from flext_core import FlextExceptions, FlextTypes
 
 # =====================================================
 # BASE ORACLE TAP EXCEPTIONS

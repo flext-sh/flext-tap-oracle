@@ -1,25 +1,12 @@
-"""Copyright (c) 2025 FLEXT Team. All rights reserved.
-SPDX-License-Identifier: MIT.
-"""
-
-from __future__ import annotations
-
-from flext_core import FlextTypes
-
 """Oracle Tap Client - Complete Tap Implementation with Domain Services.
-
-PEP8 CONSOLIDATION: All Oracle tap client logic consolidated into one module.
-This module consolidates base_service.py + domain_services.py following the
-established FLEXT pattern for comprehensive tap implementation.
-
-COMPOSITION using FlextMeltanoTapService + Domain Services pattern from flext-core.
 
 Copyright (c) 2025 FLEXT Contributors
 SPDX-License-Identifier: MIT
 """
 
+from __future__ import annotations
 
-from flext_core import FlextLogger, FlextResult
+from flext_core import FlextLogger, FlextResult, FlextTypes
 from flext_db_oracle import (
     FlextDbOracleApi,
     FlextDbOracleMetadataManager,
@@ -86,6 +73,7 @@ class FlextOracleConnectionTestService:
     """Oracle connection test service - simplified without Pydantic validation."""
 
     def __init__(self, oracle_api: FlextDbOracleApi) -> None:
+        """Initialize the instance."""
         self.oracle_api = oracle_api
 
     def execute(self) -> FlextResult[bool]:

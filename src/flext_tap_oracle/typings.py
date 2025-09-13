@@ -1,8 +1,4 @@
-"""Centralized typings facade for flext-tap-oracle.
-
-- Extends flext-core types
-- Add Tap Oracle-specific type aliases and Protocols here
-
+"""Typing definitions for flext-tap-oracle.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -10,28 +6,17 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_core import FlextTypes
-
-"""
-Copyright (c) 2025 FLEXT Team. All rights reserved.
-SPDX-License-Identifier: MIT
-"""
+from flext_core import FlextTypes as CoreFlextTypes
 
 
-from flext_core import E, F, FlextTypes as CoreFlextTypes, P, R, T, U, V
+class FlextTapOracleTypes:
+    """Type definitions for flext-tap-oracle."""
 
+    # Re-export core types for convenience
+    Core = CoreFlextTypes
 
-class FlextTypes(CoreFlextTypes):
-    """Tap Oracle domain-specific types can extend here."""
-
-
-__all__ = [
-    "E",
-    "F",
-    "FlextTypes",
-    "P",
-    "R",
-    "T",
-    "U",
-    "V",
-]
+    # Oracle-specific type aliases
+    OracleTableName = str
+    OracleColumnName = str
+    OracleRecord = dict[str, object]
+    OracleRecords = list[OracleRecord]
