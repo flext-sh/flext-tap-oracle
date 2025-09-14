@@ -1,17 +1,13 @@
-"""Copyright (c) 2025 FLEXT Team. All rights reserved.
-SPDX-License-Identifier: MIT.
-"""
+"""FLEXT Tap Oracle - Oracle Database Singer Tap for FLEXT ecosystem.
 
-from __future__ import annotations
-
-from flext_core import FlextTypes
-
-"""FLEXT Tap Oracle - Oracle Database Singer Tap for FLEXT ecosystem."""
-"""
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
 """
 
+from __future__ import annotations
+
+# Core FLEXT imports
+from flext_core import FlextTypes
 
 # Re-export flext-db-oracle infrastructure that this tap uses extensively
 from flext_db_oracle import (
@@ -26,6 +22,13 @@ from flext_db_oracle import (
 from flext_meltano import (
     FlextMeltanoBridge,
     FlextMeltanoConfig,
+)
+
+# Models - Data models and types
+from flext_tap_oracle.models import (
+    OracleTapDiscoveryResult,
+    OracleTapExecutionStats,
+    OracleTapStreamInfo,
 )
 
 # Client - Main tap implementation with domain services
@@ -53,20 +56,6 @@ from flext_tap_oracle.tap_config import (
     # Backward compatibility aliases
     TapOracleConfig,
     create_oracle_tap_config,
-)
-
-# Main alias for external usage
-FlextTapOracle = FlextOracleTapService
-
-# Ultra-simple aliases for test compatibility
-FlextOracleTapBaseService = FlextOracleTapService
-
-# Streams - Oracle stream definitions and processing
-# Models - Data models and types
-from flext_tap_oracle.models import (
-    OracleTapDiscoveryResult,
-    OracleTapExecutionStats,
-    OracleTapStreamInfo,
 )
 
 # Exceptions - Comprehensive error handling
@@ -100,6 +89,8 @@ from flext_tap_oracle.tap_models import (
     create_discovery_result,
     create_stream_info_from_oracle_table,
 )
+
+# Streams - Oracle stream definitions and processing
 from flext_tap_oracle.tap_streams import (
     # Backward compatibility
     FlextOracleStream,
@@ -107,6 +98,19 @@ from flext_tap_oracle.tap_streams import (
     create_oracle_stream,
     create_oracle_stream_from_table,
 )
+
+# Main alias for external usage
+FlextTapOracle = FlextOracleTapService
+
+# Ultra-simple aliases for test compatibility
+FlextOracleTapBaseService = FlextOracleTapService
+
+# Streams - Oracle stream definitions and processing
+# Models - Data models and types
+
+# Exceptions - Comprehensive error handling
+
+# Factory functions and type aliases from tap_models
 
 # =====================================================
 # BACKWARD COMPATIBILITY - OLD IMPORTS STILL WORK

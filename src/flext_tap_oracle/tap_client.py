@@ -32,6 +32,13 @@ class FlextOracleDiscoveryService:
     def __init__(
         self, oracle_api: FlextDbOracleApi, schema_name: str | None = None
     ) -> None:
+        """Initialize Oracle table discovery service.
+
+        Args:
+            oracle_api: FLEXT Oracle database API instance
+            schema_name: Oracle schema name (defaults to 'USER')
+
+        """
         self.oracle_api = oracle_api
         self.schema_name = schema_name
 
@@ -106,6 +113,13 @@ class FlextOracleTableFilterService:
         tap_config: FlextOracleTapConfig,
         discovery_service: FlextOracleDiscoveryService,
     ) -> None:
+        """Initialize Oracle table filtering service.
+
+        Args:
+            tap_config: FLEXT Oracle tap configuration
+            discovery_service: Oracle table discovery service
+
+        """
         self.tap_config = tap_config
         self.discovery_service = discovery_service
 
