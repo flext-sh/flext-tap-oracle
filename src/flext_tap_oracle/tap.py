@@ -18,17 +18,17 @@ from pathlib import Path
 
 import click
 from flext_cli import (
+    FlextCliApi,
     FlextCliCmd,
     FlextCliConfig,
 )
 from flext_core import FlextLogger, FlextResult
-from rich.console import Console
 
 from flext_tap_oracle.tap_client import create_oracle_tap_service
 from flext_tap_oracle.tap_config import FlextOracleTapConfig
 
 logger = FlextLogger(__name__)
-console = Console()
+cli_api = FlextCliApi()
 
 
 @dataclass
@@ -319,13 +319,13 @@ def cli() -> None:
     )
 
     if cli_config_result.is_failure:
-        console.print(f"[red]CLI configuration failed: {cli_config_result.error}[/red]")
+        cli_api.display_error(f"CLI configuration failed: {cli_config_result.error}")
         return
 
     # setup_result = setup_cli(cli_config_result.data)  # setup_cli doesn't exist
     setup_result = FlextResult[None].ok(None)  # Placeholder for setup
     if setup_result.is_failure:
-        console.print(f"[red]CLI setup failed: {setup_result.error}[/red]")
+        cli_api.display_error(f"CLI setup failed: {setup_result.error}")
         return
 
 
@@ -364,7 +364,7 @@ def discover(**kwargs: object) -> None:
 
     result = command.execute()
     if result.is_failure:
-        console.print(f"[red]Discovery failed: {result.error}[/red]")
+        cli_api.display_error(f"Discovery failed: {result.error}")
         sys.exit(1)
 
 
@@ -404,7 +404,7 @@ def sync(**kwargs: object) -> None:
 
     result = command.execute()
     if result.is_failure:
-        console.print(f"[red]Sync failed: {result.error}[/red]")
+        cli_api.display_error(f"Sync failed: {result.error}")
         sys.exit(1)
 
 
@@ -413,10 +413,10 @@ def main() -> None:
     try:
         cli()
     except KeyboardInterrupt:
-        console.print("[blue]Operation cancelled by user[/blue]")
+        cli_api.display_info("Operation cancelled by user")
         raise SystemExit(0) from None
     except Exception as e:
-        console.print(f"[red]Unexpected error: {e}[/red]")
+        cli_api.display_error(f"Unexpected error: {e}")
         raise SystemExit(1) from e
 
 

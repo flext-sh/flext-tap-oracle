@@ -574,7 +574,7 @@ def mock_oracle_tap() -> type[object]:
             """Initialize the instance."""
             self.config = config
             self._catalog = None
-            self._state: FlextTypes.Core.Dict = {}
+            self.__state: FlextTypes.Core.Dict = {}
 
         async def discover(self) -> FlextTypes.Core.Dict:
             """Discover schema using mock data."""
@@ -597,7 +597,7 @@ def mock_oracle_tap() -> type[object]:
         async def sync(
             self,
             catalog: FlextTypes.Core.Dict,
-            state: FlextTypes.Core.Dict,
+            _state: FlextTypes.Core.Dict,
         ) -> AsyncGenerator[FlextTypes.Core.Dict]:
             """Sync data using mock extraction."""
             if not isinstance(catalog, dict) or "streams" not in catalog:
@@ -657,7 +657,7 @@ def mock_oracle_connection() -> type[object]:
         async def execute_query(
             self,
             query: str,
-            parameters: FlextTypes.Core.Dict | None = None,
+            _parameters: FlextTypes.Core.Dict | None = None,
         ) -> list[FlextTypes.Core.Dict]:
             """Execute query and return mock results using Strategy Pattern."""
             return self._get_query_strategy(query).execute()

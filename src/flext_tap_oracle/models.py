@@ -6,8 +6,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import Any
-
 from flext_core import FlextModels
 
 
@@ -18,5 +16,5 @@ class TapOracleModels:
     Core = FlextModels
 
     # Oracle-specific model types
-    OracleRecord = dict[str, Any]
+    OracleRecord = dict[str, object]
     OracleRecords = list[OracleRecord]

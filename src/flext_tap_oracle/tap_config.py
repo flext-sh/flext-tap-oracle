@@ -29,14 +29,14 @@ class FlextOracleTapConfiguration(FlextModels.Config):
     batch_size: int = Field(
         default=FlextConstants.Performance.DEFAULT_BATCH_SIZE,
         ge=1,
-        le=FlextConstants.Performance.MAX_BATCH_SIZE,
+        le=FlextConstants.Singer.MAX_BATCH_SIZE,
         description="Batch size for data extraction",
     )
 
     max_parallel_streams: int = Field(
         default=1,  # Oracle-specific default (conservative for database connections)
         ge=1,
-        le=FlextConstants.Limits.MAX_THREADS,
+        le=FlextConstants.Singer.DEFAULT_MAX_PARALLEL_STREAMS,
         description="Maximum parallel stream processing",
     )
 
