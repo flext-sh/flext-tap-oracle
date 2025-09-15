@@ -105,11 +105,7 @@ class OracleStream(Stream):
                 and tap_config.schema_name
             ):
                 # Use SQLAlchemy Table with schema - proper SQLAlchemy 2.0 pattern
-                table = Table(
-                    self.table_name,
-                    metadata,
-                    schema=tap_config.schema_name
-                )
+                table = Table(self.table_name, metadata, schema=tap_config.schema_name)
             else:
                 # Use SQLAlchemy Table without schema - proper SQLAlchemy 2.0 pattern
                 table = Table(self.table_name, metadata)
@@ -117,7 +113,9 @@ class OracleStream(Stream):
             # Build proper SQLAlchemy SELECT statement - NO STRING CONCATENATION
             stmt: Select = select(table)
 
-            logger.info("Executing Oracle query via flext-db-oracle using SQLAlchemy 2.0 Core API")
+            logger.info(
+                "Executing Oracle query via flext-db-oracle using SQLAlchemy 2.0 Core API"
+            )
             # Execute query using flext-db-oracle API with SQLAlchemy statement
             result = self.oracle_api.execute_statement(stmt)
             if result.success and result.data:
