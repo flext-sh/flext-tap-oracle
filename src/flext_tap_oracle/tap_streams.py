@@ -17,6 +17,7 @@ from flext_db_oracle import (
     FlextDbOracleObservabilityManager,
 )
 from flext_meltano import FlextTapAbstract as Tap, FlextTapStream as Stream
+from sqlalchemy import MetaData, Select, Table, select
 
 logger = FlextLogger(__name__)
 
@@ -95,23 +96,30 @@ class OracleStream(Stream):
             operation_start_time = perf_counter()
             # Build optimized query using tap configuration
             tap_config = getattr(self._tap, "typed_config", None)
-            # Build query with proper Oracle identifier escaping
+            # Build query using SQLAlchemy 2.0 Core API - NO STRING CONCATENATION
+            metadata = MetaData()
+
             if (
                 tap_config
                 and hasattr(tap_config, "schema_name")
                 and tap_config.schema_name
             ):
-                # Use Oracle identifier quoting to prevent injection
-                # Both schema_name and table_name are validated inputs from config
-                schema_name = tap_config.schema_name.replace('"', '""')  # Escape quotes
-                table_name = self.table_name.replace('"', '""')  # Escape quotes
-                sql = f'SELECT * FROM "{schema_name}"."{table_name}"'  # nosec B608 - Safe: validated inputs with proper escaping  # noqa: S608
+                # Use SQLAlchemy Table with schema - proper SQLAlchemy 2.0 pattern
+                table = Table(
+                    self.table_name,
+                    metadata,
+                    schema=tap_config.schema_name
+                )
             else:
-                table_name = self.table_name.replace('"', '""')  # Escape quotes
-                sql = f'SELECT * FROM "{table_name}"'  # nosec B608 - Safe: validated inputs with proper escaping  # noqa: S608
-            logger.info("Executing Oracle query via flext-db-oracle: %s", sql[:200])
-            # Execute query using flext-db-oracle API
-            result = self.oracle_api.query(sql)
+                # Use SQLAlchemy Table without schema - proper SQLAlchemy 2.0 pattern
+                table = Table(self.table_name, metadata)
+
+            # Build proper SQLAlchemy SELECT statement - NO STRING CONCATENATION
+            stmt: Select = select(table)
+
+            logger.info("Executing Oracle query via flext-db-oracle using SQLAlchemy 2.0 Core API")
+            # Execute query using flext-db-oracle API with SQLAlchemy statement
+            result = self.oracle_api.execute_statement(stmt)
             if result.success and result.data:
                 # Use flext-db-oracle metadata for table information
                 table_metadata_result = self.metadata_manager.get_table_metadata(
