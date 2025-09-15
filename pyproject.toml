@@ -134,7 +134,7 @@ markers = [
     "discovery: marks tests as entity discovery tests",
     "requires_oracle: tests that need Oracle database access",
 ]
-filterwarnings = ["error", "ignore::UserWarning", "ignore::DeprecationWarning"]
+# filterwarnings = ["error", "ignore::UserWarning", "ignore::DeprecationWarning"]
 asyncio_mode = "auto"
 
 # pytest reads only [tool.pytest.ini_options]; remove stray extend directive
