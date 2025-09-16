@@ -16,11 +16,11 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
-import click
+# FIXED: Eliminated direct click import - using flext-cli exclusively
 from flext_cli import (
     FlextCliApi,
     FlextCliCmd,
-    FlextCliConfig,
+    FlextCliMain,
 )
 from flext_core import FlextLogger, FlextResult
 
@@ -297,115 +297,124 @@ class OracleTapSyncCommand(FlextCliCmd):
             return FlextResult[object].fail(f"Sync error: {e}")
 
 
-@click.group(name="tap-oracle")
-@click.version_option(version="0.9.0", prog_name="FLEXT Tap Oracle")
-@click.help_option("--help", "-h")
-def cli() -> None:
-    """FLEXT Tap Oracle - Modern Singer Tap for Oracle Database.
-
-    Modern CLI using flext-cli foundation with zero boilerplate.
-    Built on Clean Architecture patterns with flext-core integration.
-
-    Returns:
-            object: Description of return value.
-
-    """
-    # Initialize flext-cli
-    cli_config_result = FlextResult[FlextCliConfig].ok(
-        FlextCliConfig(
-            debug=False,
-            profile="oracle-tap",
+def create_tap_oracle_cli() -> FlextResult[FlextCliMain]:
+    """Create FLEXT Tap Oracle CLI using flext-cli foundation - NO click imports."""
+    try:
+        # Initialize CLI through flext-cli (abstracts Click internally)
+        cli_main = FlextCliMain(
+            name="tap-oracle",
+            description="FLEXT Tap Oracle - Modern Singer Tap for Oracle Database",
+            version="0.9.0",
         )
-    )
 
-    if cli_config_result.is_failure:
-        cli_api.display_error(f"CLI configuration failed: {cli_config_result.error}")
-        return
+        # Register commands through flext-cli abstraction
+        commands = {
+            "discover": {
+                "description": "Discover Oracle database schema and generate Singer catalog",
+                "handler": handle_discover_command,
+                "options": [
+                    {
+                        "name": "--config",
+                        "short": "-c",
+                        "help": "Path to tap configuration JSON file",
+                    },
+                    {
+                        "name": "--output",
+                        "short": "-o",
+                        "help": "Output catalog file",
+                        "default": "catalog.json",
+                    },
+                ],
+            },
+            "sync": {
+                "description": "Extract data from Oracle database using Singer protocol",
+                "handler": handle_sync_command,
+                "options": [
+                    {
+                        "name": "--config",
+                        "short": "-c",
+                        "help": "Path to tap configuration JSON file",
+                    },
+                    {
+                        "name": "--catalog",
+                        "help": "Path to Singer catalog file",
+                        "default": "catalog.json",
+                    },
+                    {"name": "--state", "help": "Path to Singer state file"},
+                    {
+                        "name": "--output",
+                        "short": "-o",
+                        "help": "Output file (default: stdout)",
+                    },
+                ],
+            },
+        }
 
-    # setup_result = setup_cli(cli_config_result.data)  # setup_cli doesn't exist
-    setup_result = FlextResult[None].ok(None)  # Placeholder for setup
-    if setup_result.is_failure:
-        cli_api.display_error(f"CLI setup failed: {setup_result.error}")
-        return
+        register_result = cli_main.register_commands(commands)
+        if register_result.is_failure:
+            return FlextResult[FlextCliMain].fail(
+                f"Commands registration failed: {register_result.error}"
+            )
+
+        return FlextResult[FlextCliMain].ok(cli_main)
+    except Exception as e:
+        return FlextResult[FlextCliMain].fail(f"CLI creation failed: {e}")
 
 
-@cli.command()
-@click.option(
-    "--config",
-    "-c",
-    "config_file",
-    help="Path to tap configuration JSON file",
-)
-@click.option(
-    "--output",
-    "-o",
-    "output_file",
-    help="Output catalog file (default: catalog.json)",
-    default="catalog.json",
-)
-def discover(**kwargs: object) -> None:
-    """Discover Oracle database schema and generate Singer catalog.
+def handle_discover_command(**kwargs: object) -> FlextResult[None]:
+    """Handle discover command using flext-cli patterns - NO click decorators."""
+    try:
+        params = OracleTapDiscoverParams.from_click_args(**kwargs)
 
-    Example:
-      tap-oracle discover --config config.json --output catalog.json
-      tap-oracle discover  # Uses environment variables
+        command = OracleTapDiscoverCommand(
+            command_id=str(uuid.uuid4()),
+            name="oracle-discover",
+            params=params,
+        )
 
-    Returns:
-            object: Description of return value.
+        result = command.execute()
+        if result.is_failure:
+            cli_api.display_error(f"Discovery failed: {result.error}")
+            return FlextResult[None].fail(f"Discovery failed: {result.error}")
 
-    """
-    params = OracleTapDiscoverParams.from_click_args(**kwargs)
+        return FlextResult[None].ok(None)
+    except Exception as e:
+        cli_api.display_error(f"Discovery error: {e}")
+        return FlextResult[None].fail(f"Discovery error: {e}")
 
-    command = OracleTapDiscoverCommand(
-        command_id=str(uuid.uuid4()),
-        name="oracle-discover",
-        params=params,
-    )
 
-    result = command.execute()
-    if result.is_failure:
-        cli_api.display_error(f"Discovery failed: {result.error}")
+def handle_sync_command(**kwargs: object) -> FlextResult[None]:
+    """Handle sync command using flext-cli patterns - NO click decorators."""
+    try:
+        params = OracleTapSyncParams.from_click_args(**kwargs)
+
+        command = OracleTapSyncCommand(
+            command_id=str(uuid.uuid4()),
+            name="oracle-sync",
+            params=params,
+        )
+
+        result = command.execute()
+        if result.is_failure:
+            cli_api.display_error(f"Sync failed: {result.error}")
+            return FlextResult[None].fail(f"Sync failed: {result.error}")
+
+        return FlextResult[None].ok(None)
+    except Exception as e:
+        cli_api.display_error(f"Sync error: {e}")
+        return FlextResult[None].fail(f"Sync error: {e}")
+
+
+def cli() -> None:
+    """Main CLI entry point using flext-cli foundation."""
+    cli_result = create_tap_oracle_cli()
+    if cli_result.is_failure:
+        # Use proper logging instead of print
+        logger.error(f"CLI creation failed: {cli_result.error}")
         sys.exit(1)
 
-
-@cli.command()
-@click.option(
-    "--config",
-    "-c",
-    "config_file",
-    help="Path to tap configuration JSON file",
-)
-@click.option(
-    "--catalog",
-    "catalog_file",
-    help="Path to Singer catalog file",
-    default="catalog.json",
-)
-@click.option("--state", "state_file", help="Path to Singer state file")
-@click.option("--output", "-o", "output_file", help="Output file (default: stdout)")
-def sync(**kwargs: object) -> None:
-    """Extract data from Oracle database using Singer protocol.
-
-    Example:
-      tap-oracle sync --config config.json --catalog catalog.json
-      tap-oracle sync --config config.json --catalog catalog.json --state state.json
-
-    Returns:
-            object: Description of return value.
-
-    """
-    params = OracleTapSyncParams.from_click_args(**kwargs)
-
-    command = OracleTapSyncCommand(
-        command_id=str(uuid.uuid4()),
-        name="oracle-sync",
-        params=params,
-    )
-
-    result = command.execute()
-    if result.is_failure:
-        cli_api.display_error(f"Sync failed: {result.error}")
-        sys.exit(1)
+    cli_main = cli_result.unwrap()
+    cli_main.run()
 
 
 def main() -> None:
