@@ -8,6 +8,8 @@ from __future__ import annotations
 
 from typing import Literal
 
+from pydantic import Field
+
 from flext_core import FlextModels, FlextResult, FlextTypes
 from flext_db_oracle import (
     FlextDbOracleColumn,
@@ -16,7 +18,6 @@ from flext_db_oracle import (
     FlextDbOracleTable,
 )
 from flext_meltano import FlextSingerStream as Stream
-from pydantic import Field
 
 # =====================================================
 # TAP-SPECIFIC MODELS (only what doesn't exist elsewhere)

@@ -9,6 +9,8 @@ from __future__ import annotations
 from collections.abc import Iterable, Mapping
 from time import perf_counter
 
+from sqlalchemy import MetaData, Select, Table, select
+
 from flext_core import FlextContainer, FlextLogger, FlextTypes
 from flext_db_oracle import (
     FlextDbOracleApi,
@@ -17,7 +19,6 @@ from flext_db_oracle import (
     FlextDbOracleObservabilityManager,
 )
 from flext_meltano import FlextTapAbstract as Tap, FlextTapStream as Stream
-from sqlalchemy import MetaData, Select, Table, select
 
 logger = FlextLogger(__name__)
 

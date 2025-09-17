@@ -9,6 +9,8 @@ from __future__ import annotations
 import re
 from typing import Literal, Self
 
+from pydantic import Field, field_validator, model_validator
+
 from flext_core import (
     FlextConstants,
     FlextModels,
@@ -16,7 +18,6 @@ from flext_core import (
     FlextTypes,
 )
 from flext_db_oracle import FlextDbOracleConfig
-from pydantic import Field, field_validator, model_validator
 
 
 class FlextOracleTapConfiguration(FlextModels.Config):

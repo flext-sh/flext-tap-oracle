@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from flext_core import FlextTypes
-
 from flext_tap_oracle.tap_client import FlextOracleTapService
 
 # Main alias for external usage
