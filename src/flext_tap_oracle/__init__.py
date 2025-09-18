@@ -130,15 +130,7 @@ __all__: FlextTypes.Core.StringList = [
     "Config",  # Short alias to FlextOracleTapConfig
     # Infrastructure from flext-db-oracle
     "FlextDbOracleApi",
-    "FlextDbOracleColumn",
     "FlextDbOracleConfig",
-    "FlextDbOracleConnection",
-    "FlextDbOracleMetadataManager",
-    "FlextDbOracleObservabilityManager",
-    "FlextDbOracleOperationTracker",
-    "FlextDbOracleQueryResult",
-    "FlextDbOracleSchema",
-    "FlextDbOracleTable",
     # Meltano infrastructure
     "FlextMeltanoBridge",
     "FlextMeltanoConfig",
