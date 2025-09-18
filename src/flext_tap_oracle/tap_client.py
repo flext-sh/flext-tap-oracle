@@ -202,7 +202,7 @@ class FlextOracleTapService:
             tap_type="tap-oracle", connection_config=tap_config_dict
         )
 
-        if tap_config_result.failure:
+        if tap_config_result.is_failure:
             msg = f"Failed to create tap config: {tap_config_result.error}"
             raise ValueError(msg)
 
