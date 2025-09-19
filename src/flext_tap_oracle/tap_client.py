@@ -29,7 +29,9 @@ class FlextOracleDiscoveryService:
     """Oracle table discovery service - simplified without Pydantic validation."""
 
     def __init__(
-        self, oracle_api: FlextDbOracleApi, schema_name: str | None = None,
+        self,
+        oracle_api: FlextDbOracleApi,
+        schema_name: str | None = None,
     ) -> None:
         """Initialize Oracle table discovery service.
 
@@ -199,7 +201,8 @@ class FlextOracleTapService:
         }
 
         tap_config_result = create_flext_tap_config(
-            tap_type="tap-oracle", connection_config=tap_config_dict,
+            tap_type="tap-oracle",
+            connection_config=tap_config_dict,
         )
 
         if tap_config_result.is_failure:

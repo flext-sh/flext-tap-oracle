@@ -129,14 +129,13 @@ def oracle_tap_config() -> FlextTypes.Core.Dict:
 def oracle_tap(oracle_tap_config: FlextTypes.Core.Dict) -> object:
     """Oracle tap service instance for testing."""
     # Convert dict to proper config and create service
-    config_result = FlextResult[None].ok(
+    config_result = FlextResult[FlextOracleTapConfig].ok(
         FlextOracleTapConfig.model_validate(oracle_tap_config),
     )
     if config_result.is_success and config_result.data:
         return FlextOracleTapService(config=config_result.data)
 
     # Fallback for test compatibility
-
     fallback_result = create_oracle_tap_config(
         oracle_params={
             "host": str(oracle_tap_config.get("host", "localhost")),
