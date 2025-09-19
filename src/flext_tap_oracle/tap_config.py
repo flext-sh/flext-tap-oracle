@@ -281,11 +281,11 @@ class FlextOracleTapConfig(FlextModels.Config):
             connection_string = self.oracle_config.get_connection_string()
             if not connection_string:
                 return FlextResult[None].fail(
-                    "Oracle connection string cannot be generated"
+                    "Oracle connection string cannot be generated",
                 )
         except Exception as e:
             return FlextResult[None].fail(
-                f"Oracle configuration validation failed: {e}"
+                f"Oracle configuration validation failed: {e}",
             )
 
         return FlextResult[None].ok(None)
@@ -399,7 +399,7 @@ def create_oracle_tap_config(
 
     except Exception as e:
         return FlextResult[FlextOracleTapConfig].fail(
-            f"Oracle tap configuration creation failed: {e}"
+            f"Oracle tap configuration creation failed: {e}",
         )
 
 

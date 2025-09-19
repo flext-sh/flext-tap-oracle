@@ -135,7 +135,7 @@ class OracleTapDiscoverCommand(FlextCliCmd):
             # Load configuration (required)
             if not self.params.config_file:
                 return FlextResult[object].fail(
-                    "Configuration file is required for discovery"
+                    "Configuration file is required for discovery",
                 )
 
             config_data = Path(self.params.config_file).read_text(encoding="utf-8")
@@ -159,7 +159,7 @@ class OracleTapDiscoverCommand(FlextCliCmd):
             if tables_result.is_failure or tables_result.data is None:
                 self.cli_helper.print_error(f"Discovery failed: {tables_result.error}")
                 return FlextResult[object].fail(
-                    tables_result.error or "Discovery failed"
+                    tables_result.error or "Discovery failed",
                 )
 
             # Build Singer catalog from tables using tap models
@@ -242,7 +242,7 @@ class OracleTapSyncCommand(FlextCliCmd):
             # Load configuration (required)
             if not self.params.config_file:
                 return FlextResult[object].fail(
-                    "Configuration file is required for sync"
+                    "Configuration file is required for sync",
                 )
 
             config_data = Path(self.params.config_file).read_text(encoding="utf-8")
@@ -352,7 +352,7 @@ def create_tap_oracle_cli() -> FlextResult[FlextCliMain]:
         register_result = cli_main.register_commands(commands)
         if register_result.is_failure:
             return FlextResult[FlextCliMain].fail(
-                f"Commands registration failed: {register_result.error}"
+                f"Commands registration failed: {register_result.error}",
             )
 
         return FlextResult[FlextCliMain].ok(cli_main)

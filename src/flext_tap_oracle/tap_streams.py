@@ -115,7 +115,7 @@ class OracleStream(Stream):
             stmt: Select = select(table)
 
             logger.info(
-                "Executing Oracle query via flext-db-oracle using SQLAlchemy 2.0 Core API"
+                "Executing Oracle query via flext-db-oracle using SQLAlchemy 2.0 Core API",
             )
             # Execute query using flext-db-oracle API with SQLAlchemy statement
             result = self.oracle_api.execute_statement(stmt)

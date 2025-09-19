@@ -29,7 +29,7 @@ class FlextOracleDiscoveryService:
     """Oracle table discovery service - simplified without Pydantic validation."""
 
     def __init__(
-        self, oracle_api: FlextDbOracleApi, schema_name: str | None = None
+        self, oracle_api: FlextDbOracleApi, schema_name: str | None = None,
     ) -> None:
         """Initialize Oracle table discovery service.
 
@@ -51,7 +51,7 @@ class FlextOracleDiscoveryService:
             connection = self.oracle_api.connection
             if connection is None:
                 return FlextResult[list[FlextDbOracleTable]].fail(
-                    "No Oracle connection available"
+                    "No Oracle connection available",
                 )
 
             metadata_manager = FlextDbOracleMetadataManager(connection)
@@ -65,13 +65,13 @@ class FlextOracleDiscoveryService:
             error_msg = schema_result.error or "No tables found"
             logger.warning("Oracle table discovery failed: %s", error_msg)
             return FlextResult[list[FlextDbOracleTable]].fail(
-                f"Table discovery failed: {error_msg}"
+                f"Table discovery failed: {error_msg}",
             )
 
         except Exception as e:
             logger.exception("Oracle table discovery error")
             return FlextResult[list[FlextDbOracleTable]].fail(
-                f"Table discovery error: {e}"
+                f"Table discovery error: {e}",
             )
 
 
@@ -134,7 +134,7 @@ class FlextOracleTableFilterService:
                     tap_configuration.tables_filter,
                 )
                 return FlextResult[FlextTypes.Core.StringList].ok(
-                    list(tap_configuration.tables_filter)
+                    list(tap_configuration.tables_filter),
                 )
 
             # Otherwise discover all tables and apply exclusions
@@ -159,7 +159,7 @@ class FlextOracleTableFilterService:
         except Exception as e:
             logger.exception("Table filtering error")
             return FlextResult[FlextTypes.Core.StringList].fail(
-                f"Table filtering error: {e}"
+                f"Table filtering error: {e}",
             )
 
 
@@ -199,7 +199,7 @@ class FlextOracleTapService:
         }
 
         tap_config_result = create_flext_tap_config(
-            tap_type="tap-oracle", connection_config=tap_config_dict
+            tap_type="tap-oracle", connection_config=tap_config_dict,
         )
 
         if tap_config_result.is_failure:
@@ -401,7 +401,7 @@ def create_oracle_tap_service(
 
     except Exception as e:
         return FlextResult[FlextOracleTapService].fail(
-            f"Oracle tap service creation failed: {e}"
+            f"Oracle tap service creation failed: {e}",
         )
 
 
@@ -428,7 +428,7 @@ def create_oracle_discovery_service(
 
     except Exception as e:
         return FlextResult[FlextOracleDiscoveryService].fail(
-            f"Oracle discovery service creation failed: {e}"
+            f"Oracle discovery service creation failed: {e}",
         )
 
 
