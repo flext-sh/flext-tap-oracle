@@ -21,7 +21,7 @@ from flext_tap_oracle.tap_config import FlextOracleTapConfig
 
 logger = FlextLogger(__name__)
 # =====================================================
-# DOMAIN SERVICES - Using FlextDomainService[T] pattern
+# DOMAIN SERVICES - Using FlextService[T] pattern
 # =====================================================
 
 
@@ -175,14 +175,14 @@ class FlextOracleTapService:
 
     Esta classe usa COMPOSIÇÃO ao invés de herança:
     - FlextMeltanoTapService para funcionalidade base Singer/Meltano
-    - Domain Services (FlextDomainService[T]) para lógica Oracle
+    - Domain Services (FlextService[T]) para lógica Oracle
 
     SOLID Principles:
     - Single Responsibility: Cada domain service tem uma responsabilidade
     - Open/Closed: Extensível via novos domain services
     - Liskov Substitution: Domain services são intercambiáveis
     - Interface Segregation: Interfaces específicas por domain service
-    - Dependency Inversion: Depends on abstractions (FlextDomainService[T])
+    - Dependency Inversion: Depends on abstractions (FlextService[T])
     """
 
     def __init__(self, config: FlextOracleTapConfig) -> None:
@@ -216,7 +216,7 @@ class FlextOracleTapService:
         oracle_config = self._config.get_oracle_config()
         self._oracle_api = FlextDbOracleApi(oracle_config)
 
-        # COMPOSITION: Create domain services (FlextDomainService[T])
+        # COMPOSITION: Create domain services (FlextService[T])
         # Get schema name from service name or use default
         schema_name = (
             getattr(oracle_config, "schema_name", None) or oracle_config.service_name
@@ -278,7 +278,7 @@ class FlextOracleTapService:
     ) -> FlextResult[list[FlextDbOracleTable]]:
         """Discover Oracle tables using domain service."""
         if schema_name:
-            # Create new service with specific schema_name (FlextDomainService[T] is immutable)
+            # Create new service with specific schema_name (FlextService[T] is immutable)
             discovery_service = FlextOracleDiscoveryService(
                 oracle_api=self._oracle_api,
                 schema_name=schema_name,
