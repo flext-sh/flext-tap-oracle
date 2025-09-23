@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import asyncio
 from collections.abc import Generator
-from typing import Any
+from typing import cast
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
@@ -29,7 +29,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
     """Enterprise tests for the unified Oracle tap."""
 
     @pytest.fixture
-    def database_config(self) -> dict[str, Any]:
+    def database_config(self) -> dict[str, object]:
         """Provide database connection configuration."""
         return {
             "connection_type": "database",
@@ -73,7 +73,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
 
     def test_tap_config_validation_database(
         self,
-        database_config: dict[str, Any],
+        database_config: dict[str, object],
         mock_oracle_connection: Mock,
     ) -> None:
         """Test tap configuration validation for database connection."""
@@ -94,7 +94,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
 
     def test_tap_config_validation_database_only(
         self,
-        database_config: dict[str, Any],
+        database_config: dict[str, object],
         mock_oracle_connection: Mock,
     ) -> None:
         """Test tap configuration validation for database connection only."""
@@ -130,7 +130,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
                 connection_type="invalid", host="test", username="test", password="test"
             )
 
-    def test_tap_initialization(self, database_config: dict[str, Any]) -> None:
+    def test_tap_initialization(self, database_config: dict[str, object]) -> None:
         """Test tap initialization with configuration."""
         tap = FlextOracleTapBaseService(config=database_config)
 
@@ -145,7 +145,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
     @pytest.mark.integration
     def test_database_stream_discovery(
         self,
-        database_config: dict[str, Any],
+        database_config: dict[str, object],
         mock_oracle_connection: Mock,
     ) -> None:
         """Test database stream discovery."""
@@ -178,7 +178,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
     @pytest.mark.integration
     def test_hybrid_stream_discovery(
         self,
-        database_config: dict[str, Any],
+        database_config: dict[str, object],
         mock_oracle_connection: Mock,
     ) -> None:
         """Test Oracle database stream discovery."""
@@ -204,7 +204,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
 
     def test_connection_testing_database(
         self,
-        database_config: dict[str, Any],
+        database_config: dict[str, object],
         mock_oracle_connection: Mock,
     ) -> None:
         """Test database connection testing."""
@@ -229,7 +229,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
 
     def test_connection_testing_database_failure(
         self,
-        database_config: dict[str, Any],
+        database_config: dict[str, object],
     ) -> None:
         """Test database connection testing with failure."""
         with patch("flext_db_oracle.FlextDbOracleApi") as mock_connection_class:
@@ -243,7 +243,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
 
     def test_connection_testing_database_success(
         self,
-        database_config: dict[str, Any],
+        database_config: dict[str, object],
         mock_oracle_connection: Mock,
     ) -> None:
         """Test Oracle database connection testing."""
@@ -267,7 +267,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
     @pytest.mark.performance
     def test_tap_metrics_collection(
         self,
-        database_config: dict[str, Any],
+        database_config: dict[str, object],
         mock_oracle_connection: Mock,
     ) -> None:
         """Test comprehensive metrics collection."""
@@ -290,7 +290,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
             assert config_metrics.get("async_enabled") is True  # default
             assert config_metrics.get("circuit_breaker_enabled") is True  # default
 
-    def test_tap_metrics_disabled(self, database_config: dict[str, Any]) -> None:
+    def test_tap_metrics_disabled(self, database_config: dict[str, object]) -> None:
         """Test metrics collection when disabled."""
         database_config["enable_metrics"] = False
         tap = FlextOracleTapBaseService(config=database_config)
@@ -302,7 +302,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
     @pytest.mark.asyncio
     async def test_async_operation_support(
         self,
-        database_config: dict[str, Any],
+        database_config: dict[str, object],
         mock_oracle_connection: Mock,
     ) -> None:
         """Test async operation support."""
@@ -322,7 +322,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
 
     def test_tap_discoverable_tables_filtering(
         self,
-        database_config: dict[str, Any],
+        database_config: dict[str, object],
         mock_oracle_connection: Mock,
     ) -> None:
         """Test table filtering during discovery."""
@@ -341,7 +341,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
 
     def test_tap_discoverable_tables_auto_discovery(
         self,
-        database_config: dict[str, Any],
+        database_config: dict[str, object],
         mock_oracle_connection: Mock,
     ) -> None:
         """Test automatic table discovery."""
@@ -376,7 +376,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
 
     def test_tap_table_exclusion_filtering(
         self,
-        database_config: dict[str, Any],
+        database_config: dict[str, object],
         mock_oracle_connection: Mock,
     ) -> None:
         """Test table exclusion filtering."""
@@ -409,7 +409,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
 
     def test_tap_table_pattern_filtering(
         self,
-        database_config: dict[str, Any],
+        database_config: dict[str, object],
         mock_oracle_connection: Mock,
     ) -> None:
         """Test table pattern filtering."""
@@ -458,7 +458,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
     @pytest.mark.stress
     def test_concurrent_stream_processing(
         self,
-        database_config: dict[str, Any],
+        database_config: dict[str, object],
         mock_oracle_connection: Mock,
     ) -> None:
         """Test concurrent stream processing capabilities."""
@@ -494,7 +494,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
     @pytest.mark.error_handling
     def test_error_handling_during_discovery(
         self,
-        database_config: dict[str, Any],
+        database_config: dict[str, object],
     ) -> None:
         """Test error handling during stream discovery."""
         with patch("flext_db_oracle.FlextDbOracleApi") as mock_connection_class:
@@ -511,7 +511,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
 
     def test_performance_configuration_validation(
         self,
-        database_config: dict[str, Any],
+        database_config: dict[str, object],
     ) -> None:
         """Test performance configuration validation."""
         # Test with extreme values
@@ -532,7 +532,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
     @pytest.mark.integration
     def test_real_world_workflow_simulation(
         self,
-        database_config: dict[str, Any],
+        database_config: dict[str, object],
         mock_oracle_connection: Mock,
     ) -> None:
         """Test complete real-world workflow simulation."""
@@ -584,7 +584,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
 
     def test_config_connection_string_generation(
         self,
-        database_config: dict[str, Any],
+        database_config: dict[str, object],
     ) -> None:
         """Test connection string generation for logging."""
         config = FlextOracleTapConfig(**database_config)
@@ -597,7 +597,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
 
     def test_config_performance_settings_extraction(
         self,
-        database_config: dict[str, Any],
+        database_config: dict[str, object],
     ) -> None:
         """Test performance settings extraction."""
         config = FlextOracleTapConfig(**database_config)
@@ -611,7 +611,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
 
     def test_config_circuit_breaker_settings(
         self,
-        database_config: dict[str, Any],
+        database_config: dict[str, object],
     ) -> None:
         """Test circuit breaker settings extraction."""
         config = FlextOracleTapConfig(**database_config)
@@ -628,7 +628,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
 
     def test_config_comprehensive_validation(
         self,
-        database_config: dict[str, Any],
+        database_config: dict[str, object],
     ) -> None:
         """Test comprehensive configuration validation."""
         config = FlextOracleTapConfig(**database_config)
@@ -654,7 +654,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
 
     def test_stream_name_generation_patterns(
         self,
-        database_config: dict[str, Any],
+        database_config: dict[str, object],
         mock_oracle_connection: Mock,
     ) -> None:
         """Test stream name generation patterns."""

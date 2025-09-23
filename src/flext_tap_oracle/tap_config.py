@@ -9,35 +9,34 @@ from __future__ import annotations
 import re
 from typing import Literal, Self
 
-from pydantic import Field, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from flext_core import (
     FlextConstants,
-    FlextModels,
     FlextResult,
     FlextTypes,
 )
-from flext_db_oracle import FlextDbOracleConfig
+from flext_db_oracle import FlextDbOracleModels
 
 
-class FlextOracleTapConfiguration(FlextModels.Config):
+class FlextOracleTapConfiguration(BaseModel):
     """Oracle tap configuration - ONLY tap-specific settings.
 
-    Complementa FlextDbOracleConfig com configurações específicas do tap.
+    Complementa FlextDbOracleModels.OracleConfig com configurações específicas do tap.
     """
 
     # Singer tap specific settings - USE FlextConstants defaults
     batch_size: int = Field(
         default=FlextConstants.Performance.DEFAULT_BATCH_SIZE,
         ge=1,
-        le=FlextConstants.Singer.MAX_BATCH_SIZE,
+        le=FlextConstants.Performance.MAX_BATCH_SIZE_VALIDATION,
         description="Batch size for data extraction",
     )
 
     max_parallel_streams: int = Field(
         default=1,  # Oracle-specific default (conservative for database connections)
         ge=1,
-        le=FlextConstants.Singer.DEFAULT_MAX_PARALLEL_STREAMS,
+        le=10,  # Reasonable max for Oracle connections
         description="Maximum parallel stream processing",
     )
 
@@ -70,7 +69,9 @@ class FlextOracleTapConfiguration(FlextModels.Config):
             raise ValueError(msg)
 
         # Advanced batch size validation based on parallel streams
-        max_load = FlextConstants.Performance.MAX_BATCH_SIZE * 50  # Conservative limit
+        max_load = (
+            FlextConstants.Performance.MAX_BATCH_SIZE_VALIDATION * 50
+        )  # Conservative limit
         total_load = self.batch_size * self.max_parallel_streams
         if total_load > max_load:
             msg = (
@@ -108,7 +109,7 @@ class FlextOracleTapConfiguration(FlextModels.Config):
         return FlextResult[None].ok(None)
 
 
-class FlextOracleTapStreamMetadata(FlextModels.Config):
+class FlextOracleTapStreamMetadata(BaseModel):
     """Oracle tap stream metadata - ONLY tap-specific fields.
 
     Extends Oracle table metadata with tap-specific information.
@@ -178,19 +179,19 @@ class FlextOracleTapStreamMetadata(FlextModels.Config):
         return FlextResult[None].ok(None)
 
 
-class FlextOracleTapConfig(FlextModels.Config):
+class FlextOracleTapConfig(BaseModel):
     """Oracle Tap Configuration usando COMPOSIÇÃO das bases existentes.
 
     Esta classe COMPÕE funcionalidade das bases existentes:
     - FlextConfig.BaseModel: Configuração base modernizada do flext-core
-    - FlextDbOracleConfig: Configuração Oracle database (via composition)
+    - FlextDbOracleModels.OracleConfig: Configuração Oracle database (via composition)
     - FlextOracleTapConfiguration: Configurações específicas do tap
 
     NUNCA duplica funcionalidade existente.
     """
 
     # Composition: Oracle database configuration
-    oracle_config: FlextDbOracleConfig = Field(
+    oracle_config: FlextDbOracleModels.OracleConfig = Field(
         ...,
         description="Oracle database configuration from flext-db-oracle",
     )
@@ -203,13 +204,13 @@ class FlextOracleTapConfig(FlextModels.Config):
 
     @field_validator("oracle_config", mode="before")
     @classmethod
-    def validate_oracle_config(cls, v: object) -> FlextDbOracleConfig:
+    def validate_oracle_config(cls, v: object) -> FlextDbOracleModels.OracleConfig:
         """Validate Oracle configuration using existing validation."""
         if isinstance(v, dict):
-            return FlextDbOracleConfig.model_validate(v)
-        if isinstance(v, FlextDbOracleConfig):
+            return FlextDbOracleModels.OracleConfig.model_validate(v)
+        if isinstance(v, FlextDbOracleModels.OracleConfig):
             return v
-        msg = "oracle_config must be dict or FlextDbOracleConfig"
+        msg = "oracle_config must be dict or FlextDbOracleModels.OracleConfig"
         raise ValueError(msg)
 
     @model_validator(mode="after")
@@ -238,7 +239,7 @@ class FlextOracleTapConfig(FlextModels.Config):
                 raise ValueError(msg)
 
         # Advanced validation: batch size vs Oracle characteristics
-        max_batch = FlextConstants.Performance.MAX_BATCH_SIZE
+        max_batch = FlextConstants.Performance.MAX_BATCH_SIZE_VALIDATION
         if self.tap_config.batch_size > max_batch:
             msg = (
                 f"Batch size too large for Oracle: {self.tap_config.batch_size} > {max_batch:,} "
@@ -302,10 +303,13 @@ class FlextOracleTapConfig(FlextModels.Config):
                 )
 
         # Validate batch size against Oracle limits
-        if self.tap_config.batch_size > FlextConstants.Performance.MAX_BATCH_SIZE:
+        if (
+            self.tap_config.batch_size
+            > FlextConstants.Performance.MAX_BATCH_SIZE_VALIDATION
+        ):
             return FlextResult[None].fail(
                 f"Batch size too large for Oracle: {self.tap_config.batch_size} > "
-                f"{FlextConstants.Performance.MAX_BATCH_SIZE:,} (may cause memory issues)",
+                f"{FlextConstants.Performance.MAX_BATCH_SIZE_VALIDATION:,} (may cause memory issues)",
             )
 
         return FlextResult[None].ok(None)
@@ -335,11 +339,11 @@ class FlextOracleTapConfig(FlextModels.Config):
         """Get batch size for data extraction."""
         return self.tap_config.batch_size
 
-    def get_oracle_config(self) -> FlextDbOracleConfig:
+    def get_oracle_config(self) -> FlextDbOracleModels.OracleConfig:
         """Get Oracle database configuration.
 
         Returns:
-            FlextDbOracleConfig for use with flext-db-oracle components
+            FlextDbOracleModels.OracleConfig for use with flext-db-oracle components
 
         """
         return self.oracle_config
