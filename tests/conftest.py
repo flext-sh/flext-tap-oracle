@@ -22,12 +22,35 @@ from flext_tap_oracle import (
     FlextOracleTapService,
     create_oracle_tap_config,
 )
+from flext_tests import FlextTestDocker
+
+
+# Docker container management with FlextTestDocker
+@pytest.fixture(scope="session")
+def docker_control() -> FlextTestDocker:
+    """Provide Docker control instance for tests."""
+    return FlextTestDocker()
+
+
+@pytest.fixture(scope="session")
+def shared_oracle_container(docker_control: FlextTestDocker) -> Generator[str]:
+    """Managed Oracle container using FlextTestDocker with auto-start."""
+    result = docker_control.start_container("flext-oracle-db-test")
+    if result.is_failure:
+        pytest.skip(f"Failed to start Oracle container: {result.error}")
+
+    yield "flext-oracle-db-test"
+
+    docker_control.stop_container("flext-oracle-db-test", remove=False)
 
 
 # Test environment setup
 @pytest.fixture(scope="session", autouse=True)
-def oracle_shared_container_environment() -> None:
+def oracle_shared_container_environment(shared_oracle_container: str) -> None:
     """Setup Oracle environment variables for shared container (pytest-oracle-xe)."""
+    _ = shared_oracle_container  # Acknowledge parameter usage
+    # Use the container name to ensure it's available
+    _ = shared_oracle_container
     # Set Oracle environment variables for shared container on port 10521
     os.environ.update(
         {
@@ -79,7 +102,7 @@ def skip_e2e_if_no_oracle(request: pytest.FixtureRequest) -> None:
 
     We only skip tests under the e2e/ directory to avoid hiding other failures.
     """
-    fspath = str(getattr(request.node, "fspath", ""))
+    fspath = str(request.node.fspath) if hasattr(request.node, "fspath") else ""
     if "/e2e/" not in fspath and "\\e2e\\" not in fspath:
         return
 
@@ -126,14 +149,14 @@ def oracle_tap_config() -> FlextTypes.Core.Dict:
 
 
 @pytest.fixture
-def oracle_tap(oracle_tap_config: FlextTypes.Core.Dict) -> object:
+def oracle_tap(oracle_tap_config: FlextTypes.Core.Dict) -> FlextOracleTapService:
     """Oracle tap service instance for testing."""
     # Convert dict to proper config and create service
     config_result = FlextResult[FlextOracleTapConfig].ok(
         FlextOracleTapConfig.model_validate(oracle_tap_config),
     )
-    if config_result.is_success and config_result.data:
-        return FlextOracleTapService(config=config_result.data)
+    if config_result.is_success:
+        return FlextOracleTapService(config=config_result.value)
 
     # Fallback for test compatibility
     fallback_result = create_oracle_tap_config(
@@ -143,8 +166,8 @@ def oracle_tap(oracle_tap_config: FlextTypes.Core.Dict) -> object:
             "password": str(oracle_tap_config.get("password", "test")),
         },
     )
-    if fallback_result.is_success and fallback_result.data:
-        return FlextOracleTapService(config=fallback_result.data)
+    if fallback_result.is_success:
+        return FlextOracleTapService(config=fallback_result.value)
 
     error_msg = "Failed to create oracle tap service for testing"
     raise RuntimeError(error_msg)
@@ -569,13 +592,13 @@ def mock_oracle_tap() -> type[object]:
     """Mock Oracle tap for testing."""
 
     class MockOracleTap:
-        def __init__(self, config: FlextTypes.Core.Dict) -> None:
+        def __init__(self, config: dict[str, object]) -> None:
             """Initialize the instance."""
             self.config = config
             self._catalog = None
             self.__state: FlextTypes.Core.Dict = {}
 
-        async def discover(self) -> FlextTypes.Core.Dict:
+        async def discover(self) -> dict[str, object]:
             """Discover schema using mock data."""
             return {
                 "streams": [
@@ -595,9 +618,9 @@ def mock_oracle_tap() -> type[object]:
 
         async def sync(
             self,
-            catalog: FlextTypes.Core.Dict,
-            _state: FlextTypes.Core.Dict,
-        ) -> AsyncGenerator[FlextTypes.Core.Dict]:
+            catalog: dict[str, object],
+            _state: dict[str, object],
+        ) -> AsyncGenerator[dict[str, object]]:
             """Sync data using mock extraction."""
             if not isinstance(catalog, dict) or "streams" not in catalog:
                 return
@@ -640,7 +663,7 @@ def mock_oracle_connection() -> type[object]:
     """Mock Oracle connection for testing."""
 
     class MockOracleConnection:
-        def __init__(self, config: FlextTypes.Core.Dict) -> None:
+        def __init__(self, config: dict[str, object]) -> None:
             """Initialize the instance."""
             self.config = config
             self.connected = False

@@ -37,7 +37,7 @@ class FlextTapOracleModels(FlextModels):
         to provide a complete view of stream information for the tap.
         """
 
-        def validate_business_rules(self) -> FlextResult[None]:
+        def validate_business_rules(self: object) -> FlextResult[None]:
             """Validate stream info business rules."""
             return FlextResult[None].ok(None)
 
@@ -67,7 +67,7 @@ class FlextTapOracleModels(FlextModels):
             None, description="Last extraction timestamp"
         )
 
-        def to_singer_stream_info(self) -> FlextTypes.Core.Dict:
+        def to_singer_stream_info(self: object) -> FlextTypes.Core.Dict:
             """Convert to Singer stream information format."""
             return {
                 "tap_stream_id": self.stream_name,
@@ -92,7 +92,7 @@ class FlextTapOracleModels(FlextModels):
         processed tap stream information.
         """
 
-        def validate_business_rules(self) -> FlextResult[None]:
+        def validate_business_rules(self: object) -> FlextResult[None]:
             """Validate discovery result business rules."""
             return FlextResult[None].ok(None)
 
@@ -123,7 +123,7 @@ class FlextTapOracleModels(FlextModels):
         description="Table names that were excluded",
     )
 
-    def get_selected_streams(self) -> list[OracleTapStreamInfo]:
+    def get_selected_streams(self: object) -> list[OracleTapStreamInfo]:
         """Get only selected streams."""
         return [stream for stream in self.stream_info if stream.is_selected]
 
@@ -134,7 +134,7 @@ class FlextTapOracleModels(FlextModels):
                 return table
         return None
 
-    def to_singer_catalog(self) -> FlextTypes.Core.Dict:
+    def to_singer_catalog(self: object) -> FlextTypes.Core.Dict:
         """Convert to Singer catalog format."""
         return {
             "streams": [stream.to_singer_stream_info() for stream in self.stream_info],
@@ -195,7 +195,7 @@ class OracleTapExecutionStats(FlextModels):
         description="Result processing time",
     )
 
-    def update_performance_metrics(self) -> OracleTapExecutionStats:
+    def update_performance_metrics(self: object) -> OracleTapExecutionStats:
         """Return new instance with updated calculated performance metrics."""
         if self.duration_seconds > 0:
             return self.model_copy(
@@ -227,7 +227,9 @@ class OracleTapExecutionStats(FlextModels):
 
     def mark_stream_error(self, stream_name: str) -> OracleTapExecutionStats:
         """Return new instance with marked stream error."""
-        new_failed_streams = self.failed_streams.copy() if self.failed_streams else []
+        new_failed_streams: list[object] = (
+            self.failed_streams.copy() if self.failed_streams else []
+        )
         if stream_name not in new_failed_streams:
             new_failed_streams.append(stream_name)
         return self.model_copy(
@@ -237,7 +239,7 @@ class OracleTapExecutionStats(FlextModels):
             },
         )
 
-    def to_summary(self) -> FlextTypes.Core.Dict:
+    def to_summary(self: object) -> FlextTypes.Core.Dict:
         """Create execution summary."""
         return {
             "execution_id": self.execution_id,
@@ -279,7 +281,7 @@ def create_stream_info_from_oracle_table(
     oracle_table: FlextDbOracleTable,
     stream_prefix: str = "oracle",
     replication_method: TapReplicationMethod = "FULL_TABLE",
-) -> FlextResult[OracleTapStreamInfo]:
+) -> FlextResult[FlextTapOracleModels.OracleTapStreamInfo]:
     """Create stream info from Oracle table metadata.
 
     Args:
@@ -294,7 +296,7 @@ def create_stream_info_from_oracle_table(
     try:
         stream_name = f"{stream_prefix}_{oracle_table.name.lower()}"
 
-        stream_info = OracleTapStreamInfo(
+        stream_info = FlextTapOracleModels.OracleTapStreamInfo(
             stream_name=stream_name,
             table_name=oracle_table.name,
             schema_name=getattr(oracle_table, "schema_name", None),
@@ -304,10 +306,10 @@ def create_stream_info_from_oracle_table(
             else None,
         )
 
-        return FlextResult[OracleTapStreamInfo].ok(stream_info)
+        return FlextResult[FlextTapOracleModels.OracleTapStreamInfo].ok(stream_info)
 
     except Exception as e:
-        return FlextResult[OracleTapStreamInfo].fail(
+        return FlextResult[FlextTapOracleModels.OracleTapStreamInfo].fail(
             f"Failed to create stream info from Oracle table: {e}",
         )
 
@@ -316,7 +318,7 @@ def create_discovery_result(
     schema_name: str,
     oracle_tables: list[FlextDbOracleTable],
     stream_prefix: str = "oracle",
-) -> FlextResult[OracleTapDiscoveryResult]:
+) -> FlextResult[FlextTapOracleModels.OracleTapDiscoveryResult]:
     """Create discovery result from Oracle tables.
 
     Args:
@@ -332,11 +334,13 @@ def create_discovery_result(
         # Create stream info for each table
         stream_info = []
         for table in oracle_tables:
-            stream_result = create_stream_info_from_oracle_table(table, stream_prefix)
+            stream_result: FlextResult[object] = create_stream_info_from_oracle_table(
+                table, stream_prefix
+            )
             if stream_result.success and stream_result.data:
                 stream_info.append(stream_result.data)
 
-        discovery_result = OracleTapDiscoveryResult(
+        discovery_result = FlextTapOracleModels.OracleTapDiscoveryResult(
             schema_name=schema_name,
             discovery_timestamp="now",  # Would use actual timestamp
             total_tables=len(oracle_tables),
@@ -345,10 +349,12 @@ def create_discovery_result(
             filtered_tables=[table.name for table in oracle_tables],
         )
 
-        return FlextResult[OracleTapDiscoveryResult].ok(discovery_result)
+        return FlextResult[FlextTapOracleModels.OracleTapDiscoveryResult].ok(
+            discovery_result
+        )
 
     except Exception as e:
-        return FlextResult[OracleTapDiscoveryResult].fail(
+        return FlextResult[FlextTapOracleModels.OracleTapDiscoveryResult].fail(
             f"Failed to create discovery result: {e}",
         )
 
@@ -362,9 +368,7 @@ __all__: FlextTypes.Core.StringList = [
     "FlextDbOracleQueryResult",
     "FlextDbOracleSchema",
     "FlextDbOracleTable",
-    "OracleTapDiscoveryResult",
-    "OracleTapExecutionStats",
-    "OracleTapStreamInfo",
+    "FlextTapOracleModels",
     "Stream",
     "TapExecutionMode",
     "TapOracleColumn",

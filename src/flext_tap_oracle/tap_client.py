@@ -40,10 +40,10 @@ class FlextOracleDiscoveryService:
             schema_name: Oracle schema name (defaults to 'USER')
 
         """
-        self.oracle_api = oracle_api
-        self.schema_name = schema_name
+        self.oracle_api: FlextDbOracleApi = oracle_api
+        self.schema_name: str | None = schema_name
 
-    def execute(self) -> FlextResult[list[FlextDbOracleTable]]:
+    def execute(self: object) -> FlextResult[list[FlextDbOracleTable]]:
         """Execute Oracle table discovery using flext-db-oracle infrastructure."""
         try:
             schema_name = self.schema_name or "USER"  # Default Oracle schema
@@ -56,8 +56,12 @@ class FlextOracleDiscoveryService:
                     "No Oracle connection available",
                 )
 
-            metadata_manager = FlextDbOracleMetadataManager(connection)
-            schema_result = metadata_manager.get_schema_metadata(schema_name)
+            metadata_manager: FlextTypes.Core.Dict = FlextDbOracleMetadataManager(
+                connection
+            )
+            schema_result: FlextResult[object] = metadata_manager.get_schema_metadata(
+                schema_name
+            )
 
             if schema_result.success and schema_result.data:
                 tables = schema_result.data.tables
@@ -84,13 +88,13 @@ class FlextOracleConnectionTestService:
         """Initialize the instance."""
         self.oracle_api = oracle_api
 
-    def execute(self) -> FlextResult[bool]:
+    def execute(self: object) -> FlextResult[bool]:
         """Execute Oracle connection test using flext-db-oracle infrastructure."""
         try:
             logger.info("Testing Oracle connection")
 
             # Use existing flext-db-oracle API
-            connection_result = self.oracle_api.test_connection()
+            connection_result: FlextResult[object] = self.oracle_api.test_connection()
 
             if hasattr(connection_result, "success") and connection_result.success:
                 logger.info("Oracle connection test successful")
@@ -124,10 +128,10 @@ class FlextOracleTableFilterService:
         self.tap_config = tap_config
         self.discovery_service = discovery_service
 
-    def execute(self) -> FlextResult[FlextTypes.Core.StringList]:
+    def execute(self: object) -> FlextResult[FlextTypes.Core.StringList]:
         """Execute table filtering based on tap configuration."""
         try:
-            tap_configuration = self.tap_config.get_tap_config()
+            tap_configuration: FlextTypes.Core.Dict = self.tap_config.get_tap_config()
 
             # If specific tables are configured, use them
             if tap_configuration.tables_filter:
@@ -140,7 +144,7 @@ class FlextOracleTableFilterService:
                 )
 
             # Otherwise discover all tables and apply exclusions
-            tables_result = self.discovery_service.execute()
+            tables_result: FlextResult[object] = self.discovery_service.execute()
             if tables_result.is_failure:
                 error_msg = tables_result.error or "Unknown discovery error"
                 return FlextResult[FlextTypes.Core.StringList].fail(error_msg)
@@ -187,7 +191,7 @@ class FlextOracleTapService:
 
     def __init__(self, config: FlextOracleTapConfig) -> None:
         """Initialize Oracle tap service using COMPOSITION pattern."""
-        self._config = config
+        self._config: FlextTypes.Core.Dict = config
 
         # COMPOSITION: Use FlextTap for base functionality
 
@@ -213,7 +217,7 @@ class FlextOracleTapService:
         self._meltano_service = FlextTap(tap_config_result.value, adapter)
 
         # COMPOSITION: Create Oracle API
-        oracle_config = self._config.get_oracle_config()
+        oracle_config: FlextTypes.Core.Dict = self._config.get_oracle_config()
         self._oracle_api = FlextDbOracleApi(oracle_config)
 
         # COMPOSITION: Create domain services (FlextService[T])
@@ -234,40 +238,40 @@ class FlextOracleTapService:
         )
 
     @property
-    def config(self) -> FlextOracleTapConfig:
+    def config(self: object) -> FlextOracleTapConfig:
         """Get Oracle tap configuration."""
         return self._config
 
     @property
-    def oracle_api(self) -> FlextDbOracleApi:
+    def oracle_api(self: object) -> FlextDbOracleApi:
         """Get Oracle API."""
         return self._oracle_api
 
     @property
-    def discovery_service(self) -> FlextOracleDiscoveryService:
+    def discovery_service(self: object) -> FlextOracleDiscoveryService:
         """Get Oracle discovery domain service."""
         return self._discovery_service
 
     @property
-    def connection_test_service(self) -> FlextOracleConnectionTestService:
+    def connection_test_service(self: object) -> FlextOracleConnectionTestService:
         """Get Oracle connection test domain service."""
         return self._connection_test_service
 
     @property
-    def table_filter_service(self) -> FlextOracleTableFilterService:
+    def table_filter_service(self: object) -> FlextOracleTableFilterService:
         """Get Oracle table filter domain service."""
         return self._table_filter_service
 
     # DELEGATION: Delegate base functionality to FlextMeltanoTapService
-    def validate_service(self) -> FlextResult[bool]:
+    def validate_service(self: object) -> FlextResult[bool]:
         """Validate service using base FlextMeltanoTapService."""
         return self._meltano_service.validate_service()
 
-    def get_health_status(self) -> FlextResult[FlextTypes.Core.Dict]:
+    def get_health_status(self: object) -> FlextResult[FlextTypes.Core.Dict]:
         """Get health status using base FlextMeltanoTapService."""
         return self._meltano_service.get_health_status()
 
-    def discover_catalog(self) -> FlextResult[FlextTypes.Core.Dict]:
+    def discover_catalog(self: object) -> FlextResult[FlextTypes.Core.Dict]:
         """Discover catalog using base FlextMeltanoTapService."""
         return self._meltano_service.discover_catalog()
 
@@ -286,29 +290,29 @@ class FlextOracleTapService:
             return discovery_service.execute()
         return self._discovery_service.execute()
 
-    def test_oracle_connection(self) -> FlextResult[bool]:
+    def test_oracle_connection(self: object) -> FlextResult[bool]:
         """Test Oracle connection using domain service."""
         return self._connection_test_service.execute()
 
-    def get_filtered_tables(self) -> FlextResult[FlextTypes.Core.StringList]:
+    def get_filtered_tables(self: object) -> FlextResult[FlextTypes.Core.StringList]:
         """Get filtered table list using domain service."""
         return self._table_filter_service.execute()
 
     # HIGH-LEVEL ORCHESTRATION METHODS
-    def initialize_tap(self) -> FlextResult[FlextTypes.Core.Dict]:
+    def initialize_tap(self: object) -> FlextResult[FlextTypes.Core.Dict]:
         """Initialize Oracle tap with connection test and table discovery."""
         try:
             logger.info("Initializing Oracle tap service")
 
             # Test connection first
-            connection_result = self.test_oracle_connection()
+            connection_result: FlextResult[object] = self.test_oracle_connection()
             if connection_result.is_failure:
                 return FlextResult[FlextTypes.Core.Dict].fail(
                     f"Connection test failed: {connection_result.error}",
                 )
 
             # Discover tables
-            tables_result = self.get_filtered_tables()
+            tables_result: FlextResult[object] = self.get_filtered_tables()
             if tables_result.is_failure:
                 return FlextResult[FlextTypes.Core.Dict].fail(
                     f"Table discovery failed: {tables_result.error}",
@@ -337,11 +341,11 @@ class FlextOracleTapService:
             logger.exception("Oracle tap initialization failed")
             return FlextResult[FlextTypes.Core.Dict].fail(f"Initialization failed: {e}")
 
-    def get_tap_status(self) -> FlextResult[FlextTypes.Core.Dict]:
+    def get_tap_status(self: object) -> FlextResult[FlextTypes.Core.Dict]:
         """Get comprehensive Oracle tap status."""
         try:
             # Get base health status
-            health_result = self.get_health_status()
+            health_result: FlextResult[object] = self.get_health_status()
             base_status = health_result.data if health_result.success else {}
 
             # Add Oracle-specific status
@@ -352,17 +356,17 @@ class FlextOracleTapService:
             }
 
             # Test Oracle connection
-            connection_result = self.test_oracle_connection()
+            connection_result: FlextResult[object] = self.test_oracle_connection()
             oracle_status["oracle_connection"] = (
                 "connected" if connection_result.success else "failed"
             )
 
             # Get table counts
-            discovery_result = self.discover_oracle_tables()
+            discovery_result: FlextResult[object] = self.discover_oracle_tables()
             if discovery_result.success:
                 oracle_status["discovered_tables"] = len(discovery_result.data or [])
 
-            filter_result = self.get_filtered_tables()
+            filter_result: FlextResult[object] = self.get_filtered_tables()
             if filter_result.success:
                 oracle_status["filtered_tables"] = len(filter_result.data or [])
 

@@ -15,23 +15,23 @@ from flext_core import FlextExceptions, FlextTypes
 # =====================================================
 
 
-class FlextTapOracleError(FlextExceptions._Error):
+class FlextTapOracleError(FlextExceptions.Error):
     """Base error for Oracle tap operations."""
 
 
-class FlextTapOracleValidationError(FlextExceptions._ValidationError):
+class FlextTapOracleValidationError(FlextExceptions.ValidationError):
     """Oracle tap validation errors."""
 
 
-class FlextTapOracleConnectionError(FlextExceptions._ConnectionError):
+class FlextTapOracleConnectionError(FlextExceptions.ConnectionError):
     """Oracle tap connection errors."""
 
 
-class FlextTapOracleConfigurationError(FlextExceptions._ConfigurationError):
+class FlextTapOracleConfigurationError(FlextExceptions.ConfigurationError):
     """Oracle tap configuration errors."""
 
 
-class FlextTapOracleProcessingError(FlextExceptions._ProcessingError):
+class FlextTapOracleProcessingError(FlextExceptions.ProcessingError):
     """Oracle tap processing errors."""
 
 

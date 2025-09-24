@@ -9,7 +9,7 @@ from __future__ import annotations
 from flext_core import FlextTypes as CoreFlextTypes
 
 
-class FlextTapOracleTypes:
+class FlextTapOracleTypes(CoreFlextTypes):
     """Type definitions for flext-tap-oracle."""
 
     # Re-export core types for convenience

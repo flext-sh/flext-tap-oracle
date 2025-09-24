@@ -57,7 +57,7 @@ class FlextOracleTapConfiguration(FlextConfig):
     )
 
     @model_validator(mode="after")
-    def validate_configuration_consistency(self) -> Self:
+    def validate_configuration_consistency(self: object) -> Self:
         """Validate tap configuration consistency - Python 3.13 enhanced validators."""
         # Check for conflicting table filters
         if (
@@ -104,7 +104,7 @@ class FlextOracleTapConfiguration(FlextConfig):
 
         return all(c.isalnum() or c in "_$#" for c in name)
 
-    def validate_business_rules(self) -> FlextResult[None]:
+    def validate_business_rules(self: object) -> FlextResult[None]:
         """Validate tap configuration business rules - backward compatibility."""
         # Kept for backward compatibility, main validation moved to model_validator
         return FlextResult[None].ok(None)
@@ -154,7 +154,7 @@ class FlextOracleTapStreamMetadata(BaseModel):
         return cleaned.lower()
 
     @model_validator(mode="after")
-    def validate_replication_consistency(self) -> Self:
+    def validate_replication_consistency(self: object) -> Self:
         """Validate replication configuration consistency - Python 3.13 Self typing."""
         if self.replication_method == "INCREMENTAL":
             if not self.replication_key:
@@ -173,7 +173,7 @@ class FlextOracleTapStreamMetadata(BaseModel):
 
         return self
 
-    def validate_business_rules(self) -> FlextResult[None]:
+    def validate_business_rules(self: object) -> FlextResult[None]:
         """Validate tap-specific business rules - Python 3.13 enhanced."""
         # This method is kept for backward compatibility but
         # most validation moved to model_validator for better Pydantic integration
@@ -215,7 +215,7 @@ class FlextOracleTapConfig(BaseModel):
         raise ValueError(msg)
 
     @model_validator(mode="after")
-    def validate_tap_oracle_integration(self) -> Self:
+    def validate_tap_oracle_integration(self: object) -> Self:
         """Validate integration between Oracle and tap configurations - Python 3.13 enhanced."""
         # Enhanced validation for Oracle-tap compatibility
         max_tables = FlextConstants.Limits.MAX_LIST_SIZE
@@ -255,7 +255,7 @@ class FlextOracleTapConfig(BaseModel):
 
         return self
 
-    def validate_business_rules(self) -> FlextResult[None]:
+    def validate_business_rules(self: object) -> FlextResult[None]:
         """Validate Oracle tap configuration business rules using FlextConfig.BaseModel pattern."""
         # Validate Oracle configuration
         oracle_validation = self._validate_oracle_config()
@@ -274,7 +274,7 @@ class FlextOracleTapConfig(BaseModel):
 
         return FlextResult[None].ok(None)
 
-    def _validate_oracle_config(self) -> FlextResult[None]:
+    def _validate_oracle_config(self: object) -> FlextResult[None]:
         """Validate Oracle configuration."""
         if not self.oracle_config:
             return FlextResult[None].fail("Oracle database configuration is required")
@@ -292,7 +292,7 @@ class FlextOracleTapConfig(BaseModel):
 
         return FlextResult[None].ok(None)
 
-    def _validate_cross_configuration(self) -> FlextResult[None]:
+    def _validate_cross_configuration(self: object) -> FlextResult[None]:
         """Validate cross-configuration compatibility."""
         # Cross-validate Oracle and tap configurations
         if hasattr(self.oracle_config, "pool_max"):
@@ -326,21 +326,21 @@ class FlextOracleTapConfig(BaseModel):
         return bool(re.match(FlextConstants.Patterns.IDENTIFIER_PATTERN, prefix))
 
     @property
-    def connection_string(self) -> str:
+    def connection_string(self: object) -> str:
         """Get Oracle connection string from composed config."""
         return self.oracle_config.get_connection_string()
 
     @property
-    def stream_prefix(self) -> str:
+    def stream_prefix(self: object) -> str:
         """Get stream prefix for Singer streams."""
         return self.tap_config.stream_prefix
 
     @property
-    def batch_size(self) -> int:
+    def batch_size(self: object) -> int:
         """Get batch size for data extraction."""
         return self.tap_config.batch_size
 
-    def get_oracle_config(self) -> FlextDbOracleModels.OracleConfig:
+    def get_oracle_config(self: object) -> FlextDbOracleModels.OracleConfig:
         """Get Oracle database configuration.
 
         Returns:
@@ -349,7 +349,7 @@ class FlextOracleTapConfig(BaseModel):
         """
         return self.oracle_config
 
-    def get_tap_config(self) -> FlextOracleTapConfiguration:
+    def get_tap_config(self: object) -> FlextOracleTapConfiguration:
         """Get tap-specific configuration.
 
         Returns:
@@ -399,7 +399,9 @@ def create_oracle_tap_config(
             **meltano_config,
         }
 
-        config_instance = FlextOracleTapConfig.model_validate(config_data)
+        config_instance: dict[str, object] = FlextOracleTapConfig.model_validate(
+            config_data
+        )
         return FlextResult[FlextOracleTapConfig].ok(config_instance)
 
     except Exception as e:

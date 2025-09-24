@@ -11,7 +11,7 @@ from time import perf_counter
 
 from sqlalchemy import MetaData, Select, Table, select
 
-from flext_core import FlextContainer, FlextLogger, FlextTypes
+from flext_core import FlextContainer, FlextLogger, FlextResult, FlextTypes
 from flext_db_oracle import (
     FlextDbOracleApi,
     FlextDbOracleConnection,
@@ -43,35 +43,39 @@ class OracleStream(Stream):
     ) -> None:
         """Initialize Oracle stream with maximum flext-db-oracle integration."""
         super().__init__(tap, name=name, schema=schema)
-        self.table_name = table_name
-        self.oracle_api = oracle_api
-        self._tap = tap
+        self.table_name: str = table_name
+        self.oracle_api: FlextDbOracleApi = oracle_api
+        self._tap: Tap = tap
         # Use flext-db-oracle infrastructure services
         self._metadata_manager: FlextDbOracleMetadataManager | None = None
         self._observability_manager: FlextDbOracleObservabilityManager | None = None
 
     @property
-    def metadata_manager(self) -> FlextDbOracleMetadataManager:
+    def metadata_manager(self: object) -> FlextDbOracleMetadataManager:
         """Get flext-db-oracle metadata manager with lazy initialization."""
         if self._metadata_manager is None:
             # Use REAL constructor - requires FlextDbOracleConnection
             connection = self.oracle_api.connection
             if connection is None:
                 # Fallback: create connection from tap config using CORRECT method
-                tap_config = getattr(self._tap, "typed_config", None)
+                tap_config: FlextTypes.Core.Dict = getattr(
+                    self._tap, "typed_config", None
+                )
                 if tap_config and hasattr(tap_config, "get_oracle_config"):
-                    oracle_config = tap_config.get_oracle_config()
+                    oracle_config: FlextTypes.Core.Dict = tap_config.get_oracle_config()
                     connection = FlextDbOracleConnection(oracle_config)
                 else:
                     msg = (
                         "Cannot create metadata manager without valid Oracle connection"
                     )
                     raise RuntimeError(msg)
-            self._metadata_manager = FlextDbOracleMetadataManager(connection)
+            self._metadata_manager: FlextTypes.Core.Dict = FlextDbOracleMetadataManager(
+                connection
+            )
         return self._metadata_manager
 
     @property
-    def observability_manager(self) -> FlextDbOracleObservabilityManager:
+    def observability_manager(self: object) -> FlextDbOracleObservabilityManager:
         """Get flext-db-oracle observability manager with lazy initialization."""
         if self._observability_manager is None:
             # Use REAL constructor - requires FlextContainer and context_name
@@ -96,9 +100,9 @@ class OracleStream(Stream):
             )
             operation_start_time = perf_counter()
             # Build optimized query using tap configuration
-            tap_config = getattr(self._tap, "typed_config", None)
+            tap_config: FlextTypes.Core.Dict = getattr(self._tap, "typed_config", None)
             # Build query using SQLAlchemy 2.0 Core API - NO STRING CONCATENATION
-            metadata = MetaData()
+            metadata: FlextTypes.Core.Dict = MetaData()
 
             if (
                 tap_config
@@ -118,8 +122,8 @@ class OracleStream(Stream):
                 "Executing Oracle query via flext-db-oracle using SQLAlchemy 2.0 Core API",
             )
             # Execute query using flext-db-oracle API with SQLAlchemy statement
-            result = self.oracle_api.execute_statement(stmt)
-            if result.success and result.data:
+            result: FlextResult[object] = self.oracle_api.execute_statement(stmt)
+            if result.is_success and result.value:
                 # Use flext-db-oracle metadata for table information
                 table_metadata_result = self.metadata_manager.get_table_metadata(
                     self.table_name,
@@ -225,7 +229,9 @@ class OracleStream(Stream):
     ) -> Iterable[FlextTypes.Core.Dict]:
         """Fallback processing without metadata (minimal implementation)."""
         # Use schema properties as column names
-        column_names = list(self.schema.get("properties", {}).keys())
+        column_names: FlextTypes.Core.Dict = list(
+            self.schema.get("properties", {}).keys()
+        )
         # Handle different query_data structures
         if hasattr(query_data, "__iter__") and not isinstance(query_data, (str, bytes)):
             data_rows = query_data
@@ -301,7 +307,7 @@ class OracleStream(Stream):
         return transformed_record
 
     # ADDITIONAL ORACLE STREAM METHODS
-    def get_table_info(self) -> FlextTypes.Core.Dict:
+    def get_table_info(self: object) -> FlextTypes.Core.Dict:
         """Get Oracle table information using flext-db-oracle metadata."""
         try:
             table_metadata_result = self.metadata_manager.get_table_metadata(
@@ -323,7 +329,7 @@ class OracleStream(Stream):
             logger.exception("Failed to get table info")
             return {"table_name": self.table_name, "error": str(e)}
 
-    def estimate_row_count(self) -> int | None:
+    def estimate_row_count(self: object) -> int | None:
         """Estimate table row count using Oracle system views."""
         try:
             # Validate table name is a valid Oracle identifier before using in SQL
@@ -341,10 +347,16 @@ class OracleStream(Stream):
                 return None
             # Safe query construction using template - table name pre-validated
             safe_table_name = self.table_name.replace('"', '""')  # Escape quotes
-            query_template = 'SELECT COUNT(*) FROM "{}"'
-            result = self.oracle_api.query(query_template.format(safe_table_name))
-            if result.success and result.data and hasattr(result.data, "__getitem__"):
-                first_row = result.data[0]
+            query_template: FlextTypes.Core.Dict = 'SELECT COUNT(*) FROM "{}"'
+            result: FlextResult[object] = self.oracle_api.query(
+                query_template.format(safe_table_name)
+            )
+            if (
+                result.is_success
+                and result.value
+                and hasattr(result.value, "__getitem__")
+            ):
+                first_row = result.value[0]
                 if isinstance(first_row, (list, tuple)) and first_row:
                     return int(first_row[0])
                 if isinstance(first_row, dict):
@@ -359,7 +371,7 @@ class OracleStream(Stream):
             )
             return None
 
-    def get_stream_metadata(self) -> FlextTypes.Core.Dict:
+    def get_stream_metadata(self: object) -> FlextTypes.Core.Dict:
         """Get comprehensive stream metadata."""
         return {
             "name": self.name,
@@ -437,7 +449,7 @@ def create_oracle_stream_from_table(
             elif col_type.upper().startswith("FLOAT"):
                 singer_type = "number"
 
-            properties = schema.get("properties", {})
+            properties: FlextTypes.Core.Dict = schema.get("properties", {})
             if isinstance(properties, dict):
                 properties[col_name] = {"type": singer_type}
                 schema["properties"] = properties
