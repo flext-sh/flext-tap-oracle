@@ -12,6 +12,7 @@ from typing import Literal, Self
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from flext_core import (
+    FlextConfig,
     FlextConstants,
     FlextResult,
     FlextTypes,
@@ -19,7 +20,7 @@ from flext_core import (
 from flext_db_oracle import FlextDbOracleModels
 
 
-class FlextOracleTapConfiguration(BaseModel):
+class FlextOracleTapConfiguration(FlextConfig):
     """Oracle tap configuration - ONLY tap-specific settings.
 
     Complementa FlextDbOracleModels.OracleConfig com configurações específicas do tap.

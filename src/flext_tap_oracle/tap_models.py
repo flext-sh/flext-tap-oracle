@@ -24,70 +24,77 @@ from flext_meltano import FlextSingerStream as Stream
 # =====================================================
 
 
-class OracleTapStreamInfo(FlextModels):
-    """Oracle tap stream information - aggregates tap and Oracle metadata.
+class FlextTapOracleModels(FlextModels):
+    """Oracle Tap Models - Specific Data Models for Oracle Tap.
 
-    This model combines Oracle table metadata with tap-specific stream configuration
-    to provide a complete view of stream information for the tap.
+    Inherits from FlextModels to avoid duplication and ensure consistency.
     """
 
-    def validate_business_rules(self) -> FlextResult[None]:
-        """Validate stream info business rules."""
-        return FlextResult[None].ok(None)
+    class OracleTapStreamInfo(FlextModels.Entity):
+        """Oracle tap stream information - aggregates tap and Oracle metadata.
 
-    # Stream identity
-    stream_name: str = Field(..., description="Singer stream name")
-    table_name: str = Field(..., description="Oracle table name")
-    schema_name: str | None = Field(None, description="Oracle schema name")
+        This model combines Oracle table metadata with tap-specific stream configuration
+        to provide a complete view of stream information for the tap.
+        """
 
-    # Stream configuration
-    is_selected: bool = Field(
-        default=True,
-        description="Whether stream is selected for extraction",
-    )
-    replication_method: Literal["FULL_TABLE", "INCREMENTAL"] = Field(
-        default="FULL_TABLE",
-        description="Replication method for this stream",
-    )
-    replication_key: str | None = Field(
-        None,
-        description="Column used for incremental replication",
-    )
+        def validate_business_rules(self) -> FlextResult[None]:
+            """Validate stream info business rules."""
+            return FlextResult[None].ok(None)
 
-    # Runtime information (populated at runtime)
-    estimated_rows: int | None = Field(None, description="Estimated row count")
-    column_count: int | None = Field(None, description="Number of columns")
-    last_extracted: str | None = Field(None, description="Last extraction timestamp")
+        # Stream identity
+        stream_name: str = Field(..., description="Singer stream name")
+        table_name: str = Field(..., description="Oracle table name")
+        schema_name: str | None = Field(None, description="Oracle schema name")
 
-    def to_singer_stream_info(self) -> FlextTypes.Core.Dict:
-        """Convert to Singer stream information format."""
-        return {
-            "tap_stream_id": self.stream_name,
-            "table_name": self.table_name,
-            "schema": self.schema_name,
-            "metadata": {
-                "replication-method": self.replication_method,
-                "replication-key": self.replication_key,
-                "selected": self.is_selected,
-            },
-            "stats": {
-                "estimated_rows": self.estimated_rows,
-                "column_count": self.column_count,
-                "last_extracted": self.last_extracted,
-            },
-        }
+        # Stream configuration
+        is_selected: bool = Field(
+            default=True,
+            description="Whether stream is selected for extraction",
+        )
+        replication_method: Literal["FULL_TABLE", "INCREMENTAL"] = Field(
+            default="FULL_TABLE",
+            description="Replication method for this stream",
+        )
+        replication_key: str | None = Field(
+            None,
+            description="Column used for incremental replication",
+        )
 
+        # Runtime information (populated at runtime)
+        estimated_rows: int | None = Field(None, description="Estimated row count")
+        column_count: int | None = Field(None, description="Number of columns")
+        last_extracted: str | None = Field(
+            None, description="Last extraction timestamp"
+        )
 
-class OracleTapDiscoveryResult(FlextModels):
-    """Result of Oracle table discovery operation.
+        def to_singer_stream_info(self) -> FlextTypes.Core.Dict:
+            """Convert to Singer stream information format."""
+            return {
+                "tap_stream_id": self.stream_name,
+                "table_name": self.table_name,
+                "schema": self.schema_name,
+                "metadata": {
+                    "replication-method": self.replication_method,
+                    "replication-key": self.replication_key,
+                    "selected": self.is_selected,
+                },
+                "stats": {
+                    "estimated_rows": self.estimated_rows,
+                    "column_count": self.column_count,
+                    "last_extracted": self.last_extracted,
+                },
+            }
 
-    Aggregates discovery results with both raw Oracle metadata and
-    processed tap stream information.
-    """
+    class OracleTapDiscoveryResult(FlextModels.Entity):
+        """Result of Oracle table discovery operation.
 
-    def validate_business_rules(self) -> FlextResult[None]:
-        """Validate discovery result business rules."""
-        return FlextResult[None].ok(None)
+        Aggregates discovery results with both raw Oracle metadata and
+        processed tap stream information.
+        """
+
+        def validate_business_rules(self) -> FlextResult[None]:
+            """Validate discovery result business rules."""
+            return FlextResult[None].ok(None)
 
     # Discovery metadata
     schema_name: str = Field(..., description="Oracle schema that was discovered")
