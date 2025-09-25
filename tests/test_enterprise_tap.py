@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import asyncio
 from collections.abc import Generator
-from typing import cast
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
@@ -130,7 +129,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
                 connection_type="invalid", host="test", username="test", password="test"
             )
 
-    def test_tap_initialization(self, database_config: dict[str, object]) -> None:
+    def test_self(self, database_config: dict[str, object]) -> None:
         """Test tap initialization with configuration."""
         tap = FlextOracleTapBaseService(config=database_config)
 
@@ -290,7 +289,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
             assert config_metrics.get("async_enabled") is True  # default
             assert config_metrics.get("circuit_breaker_enabled") is True  # default
 
-    def test_tap_metrics_disabled(self, database_config: dict[str, object]) -> None:
+    def test_self(self, database_config: dict[str, object]) -> None:
         """Test metrics collection when disabled."""
         database_config["enable_metrics"] = False
         tap = FlextOracleTapBaseService(config=database_config)
