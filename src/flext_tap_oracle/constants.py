@@ -6,29 +6,55 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import ClassVar
+from typing import ClassVar, Final
 
 from flext_core import FlextConstants
 
 
 class FlextTapOracleConstants(FlextConstants):
-    """Oracle tap extraction-specific constants following flext-core patterns."""
+    """Oracle tap extraction-specific constants following FLEXT unified pattern.
 
-    # Oracle Connection Configuration
-    DEFAULT_ORACLE_PORT = 1521
-    DEFAULT_ORACLE_TIMEOUT = 30
-    DEFAULT_FETCH_SIZE = 1000
+    Inherits from FlextConstants for universal constants, defines only
+    Oracle tap-specific constants using nested namespace classes.
+    """
 
-    # Singer Tap Configuration
-    DEFAULT_BATCH_SIZE = 1000
-    MAX_BATCH_SIZE = 10000
+    # Project metadata (Final attributes inherited from FlextConstants)
+    # CONSTANTS_VERSION, PROJECT_PREFIX, PROJECT_NAME inherited from FlextConstants
 
-    # Oracle Replication Methods
-    REPLICATION_METHODS: ClassVar[list[str]] = [
-        "FULL_TABLE",
-        "INCREMENTAL",
-        "LOG_BASED",
-    ]
+    class Oracle:
+        """Oracle database connection constants."""
+
+        # Use FlextConstants for common database defaults where available
+        DEFAULT_PORT: Final[int] = 1521  # Oracle-specific port
+        DEFAULT_TIMEOUT: Final[int] = FlextConstants.Network.DEFAULT_TIMEOUT
+
+        # Oracle-specific fetch configuration
+        DEFAULT_FETCH_SIZE: Final[int] = FlextConstants.Performance.DEFAULT_BATCH_SIZE
+
+    class Singer:
+        """Singer tap configuration constants."""
+
+        # Use FlextConstants for performance settings
+        DEFAULT_BATCH_SIZE: Final[int] = FlextConstants.Performance.DEFAULT_BATCH_SIZE
+        MAX_BATCH_SIZE: Final[int] = FlextConstants.Performance.MAX_BATCH_ITEMS
+
+    class Replication:
+        """Oracle replication method constants."""
+
+        REPLICATION_METHODS: ClassVar[Final[list[str]]] = [
+            "FULL_TABLE",
+            "INCREMENTAL",
+            "LOG_BASED",
+        ]
+
+        DEFAULT_METHOD: Final[str] = "INCREMENTAL"
+
+    class Validation:
+        """Oracle tap validation constants."""
+
+        # Use FlextConstants for validation limits
+        MIN_BATCH_SIZE: Final[int] = FlextConstants.Performance.MIN_TAKE
+        MAX_TIMEOUT: Final[int] = FlextConstants.Performance.MAX_TIMEOUT_SECONDS
 
 
 __all__ = ["FlextTapOracleConstants"]

@@ -15,6 +15,7 @@ import uuid
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
+from typing import override
 
 # FIXED: Eliminated direct click import - using flext-cli exclusively
 from flext_cli import (
@@ -95,6 +96,8 @@ class OracleTapDiscoverCommand(FlextCliCmd):
     - CLIConfigMixin: Configuration management
     """
 
+    @override
+    @override
     def __init__(
         self,
         command_id: str,
@@ -119,6 +122,8 @@ class OracleTapDiscoverCommand(FlextCliCmd):
             )
         return FlextResult[None].ok(None)
 
+    @override
+    @override
     def execute(self) -> FlextResult[object]:
         """Execute Oracle tap discovery using modern patterns."""
         self.cli_helper.print_info("Starting Oracle database discovery")
@@ -187,7 +192,7 @@ class OracleTapDiscoverCommand(FlextCliCmd):
                 self.cli_helper.print_success(f"Catalog written to {output_path}")
 
             self.cli_helper.print_success("Oracle schema discovery completed")
-            return FlextResult[object].ok({"catalog": catalog_dict})
+            return FlextResult[object].ok({"catalog": "catalog_dict"})
 
         except Exception as e:
             logger.exception("Oracle discovery failed")
@@ -198,6 +203,8 @@ class OracleTapDiscoverCommand(FlextCliCmd):
 class OracleTapSyncCommand(FlextCliCmd):
     """Oracle tap sync command using modern flext-cli patterns."""
 
+    @override
+    @override
     def __init__(
         self,
         command_id: str,
@@ -229,6 +236,8 @@ class OracleTapSyncCommand(FlextCliCmd):
             )
         return FlextResult[None].ok(None)
 
+    @override
+    @override
     def execute(self) -> FlextResult[object]:
         """Execute Oracle tap sync using modern patterns."""
         self.cli_helper.print_info("Starting Oracle data extraction")
@@ -295,7 +304,7 @@ class OracleTapSyncCommand(FlextCliCmd):
                 f"Prepared sync for {len(table_names)} tables; records extracted: {record_count}",
             )
             return FlextResult[object].ok(
-                {"records_extracted": record_count, "tables": table_names},
+                {"records_extracted": "record_count", "tables": "table_names"},
             )
 
         except Exception as e:
@@ -318,7 +327,7 @@ def create_tap_oracle_cli() -> FlextResult[FlextCliCommands]:
         commands = {
             "discover": {
                 "description": "Discover Oracle database schema and generate Singer catalog",
-                "handler": handle_discover_command,
+                "handler": "handle_discover_command",
                 "options": [
                     {
                         "name": "--config",
@@ -335,7 +344,7 @@ def create_tap_oracle_cli() -> FlextResult[FlextCliCommands]:
             },
             "sync": {
                 "description": "Extract data from Oracle database using Singer protocol",
-                "handler": handle_sync_command,
+                "handler": "handle_sync_command",
                 "options": [
                     {
                         "name": "--config",

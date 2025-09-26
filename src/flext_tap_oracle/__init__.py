@@ -6,15 +6,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-# Core FLEXT imports
-from flext_core import FlextTypes
-
 # Re-export flext-db-oracle infrastructure that this tap uses extensively
 from flext_db_oracle import (
     # Core Oracle database functionality
     FlextDbOracleApi,
     FlextDbOracleConfig,
-    # Note: Column, QueryResult, Schema, Table are accessible via FlextDbOracleModels
+    # Note: "Column", QueryResult, Schema, Table are accessible via FlextDbOracleModels
 )
 
 # === FLEXT-MELTANO INTEGRATION ===
@@ -25,10 +22,12 @@ from flext_meltano import (
 )
 
 # Models - Data models and types
+# Models - Unified models collection
 from flext_tap_oracle.models import (
     OracleTapDiscoveryResult,
     OracleTapExecutionStats,
     OracleTapStreamInfo,
+    TapOracleModels,
 )
 
 # Client - Main tap implementation with domain services
@@ -52,7 +51,6 @@ from flext_tap_oracle.tap_config import (
     Config,
     FlextOracleTapConfig,
     FlextOracleTapConfiguration,
-    FlextOracleTapStreamMetadata,
     # Backward compatibility aliases
     TapOracleConfig,
     create_oracle_tap_config,
@@ -99,6 +97,9 @@ from flext_tap_oracle.tap_streams import (
     create_oracle_stream_from_table,
 )
 
+# Core FLEXT imports
+from flext_tap_oracle.typings import FlextTapOracleTypes
+
 # Main alias for external usage
 FlextTapOracle = FlextOracleTapService
 
@@ -126,7 +127,7 @@ _LEGACY_FACADE_AVAILABLE = False  # Simplified for type checking
 __version__ = "0.9.0"
 __version_info__ = tuple(int(x) for x in __version__.split(".") if x.isdigit())
 
-__all__: FlextTypes.Core.StringList = [
+__all__: FlextTapOracleTypes.Core.StringList = [
     "Config",  # Short alias to FlextOracleTapConfig
     # Infrastructure from flext-db-oracle
     "FlextDbOracleApi",
@@ -145,7 +146,6 @@ __all__: FlextTypes.Core.StringList = [
     "FlextOracleTapConfig",
     "FlextOracleTapConfiguration",
     "FlextOracleTapService",  # Main service class
-    "FlextOracleTapStreamMetadata",
     # ===== NEW PEP8 CONSOLIDATED STRUCTURE =====
     # Main Tap Classes
     "FlextTapOracle",
@@ -170,6 +170,7 @@ __all__: FlextTypes.Core.StringList = [
     "TapOracleColumn",
     # ===== BACKWARD COMPATIBILITY =====
     "TapOracleConfig",
+    "TapOracleModels",  # Unified models collection
     "TapOracleSchema",
     "TapOracleTable",
     "TapReplicationMethod",

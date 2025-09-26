@@ -7,9 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
-from time import perf_counter
-
-from sqlalchemy import MetaData, Select, Table, select
+from typing import override
 
 from flext_core import FlextContainer, FlextLogger, FlextResult, FlextTypes
 from flext_db_oracle import (
@@ -33,6 +31,7 @@ class OracleStream(Stream):
     - Native Oracle connection pooling and performance optimization.
     """
 
+    @override
     def __init__(
         self,
         tap: Tap,
@@ -88,99 +87,53 @@ class OracleStream(Stream):
         return self._observability_manager
 
     def get_records(
-        self,
-        context: Mapping[str, object] | None,
-    ) -> Iterable[FlextTypes.Core.Dict]:
-        """Extract records using MAXIMUM flext-db-oracle capabilities."""
+        self, context: Mapping[str, object] | None
+    ) -> Iterable[dict[str, object]]:
+        """Get records from Oracle table using flext-db-oracle exclusively - NO direct SQLAlchemy."""
+        oracle_api = self._create_oracle_api()
+        tap_config = self.tap_config
+
         try:
-            # Log operation start using proper info logging
-            logger.info(
-                "Starting stream extraction for table: %s",
-                self.table_name,
-            )
-            operation_start_time = perf_counter()
-            # Build optimized query using tap configuration
-            tap_config: FlextTypes.Core.Dict = getattr(self._tap, "typed_config", None)
-            # Build query using SQLAlchemy 2.0 Core API - NO STRING CONCATENATION
-            metadata: FlextTypes.Core.Dict = MetaData()
+            with oracle_api as api:
+                # Build query through flext-db-oracle API - NO direct SQLAlchemy
+                base_query = f"SELECT * FROM {self.table_name}"
 
-            if (
-                tap_config
-                and hasattr(tap_config, "schema_name")
-                and tap_config.schema_name
-            ):
-                # Use SQLAlchemy Table with schema - proper SQLAlchemy 2.0 pattern
-                table = Table(self.table_name, metadata, schema=tap_config.schema_name)
-            else:
-                # Use SQLAlchemy Table without schema - proper SQLAlchemy 2.0 pattern
-                table = Table(self.table_name, metadata)
-
-            # Build proper SQLAlchemy SELECT statement - NO STRING CONCATENATION
-            stmt: Select = select(table)
-
-            logger.info(
-                "Executing Oracle query via flext-db-oracle using SQLAlchemy 2.0 Core API",
-            )
-            # Execute query using flext-db-oracle API with SQLAlchemy statement
-            result: FlextResult[object] = self.oracle_api.execute_statement(stmt)
-            if result.is_success and result.value:
-                # Use flext-db-oracle metadata for table information
-                table_metadata_result = self.metadata_manager.get_table_metadata(
-                    self.table_name,
-                    schema_name=getattr(tap_config, "schema_name", None)
-                    if tap_config
-                    else None,
-                )
-                if table_metadata_result.success and table_metadata_result.data:
-                    # Convert Oracle results to Singer records using flext-db-oracle metadata
-                    yield from self._process_results_with_table_metadata(
-                        result.data,
-                        table_metadata_result.data,
+                # Add schema prefix if configured
+                if hasattr(tap_config, "schema_name") and tap_config.schema_name:
+                    base_query = (
+                        f"SELECT * FROM {tap_config.schema_name}.{self.table_name}"
                     )
-                else:
-                    # Fallback processing without metadata
-                    yield from self._process_results_fallback(result.data)
-                # Log successful operation using proper info logging
-                operation_time = perf_counter() - operation_start_time
-                record_count = (
-                    len(result.data) if hasattr(result.data, "__len__") else 0
-                )
-                logger.info(
-                    "Stream extraction completed in %.2fs for table %s (records: %d)",
-                    operation_time,
-                    self.table_name,
-                    record_count,
-                )
-            else:
-                logger.warning(
-                    "No data from Oracle table %s via flext-db-oracle: %s",
-                    self.table_name,
-                    result.error if hasattr(result, "error") else "Empty result",
-                )
-                # Log no-data completion using proper info logging
-                operation_time = perf_counter() - operation_start_time
-                logger.info(
-                    "Stream extraction completed with no data in %.2fs for table: %s",
-                    operation_time,
-                    self.table_name,
-                )
+
+                # Execute query through flext-db-oracle API
+                query_result = api.execute_query(base_query)
+
+                if query_result.is_failure:
+                    logger.error(f"Failed to execute query: {query_result.error}")
+                    return
+
+                # Process results using flext-db-oracle result handling
+                rows = query_result.data or []
+
+                for row in rows:
+                    # Convert row to dict format expected by Singer
+                    if hasattr(row, "_asdict"):
+                        # Handle named tuple rows
+                        record = row._asdict()
+                    elif isinstance(row, dict):
+                        # Handle dict rows
+                        record = row
+                    else:
+                        # Handle other row formats
+                        record = dict(row) if row else {}
+
+                    # Apply any necessary transformations
+                    processed_record = self._process_record(record)
+                    yield processed_record
+
         except Exception as e:
-            logger.exception(
-                "Oracle extraction failed via flext-db-oracle for table %s",
-                self.table_name,
-            )
-            # Log failed operation using flext-db-oracle observability
-            if hasattr(self, "_observability_manager") and self._observability_manager:
-                operation_time = (
-                    perf_counter() - operation_start_time
-                    if "operation_start_time" in locals()
-                    else 0
-                )
-                self.observability_manager.log_error_with_context(
-                    "Stream",
-                    f"Stream extraction failed after {operation_time:.2f}s: {e}",
-                    table=self.table_name,
-                )
+            logger.exception(f"Error getting records from {self.table_name}")
+            msg = f"Failed to get records: {e}"
+            raise RuntimeError(msg) from e
 
     def _process_results_with_table_metadata(
         self,
@@ -451,7 +404,7 @@ def create_oracle_stream_from_table(
 
             properties: FlextTypes.Core.Dict = schema.get("properties", {})
             if isinstance(properties, dict):
-                properties[col_name] = {"type": singer_type}
+                properties[col_name] = {"type": "singer_type"}
                 schema["properties"] = properties
 
     return create_oracle_stream(

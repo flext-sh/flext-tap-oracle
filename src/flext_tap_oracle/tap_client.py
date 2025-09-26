@@ -6,6 +6,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from typing import override
+
 from flext_core import FlextLogger, FlextResult, FlextTypes
 from flext_db_oracle import (
     FlextDbOracleApi,
@@ -28,6 +30,10 @@ logger = FlextLogger(__name__)
 class FlextOracleDiscoveryService:
     """Oracle table discovery service - simplified without Pydantic validation."""
 
+    @override
+    @override
+    @override
+    @override
     def __init__(
         self,
         oracle_api: FlextDbOracleApi,
@@ -43,6 +49,9 @@ class FlextOracleDiscoveryService:
         self.oracle_api: FlextDbOracleApi = oracle_api
         self.schema_name: str | None = schema_name
 
+    @override
+    @override
+    @override
     def execute(self: object) -> FlextResult[list[FlextDbOracleTable]]:
         """Execute Oracle table discovery using flext-db-oracle infrastructure."""
         try:
@@ -84,10 +93,17 @@ class FlextOracleDiscoveryService:
 class FlextOracleConnectionTestService:
     """Oracle connection test service - simplified without Pydantic validation."""
 
+    @override
+    @override
+    @override
+    @override
     def __init__(self, oracle_api: FlextDbOracleApi) -> None:
         """Initialize the instance."""
         self.oracle_api = oracle_api
 
+    @override
+    @override
+    @override
     def execute(self: object) -> FlextResult[bool]:
         """Execute Oracle connection test using flext-db-oracle infrastructure."""
         try:
@@ -113,6 +129,10 @@ class FlextOracleConnectionTestService:
 class FlextOracleTableFilterService:
     """Oracle table filtering service - simplified without Pydantic validation."""
 
+    @override
+    @override
+    @override
+    @override
     def __init__(
         self,
         tap_config: FlextOracleTapConfig,
@@ -128,6 +148,9 @@ class FlextOracleTableFilterService:
         self.tap_config = tap_config
         self.discovery_service = discovery_service
 
+    @override
+    @override
+    @override
     def execute(self: object) -> FlextResult[FlextTypes.Core.StringList]:
         """Execute table filtering based on tap configuration."""
         try:
@@ -189,6 +212,10 @@ class FlextOracleTapService:
     - Dependency Inversion: Depends on abstractions (FlextService[T])
     """
 
+    @override
+    @override
+    @override
+    @override
     def __init__(self, config: FlextOracleTapConfig) -> None:
         """Initialize Oracle tap service using COMPOSITION pattern."""
         self._config: FlextTypes.Core.Dict = config
@@ -372,7 +399,7 @@ class FlextOracleTapService:
 
             # Combine status
             combined_status: FlextTypes.Core.Dict = {
-                "oracle_tap": oracle_status,
+                "oracle_tap": "oracle_status",
                 "timestamp": "now",  # Would use actual timestamp in real implementation
             }
             if base_status:

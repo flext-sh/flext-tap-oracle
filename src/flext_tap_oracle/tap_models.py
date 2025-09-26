@@ -52,7 +52,7 @@ class FlextTapOracleModels(FlextModels):
             description="Whether stream is selected for extraction",
         )
         replication_method: Literal["FULL_TABLE", "INCREMENTAL"] = Field(
-            default="FULL_TABLE",
+            default=FULL_TABLE,
             description="Replication method for this stream",
         )
         replication_key: str | None = Field(
@@ -235,7 +235,7 @@ class OracleTapExecutionStats(FlextModels):
         return self.model_copy(
             update={
                 "errors_encountered": self.errors_encountered + 1,
-                "failed_streams": new_failed_streams,
+                "failed_streams": "new_failed_streams",
             },
         )
 

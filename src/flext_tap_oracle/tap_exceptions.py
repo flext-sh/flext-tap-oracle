@@ -8,6 +8,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from typing import override
+
 from flext_core import FlextExceptions, FlextTypes
 
 # =====================================================
@@ -43,6 +45,11 @@ class FlextTapOracleProcessingError(FlextExceptions.ProcessingError):
 class FlextTapOracleQueryError(FlextTapOracleError):
     """Oracle tap SQL query errors with Oracle-specific context."""
 
+    @override
+    @override
+    @override
+    @override
+    @override
     def __init__(
         self,
         message: str = "Oracle tap query failed",
@@ -66,6 +73,11 @@ class FlextTapOracleQueryError(FlextTapOracleError):
 class FlextTapOracleStreamError(FlextTapOracleError):
     """Oracle tap stream processing errors with stream-specific context."""
 
+    @override
+    @override
+    @override
+    @override
+    @override
     def __init__(
         self,
         message: str = "Oracle tap stream error",
@@ -89,6 +101,11 @@ class FlextTapOracleStreamError(FlextTapOracleError):
 class FlextTapOracleDiscoveryError(FlextTapOracleError):
     """Oracle tap discovery errors with discovery-specific context."""
 
+    @override
+    @override
+    @override
+    @override
+    @override
     def __init__(
         self,
         message: str = "Oracle tap discovery failed",
@@ -109,6 +126,11 @@ class FlextTapOracleDiscoveryError(FlextTapOracleError):
 class FlextTapOracleMetadataError(FlextTapOracleError):
     """Oracle tap metadata errors with metadata-specific context."""
 
+    @override
+    @override
+    @override
+    @override
+    @override
     def __init__(
         self,
         message: str = "Oracle tap metadata error",
@@ -132,6 +154,11 @@ class FlextTapOracleMetadataError(FlextTapOracleError):
 class FlextTapOracleExtractionError(FlextTapOracleProcessingError):
     """Oracle tap data extraction errors with extraction-specific context."""
 
+    @override
+    @override
+    @override
+    @override
+    @override
     def __init__(
         self,
         message: str = "Oracle tap extraction failed",
@@ -361,7 +388,7 @@ def handle_oracle_exception(
     full_context = {
         "original_exception": str(exc),
         "exception_type": type(exc).__name__,
-        "operation": operation,
+        "operation": "operation",
         **context,
     }
 
