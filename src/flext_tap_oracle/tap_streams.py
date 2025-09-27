@@ -87,7 +87,8 @@ class OracleStream(Stream):
         return self._observability_manager
 
     def get_records(
-        self, context: Mapping[str, object] | None
+        self,
+        context: Mapping[str, object] | None = None,  # noqa: ARG002
     ) -> Iterable[dict[str, object]]:
         """Get records from Oracle table using flext-db-oracle exclusively - NO direct SQLAlchemy."""
         oracle_api = self._create_oracle_api()
@@ -95,17 +96,23 @@ class OracleStream(Stream):
 
         try:
             with oracle_api as api:
-                # Build query through flext-db-oracle API - NO direct SQLAlchemy
-                base_query = f"SELECT * FROM {self.table_name}"
+                # Use safe query construction with parameterized queries through flext-db-oracle
+                # This prevents SQL injection by using proper parameter binding
 
-                # Add schema prefix if configured
+                # Get schema and table names safely
+                schema_name = None
                 if hasattr(tap_config, "schema_name") and tap_config.schema_name:
-                    base_query = (
-                        f"SELECT * FROM {tap_config.schema_name}.{self.table_name}"
-                    )
+                    schema_name = tap_config.schema_name
 
-                # Execute query through flext-db-oracle API
-                query_result = api.execute_query(base_query)
+                # Use flext-db-oracle API for safe query construction
+                query_result = api.execute_table_query(
+                    table_name=self.table_name,
+                    schema_name=schema_name,
+                    columns=["*"],  # Select all columns
+                    where_conditions=None,  # No filtering for full extraction
+                    order_by=None,
+                    limit=None,
+                )
 
                 if query_result.is_failure:
                     logger.error(f"Failed to execute query: {query_result.error}")
@@ -394,13 +401,12 @@ def create_oracle_stream_from_table(
             col_type = getattr(column, "data_type", "string")
 
             # Map Oracle types to Singer schema types
-            singer_type = "string"  # Default
             if col_type.upper().startswith(("NUMBER", "INTEGER")):
-                singer_type = "integer"
+                pass
             elif col_type.upper().startswith(("DATE", "TIMESTAMP")):
-                singer_type = "string"  # ISO format
+                pass  # ISO format
             elif col_type.upper().startswith("FLOAT"):
-                singer_type = "number"
+                pass
 
             properties: FlextTypes.Core.Dict = schema.get("properties", {})
             if isinstance(properties, dict):

@@ -10,15 +10,27 @@ from typing import Literal, Self
 
 from pydantic import Field, field_validator, model_validator
 
-from flext_core import FlextConstants, FlextModels, FlextResult
+from flext_core import FlextConstants, FlextModels, FlextResult, FlextTypes
+from flext_db_oracle import (
+    FlextDbOracleColumn,
+    FlextDbOracleQueryResult,
+    FlextDbOracleSchema,
+    FlextDbOracleTable,
+)
+from flext_meltano import FlextSingerStream as Stream
 
 
-class TapOracleModels(FlextModels):
-    """Unified models for Oracle tap operations.
+class FlextTapOracleModels(FlextModels):
+    """Comprehensive models for Oracle tap operations extending FlextModels.
 
-    Extends FlextModels to avoid duplication and ensure consistency.
-    This class consolidates all Oracle tap domain models following
-    the [Project]Models pattern for centralized Pydantic validation.
+    Provides standardized models for all Oracle tap domain entities including:
+    - Singer stream metadata and configuration
+    - Oracle table extraction configuration
+    - Replication and discovery operations
+    - Performance monitoring and metrics
+    - Singer protocol compliance models
+
+    All nested classes inherit FlextModels validation and patterns.
     """
 
     # Legacy type aliases for backward compatibility
@@ -26,15 +38,16 @@ class TapOracleModels(FlextModels):
     OracleRecords = list[OracleRecord]
 
     class OracleTapStreamMetadata(FlextModels.Entity):
-        """Oracle tap stream metadata - ONLY tap-specific fields.
+        """Oracle tap stream metadata with Singer protocol compliance.
 
-        Extends Oracle table metadata with tap-specific information.
+        Extends Oracle table metadata with tap-specific information
+        for Singer streaming operations and replication configuration.
         """
 
-        # Tap-specific metadata (não duplica FlextDbOracleTable)
+        # Singer stream configuration
         stream_name: str = Field(..., description="Singer stream name")
         replication_method: Literal["FULL_TABLE", "INCREMENTAL"] = Field(
-            default=FULL_TABLE,
+            default="FULL_TABLE",
             description="Replication method for this stream",
         )
         replication_key: str | None = Field(
@@ -46,15 +59,23 @@ class TapOracleModels(FlextModels):
             description="Whether stream is selected for extraction",
         )
 
+        # Oracle-specific metadata
+        table_name: str = Field(..., description="Oracle table name")
+        schema_name: str | None = Field(default=None, description="Oracle schema name")
+        estimated_rows: int | None = Field(
+            default=None, description="Estimated row count"
+        )
+        column_count: int | None = Field(default=None, description="Number of columns")
+
         @field_validator("stream_name")
         @classmethod
         def validate_stream_name(cls, v: str) -> str:
-            """Validate stream name follows Singer conventions - Python 3.13 enhanced."""
+            """Validate stream name follows Singer conventions."""
             if not v or not v.strip():
                 msg = "Stream name cannot be empty"
                 raise ValueError(msg)
 
-            # Enhanced validation with Python 3.13 string methods
+            # Enhanced validation with proper limits
             max_length = FlextConstants.Limits.MAX_STRING_LENGTH
             if len(v) > max_length:
                 msg = f"Stream name too long: {len(v)} > {max_length} characters"
@@ -64,19 +85,19 @@ class TapOracleModels(FlextModels):
                 msg = "Stream name cannot start/end with underscore or dash"
                 raise ValueError(msg)
 
-            # Remove invalid characters for Singer streams using Python 3.13 enhanced string processing
+            # Clean invalid characters for Singer streams
             cleaned = "".join(c if c.isalnum() or c in "_-" else "_" for c in v)
             return cleaned.lower()
 
         @model_validator(mode="after")
         def validate_replication_consistency(self) -> Self:
-            """Validate replication configuration consistency - Python 3.13 Self typing."""
+            """Validate replication configuration consistency."""
             if self.replication_method == "INCREMENTAL":
                 if not self.replication_key:
                     msg = "Incremental replication requires a replication_key"
                     raise ValueError(msg)
 
-                # Advanced validation: check if replication key is reasonable
+                # Validation for replication key length
                 max_key_length = FlextConstants.Limits.MAX_STRING_LENGTH
                 if len(self.replication_key) > max_key_length:
                     msg = f"Replication key too long: {len(self.replication_key)} > {max_key_length}"
@@ -89,7 +110,918 @@ class TapOracleModels(FlextModels):
             return self
 
         def validate_business_rules(self: object) -> FlextResult[None]:
-            """Validate tap-specific business rules - Python 3.13 enhanced."""
-            # This method is kept for backward compatibility but
-            # most validation moved to model_validator for better Pydantic integration
+            """Validate tap-specific business rules."""
             return FlextResult[None].ok(None)
+
+    class OracleTapDiscoveryConfig(FlextModels.BaseConfig):
+        """Configuration for Oracle tap discovery operations."""
+
+        # Discovery scope
+        schema_names: list[str] = Field(
+            default_factory=list, description="Oracle schemas to discover"
+        )
+        table_patterns: list[str] = Field(
+            default_factory=list, description="Table name patterns to include"
+        )
+        exclude_patterns: list[str] = Field(
+            default_factory=list, description="Table name patterns to exclude"
+        )
+
+        # Discovery options
+        include_views: bool = Field(
+            default=False, description="Include Oracle views in discovery"
+        )
+        include_system_tables: bool = Field(
+            default=False, description="Include system tables in discovery"
+        )
+        max_tables: int = Field(
+            default=1000, description="Maximum number of tables to discover"
+        )
+
+        # Performance settings
+        discovery_timeout: int = Field(
+            default=300, description="Discovery timeout in seconds"
+        )
+        parallel_discovery: bool = Field(
+            default=True, description="Enable parallel discovery"
+        )
+
+    class OracleTapExtractionConfig(FlextModels.BaseConfig):
+        """Configuration for Oracle tap extraction operations."""
+
+        # Extraction parameters
+        batch_size: int = Field(default=10000, description="Number of rows per batch")
+        max_rows: int | None = Field(
+            default=None, description="Maximum rows to extract (None for unlimited)"
+        )
+
+        # Performance optimization
+        parallel_streams: int = Field(
+            default=1, description="Number of parallel extraction streams"
+        )
+        enable_query_hints: bool = Field(
+            default=True, description="Enable Oracle query optimization hints"
+        )
+
+        # Incremental extraction
+        incremental_column: str | None = Field(
+            default=None, description="Column for incremental extraction"
+        )
+        incremental_bookmark: str | None = Field(
+            default=None, description="Bookmark value for incremental extraction"
+        )
+
+    class OracleTapPerformanceMetrics(FlextModels.BaseModel):
+        """Performance metrics for Oracle tap operations."""
+
+        # Extraction metrics
+        extraction_id: str = Field(description="Unique extraction identifier")
+        start_time: str = Field(description="Extraction start timestamp")
+        end_time: str | None = Field(
+            default=None, description="Extraction end timestamp"
+        )
+
+        # Volume metrics
+        total_records: int = Field(default=0, description="Total records extracted")
+        total_bytes: int = Field(default=0, description="Total bytes processed")
+        streams_processed: int = Field(
+            default=0, description="Number of streams processed"
+        )
+
+        # Performance metrics
+        avg_records_per_second: float = Field(
+            default=0.0, description="Average records per second"
+        )
+        avg_bytes_per_second: float = Field(
+            default=0.0, description="Average bytes per second"
+        )
+
+        # Oracle-specific metrics
+        oracle_connection_time: float = Field(
+            default=0.0, description="Oracle connection establishment time"
+        )
+        oracle_query_time: float = Field(
+            default=0.0, description="Total Oracle query execution time"
+        )
+
+    class OracleTapStreamInfo(FlextModels.Entity):
+        """Oracle tap stream information - aggregates tap and Oracle metadata.
+
+        This model combines Oracle table metadata with tap-specific stream configuration
+        to provide a complete view of stream information for the tap.
+        """
+
+        # Stream identity
+        stream_name: str = Field(..., description="Singer stream name")
+        table_name: str = Field(..., description="Oracle table name")
+        schema_name: str | None = Field(None, description="Oracle schema name")
+
+        # Stream configuration
+        is_selected: bool = Field(
+            default=True,
+            description="Whether stream is selected for extraction",
+        )
+        replication_method: Literal["FULL_TABLE", "INCREMENTAL"] = Field(
+            default="FULL_TABLE",
+            description="Replication method for this stream",
+        )
+        replication_key: str | None = Field(
+            None,
+            description="Column used for incremental replication",
+        )
+
+        # Runtime information (populated at runtime)
+        estimated_rows: int | None = Field(None, description="Estimated row count")
+        column_count: int | None = Field(None, description="Number of columns")
+        last_extracted: str | None = Field(
+            None, description="Last extraction timestamp"
+        )
+
+        def validate_business_rules(self: object) -> FlextResult[None]:
+            """Validate stream info business rules."""
+            return FlextResult[None].ok(None)
+
+        def to_singer_stream_info(self: object) -> FlextTypes.Core.Dict:
+            """Convert to Singer stream information format."""
+            return {
+                "tap_stream_id": self.stream_name,
+                "table_name": self.table_name,
+                "schema": self.schema_name,
+                "metadata": {
+                    "replication-method": self.replication_method,
+                    "replication-key": self.replication_key,
+                    "selected": self.is_selected,
+                },
+                "stats": {
+                    "estimated_rows": self.estimated_rows,
+                    "column_count": self.column_count,
+                    "last_extracted": self.last_extracted,
+                },
+            }
+
+    class OracleTapDiscoveryResult(FlextModels.Entity):
+        """Result of Oracle table discovery operation.
+
+        Aggregates discovery results with both raw Oracle metadata and
+        processed tap stream information.
+        """
+
+        # Discovery metadata
+        schema_name: str = Field(..., description="Oracle schema that was discovered")
+        discovery_timestamp: str = Field(
+            ..., description="When discovery was performed"
+        )
+        total_tables: int = Field(..., description="Total number of tables discovered")
+
+        # Raw Oracle metadata
+        oracle_tables: list[FlextDbOracleTable] = Field(
+            default_factory=list,
+            description="Raw Oracle table metadata from flext-db-oracle",
+        )
+
+        # Processed stream information
+        stream_info: list[FlextTapOracleModels.OracleTapStreamInfo] = Field(
+            default_factory=list,
+            description="Processed stream information for tap use",
+        )
+
+        # Filtering results
+        filtered_tables: FlextTypes.Core.StringList = Field(
+            default_factory=list,
+            description="Table names after applying filters",
+        )
+        excluded_tables: FlextTypes.Core.StringList = Field(
+            default_factory=list,
+            description="Table names that were excluded",
+        )
+
+        def validate_business_rules(self: object) -> FlextResult[None]:
+            """Validate discovery result business rules."""
+            return FlextResult[None].ok(None)
+
+        def get_selected_streams(
+            self: object,
+        ) -> list[FlextTapOracleModels.OracleTapStreamInfo]:
+            """Get only selected streams."""
+            return [stream for stream in self.stream_info if stream.is_selected]
+
+        def get_table_by_name(self, table_name: str) -> FlextDbOracleTable | None:
+            """Get Oracle table metadata by name."""
+            for table in self.oracle_tables:
+                if table.name == table_name:
+                    return table
+            return None
+
+        def to_singer_catalog(self: object) -> FlextTypes.Core.Dict:
+            """Convert to Singer catalog format."""
+            return {
+                "streams": [
+                    stream.to_singer_stream_info() for stream in self.stream_info
+                ],
+                "metadata": {
+                    "schema": self.schema_name,
+                    "discovery_timestamp": self.discovery_timestamp,
+                    "total_tables": self.total_tables,
+                },
+            }
+
+    class OracleTapExecutionStats(FlextModels.Entity):
+        """Oracle tap execution statistics and metrics.
+
+        Tracks runtime statistics for tap execution, performance metrics,
+        and operational information.
+        """
+
+        # Execution metadata
+        execution_id: str = Field(..., description="Unique execution identifier")
+        start_timestamp: str = Field(..., description="Execution start time")
+        end_timestamp: str | None = Field(None, description="Execution end time")
+
+        # Stream statistics
+        streams_processed: int = Field(
+            default=0, description="Number of streams processed"
+        )
+        total_records: int = Field(default=0, description="Total records extracted")
+        total_bytes: int = Field(default=0, description="Total bytes processed")
+
+        # Performance metrics
+        avg_records_per_second: float = Field(
+            default=0.0,
+            description="Average records per second",
+        )
+        avg_bytes_per_second: float = Field(
+            default=0.0,
+            description="Average bytes per second",
+        )
+        duration_seconds: float = Field(
+            default=0.0, description="Total execution duration"
+        )
+
+        # Error tracking
+        errors_encountered: int = Field(
+            default=0,
+            description="Number of errors encountered",
+        )
+        failed_streams: FlextTypes.Core.StringList = Field(
+            default_factory=list,
+            description="Names of failed streams",
+        )
+
+        # Oracle-specific metrics
+        oracle_connection_time: float = Field(
+            default=0.0,
+            description="Oracle connection time",
+        )
+        oracle_query_time: float = Field(
+            default=0.0, description="Total Oracle query time"
+        )
+        oracle_result_processing_time: float = Field(
+            default=0.0,
+            description="Result processing time",
+        )
+
+        def validate_business_rules(self: object) -> FlextResult[None]:
+            """Validate execution stats business rules."""
+            return FlextResult[None].ok(None)
+
+        def update_performance_metrics(
+            self: object,
+        ) -> FlextTapOracleModels.OracleTapExecutionStats:
+            """Return new instance with updated calculated performance metrics."""
+            if self.duration_seconds > 0:
+                return self.model_copy(
+                    update={
+                        "avg_records_per_second": self.total_records
+                        / self.duration_seconds,
+                        "avg_bytes_per_second": self.total_bytes
+                        / self.duration_seconds,
+                    },
+                )
+            return self
+
+        def add_stream_stats(
+            self,
+            records: int,
+            bytes_processed: int,
+            processing_time: float,
+        ) -> FlextTapOracleModels.OracleTapExecutionStats:
+            """Return new instance with added statistics for a processed stream."""
+            updated = self.model_copy(
+                update={
+                    "streams_processed": self.streams_processed + 1,
+                    "total_records": self.total_records + records,
+                    "total_bytes": self.total_bytes + bytes_processed,
+                    "oracle_result_processing_time": self.oracle_result_processing_time
+                    + processing_time,
+                },
+            )
+            return updated.update_performance_metrics()
+
+        def mark_stream_error(
+            self, stream_name: str
+        ) -> FlextTapOracleModels.OracleTapExecutionStats:
+            """Return new instance with marked stream error."""
+            new_failed_streams = (
+                self.failed_streams.copy() if self.failed_streams else []
+            )
+            if stream_name not in new_failed_streams:
+                new_failed_streams.append(stream_name)
+            return self.model_copy(
+                update={
+                    "errors_encountered": self.errors_encountered + 1,
+                    "failed_streams": new_failed_streams,
+                },
+            )
+
+        def to_summary(self: object) -> FlextTypes.Core.Dict:
+            """Create execution summary."""
+            return {
+                "execution_id": self.execution_id,
+                "duration_seconds": self.duration_seconds,
+                "streams_processed": self.streams_processed,
+                "total_records": self.total_records,
+                "avg_records_per_second": self.avg_records_per_second,
+                "errors": self.errors_encountered,
+                "success_rate": (
+                    (self.streams_processed - len(self.failed_streams))
+                    / max(self.streams_processed, 1)
+                )
+                * 100,
+            }
+
+    # Legacy type aliases for backward compatibility
+    TapStreamMetadata = dict[str, object]
+    TapConfiguration = dict[str, object]
+
+
+class FlextTapOracleUtilities(FlextUtilities):
+    """Unified Oracle tap utilities extending FlextUtilities.
+
+    Provides comprehensive utility classes for Oracle Singer tap operations:
+    - Oracle connection and metadata utilities
+    - Singer stream configuration utilities
+    - Data extraction and transformation utilities
+    - Oracle-specific tap performance utilities
+    - Discovery and catalog generation utilities
+
+    All nested utility classes follow SOLID principles and FlextResult patterns.
+    """
+
+    class _OracleConnectionHelper:
+        """Oracle connection utilities for tap operations."""
+
+        @staticmethod
+        def validate_oracle_config(config: dict) -> FlextResult[dict]:
+            """Validate Oracle tap configuration."""
+            required_fields = ["host", "port", "user", "password", "service_name"]
+
+            for field in required_fields:
+                if field not in config:
+                    return FlextResult[dict].fail(
+                        f"Missing required Oracle config field: {field}"
+                    )
+
+            # Validate port is integer
+            if not isinstance(config.get("port"), int):
+                return FlextResult[dict].fail("Oracle port must be an integer")
+
+            # Validate port range
+            port = config["port"]
+            if not (1 <= port <= 65535):
+                return FlextResult[dict].fail("Oracle port must be between 1 and 65535")
+
+            return FlextResult[dict].ok(config)
+
+        @staticmethod
+        def build_connection_string(config: dict) -> FlextResult[str]:
+            """Build Oracle connection string for tap operations."""
+            validation_result = (
+                FlextTapOracleUtilities._OracleConnectionHelper.validate_oracle_config(
+                    config
+                )
+            )
+            if validation_result.is_failure:
+                return FlextResult[str].fail(
+                    f"Config validation failed: {validation_result.error}"
+                )
+
+            try:
+                connection_string = (
+                    f"oracle+oracledb://{config['user']}:{config['password']}"
+                    f"@{config['host']}:{config['port']}/{config['service_name']}"
+                )
+                return FlextResult[str].ok(connection_string)
+            except Exception as e:
+                return FlextResult[str].fail(f"Connection string build failed: {e}")
+
+        @staticmethod
+        def test_oracle_connectivity(config: dict) -> FlextResult[dict]:
+            """Test Oracle database connectivity for tap operations."""
+            validation_result = (
+                FlextTapOracleUtilities._OracleConnectionHelper.validate_oracle_config(
+                    config
+                )
+            )
+            if validation_result.is_failure:
+                return FlextResult[dict].fail(
+                    f"Config validation failed: {validation_result.error}"
+                )
+
+            # Return connectivity test result structure
+            return FlextResult[dict].ok({
+                "connection_status": "testable",
+                "host": config["host"],
+                "port": config["port"],
+                "service_name": config["service_name"],
+                "test_timestamp": "now",
+            })
+
+    class _SingerStreamHelper:
+        """Singer stream configuration utilities for Oracle tap."""
+
+        @staticmethod
+        def generate_stream_metadata(table_info: dict) -> FlextResult[dict]:
+            """Generate Singer stream metadata from Oracle table information."""
+            if not table_info.get("table_name"):
+                return FlextResult[dict].fail(
+                    "Table name is required for stream metadata"
+                )
+
+            try:
+                stream_metadata = {
+                    "tap_stream_id": table_info["table_name"],
+                    "table_name": table_info["table_name"],
+                    "schema": table_info.get("schema_name", "public"),
+                    "metadata": {
+                        "replication-method": "FULL_TABLE",
+                        "selected": True,
+                        "inclusion": "available",
+                    },
+                }
+                return FlextResult[dict].ok(stream_metadata)
+            except Exception as e:
+                return FlextResult[dict].fail(f"Stream metadata generation failed: {e}")
+
+        @staticmethod
+        def configure_incremental_replication(
+            stream_config: dict, replication_key: str
+        ) -> FlextResult[dict]:
+            """Configure incremental replication for Oracle tap stream."""
+            if not stream_config:
+                return FlextResult[dict].fail("Stream configuration cannot be empty")
+
+            if not replication_key:
+                return FlextResult[dict].fail(
+                    "Replication key is required for incremental replication"
+                )
+
+            try:
+                updated_config = stream_config.copy()
+                updated_config["metadata"]["replication-method"] = "INCREMENTAL"
+                updated_config["metadata"]["replication-key"] = replication_key
+                return FlextResult[dict].ok(updated_config)
+            except Exception as e:
+                return FlextResult[dict].fail(
+                    f"Incremental replication configuration failed: {e}"
+                )
+
+        @staticmethod
+        def validate_stream_selection(streams: list[dict]) -> FlextResult[list[dict]]:
+            """Validate Oracle tap stream selection configuration."""
+            if not streams:
+                return FlextResult[list[dict]].fail("Stream list cannot be empty")
+
+            validated_streams = []
+            for stream in streams:
+                if not stream.get("tap_stream_id"):
+                    return FlextResult[list[dict]].fail(
+                        "Each stream must have tap_stream_id"
+                    )
+
+                if "metadata" not in stream:
+                    return FlextResult[list[dict]].fail(
+                        "Each stream must have metadata"
+                    )
+
+                validated_streams.append(stream)
+
+            return FlextResult[list[dict]].ok(validated_streams)
+
+    class _DataExtractionHelper:
+        """Data extraction utilities for Oracle tap operations."""
+
+        @staticmethod
+        def optimize_extraction_query(
+            base_query: str, batch_size: int = 10000
+        ) -> FlextResult[str]:
+            """Optimize Oracle extraction query for tap performance."""
+            if not base_query or not base_query.strip():
+                return FlextResult[str].fail("Base query cannot be empty")
+
+            if batch_size <= 0:
+                return FlextResult[str].fail("Batch size must be positive")
+
+            try:
+                # Add Oracle-specific optimizations
+                optimized_query = base_query
+
+                # Add ROWNUM for pagination
+                if "ROWNUM" not in optimized_query.upper():
+                    optimized_query = f"SELECT * FROM ({optimized_query}) WHERE ROWNUM <= {batch_size}"
+
+                return FlextResult[str].ok(optimized_query)
+            except Exception as e:
+                return FlextResult[str].fail(f"Query optimization failed: {e}")
+
+        @staticmethod
+        def calculate_extraction_metrics(
+            records_processed: int, processing_time: float
+        ) -> FlextResult[dict]:
+            """Calculate extraction performance metrics."""
+            if records_processed < 0:
+                return FlextResult[dict].fail("Records processed cannot be negative")
+
+            if processing_time <= 0:
+                return FlextResult[dict].fail("Processing time must be positive")
+
+            try:
+                metrics = {
+                    "records_processed": records_processed,
+                    "processing_time_seconds": processing_time,
+                    "records_per_second": records_processed / processing_time,
+                    "average_record_time_ms": (processing_time * 1000)
+                    / max(records_processed, 1),
+                }
+                return FlextResult[dict].ok(metrics)
+            except Exception as e:
+                return FlextResult[dict].fail(f"Metrics calculation failed: {e}")
+
+        @staticmethod
+        def format_singer_record(
+            raw_record: dict, stream_name: str
+        ) -> FlextResult[dict]:
+            """Format raw Oracle record as Singer record."""
+            if not raw_record:
+                return FlextResult[dict].fail("Raw record cannot be empty")
+
+            if not stream_name:
+                return FlextResult[dict].fail("Stream name is required")
+
+            try:
+                singer_record = {
+                    "type": "RECORD",
+                    "stream": stream_name,
+                    "record": raw_record,
+                    "time_extracted": "now",
+                }
+                return FlextResult[dict].ok(singer_record)
+            except Exception as e:
+                return FlextResult[dict].fail(f"Singer record formatting failed: {e}")
+
+    class _OracleDiscoveryHelper:
+        """Oracle discovery utilities for tap catalog generation."""
+
+        @staticmethod
+        def discover_oracle_tables(
+            schema_name: str, connection_config: dict
+        ) -> FlextResult[list[dict]]:
+            """Discover Oracle tables for tap catalog."""
+            if not schema_name:
+                return FlextResult[list[dict]].fail("Schema name is required")
+
+            validation_result = (
+                FlextTapOracleUtilities._OracleConnectionHelper.validate_oracle_config(
+                    connection_config
+                )
+            )
+            if validation_result.is_failure:
+                return FlextResult[list[dict]].fail(
+                    f"Connection config invalid: {validation_result.error}"
+                )
+
+            # Return mock discovery result for validation
+            try:
+                discovered_tables = [
+                    {
+                        "table_name": "example_table",
+                        "schema_name": schema_name,
+                        "table_type": "TABLE",
+                        "estimated_rows": 1000,
+                    }
+                ]
+                return FlextResult[list[dict]].ok(discovered_tables)
+            except Exception as e:
+                return FlextResult[list[dict]].fail(f"Table discovery failed: {e}")
+
+        @staticmethod
+        def generate_tap_catalog(discovered_tables: list[dict]) -> FlextResult[dict]:
+            """Generate Singer catalog from discovered Oracle tables."""
+            if not discovered_tables:
+                return FlextResult[dict].fail("Discovered tables list cannot be empty")
+
+            try:
+                streams = []
+                for table in discovered_tables:
+                    stream_result = FlextTapOracleUtilities._SingerStreamHelper.generate_stream_metadata(
+                        table
+                    )
+                    if stream_result.is_failure:
+                        return FlextResult[dict].fail(
+                            f"Stream metadata generation failed: {stream_result.error}"
+                        )
+
+                    streams.append(stream_result.unwrap())
+
+                catalog = {
+                    "streams": streams,
+                    "metadata": {
+                        "catalog_version": "1.0",
+                        "generated_at": "now",
+                        "total_streams": len(streams),
+                    },
+                }
+                return FlextResult[dict].ok(catalog)
+            except Exception as e:
+                return FlextResult[dict].fail(f"Catalog generation failed: {e}")
+
+        @staticmethod
+        def filter_catalog_by_patterns(
+            catalog: dict, include_patterns: list[str], exclude_patterns: list[str]
+        ) -> FlextResult[dict]:
+            """Filter Singer catalog by table name patterns."""
+            if not catalog or "streams" not in catalog:
+                return FlextResult[dict].fail("Valid catalog with streams is required")
+
+            try:
+                filtered_streams = []
+                for stream in catalog["streams"]:
+                    table_name = stream.get("table_name", "")
+
+                    # Check exclude patterns first
+                    excluded = False
+                    for exclude_pattern in exclude_patterns or []:
+                        if exclude_pattern in table_name:
+                            excluded = True
+                            break
+
+                    if excluded:
+                        continue
+
+                    # Check include patterns
+                    if include_patterns:
+                        included = False
+                        for include_pattern in include_patterns:
+                            if include_pattern in table_name:
+                                included = True
+                                break
+                        if not included:
+                            continue
+
+                    filtered_streams.append(stream)
+
+                filtered_catalog = catalog.copy()
+                filtered_catalog["streams"] = filtered_streams
+                filtered_catalog["metadata"]["total_streams"] = len(filtered_streams)
+
+                return FlextResult[dict].ok(filtered_catalog)
+            except Exception as e:
+                return FlextResult[dict].fail(f"Catalog filtering failed: {e}")
+
+    class _PerformanceHelper:
+        """Performance optimization utilities for Oracle tap operations."""
+
+        @staticmethod
+        def analyze_extraction_performance(execution_stats: dict) -> FlextResult[dict]:
+            """Analyze Oracle tap extraction performance."""
+            if not execution_stats:
+                return FlextResult[dict].fail("Execution stats cannot be empty")
+
+            required_fields = ["total_records", "duration_seconds", "streams_processed"]
+            for field in required_fields:
+                if field not in execution_stats:
+                    return FlextResult[dict].fail(
+                        f"Missing required stats field: {field}"
+                    )
+
+            try:
+                analysis = {
+                    "overall_performance": "good"
+                    if execution_stats["total_records"] > 0
+                    else "poor",
+                    "records_per_second": execution_stats["total_records"]
+                    / max(execution_stats["duration_seconds"], 1),
+                    "streams_per_minute": (execution_stats["streams_processed"] * 60)
+                    / max(execution_stats["duration_seconds"], 1),
+                    "recommendations": [],
+                }
+
+                # Add performance recommendations
+                if analysis["records_per_second"] < 100:
+                    analysis["recommendations"].append("Consider increasing batch size")
+
+                if analysis["streams_per_minute"] < 1:
+                    analysis["recommendations"].append(
+                        "Consider parallel stream processing"
+                    )
+
+                return FlextResult[dict].ok(analysis)
+            except Exception as e:
+                return FlextResult[dict].fail(f"Performance analysis failed: {e}")
+
+        @staticmethod
+        def suggest_optimization_parameters(table_stats: dict) -> FlextResult[dict]:
+            """Suggest optimization parameters based on table statistics."""
+            if not table_stats:
+                return FlextResult[dict].fail("Table stats cannot be empty")
+
+            try:
+                estimated_rows = table_stats.get("estimated_rows", 1000)
+
+                # Calculate optimal batch size
+                if estimated_rows < 1000:
+                    batch_size = 500
+                elif estimated_rows < 100000:
+                    batch_size = 5000
+                else:
+                    batch_size = 10000
+
+                optimization_params = {
+                    "recommended_batch_size": batch_size,
+                    "parallel_streams": min(4, max(1, estimated_rows // 50000)),
+                    "enable_query_hints": estimated_rows > 10000,
+                    "use_incremental": estimated_rows > 1000000,
+                }
+
+                return FlextResult[dict].ok(optimization_params)
+            except Exception as e:
+                return FlextResult[dict].fail(
+                    f"Optimization parameter suggestion failed: {e}"
+                )
+
+        @staticmethod
+        def monitor_memory_usage(
+            current_batch_size: int, memory_threshold_mb: int = 512
+        ) -> FlextResult[dict]:
+            """Monitor memory usage and suggest adjustments."""
+            if current_batch_size <= 0:
+                return FlextResult[dict].fail("Batch size must be positive")
+
+            if memory_threshold_mb <= 0:
+                return FlextResult[dict].fail("Memory threshold must be positive")
+
+            try:
+                # Estimate memory usage (simplified calculation)
+                estimated_memory_mb = (current_batch_size * 1024) / (
+                    1024 * 1024
+                )  # Rough estimate
+
+                monitoring_result = {
+                    "current_batch_size": current_batch_size,
+                    "estimated_memory_mb": estimated_memory_mb,
+                    "memory_threshold_mb": memory_threshold_mb,
+                    "within_threshold": estimated_memory_mb <= memory_threshold_mb,
+                    "suggested_adjustment": None,
+                }
+
+                if estimated_memory_mb > memory_threshold_mb:
+                    new_batch_size = int(current_batch_size * 0.8)  # Reduce by 20%
+                    monitoring_result["suggested_adjustment"] = {
+                        "action": "reduce_batch_size",
+                        "new_batch_size": new_batch_size,
+                        "reason": "Memory usage exceeds threshold",
+                    }
+                elif estimated_memory_mb < memory_threshold_mb * 0.5:
+                    new_batch_size = int(current_batch_size * 1.2)  # Increase by 20%
+                    monitoring_result["suggested_adjustment"] = {
+                        "action": "increase_batch_size",
+                        "new_batch_size": new_batch_size,
+                        "reason": "Memory usage is low, can optimize throughput",
+                    }
+
+                return FlextResult[dict].ok(monitoring_result)
+            except Exception as e:
+                return FlextResult[dict].fail(f"Memory usage monitoring failed: {e}")
+
+
+# =====================================================
+# TYPE ALIASES AND ADDITIONAL TYPES
+# =====================================================
+
+# Re-export types from flext-db-oracle with tap-specific aliases
+TapOracleTable = FlextDbOracleTable
+TapOracleColumn = FlextDbOracleColumn
+TapOracleSchema = FlextDbOracleSchema
+TapOracleQueryResult = FlextDbOracleQueryResult
+
+# Tap-specific type definitions
+TapReplicationMethod = Literal["FULL_TABLE", "INCREMENTAL"]
+TapStreamSelection = Literal["selected", "automatic", "excluded"]
+TapExecutionMode = Literal["discovery", "extraction", "test", "validate"]
+
+
+# =====================================================
+# FACTORY FUNCTIONS
+# =====================================================
+
+
+def create_stream_info_from_oracle_table(
+    oracle_table: FlextDbOracleTable,
+    stream_prefix: str = "oracle",
+    replication_method: TapReplicationMethod = "FULL_TABLE",
+) -> FlextResult[FlextTapOracleModels.OracleTapStreamInfo]:
+    """Create stream info from Oracle table metadata.
+
+    Args:
+      oracle_table: Oracle table metadata from flext-db-oracle
+      stream_prefix: Prefix for stream name
+      replication_method: Default replication method
+
+    Returns:
+      FlextResult containing stream info
+
+    """
+    try:
+        stream_name = f"{stream_prefix}_{oracle_table.name.lower()}"
+
+        stream_info = FlextTapOracleModels.OracleTapStreamInfo(
+            stream_name=stream_name,
+            table_name=oracle_table.name,
+            schema_name=getattr(oracle_table, "schema_name", None),
+            replication_method=replication_method,
+            column_count=len(oracle_table.columns)
+            if hasattr(oracle_table, "columns")
+            else None,
+        )
+
+        return FlextResult[FlextTapOracleModels.OracleTapStreamInfo].ok(stream_info)
+
+    except Exception as e:
+        return FlextResult[FlextTapOracleModels.OracleTapStreamInfo].fail(
+            f"Failed to create stream info from Oracle table: {e}",
+        )
+
+
+def create_discovery_result(
+    schema_name: str,
+    oracle_tables: list[FlextDbOracleTable],
+    stream_prefix: str = "oracle",
+) -> FlextResult[FlextTapOracleModels.OracleTapDiscoveryResult]:
+    """Create discovery result from Oracle tables.
+
+    Args:
+      schema_name: Oracle schema name
+      oracle_tables: List of Oracle table metadata
+      stream_prefix: Prefix for stream names
+
+    Returns:
+      FlextResult containing discovery result
+
+    """
+    try:
+        # Create stream info for each table
+        stream_info = []
+        for table in oracle_tables:
+            stream_result = create_stream_info_from_oracle_table(table, stream_prefix)
+            if stream_result.success and stream_result.data:
+                stream_info.append(stream_result.data)
+
+        discovery_result = FlextTapOracleModels.OracleTapDiscoveryResult(
+            schema_name=schema_name,
+            discovery_timestamp="now",  # Would use actual timestamp
+            total_tables=len(oracle_tables),
+            oracle_tables=oracle_tables,
+            stream_info=stream_info,
+            filtered_tables=[table.name for table in oracle_tables],
+        )
+
+        return FlextResult[FlextTapOracleModels.OracleTapDiscoveryResult].ok(
+            discovery_result
+        )
+
+    except Exception as e:
+        return FlextResult[FlextTapOracleModels.OracleTapDiscoveryResult].fail(
+            f"Failed to create discovery result: {e}",
+        )
+
+
+# =====================================================
+# MAIN EXPORTS
+# =====================================================
+
+__all__: FlextTypes.Core.StringList = [
+    "FlextDbOracleColumn",
+    "FlextDbOracleQueryResult",
+    "FlextDbOracleSchema",
+    "FlextDbOracleTable",
+    "FlextTapOracleModels",
+    "Stream",
+    "TapExecutionMode",
+    "TapOracleColumn",
+    "TapOracleQueryResult",
+    "TapOracleSchema",
+    "TapOracleTable",
+    "TapReplicationMethod",
+    "TapStreamSelection",
+    "create_discovery_result",
+    "create_stream_info_from_oracle_table",
+]

@@ -25,7 +25,7 @@ from flext_cli import (
 )
 from flext_core import FlextLogger, FlextResult
 from flext_tap_oracle.tap_client import create_oracle_tap_service
-from flext_tap_oracle.tap_config import FlextOracleTapConfig
+from flext_tap_oracle.tap_config import FlextTapOracleConfig
 
 logger = FlextLogger(__name__)
 cli_api = FlextCliApi()
@@ -146,7 +146,9 @@ class OracleTapDiscoverCommand(FlextCliCmd):
             config_data: dict[str, object] = Path(self.params.config_file).read_text(
                 encoding="utf-8"
             )
-            config: dict[str, object] = FlextOracleTapConfig.model_validate_json(
+            # Use singleton instance instead of direct model_validate_json
+            config_instance = FlextTapOracleConfig.get_global_instance()
+            config: dict[str, object] = config_instance.model_validate_json(
                 config_data
             )
 
@@ -261,7 +263,7 @@ class OracleTapSyncCommand(FlextCliCmd):
             config_data: dict[str, object] = Path(self.params.config_file).read_text(
                 encoding="utf-8"
             )
-            config: dict[str, object] = FlextOracleTapConfig.model_validate_json(
+            config: dict[str, object] = FlextTapOracleConfig.model_validate_json(
                 config_data
             )
 

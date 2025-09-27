@@ -7,18 +7,18 @@ SPDX-License-Identifier: MIT.
 from __future__ import annotations
 
 import re
-import threading
-from typing import ClassVar, Self
+from typing import Self
 
 from pydantic import Field, SecretStr, field_validator, model_validator
+from pydantic_settings import SettingsConfigDict
 
 from flext_core import (
     FlextConfig,
     FlextConstants,
     FlextResult,
-    FlextTypes,
 )
 from flext_db_oracle import FlextDbOracleModels
+from flext_tap_oracle.typings import FlextTapOracleTypes
 
 
 class FlextOracleTapConfiguration(FlextConfig):
@@ -47,12 +47,12 @@ class FlextOracleTapConfiguration(FlextConfig):
         description="Prefix for Singer stream names",
     )
 
-    tables_filter: FlextTypes.Core.StringList | None = Field(
+    tables_filter: FlextTapOracleTypes.Core.StringList | None = Field(
         default=None,
         description="Tables to include (None = all tables)",
     )
 
-    exclude_tables: FlextTypes.Core.StringList | None = Field(
+    exclude_tables: FlextTapOracleTypes.Core.StringList | None = Field(
         default=None,
         description="Tables to exclude",
     )
@@ -111,7 +111,7 @@ class FlextOracleTapConfiguration(FlextConfig):
         return FlextResult[None].ok(None)
 
 
-class FlextOracleTapConfig(FlextConfig):
+class FlextTapOracleConfig(FlextConfig):
     """Oracle Tap Configuration extending FlextConfig.
 
     Follows standardized [Project]Config pattern:
@@ -124,12 +124,23 @@ class FlextOracleTapConfig(FlextConfig):
     Combines Oracle database configuration with tap-specific settings using composition.
     """
 
-    # Singleton pattern attributes
-    _global_instance: ClassVar[FlextOracleTapConfig | None] = None
-    _lock: ClassVar[threading.Lock] = threading.Lock()
+    model_config = SettingsConfigDict(
+        env_prefix="FLEXT_TAP_ORACLE_",
+        case_sensitive=False,
+        extra="ignore",
+        env_file=".env",
+        env_file_encoding="utf-8",
+        env_nested_delimiter="__",
+        use_enum_values=True,
+        validate_assignment=True,
+        validate_default=True,
+        frozen=False,
+        str_strip_whitespace=True,
+    )
 
     # Oracle Database Configuration (using composition)
-    oracle_host: str = Field(default=localhost, description="Oracle database host")
+
+    oracle_host: str = Field(default="localhost", description="Oracle database host")
 
     oracle_port: int = Field(
         default=1521, ge=1, le=65535, description="Oracle database port"
@@ -147,7 +158,7 @@ class FlextOracleTapConfig(FlextConfig):
 
     # Tap-specific Configuration
     stream_prefix: str = Field(
-        default=oracle, description="Prefix for Singer stream names"
+        default="oracle", description="Prefix for Singer stream names"
     )
 
     batch_size: int = Field(
@@ -177,7 +188,7 @@ class FlextOracleTapConfig(FlextConfig):
     )
 
     incremental_column: str = Field(
-        default=LAST_MODIFIED, description="Column for incremental extraction"
+        default="LAST_MODIFIED", description="Column for incremental extraction"
     )
 
     # Performance Configuration
@@ -397,27 +408,61 @@ class FlextOracleTapConfig(FlextConfig):
         # Pydantic BaseSettings handles kwargs validation and type conversion automatically
         return cls(**all_overrides)
 
-    # Singleton pattern override for proper typing
+    # Enhanced singleton pattern methods
     @classmethod
-    def get_global_instance(cls) -> FlextOracleTapConfig:
-        """Get the global singleton instance of FlextOracleTapConfig."""
-        if cls._global_instance is None:
-            with cls._lock:
-                if cls._global_instance is None:
-                    cls._global_instance = cls()
-        return cls._global_instance
+    def get_global_instance(cls) -> Self:
+        """Get the global singleton instance using enhanced FlextConfig pattern."""
+        return cls.get_or_create_shared_instance(project_name="flext-tap-oracle")
 
     @classmethod
-    def reset_global_instance(cls) -> None:
-        """Reset the global FlextOracleTapConfig instance (mainly for testing)."""
-        cls._global_instance = None
+    def create_for_development(cls, **overrides) -> Self:
+        """Create development configuration instance."""
+        dev_defaults = {
+            "oracle_host": "localhost",
+            "oracle_port": 1521,
+            "oracle_service_name": "ORCL",
+            "oracle_username": "tap_dev",
+            "batch_size": 1000,
+            "max_parallel_streams": 1,
+            "query_timeout": 60,
+        }
+        dev_defaults.update(overrides)
+        return cls(**dev_defaults)
+
+    @classmethod
+    def create_for_production(cls, **overrides) -> Self:
+        """Create production configuration instance."""
+        prod_defaults = {
+            "batch_size": 10000,
+            "max_parallel_streams": 4,
+            "query_timeout": 300,
+            "fetch_size": 50000,
+            "enable_incremental": True,
+        }
+        prod_defaults.update(overrides)
+        return cls(**prod_defaults)
+
+    @classmethod
+    def create_for_testing(cls, **overrides) -> Self:
+        """Create testing configuration instance."""
+        test_defaults = {
+            "oracle_host": "test-oracle",
+            "oracle_port": 1521,
+            "oracle_service_name": "XE",
+            "oracle_username": "test_user",
+            "batch_size": 100,
+            "max_parallel_streams": 1,
+            "query_timeout": 30,
+        }
+        test_defaults.update(overrides)
+        return cls(**test_defaults)
 
 
 # Factory function for easy creation using configuration objects pattern
 def create_oracle_tap_config(
-    oracle_params: FlextTypes.Core.Dict,
-    tap_params: FlextTypes.Core.Dict | None = None,
-    meltano_params: FlextTypes.Core.Dict | None = None,
+    oracle_params: FlextTapOracleTypes.Database.DatabaseConfiguration,
+    tap_params: FlextTapOracleTypes.Configuration.TapOracleConfig | None = None,
+    meltano_params: FlextTapOracleTypes.Configuration.TapOracleConfig | None = None,
 ) -> FlextResult[FlextOracleTapConfig]:
     """Create Oracle tap configuration using grouped parameters.
 
@@ -447,15 +492,14 @@ def create_oracle_tap_config(
             FlextConstants.Config.DEFAULT_ENVIRONMENT,
         )
 
+        # Merge Oracle parameters with other configurations
         config_data = {
-            "oracle_config": "oracle_params",
-            "tap_config": "tap_config",
+            **oracle_params,  # Use oracle_params properly
+            **tap_config,
             **meltano_config,
         }
 
-        config_instance: FlextOracleTapConfig = FlextOracleTapConfig.model_validate(
-            config_data
-        )
+        config_instance = FlextOracleTapConfig.model_validate(config_data)
         return FlextResult[FlextOracleTapConfig].ok(config_instance)
 
     except Exception as e:
@@ -465,13 +509,15 @@ def create_oracle_tap_config(
 
 
 # Backward compatibility aliases
-TapOracleConfig = FlextOracleTapConfig
-Config = FlextOracleTapConfig
+FlextOracleTapConfig = FlextTapOracleConfig
+TapOracleConfig = FlextTapOracleConfig
+Config = FlextTapOracleConfig
 
-__all__: FlextTypes.Core.StringList = [
+__all__: FlextTapOracleTypes.Core.StringList = [
     "Config",  # Legacy alias
-    "FlextOracleTapConfig",
+    "FlextOracleTapConfig",  # Legacy alias
     "FlextOracleTapConfiguration",
+    "FlextTapOracleConfig",
     "TapOracleConfig",  # Legacy alias
     "create_oracle_tap_config",
 ]
