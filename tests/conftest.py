@@ -18,8 +18,8 @@ import pytest
 
 from flext_core import FlextResult, FlextTypes
 from flext_tap_oracle import (
-    FlextTapOracleConfig,
     FlextOracleTapService,
+    FlextTapOracleConfig,
     create_oracle_tap_config,
 )
 from flext_tests import FlextTestDocker
@@ -152,8 +152,8 @@ def oracle_tap_config() -> FlextTypes.Core.Dict:
 def oracle_tap(oracle_tap_config: FlextTypes.Core.Dict) -> FlextOracleTapService:
     """Oracle tap service instance for testing."""
     # Convert dict to proper config and create service
-    config_result = FlextResult[FlextOracleTapConfig].ok(
-        FlextOracleTapConfig.model_validate(oracle_tap_config),
+    config_result = FlextResult[FlextTapOracleConfig].ok(
+        FlextTapOracleConfig.get_global_instance().model_validate(oracle_tap_config),
     )
     if config_result.is_success:
         return FlextOracleTapService(config=config_result.value)

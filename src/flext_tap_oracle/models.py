@@ -920,88 +920,14 @@ TapExecutionMode = Literal["discovery", "extraction", "test", "validate"]
 
 
 # =====================================================
-# FACTORY FUNCTIONS
+# FUNCTIONS MOVED TO UTILITIES PATTERN
 # =====================================================
-
-
-def create_stream_info_from_oracle_table(
-    oracle_table: FlextDbOracleTable,
-    stream_prefix: str = "oracle",
-    replication_method: TapReplicationMethod = "FULL_TABLE",
-) -> FlextResult[FlextTapOracleModels.OracleTapStreamInfo]:
-    """Create stream info from Oracle table metadata.
-
-    Args:
-      oracle_table: Oracle table metadata from flext-db-oracle
-      stream_prefix: Prefix for stream name
-      replication_method: Default replication method
-
-    Returns:
-      FlextResult containing stream info
-
-    """
-    try:
-        stream_name = f"{stream_prefix}_{oracle_table.name.lower()}"
-
-        stream_info = FlextTapOracleModels.OracleTapStreamInfo(
-            stream_name=stream_name,
-            table_name=oracle_table.name,
-            schema_name=getattr(oracle_table, "schema_name", None),
-            replication_method=replication_method,
-            column_count=len(oracle_table.columns)
-            if hasattr(oracle_table, "columns")
-            else None,
-        )
-
-        return FlextResult[FlextTapOracleModels.OracleTapStreamInfo].ok(stream_info)
-
-    except Exception as e:
-        return FlextResult[FlextTapOracleModels.OracleTapStreamInfo].fail(
-            f"Failed to create stream info from Oracle table: {e}",
-        )
-
-
-def create_discovery_result(
-    schema_name: str,
-    oracle_tables: list[FlextDbOracleTable],
-    stream_prefix: str = "oracle",
-) -> FlextResult[FlextTapOracleModels.OracleTapDiscoveryResult]:
-    """Create discovery result from Oracle tables.
-
-    Args:
-      schema_name: Oracle schema name
-      oracle_tables: List of Oracle table metadata
-      stream_prefix: Prefix for stream names
-
-    Returns:
-      FlextResult containing discovery result
-
-    """
-    try:
-        # Create stream info for each table
-        stream_info = []
-        for table in oracle_tables:
-            stream_result = create_stream_info_from_oracle_table(table, stream_prefix)
-            if stream_result.success and stream_result.data:
-                stream_info.append(stream_result.data)
-
-        discovery_result = FlextTapOracleModels.OracleTapDiscoveryResult(
-            schema_name=schema_name,
-            discovery_timestamp="now",  # Would use actual timestamp
-            total_tables=len(oracle_tables),
-            oracle_tables=oracle_tables,
-            stream_info=stream_info,
-            filtered_tables=[table.name for table in oracle_tables],
-        )
-
-        return FlextResult[FlextTapOracleModels.OracleTapDiscoveryResult].ok(
-            discovery_result
-        )
-
-    except Exception as e:
-        return FlextResult[FlextTapOracleModels.OracleTapDiscoveryResult].fail(
-            f"Failed to create discovery result: {e}",
-        )
+#
+# The following functions have been moved to FlextTapOracleUtilities:
+# - create_stream_info_from_oracle_table -> FlextTapOracleUtilities.StreamManagement.create_stream_info_from_oracle_table
+# - create_discovery_result -> FlextTapOracleUtilities.StreamManagement.create_discovery_result
+#
+# Use the utilities pattern instead of standalone functions.
 
 
 # =====================================================
@@ -1014,6 +940,7 @@ __all__: FlextTypes.Core.StringList = [
     "FlextDbOracleSchema",
     "FlextDbOracleTable",
     "FlextTapOracleModels",
+    "FlextTapOracleUtilities",
     "Stream",
     "TapExecutionMode",
     "TapOracleColumn",
@@ -1022,6 +949,4 @@ __all__: FlextTypes.Core.StringList = [
     "TapOracleTable",
     "TapReplicationMethod",
     "TapStreamSelection",
-    "create_discovery_result",
-    "create_stream_info_from_oracle_table",
 ]

@@ -97,7 +97,6 @@ class OracleTapDiscoverCommand(FlextCliCmd):
     """
 
     @override
-    @override
     def __init__(
         self,
         command_id: str,
@@ -123,7 +122,6 @@ class OracleTapDiscoverCommand(FlextCliCmd):
         return FlextResult[None].ok(None)
 
     @override
-    @override
     def execute(self) -> FlextResult[object]:
         """Execute Oracle tap discovery using modern patterns."""
         self.cli_helper.print_info("Starting Oracle database discovery")
@@ -148,9 +146,7 @@ class OracleTapDiscoverCommand(FlextCliCmd):
             )
             # Use singleton instance instead of direct model_validate_json
             config_instance = FlextTapOracleConfig.get_global_instance()
-            config: dict[str, object] = config_instance.model_validate_json(
-                config_data
-            )
+            config: dict[str, object] = config_instance.model_validate_json(config_data)
 
             # Create Oracle tap service
             tap_service_result: FlextResult[object] = create_oracle_tap_service(config)
@@ -206,7 +202,6 @@ class OracleTapSyncCommand(FlextCliCmd):
     """Oracle tap sync command using modern flext-cli patterns."""
 
     @override
-    @override
     def __init__(
         self,
         command_id: str,
@@ -239,7 +234,6 @@ class OracleTapSyncCommand(FlextCliCmd):
         return FlextResult[None].ok(None)
 
     @override
-    @override
     def execute(self) -> FlextResult[object]:
         """Execute Oracle tap sync using modern patterns."""
         self.cli_helper.print_info("Starting Oracle data extraction")
@@ -263,9 +257,9 @@ class OracleTapSyncCommand(FlextCliCmd):
             config_data: dict[str, object] = Path(self.params.config_file).read_text(
                 encoding="utf-8"
             )
-            config: dict[str, object] = FlextTapOracleConfig.model_validate_json(
-                config_data
-            )
+            # Use singleton instance instead of direct model_validate_json
+            config_instance = FlextTapOracleConfig.get_global_instance()
+            config: dict[str, object] = config_instance.model_validate_json(config_data)
 
             # Create Oracle tap service
             tap_service_result: FlextResult[object] = create_oracle_tap_service(config)

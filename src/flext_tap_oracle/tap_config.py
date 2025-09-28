@@ -261,7 +261,7 @@ class FlextTapOracleConfig(FlextConfig):
         return v
 
     @model_validator(mode="after")
-    def validate_oracle_connection_config(self) -> FlextOracleTapConfig:
+    def validate_oracle_connection_config(self) -> FlextTapOracleConfig:
         """Validate Oracle connection configuration."""
         # Either service_name or sid must be provided
         if not self.oracle_service_name and not self.oracle_sid:
@@ -298,7 +298,6 @@ class FlextTapOracleConfig(FlextConfig):
             pool_min=1,
             pool_max=self.max_parallel_streams + 2,  # Extra connections for metadata
             timeout=self.query_timeout,
-            domain_events=[],  # Initialize empty domain events list
         )
 
     def get_tap_config(self) -> dict[str, object]:
@@ -381,7 +380,7 @@ class FlextTapOracleConfig(FlextConfig):
     @classmethod
     def create_for_environment(
         cls, environment: str, **overrides: object
-    ) -> FlextOracleTapConfig:
+    ) -> FlextTapOracleConfig:
         """Create configuration for specific environment."""
         env_overrides: dict[str, object] = {}
 
@@ -463,7 +462,7 @@ def create_oracle_tap_config(
     oracle_params: FlextTapOracleTypes.Database.DatabaseConfiguration,
     tap_params: FlextTapOracleTypes.Configuration.TapOracleConfig | None = None,
     meltano_params: FlextTapOracleTypes.Configuration.TapOracleConfig | None = None,
-) -> FlextResult[FlextOracleTapConfig]:
+) -> FlextResult[FlextTapOracleConfig]:
     """Create Oracle tap configuration using grouped parameters.
 
     Args:
@@ -499,11 +498,13 @@ def create_oracle_tap_config(
             **meltano_config,
         }
 
-        config_instance = FlextOracleTapConfig.model_validate(config_data)
-        return FlextResult[FlextOracleTapConfig].ok(config_instance)
+        config_instance = FlextTapOracleConfig.get_global_instance().model_validate(
+            config_data
+        )
+        return FlextResult[FlextTapOracleConfig].ok(config_instance)
 
     except Exception as e:
-        return FlextResult[FlextOracleTapConfig].fail(
+        return FlextResult[FlextTapOracleConfig].fail(
             f"Oracle tap configuration creation failed: {e}",
         )
 

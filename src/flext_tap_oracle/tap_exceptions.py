@@ -46,10 +46,6 @@ class FlextTapOracleQueryError(FlextTapOracleError):
     """Oracle tap SQL query errors with Oracle-specific context."""
 
     @override
-    @override
-    @override
-    @override
-    @override
     def __init__(
         self,
         message: str = "Oracle tap query failed",
@@ -73,10 +69,6 @@ class FlextTapOracleQueryError(FlextTapOracleError):
 class FlextTapOracleStreamError(FlextTapOracleError):
     """Oracle tap stream processing errors with stream-specific context."""
 
-    @override
-    @override
-    @override
-    @override
     @override
     def __init__(
         self,
@@ -102,10 +94,6 @@ class FlextTapOracleDiscoveryError(FlextTapOracleError):
     """Oracle tap discovery errors with discovery-specific context."""
 
     @override
-    @override
-    @override
-    @override
-    @override
     def __init__(
         self,
         message: str = "Oracle tap discovery failed",
@@ -126,10 +114,6 @@ class FlextTapOracleDiscoveryError(FlextTapOracleError):
 class FlextTapOracleMetadataError(FlextTapOracleError):
     """Oracle tap metadata errors with metadata-specific context."""
 
-    @override
-    @override
-    @override
-    @override
     @override
     def __init__(
         self,
@@ -155,10 +139,6 @@ class FlextTapOracleExtractionError(FlextTapOracleProcessingError):
     """Oracle tap data extraction errors with extraction-specific context."""
 
     @override
-    @override
-    @override
-    @override
-    @override
     def __init__(
         self,
         message: str = "Oracle tap extraction failed",
@@ -180,233 +160,6 @@ class FlextTapOracleExtractionError(FlextTapOracleProcessingError):
 
 
 # =====================================================
-# EXCEPTION FACTORY USING FLEXT-CORE PATTERN
-# =====================================================
-
-# Note: Exception factory functionality can be added later if needed
-# For now, using direct exception instantiation with context
-
-
-# =====================================================
-# FACTORY FUNCTIONS FOR COMMON ORACLE TAP ERRORS
-# =====================================================
-
-
-def create_connection_error(
-    message: str = "Oracle connection failed",
-    host: str | None = None,
-    port: int | None = None,
-    service_name: str | None = None,
-    **kwargs: object,
-) -> FlextTapOracleConnectionError:
-    """Create Oracle connection errors with context.
-
-    Args:
-      message: Error message
-      host: Oracle host
-      port: Oracle port
-      service_name: Oracle service name
-      **kwargs: Additional context
-
-    Returns:
-      Configured Oracle connection error
-
-    """
-    context = kwargs.copy()
-    if host is not None:
-        context["host"] = host
-    if port is not None:
-        context["port"] = port
-    if service_name is not None:
-        context["service_name"] = service_name
-
-    return FlextTapOracleConnectionError(message, context=context)
-
-
-def create_query_error(
-    message: str = "Oracle query failed",
-    query: str | None = None,
-    table_name: str | None = None,
-    oracle_error_code: str | None = None,
-    **kwargs: object,
-) -> FlextTapOracleQueryError:
-    """Create Oracle query errors with context.
-
-    Args:
-      message: Error message
-      query: SQL query that failed
-      table_name: Oracle table name
-      oracle_error_code: Oracle-specific error code
-      **kwargs: Additional context
-
-    Returns:
-      Configured Oracle query error
-
-    """
-    return FlextTapOracleQueryError(
-        message=message,
-        query=query,
-        oracle_error_code=oracle_error_code,
-        table_name=table_name,
-        **kwargs,
-    )
-
-
-def create_stream_error(
-    message: str = "Stream processing failed",
-    stream_name: str | None = None,
-    table_name: str | None = None,
-    record_count: int | None = None,
-    **kwargs: object,
-) -> FlextTapOracleStreamError:
-    """Create Oracle stream errors with context.
-
-    Args:
-      message: Error message
-      stream_name: Singer stream name
-      table_name: Oracle table name
-      record_count: Number of records processed before failure
-      **kwargs: Additional context
-
-    Returns:
-      Configured Oracle stream error
-
-    """
-    return FlextTapOracleStreamError(
-        message=message,
-        stream_name=stream_name,
-        table_name=table_name,
-        record_count=record_count,
-        **kwargs,
-    )
-
-
-def create_discovery_error(
-    message: str = "Discovery failed",
-    schema_name: str | None = None,
-    table_count: int | None = None,
-    **kwargs: object,
-) -> FlextTapOracleDiscoveryError:
-    """Create Oracle discovery errors with context.
-
-    Args:
-      message: Error message
-      schema_name: Oracle schema name
-      table_count: Number of tables discovered before failure
-      **kwargs: Additional context
-
-    Returns:
-      Configured Oracle discovery error
-
-    """
-    return FlextTapOracleDiscoveryError(
-        message=message,
-        schema_name=schema_name,
-        table_count=table_count,
-        **kwargs,
-    )
-
-
-def create_configuration_error(
-    message: str = "Configuration invalid",
-    config_field: str | None = None,
-    config_value: object = None,
-    **kwargs: object,
-) -> FlextTapOracleConfigurationError:
-    """Create Oracle configuration errors with context.
-
-    Args:
-      message: Error message
-      config_field: Configuration field that caused the error
-      config_value: Invalid configuration value
-      **kwargs: Additional context
-
-    Returns:
-      Configured Oracle configuration error
-
-    """
-    context = kwargs.copy()
-    if config_field is not None:
-        context["config_field"] = config_field
-    if config_value is not None:
-        context["config_value"] = str(config_value)
-
-    return FlextTapOracleConfigurationError(message, context=context)
-
-
-def create_extraction_error(
-    message: str = "Data extraction failed",
-    table_name: str | None = None,
-    batch_size: int | None = None,
-    records_processed: int | None = None,
-    **kwargs: object,
-) -> FlextTapOracleExtractionError:
-    """Create Oracle extraction errors with context.
-
-    Args:
-      message: Error message
-      table_name: Oracle table name
-      batch_size: Configured batch size
-      records_processed: Number of records processed before failure
-      **kwargs: Additional context
-
-    Returns:
-      Configured Oracle extraction error
-
-    """
-    return FlextTapOracleExtractionError(
-        message=message,
-        table_name=table_name,
-        batch_size=batch_size,
-        records_processed=records_processed,
-        **kwargs,
-    )
-
-
-# =====================================================
-# ERROR HANDLING UTILITIES
-# =====================================================
-
-
-def handle_oracle_exception(
-    exc: Exception,
-    operation: str = "unknown",
-    **context: object,
-) -> FlextTapOracleError:
-    """Convert generic exceptions to Oracle tap specific errors.
-
-    Args:
-      exc: Original exception
-      operation: Operation that failed
-      **context: Additional context
-
-    Returns:
-      Oracle tap specific error
-
-    """
-    base_message = f"Oracle tap {operation} failed: {exc}"
-    full_context = {
-        "original_exception": str(exc),
-        "exception_type": type(exc).__name__,
-        "operation": "operation",
-        **context,
-    }
-
-    # Map common exception types to specific Oracle tap errors
-    if "connection" in str(exc).lower() or "connect" in str(exc).lower():
-        return FlextTapOracleError(base_message, context=full_context)
-    if "query" in str(exc).lower() or "sql" in str(exc).lower():
-        return FlextTapOracleError(base_message, context=full_context)
-    if "stream" in str(exc).lower():
-        return FlextTapOracleError(base_message, context=full_context)
-    if "discovery" in str(exc).lower():
-        return FlextTapOracleError(base_message, context=full_context)
-    if "config" in str(exc).lower():
-        return FlextTapOracleError(base_message, context=full_context)
-    return FlextTapOracleError(base_message, context=full_context)
-
-
-# =====================================================
 # EXPORTS
 # =====================================================
 
@@ -421,11 +174,4 @@ __all__: FlextTypes.Core.StringList = [
     "FlextTapOracleQueryError",
     "FlextTapOracleStreamError",
     "FlextTapOracleValidationError",
-    "create_configuration_error",
-    "create_connection_error",
-    "create_discovery_error",
-    "create_extraction_error",
-    "create_query_error",
-    "create_stream_error",
-    "handle_oracle_exception",
 ]

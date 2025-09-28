@@ -33,8 +33,6 @@ from flext_tap_oracle.models import (
     TapOracleSchema,
     TapOracleTable,
     TapReplicationMethod,
-    create_discovery_result,
-    create_stream_info_from_oracle_table,
 )
 
 # Client - Main tap implementation with domain services
@@ -56,10 +54,10 @@ from flext_tap_oracle.tap_client import (
 # Configuration - Comprehensive configuration management
 from flext_tap_oracle.tap_config import (
     Config,
-    FlextTapOracleConfig,
-    FlextOracleTapConfiguration,
     # Backward compatibility aliases
     FlextOracleTapConfig,
+    FlextOracleTapConfiguration,
+    FlextTapOracleConfig,
     TapOracleConfig,
     create_oracle_tap_config,
 )
@@ -76,14 +74,6 @@ from flext_tap_oracle.tap_exceptions import (
     FlextTapOracleQueryError,
     FlextTapOracleStreamError,
     FlextTapOracleValidationError,
-    create_configuration_error,
-    # Factory functions
-    create_connection_error,
-    create_discovery_error,
-    create_extraction_error,
-    create_query_error,
-    create_stream_error,
-    handle_oracle_exception,
 )
 
 # Streams - Oracle stream definitions and processing
@@ -136,14 +126,14 @@ __all__ = [
     "FlextOracleTableFilterService",
     "FlextOracleTapBaseService",  # Ultra-simple alias for test compatibility
     "FlextOracleTapClient",
-    # Configuration
-    "FlextTapOracleConfig",
     "FlextOracleTapConfig",  # Legacy alias
     "FlextOracleTapConfiguration",
     "FlextOracleTapService",  # Main service class
     # ===== NEW PEP8 CONSOLIDATED STRUCTURE =====
     # Main Tap Classes
     "FlextTapOracle",
+    # Configuration
+    "FlextTapOracleConfig",
     "FlextTapOracleConfigurationError",
     "FlextTapOracleConnectionError",
     "FlextTapOracleDiscoveryError",
@@ -169,20 +159,11 @@ __all__ = [
     "TapOracleSchema",
     "TapOracleTable",
     "TapReplicationMethod",
-    "create_configuration_error",
-    "create_connection_error",
-    "create_discovery_error",
-    "create_discovery_result",
-    "create_extraction_error",
     "create_oracle_discovery_service",
     "create_oracle_stream",
     "create_oracle_stream_from_table",
     "create_oracle_tap_config",
     "create_oracle_tap_service",
-    "create_query_error",
-    "create_stream_error",
-    "create_stream_info_from_oracle_table",
-    "handle_oracle_exception",
 ]
 
 # Note: FlextOracleTapBaseService is conditionally imported above but not exported in __all__
