@@ -19,6 +19,16 @@ from flext_core import (
     FlextTypes,
     FlextUtilities,
 )
+from flext_db_oracle import FlextDbOracleTable
+from flext_tap_oracle.models import FlextTapOracleModels
+from flext_tap_oracle.tap_exceptions import (
+    FlextTapOracleConfigurationError,
+    FlextTapOracleConnectionError,
+    FlextTapOracleDiscoveryError,
+    FlextTapOracleExtractionError,
+    FlextTapOracleQueryError,
+    FlextTapOracleStreamError,
+)
 
 
 class FlextTapOracleUtilities(FlextUtilities):
@@ -34,6 +44,13 @@ class FlextTapOracleUtilities(FlextUtilities):
 
     Follows FLEXT pattern: single class with nested subclasses.
     """
+
+    # Constants
+    MAX_PORT_NUMBER = 65535
+    LARGE_TABLE_THRESHOLD = 100000
+    EXCELLENT_PERFORMANCE_THRESHOLD = 1000
+    GOOD_PERFORMANCE_THRESHOLD = 500
+    MODERATE_PERFORMANCE_THRESHOLD = 100
 
     def __init__(self) -> None:
         """Initialize FlextTapOracleUtilities service."""
@@ -83,9 +100,6 @@ class FlextTapOracleUtilities(FlextUtilities):
             **kwargs: object,
         ) -> FlextTapOracleConnectionError:
             """Create Oracle connection errors with context."""
-            # Import here to avoid circular imports
-            from flext_tap_oracle.tap_exceptions import FlextTapOracleConnectionError
-
             context = kwargs.copy()
             if host is not None:
                 context["host"] = host
@@ -104,8 +118,6 @@ class FlextTapOracleUtilities(FlextUtilities):
             **kwargs: object,
         ) -> FlextTapOracleQueryError:
             """Create Oracle query errors with SQL context."""
-            from flext_tap_oracle.tap_exceptions import FlextTapOracleQueryError
-
             context = kwargs.copy()
             if sql_query is not None:
                 context["sql_query"] = sql_query
@@ -122,8 +134,6 @@ class FlextTapOracleUtilities(FlextUtilities):
             **kwargs: object,
         ) -> FlextTapOracleStreamError:
             """Create stream processing errors with stream context."""
-            from flext_tap_oracle.tap_exceptions import FlextTapOracleStreamError
-
             context = kwargs.copy()
             if stream_name is not None:
                 context["stream_name"] = stream_name
@@ -139,8 +149,6 @@ class FlextTapOracleUtilities(FlextUtilities):
             **kwargs: object,
         ) -> FlextTapOracleDiscoveryError:
             """Create discovery errors with schema context."""
-            from flext_tap_oracle.tap_exceptions import FlextTapOracleDiscoveryError
-
             context = kwargs.copy()
             if schema_name is not None:
                 context["schema_name"] = schema_name
@@ -154,8 +162,6 @@ class FlextTapOracleUtilities(FlextUtilities):
             **kwargs: object,
         ) -> FlextTapOracleConfigurationError:
             """Create configuration errors with section context."""
-            from flext_tap_oracle.tap_exceptions import FlextTapOracleConfigurationError
-
             context = kwargs.copy()
             if config_section is not None:
                 context["config_section"] = config_section
@@ -170,8 +176,6 @@ class FlextTapOracleUtilities(FlextUtilities):
             **kwargs: object,
         ) -> FlextTapOracleExtractionError:
             """Create extraction errors with method context."""
-            from flext_tap_oracle.tap_exceptions import FlextTapOracleExtractionError
-
             context = kwargs.copy()
             if table_name is not None:
                 context["table_name"] = table_name
@@ -233,8 +237,6 @@ class FlextTapOracleUtilities(FlextUtilities):
         ) -> FlextResult[Any]:
             """Create stream info from Oracle table metadata."""
             try:
-                from flext_tap_oracle.models import FlextTapOracleModels
-
                 stream_name = f"{stream_prefix}_{oracle_table.name.lower()}"
 
                 stream_info = FlextTapOracleModels.OracleTapStreamInfo(
@@ -261,8 +263,6 @@ class FlextTapOracleUtilities(FlextUtilities):
         ) -> FlextResult[Any]:
             """Create discovery result from Oracle tables."""
             try:
-                from flext_tap_oracle.models import FlextTapOracleModels
-
                 # Convert tables to stream info
                 stream_infos = []
                 for table in tables:
@@ -310,9 +310,9 @@ class FlextTapOracleUtilities(FlextUtilities):
                 # Validate port is numeric
                 try:
                     port = int(config["port"])
-                    if port <= 0 or port > 65535:
+                    if port <= 0 or port > FlextTapOracleUtilities.MAX_PORT_NUMBER:
                         return FlextResult[dict].fail(
-                            "Oracle port must be between 1 and 65535"
+                            f"Oracle port must be between 1 and {FlextTapOracleUtilities.MAX_PORT_NUMBER}"
                         )
                     config["port"] = port
                 except ValueError:
@@ -391,7 +391,7 @@ class FlextTapOracleUtilities(FlextUtilities):
 
                 # Add optimizations based on table size
                 row_count = table_stats.get("row_count", 0)
-                if row_count > 100000:
+                if row_count > FlextTapOracleUtilities.LARGE_TABLE_THRESHOLD:
                     # Add parallel hints for large tables
                     optimized_query = f"/*+ PARALLEL(4) */ {optimized_query}"
 
@@ -422,11 +422,14 @@ class FlextTapOracleUtilities(FlextUtilities):
                     "records_per_second": round(records_per_second, 2),
                     "performance_rating": (
                         "excellent"
-                        if records_per_second > 1000
+                        if records_per_second
+                        > FlextTapOracleUtilities.EXCELLENT_PERFORMANCE_THRESHOLD
                         else "good"
-                        if records_per_second > 500
+                        if records_per_second
+                        > FlextTapOracleUtilities.GOOD_PERFORMANCE_THRESHOLD
                         else "moderate"
-                        if records_per_second > 100
+                        if records_per_second
+                        > FlextTapOracleUtilities.MODERATE_PERFORMANCE_THRESHOLD
                         else "slow"
                     ),
                 }

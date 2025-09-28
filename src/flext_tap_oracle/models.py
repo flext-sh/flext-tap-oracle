@@ -33,8 +33,147 @@ class FlextTapOracleModels(FlextModels):
     All nested classes inherit FlextModels validation and patterns.
     """
 
+    # Pydantic 2.11 Configuration - Enterprise Singer Oracle Tap Features
+    model_config = ConfigDict(
+        validate_assignment=True,
+        use_enum_values=True,
+        arbitrary_types_allowed=True,
+        extra="forbid",
+        frozen=False,
+        validate_return=True,
+        ser_json_timedelta="iso8601",
+        ser_json_bytes="base64",
+        hide_input_in_errors=True,
+        json_schema_extra={
+            "title": "FLEXT Singer Oracle Tap Models",
+            "description": "Enterprise Oracle database extraction models with Singer protocol compliance",
+            "examples": [
+                {
+                    "tap_name": "tap-oracle",
+                    "extraction_mode": "incremental_replication",
+                    "oracle_connection": "oracle://user@host:1521/service",
+                }
+            ],
+            "tags": ["singer", "oracle", "tap", "extraction", "database"],
+            "version": "2.11.0",
+        },
+    )
+
+    # Advanced Pydantic 2.11 Features - Singer Oracle Tap Domain
+
+    @computed_field
+    @property
+    def active_oracle_tap_models_count(self) -> int:
+        """Count of active Oracle tap models with database extraction capabilities."""
+        count = 0
+        # Count core Singer Oracle tap models
+        if hasattr(self, "OracleTapStreamMetadata"):
+            count += 1
+        if hasattr(self, "OracleTapDiscoveryConfig"):
+            count += 1
+        if hasattr(self, "OracleTapExtractionConfig"):
+            count += 1
+        if hasattr(self, "OracleTapPerformanceMetrics"):
+            count += 1
+        if hasattr(self, "OracleTapStreamInfo"):
+            count += 1
+        if hasattr(self, "OracleTapDiscoveryResult"):
+            count += 1
+        if hasattr(self, "OracleTapExecutionStats"):
+            count += 1
+        if hasattr(self, "OracleConnection"):
+            count += 1
+        if hasattr(self, "OracleQuery"):
+            count += 1
+        if hasattr(self, "OracleRecord"):
+            count += 1
+        return count
+
+    @computed_field
+    @property
+    def oracle_tap_system_summary(self) -> dict[str, Any]:
+        """Comprehensive Singer Oracle tap system summary with database extraction capabilities."""
+        return {
+            "total_models": self.active_oracle_tap_models_count,
+            "tap_type": "singer_oracle_database_extractor",
+            "extraction_features": [
+                "oracle_table_discovery",
+                "incremental_replication",
+                "full_table_extraction",
+                "schema_introspection",
+                "performance_monitoring",
+                "connection_pooling",
+            ],
+            "singer_compliance": {
+                "protocol_version": "singer_v1",
+                "stream_discovery": True,
+                "catalog_generation": True,
+                "state_management": True,
+                "incremental_bookmarking": True,
+            },
+            "oracle_capabilities": {
+                "connection_pooling": True,
+                "query_optimization": True,
+                "batch_processing": True,
+                "type_mapping": True,
+                "schema_discovery": True,
+            },
+        }
+
+    @model_validator(mode="after")
+    def validate_oracle_tap_system_consistency(self) -> Self:
+        """Validate Singer Oracle tap system consistency and configuration."""
+        # Singer Oracle tap database validation
+        if hasattr(self, "_oracle_connection") and self._oracle_connection:
+            if not hasattr(self, "OracleTapStreamMetadata"):
+                msg = (
+                    "OracleTapStreamMetadata required when Oracle connection configured"
+                )
+                raise ValueError(msg)
+
+        # Discovery operation validation
+        if hasattr(self, "_discovery_mode") and self._discovery_mode:
+            if not hasattr(self, "OracleTapDiscoveryConfig"):
+                msg = "OracleTapDiscoveryConfig required for discovery operations"
+                raise ValueError(msg)
+
+        # Singer protocol compliance validation
+        if hasattr(self, "_singer_mode") and self._singer_mode:
+            required_models = ["OracleTapStreamInfo", "OracleTapExecutionStats"]
+            for model in required_models:
+                if not hasattr(self, model):
+                    msg = f"{model} required for Singer protocol compliance"
+                    raise ValueError(msg)
+
+        return self
+
+    @field_serializer("*", when_used="json")
+    def serialize_with_oracle_metadata(self, value: Any, _info) -> Any:
+        """Add Singer Oracle tap metadata to all serialized fields."""
+        if isinstance(value, dict):
+            return {
+                **value,
+                "_oracle_tap_metadata": {
+                    "extraction_timestamp": datetime.now(UTC).isoformat(),
+                    "tap_type": "oracle_database_extractor",
+                    "singer_protocol": "v1.0",
+                    "data_source": "oracle_database",
+                },
+            }
+        if isinstance(value, (str, int, float, bool)) and hasattr(
+            self, "_include_oracle_metadata"
+        ):
+            return {
+                "value": value,
+                "_oracle_context": {
+                    "extracted_at": datetime.now(UTC).isoformat(),
+                    "tap_name": "flext-tap-oracle",
+                },
+            }
+        return value
+
     # Legacy type aliases for backward compatibility
-    OracleRecord = dict["str", "object"]
+    OracleRecord = dict[str, object]
     OracleRecords = list[OracleRecord]
 
     class OracleTapStreamMetadata(FlextModels.Entity):
@@ -43,6 +182,23 @@ class FlextTapOracleModels(FlextModels):
         Extends Oracle table metadata with tap-specific information
         for Singer streaming operations and replication configuration.
         """
+
+        # Pydantic 2.11 Configuration - Stream Metadata Features
+        model_config = ConfigDict(
+            validate_assignment=True,
+            extra="forbid",
+            frozen=False,
+            json_schema_extra={
+                "description": "Oracle Singer stream metadata with replication support",
+                "examples": [
+                    {
+                        "stream_name": "users",
+                        "table_name": "USERS",
+                        "replication_method": "INCREMENTAL",
+                    }
+                ],
+            },
+        )
 
         # Singer stream configuration
         stream_name: str = Field(..., description="Singer stream name")
@@ -66,6 +222,36 @@ class FlextTapOracleModels(FlextModels):
             default=None, description="Estimated row count"
         )
         column_count: int | None = Field(default=None, description="Number of columns")
+
+        @computed_field
+        @property
+        def stream_metadata_summary(self) -> dict[str, Any]:
+            """Oracle stream metadata summary."""
+            return {
+                "stream_name": self.stream_name,
+                "table_reference": f"{self.schema_name}.{self.table_name}"
+                if self.schema_name
+                else self.table_name,
+                "extraction_type": self.replication_method,
+                "is_incremental": self.replication_method == "INCREMENTAL",
+                "replication_column": self.replication_key,
+                "selected_for_extraction": self.is_selected,
+                "estimated_volume": {
+                    "rows": self.estimated_rows,
+                    "columns": self.column_count,
+                },
+            }
+
+        @model_validator(mode="after")
+        def validate_stream_metadata(self) -> Self:
+            """Validate Oracle stream metadata."""
+            if self.replication_method == "INCREMENTAL" and not self.replication_key:
+                msg = "Incremental replication requires a replication_key"
+                raise ValueError(msg)
+            if self.replication_method == "FULL_TABLE" and self.replication_key:
+                msg = "Full table replication should not have replication_key"
+                raise ValueError(msg)
+            return self
 
         @field_validator("stream_name")
         @classmethod
@@ -116,6 +302,23 @@ class FlextTapOracleModels(FlextModels):
     class OracleTapDiscoveryConfig(FlextModels.BaseConfig):
         """Configuration for Oracle tap discovery operations."""
 
+        # Pydantic 2.11 Configuration - Discovery Features
+        model_config = ConfigDict(
+            validate_assignment=True,
+            extra="forbid",
+            frozen=False,
+            json_schema_extra={
+                "description": "Oracle database discovery configuration",
+                "examples": [
+                    {
+                        "schema_names": ["HR", "SALES"],
+                        "include_views": True,
+                        "max_tables": 100,
+                    }
+                ],
+            },
+        )
+
         # Discovery scope
         schema_names: list[str] = Field(
             default_factory=list, description="Oracle schemas to discover"
@@ -146,8 +349,55 @@ class FlextTapOracleModels(FlextModels):
             default=True, description="Enable parallel discovery"
         )
 
+        @computed_field
+        @property
+        def discovery_scope_summary(self) -> dict[str, Any]:
+            """Oracle discovery scope summary."""
+            return {
+                "target_schemas": len(self.schema_names),
+                "include_patterns": len(self.table_patterns),
+                "exclude_patterns": len(self.exclude_patterns),
+                "discovery_options": {
+                    "include_views": self.include_views,
+                    "include_system_tables": self.include_system_tables,
+                    "max_tables": self.max_tables,
+                },
+                "performance": {
+                    "timeout_seconds": self.discovery_timeout,
+                    "parallel_enabled": self.parallel_discovery,
+                },
+            }
+
+        @model_validator(mode="after")
+        def validate_discovery_config(self) -> Self:
+            """Validate Oracle discovery configuration."""
+            if self.max_tables <= 0:
+                msg = "Max tables must be positive"
+                raise ValueError(msg)
+            if self.discovery_timeout <= 0:
+                msg = "Discovery timeout must be positive"
+                raise ValueError(msg)
+            return self
+
     class OracleTapExtractionConfig(FlextModels.BaseConfig):
         """Configuration for Oracle tap extraction operations."""
+
+        # Pydantic 2.11 Configuration - Extraction Features
+        model_config = ConfigDict(
+            validate_assignment=True,
+            extra="forbid",
+            frozen=False,
+            json_schema_extra={
+                "description": "Oracle database extraction configuration",
+                "examples": [
+                    {
+                        "batch_size": 10000,
+                        "parallel_streams": 4,
+                        "incremental_column": "UPDATED_AT",
+                    }
+                ],
+            },
+        )
 
         # Extraction parameters
         batch_size: int = Field(default=10000, description="Number of rows per batch")
@@ -171,8 +421,60 @@ class FlextTapOracleModels(FlextModels):
             default=None, description="Bookmark value for incremental extraction"
         )
 
+        @computed_field
+        @property
+        def extraction_config_summary(self) -> dict[str, Any]:
+            """Oracle extraction configuration summary."""
+            return {
+                "batch_processing": {
+                    "batch_size": self.batch_size,
+                    "max_rows": self.max_rows,
+                    "unlimited": self.max_rows is None,
+                },
+                "performance": {
+                    "parallel_streams": self.parallel_streams,
+                    "query_hints_enabled": self.enable_query_hints,
+                },
+                "incremental_settings": {
+                    "column": self.incremental_column,
+                    "bookmark": self.incremental_bookmark,
+                    "incremental_enabled": bool(self.incremental_column),
+                },
+            }
+
+        @model_validator(mode="after")
+        def validate_extraction_config(self) -> Self:
+            """Validate Oracle extraction configuration."""
+            if self.batch_size <= 0:
+                msg = "Batch size must be positive"
+                raise ValueError(msg)
+            if self.parallel_streams <= 0:
+                msg = "Parallel streams must be positive"
+                raise ValueError(msg)
+            if self.max_rows is not None and self.max_rows <= 0:
+                msg = "Max rows must be positive when specified"
+                raise ValueError(msg)
+            return self
+
     class OracleTapPerformanceMetrics(FlextModels.BaseModel):
         """Performance metrics for Oracle tap operations."""
+
+        # Pydantic 2.11 Configuration - Performance Features
+        model_config = ConfigDict(
+            validate_assignment=True,
+            extra="forbid",
+            frozen=False,
+            json_schema_extra={
+                "description": "Oracle tap performance metrics with comprehensive monitoring",
+                "examples": [
+                    {
+                        "extraction_id": "ext_123",
+                        "total_records": 50000,
+                        "avg_records_per_second": 1000.0,
+                    }
+                ],
+            },
+        )
 
         # Extraction metrics
         extraction_id: str = Field(description="Unique extraction identifier")
@@ -204,12 +506,74 @@ class FlextTapOracleModels(FlextModels):
             default=0.0, description="Total Oracle query execution time"
         )
 
+        @computed_field
+        @property
+        def performance_analysis_summary(self) -> dict[str, Any]:
+            """Oracle tap performance analysis summary."""
+            duration = 0.0
+            if self.start_time and self.end_time:
+                from datetime import datetime
+
+                start = datetime.fromisoformat(self.start_time)
+                end = datetime.fromisoformat(self.end_time)
+                duration = (end - start).total_seconds()
+
+            return {
+                "extraction_performance": {
+                    "extraction_id": self.extraction_id,
+                    "duration_seconds": duration,
+                    "records_extracted": self.total_records,
+                    "bytes_processed": self.total_bytes,
+                    "streams_processed": self.streams_processed,
+                },
+                "throughput": {
+                    "records_per_second": self.avg_records_per_second,
+                    "bytes_per_second": self.avg_bytes_per_second,
+                    "mbps": self.avg_bytes_per_second / (1024 * 1024),
+                },
+                "oracle_metrics": {
+                    "connection_time": self.oracle_connection_time,
+                    "query_time": self.oracle_query_time,
+                    "query_efficiency": self.oracle_query_time / duration
+                    if duration > 0
+                    else 0,
+                },
+            }
+
+        @model_validator(mode="after")
+        def validate_performance_metrics(self) -> Self:
+            """Validate Oracle performance metrics."""
+            if self.total_records < 0:
+                msg = "Total records cannot be negative"
+                raise ValueError(msg)
+            if self.total_bytes < 0:
+                msg = "Total bytes cannot be negative"
+                raise ValueError(msg)
+            return self
+
     class OracleTapStreamInfo(FlextModels.Entity):
         """Oracle tap stream information - aggregates tap and Oracle metadata.
 
         This model combines Oracle table metadata with tap-specific stream configuration
         to provide a complete view of stream information for the tap.
         """
+
+        # Pydantic 2.11 Configuration - Stream Info Features
+        model_config = ConfigDict(
+            validate_assignment=True,
+            extra="forbid",
+            frozen=False,
+            json_schema_extra={
+                "description": "Oracle tap stream with complete metadata",
+                "examples": [
+                    {
+                        "stream_name": "users",
+                        "table_name": "USERS",
+                        "replication_method": "INCREMENTAL",
+                    }
+                ],
+            },
+        )
 
         # Stream identity
         stream_name: str = Field(..., description="Singer stream name")
@@ -236,6 +600,43 @@ class FlextTapOracleModels(FlextModels):
         last_extracted: str | None = Field(
             None, description="Last extraction timestamp"
         )
+
+        @computed_field
+        @property
+        def stream_info_summary(self) -> dict[str, Any]:
+            """Oracle stream information summary."""
+            return {
+                "stream_identity": {
+                    "name": self.stream_name,
+                    "table": self.table_name,
+                    "schema": self.schema_name,
+                    "full_reference": f"{self.schema_name}.{self.table_name}"
+                    if self.schema_name
+                    else self.table_name,
+                },
+                "extraction_config": {
+                    "selected": self.is_selected,
+                    "replication_method": self.replication_method,
+                    "replication_key": self.replication_key,
+                    "is_incremental": self.replication_method == "INCREMENTAL",
+                },
+                "table_metadata": {
+                    "estimated_rows": self.estimated_rows,
+                    "column_count": self.column_count,
+                    "last_extracted": self.last_extracted,
+                },
+            }
+
+        @model_validator(mode="after")
+        def validate_stream_info(self) -> Self:
+            """Validate Oracle stream information."""
+            if not self.stream_name:
+                msg = "Stream name is required"
+                raise ValueError(msg)
+            if not self.table_name:
+                msg = "Table name is required"
+                raise ValueError(msg)
+            return self
 
         def validate_business_rules(self: object) -> FlextResult[None]:
             """Validate stream info business rules."""
@@ -266,6 +667,23 @@ class FlextTapOracleModels(FlextModels):
         processed tap stream information.
         """
 
+        # Pydantic 2.11 Configuration - Discovery Result Features
+        model_config = ConfigDict(
+            validate_assignment=True,
+            extra="forbid",
+            frozen=False,
+            json_schema_extra={
+                "description": "Oracle discovery result with comprehensive metadata",
+                "examples": [
+                    {
+                        "schema_name": "HR",
+                        "total_tables": 15,
+                        "discovery_timestamp": "2023-01-01T00:00:00Z",
+                    }
+                ],
+            },
+        )
+
         # Discovery metadata
         schema_name: str = Field(..., description="Oracle schema that was discovered")
         discovery_timestamp: str = Field(
@@ -294,6 +712,48 @@ class FlextTapOracleModels(FlextModels):
             default_factory=list,
             description="Table names that were excluded",
         )
+
+        @computed_field
+        @property
+        def discovery_result_summary(self) -> dict[str, Any]:
+            """Oracle discovery result summary."""
+            selected_streams = len([s for s in self.stream_info if s.is_selected])
+
+            return {
+                "discovery_metadata": {
+                    "schema": self.schema_name,
+                    "timestamp": self.discovery_timestamp,
+                    "total_tables_found": self.total_tables,
+                },
+                "processing_results": {
+                    "raw_tables": len(self.oracle_tables),
+                    "stream_configurations": len(self.stream_info),
+                    "selected_streams": selected_streams,
+                    "excluded_tables": len(self.excluded_tables),
+                },
+                "filtering_efficiency": {
+                    "inclusion_rate": len(self.filtered_tables) / self.total_tables
+                    if self.total_tables > 0
+                    else 0,
+                    "exclusion_rate": len(self.excluded_tables) / self.total_tables
+                    if self.total_tables > 0
+                    else 0,
+                    "selection_rate": selected_streams / len(self.stream_info)
+                    if self.stream_info
+                    else 0,
+                },
+            }
+
+        @model_validator(mode="after")
+        def validate_discovery_result(self) -> Self:
+            """Validate Oracle discovery result."""
+            if not self.schema_name:
+                msg = "Schema name is required"
+                raise ValueError(msg)
+            if self.total_tables < 0:
+                msg = "Total tables cannot be negative"
+                raise ValueError(msg)
+            return self
 
         def validate_business_rules(self: object) -> FlextResult[None]:
             """Validate discovery result business rules."""
@@ -331,6 +791,23 @@ class FlextTapOracleModels(FlextModels):
         Tracks runtime statistics for tap execution, performance metrics,
         and operational information.
         """
+
+        # Pydantic 2.11 Configuration - Execution Stats Features
+        model_config = ConfigDict(
+            validate_assignment=True,
+            extra="forbid",
+            frozen=False,
+            json_schema_extra={
+                "description": "Oracle tap execution statistics with performance tracking",
+                "examples": [
+                    {
+                        "execution_id": "exec_123",
+                        "streams_processed": 5,
+                        "total_records": 100000,
+                    }
+                ],
+            },
+        )
 
         # Execution metadata
         execution_id: str = Field(..., description="Unique execution identifier")
@@ -379,6 +856,64 @@ class FlextTapOracleModels(FlextModels):
             default=0.0,
             description="Result processing time",
         )
+
+        @computed_field
+        @property
+        def execution_stats_summary(self) -> dict[str, Any]:
+            """Oracle tap execution statistics summary."""
+            success_rate = 0.0
+            if self.streams_processed > 0:
+                successful_streams = self.streams_processed - len(self.failed_streams)
+                success_rate = successful_streams / self.streams_processed
+
+            return {
+                "execution_overview": {
+                    "execution_id": self.execution_id,
+                    "duration_seconds": self.duration_seconds,
+                    "status": "completed" if self.end_timestamp else "running",
+                },
+                "volume_metrics": {
+                    "streams_processed": self.streams_processed,
+                    "total_records": self.total_records,
+                    "total_bytes": self.total_bytes,
+                    "avg_records_per_stream": self.total_records
+                    / self.streams_processed
+                    if self.streams_processed > 0
+                    else 0,
+                },
+                "performance_metrics": {
+                    "records_per_second": self.avg_records_per_second,
+                    "bytes_per_second": self.avg_bytes_per_second,
+                    "mbps": self.avg_bytes_per_second / (1024 * 1024),
+                },
+                "quality_metrics": {
+                    "success_rate": success_rate,
+                    "errors_encountered": self.errors_encountered,
+                    "failed_streams": len(self.failed_streams),
+                    "error_rate": self.errors_encountered / self.total_records
+                    if self.total_records > 0
+                    else 0,
+                },
+                "oracle_metrics": {
+                    "connection_time": self.oracle_connection_time,
+                    "query_time": self.oracle_query_time,
+                    "processing_time": self.oracle_result_processing_time,
+                    "query_efficiency": self.oracle_query_time / self.duration_seconds
+                    if self.duration_seconds > 0
+                    else 0,
+                },
+            }
+
+        @model_validator(mode="after")
+        def validate_execution_stats(self) -> Self:
+            """Validate Oracle execution statistics."""
+            if not self.execution_id:
+                msg = "Execution ID is required"
+                raise ValueError(msg)
+            if self.streams_processed < 0:
+                msg = "Streams processed cannot be negative"
+                raise ValueError(msg)
+            return self
 
         def validate_business_rules(self: object) -> FlextResult[None]:
             """Validate execution stats business rules."""

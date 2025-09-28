@@ -19,7 +19,7 @@ from flext_meltano import (
     FlextTap,
     create_flext_tap_config,
 )
-from flext_tap_oracle.tap_config import FlextTapOracleConfig
+from flext_tap_oracle.config import FlextTapOracleConfig
 from flext_tap_oracle.typings import FlextTapOracleTypes
 
 logger = FlextLogger(__name__)

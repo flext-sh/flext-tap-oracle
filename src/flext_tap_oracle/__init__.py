@@ -21,6 +21,15 @@ from flext_meltano import (
     FlextMeltanoConfig,
 )
 
+# =====================================================
+# NEW PEP8 CONSOLIDATED STRUCTURE - PRIMARY IMPORTS
+# =====================================================
+# Configuration - Comprehensive configuration management
+from flext_tap_oracle.config import (
+    FlextTapOracleConfig,
+    create_oracle_tap_config,
+)
+
 # Models - Data models and types
 # Models - Unified models collection
 # Additional model imports from models for backward compatibility
@@ -46,20 +55,6 @@ from flext_tap_oracle.tap_client import (
     OracleTapService,
     create_oracle_discovery_service,
     create_oracle_tap_service,
-)
-
-# =====================================================
-# NEW PEP8 CONSOLIDATED STRUCTURE - PRIMARY IMPORTS
-# =====================================================
-# Configuration - Comprehensive configuration management
-from flext_tap_oracle.tap_config import (
-    Config,
-    # Backward compatibility aliases
-    FlextOracleTapConfig,
-    FlextOracleTapConfiguration,
-    FlextTapOracleConfig,
-    TapOracleConfig,
-    create_oracle_tap_config,
 )
 
 # Exceptions - Comprehensive error handling
@@ -112,7 +107,6 @@ _LEGACY_IMPORTS_AVAILABLE = False  # Simplified for type checking
 _LEGACY_FACADE_AVAILABLE = False  # Simplified for type checking
 
 __all__ = [
-    "Config",  # Short alias to FlextTapOracleConfig
     # Infrastructure from flext-db-oracle
     "FlextDbOracleApi",
     "FlextDbOracleConfig",
@@ -124,14 +118,9 @@ __all__ = [
     "FlextOracleDiscoveryService",
     "FlextOracleStream",
     "FlextOracleTableFilterService",
-    "FlextOracleTapBaseService",  # Ultra-simple alias for test compatibility
     "FlextOracleTapClient",
-    "FlextOracleTapConfig",  # Legacy alias
-    "FlextOracleTapConfiguration",
     "FlextOracleTapService",  # Main service class
     # ===== NEW PEP8 CONSOLIDATED STRUCTURE =====
-    # Main Tap Classes
-    "FlextTapOracle",
     # Configuration
     "FlextTapOracleConfig",
     "FlextTapOracleConfigurationError",
@@ -154,8 +143,6 @@ __all__ = [
     "OracleTapService",  # Short alias to FlextOracleTapService
     "TapModels",  # Backward compatibility alias
     "TapOracleColumn",
-    # ===== BACKWARD COMPATIBILITY =====
-    "TapOracleConfig",
     "TapOracleSchema",
     "TapOracleTable",
     "TapReplicationMethod",
