@@ -61,7 +61,7 @@ class FlextTapOracleConfig(FlextConfig):
     )
 
     oracle_port: int = Field(
-        default=1521,
+        default=FlextConstants.Platform.DATABASE_DEFAULT_PORT,
         ge=1,
         le=65535,
         description="Oracle database port",
@@ -101,7 +101,7 @@ class FlextTapOracleConfig(FlextConfig):
     )
 
     max_parallel_streams: int = Field(
-        default=4,
+        default=FlextConstants.Container.DEFAULT_WORKERS,
         ge=1,
         le=FlextConstants.Container.MAX_WORKERS,
         description="Maximum parallel streams for extraction",
@@ -129,7 +129,7 @@ class FlextTapOracleConfig(FlextConfig):
 
     # Performance Configuration using FlextConstants
     fetch_size: int = Field(
-        default=10000,
+        default=FlextConstants.Performance.BatchProcessing.MAX_ITEMS,
         ge=100,
         le=100000,
         description="Oracle fetch size for queries",
@@ -198,7 +198,9 @@ class FlextTapOracleConfig(FlextConfig):
         if v is None:
             return v
 
-        max_schemas = 100  # Reasonable schema limit
+        max_schemas = (
+            FlextConstants.Limits.MAX_LIST_SIZE // 10
+        )  # Reasonable schema limit
         if len(v) > max_schemas:
             msg = f"Too many schemas specified: {len(v)} > {max_schemas}"
             raise ValueError(msg)
@@ -224,8 +226,8 @@ class FlextTapOracleConfig(FlextConfig):
             raise ValueError(msg)
 
         # Validate parallel streams vs batch size
-        max_safe_parallel = 8
-        max_safe_batch = 50000
+        max_safe_parallel = FlextConstants.Container.MAX_WORKERS
+        max_safe_batch = FlextConstants.Performance.BatchProcessing.MAX_ITEMS // 2
         if (
             self.max_parallel_streams > max_safe_parallel
             and self.batch_size > max_safe_batch
@@ -257,8 +259,8 @@ class FlextTapOracleConfig(FlextConfig):
                 )
 
             # Validate performance settings
-            max_safe_parallel = 8
-            max_safe_batch = 50000
+            max_safe_parallel = FlextConstants.Container.MAX_WORKERS
+            max_safe_batch = FlextConstants.Performance.BatchProcessing.MAX_ITEMS // 2
             if (
                 self.max_parallel_streams > max_safe_parallel
                 and self.batch_size > max_safe_batch
@@ -337,20 +339,21 @@ class FlextTapOracleConfig(FlextConfig):
         if environment == "production":
             env_overrides.update({
                 "batch_size": FlextConstants.Performance.DEFAULT_BATCH_SIZE,
-                "max_parallel_streams": 4,
-                "query_timeout": 300,  # 5 minutes for production
+                "max_parallel_streams": FlextConstants.Container.DEFAULT_WORKERS,
+                "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT
+                * 10,  # 5 minutes for production
             })
         elif environment == "development":
             env_overrides.update({
-                "batch_size": 1000,  # Smaller batches for development
+                "batch_size": FlextConstants.Performance.BatchProcessing.DEFAULT_SIZE,  # Smaller batches for development
                 "max_parallel_streams": 1,
-                "query_timeout": 60,
+                "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT * 2,
             })
         elif environment == "staging":
             env_overrides.update({
                 "batch_size": FlextConstants.Performance.DEFAULT_BATCH_SIZE // 2,
                 "max_parallel_streams": 2,
-                "query_timeout": 180,
+                "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT * 6,
             })
 
         all_overrides = {**env_overrides, **overrides}
@@ -368,12 +371,12 @@ class FlextTapOracleConfig(FlextConfig):
         """Create configuration for development environment."""
         dev_overrides: dict[str, object] = {
             "oracle_host": "localhost",
-            "oracle_port": 1521,
+            "oracle_port": FlextConstants.Platform.DATABASE_DEFAULT_PORT,
             "oracle_service_name": "ORCL",
             "oracle_username": "tap_dev",
-            "batch_size": 1000,
+            "batch_size": FlextConstants.Performance.BatchProcessing.DEFAULT_SIZE,
             "max_parallel_streams": 1,
-            "query_timeout": 60,
+            "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT * 2,
             **overrides,
         }
         return cls.get_or_create_shared_instance(
@@ -384,10 +387,10 @@ class FlextTapOracleConfig(FlextConfig):
     def create_for_production(cls, **overrides: object) -> Self:
         """Create configuration for production environment."""
         prod_overrides: dict[str, object] = {
-            "batch_size": 10000,
-            "max_parallel_streams": 4,
-            "query_timeout": 300,
-            "fetch_size": 50000,
+            "batch_size": FlextConstants.Performance.BatchProcessing.MAX_ITEMS,
+            "max_parallel_streams": FlextConstants.Container.DEFAULT_WORKERS,
+            "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT * 10,
+            "fetch_size": FlextConstants.Performance.BatchProcessing.MAX_ITEMS * 5,
             "enable_incremental": True,
             **overrides,
         }
@@ -400,12 +403,12 @@ class FlextTapOracleConfig(FlextConfig):
         """Create configuration for testing environment."""
         test_overrides: dict[str, object] = {
             "oracle_host": "test-oracle",
-            "oracle_port": 1521,
+            "oracle_port": FlextConstants.Platform.DATABASE_DEFAULT_PORT,
             "oracle_service_name": "XE",
             "oracle_username": "test_user",
-            "batch_size": 100,
+            "batch_size": FlextConstants.Performance.BatchProcessing.DEFAULT_SIZE // 10,
             "max_parallel_streams": 1,
-            "query_timeout": 30,
+            "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT,
             **overrides,
         }
         return cls.get_or_create_shared_instance(

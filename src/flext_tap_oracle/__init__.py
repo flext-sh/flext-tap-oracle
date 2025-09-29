@@ -8,51 +8,36 @@ from __future__ import annotations
 
 # Re-export flext-db-oracle infrastructure that this tap uses extensively
 from flext_db_oracle import (
-    # Core Oracle database functionality
     FlextDbOracleApi,
     FlextDbOracleConfig,
-    # Note: "Column", QueryResult, Schema, Table are accessible via FlextDbOracleModels
 )
 
-# === FLEXT-MELTANO INTEGRATION ===
-# Import only what exists and is actually used
+# FLEXT-MELTANO INTEGRATION
 from flext_meltano import (
     FlextMeltanoBridge,
     FlextMeltanoConfig,
 )
 
-# =====================================================
-# NEW PEP8 CONSOLIDATED STRUCTURE - PRIMARY IMPORTS
-# =====================================================
-# Configuration - Comprehensive configuration management
+# PRIMARY IMPORTS - [Project]Utilities, [Project]Config, [Project]Models, [Project]Typings patterns
 from flext_tap_oracle.config import (
     FlextTapOracleConfig,
     create_oracle_tap_config,
 )
-
-# Models - Data models and types
-# Models - Unified models collection
-# Additional model imports from models for backward compatibility
-# Factory functions and type aliases from consolidated models
 from flext_tap_oracle.models import (
     FlextTapOracleModels,
-    FlextTapOracleModels as TapModels,  # alias for compatibility
-    FlextTapOracleUtilities,
     TapOracleColumn,
     TapOracleSchema,
     TapOracleTable,
     TapReplicationMethod,
 )
+from flext_tap_oracle.protocols import FlextTapOracleProtocols
 
 # Client - Main tap implementation with domain services
 from flext_tap_oracle.tap_client import (
     FlextOracleConnectionTestService,
     FlextOracleDiscoveryService,
     FlextOracleTableFilterService,
-    # Backward compatibility aliases
-    FlextOracleTapClient,
     FlextOracleTapService,
-    OracleTapService,
     create_oracle_discovery_service,
     create_oracle_tap_service,
 )
@@ -73,75 +58,38 @@ from flext_tap_oracle.tap_exceptions import (
 
 # Streams - Oracle stream definitions and processing
 from flext_tap_oracle.tap_streams import (
-    # Backward compatibility
     FlextOracleStream,
-    OracleStream,
     create_oracle_stream,
     create_oracle_stream_from_table,
 )
-
-# Core FLEXT imports
 from flext_tap_oracle.typings import FlextTapOracleTypes
-
-# Main alias for external usage
-FlextTapOracle = FlextOracleTapService
-
-# Ultra-simple aliases for test compatibility
-FlextOracleTapBaseService = FlextOracleTapService
-
-# Streams - Oracle stream definitions and processing
-# Models - Data models and types
-
-# Exceptions - Comprehensive error handling
-
-# Factory functions and type aliases from tap_models
-
-# =====================================================
-# BACKWARD COMPATIBILITY - OLD IMPORTS STILL WORK
-# =====================================================
-
-# Legacy imports moved to _legacy/ directory for backward compatibility
-_LEGACY_IMPORTS_AVAILABLE = False  # Simplified for type checking
-
-# TEMPORARY FACADE for compatibility during refactoring (will be removed)
-_LEGACY_FACADE_AVAILABLE = False  # Simplified for type checking
+from flext_tap_oracle.utilities import FlextTapOracleUtilities
 
 __all__ = [
-    # Infrastructure from flext-db-oracle
     "FlextDbOracleApi",
     "FlextDbOracleConfig",
-    # Meltano infrastructure
     "FlextMeltanoBridge",
     "FlextMeltanoConfig",
-    # Client & Services
     "FlextOracleConnectionTestService",
     "FlextOracleDiscoveryService",
     "FlextOracleStream",
     "FlextOracleTableFilterService",
-    "FlextOracleTapClient",
-    "FlextOracleTapService",  # Main service class
-    # ===== NEW PEP8 CONSOLIDATED STRUCTURE =====
-    # Configuration
+    "FlextOracleTapService",
     "FlextTapOracleConfig",
     "FlextTapOracleConfigurationError",
     "FlextTapOracleConnectionError",
     "FlextTapOracleDiscoveryError",
-    # Exceptions
     "FlextTapOracleError",
     "FlextTapOracleExtractionError",
     "FlextTapOracleMetadataError",
-    "FlextTapOracleModels",  # Standardized [Project]Models pattern
+    "FlextTapOracleModels",
     "FlextTapOracleProcessingError",
+    "FlextTapOracleProtocols",
     "FlextTapOracleQueryError",
     "FlextTapOracleStreamError",
     "FlextTapOracleTypes",
-    "FlextTapOracleUtilities",  # Standardized [Project]Utilities pattern
+    "FlextTapOracleUtilities",
     "FlextTapOracleValidationError",
-    # Streams
-    "OracleStream",
-    # Models - Access via FlextTapOracleModels.ClassName
-    "OracleTapService",  # Short alias to FlextOracleTapService
-    "TapModels",  # Backward compatibility alias
     "TapOracleColumn",
     "TapOracleSchema",
     "TapOracleTable",
@@ -152,6 +100,3 @@ __all__ = [
     "create_oracle_tap_config",
     "create_oracle_tap_service",
 ]
-
-# Note: FlextOracleTapBaseService is conditionally imported above but not exported in __all__
-# to avoid type checking issues when not available
