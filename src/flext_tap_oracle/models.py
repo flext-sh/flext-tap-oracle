@@ -148,7 +148,9 @@ class FlextTapOracleModels(FlextModels):
         return self
 
     @field_serializer("*", when_used="json")
-    def serialize_with_oracle_metadata(self, value: Any, _info) -> Any:
+    def serialize_with_oracle_metadata(
+        self, value: Any, _info: FieldSerializationInfo
+    ) -> Any:
         """Add Singer Oracle tap metadata to all serialized fields."""
         if isinstance(value, dict):
             return {
