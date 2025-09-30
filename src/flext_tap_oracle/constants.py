@@ -9,6 +9,7 @@ from __future__ import annotations
 from typing import ClassVar, Final
 
 from flext_core import FlextConstants
+from flext_db_oracle import FlextDbOracleConstants
 
 
 class FlextTapOracleConstants(FlextConstants):

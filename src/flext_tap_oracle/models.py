@@ -6,9 +6,16 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import Literal, Self
+from typing import Any, Literal, Self
 
-from pydantic import Field, field_validator, model_validator
+from pydantic import (
+    ConfigDict,
+    Field,
+    FieldSerializationInfo,
+    computed_field,
+    field_validator,
+    model_validator,
+)
 
 from flext_core import FlextConstants, FlextModels, FlextResult, FlextTypes
 from flext_db_oracle import (
