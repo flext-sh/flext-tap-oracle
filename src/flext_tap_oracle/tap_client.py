@@ -17,6 +17,7 @@ from flext_meltano import (
     FlextMeltanoTypeAdapters,
     FlextTap,
 )
+
 from flext_tap_oracle.config import FlextTapOracleConfig
 from flext_tap_oracle.typings import FlextTapOracleTypes
 

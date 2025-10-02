@@ -1,103 +1,178 @@
 [build-system]
-requires = [ "poetry-core>=1.9.0",]
-build-backend = "poetry.core.masonry.api"
+    build-backend = "poetry.core.masonry.api"
+    requires = [
+        "poetry-core>=1.9.0",
+    ]
 
 [project]
-name = "flext-tap-oracle"
-version = "0.9.0"
-description = "FLEXT Tap Oracle - Modern Singer Tap for Oracle Database"
-readme = "README.md"
-requires-python = ">=3.13,<3.14"
-dependencies = [ "flext-core>=0.8.0", "flext-meltano>=0.9.0", "flext-db-oracle>=0.9.0", "flext-observability>=0.9.0", "pydantic>=2.11.0",]
-keywords = [ "flext", "singer", "tap", "oracle", "database", "enterprise", "integration", "etl",]
-classifiers = [ "Development Status :: 5 - Production/Stable", "Intended Audience :: Developers", "License :: OSI Approved :: MIT License", "Operating System :: OS Independent", "Programming Language :: Python :: 3.13", "Programming Language :: Python :: 3 :: Only", "Topic :: Software Development :: Libraries :: Python Modules", "Topic :: Database", "Topic :: System :: Systems Administration", "Topic :: Office/Business", "Typing :: Typed",]
-[[project.authors]]
-name = "FLEXT Team"
-email = "team@flext.sh"
+    classifiers = [
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python :: 3 :: Only",
+        "Programming Language :: Python :: 3.13",
+        "Topic :: Database",
+        "Topic :: Office/Business",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        "Topic :: System :: Systems Administration",
+        "Typing :: Typed",
+    ]
+    dependencies = [
+        "flext-core>=0.8.0",
+        "flext-db-oracle>=0.9.0",
+        "flext-meltano>=0.9.0",
+        "flext-observability>=0.9.0",
+        "pydantic>=2.11.0",
+    ]
+    description = "FLEXT Tap Oracle - Modern Singer Tap for Oracle Database"
+    keywords = [
+        "database",
+        "enterprise",
+        "etl",
+        "flext",
+        "integration",
+        "oracle",
+        "singer",
+        "tap",
+    ]
+    name = "flext-tap-oracle"
+    readme = "README.md"
+    requires-python = ">=3.13,<3.14"
+    version = "0.9.0"
+    [[project.authors]]
+        email = "team@flext.sh"
+        name  = "FLEXT Team"
 
-[[project.maintainers]]
-name = "FLEXT Team"
-email = "team@flext.sh"
+    [[project.maintainers]]
+        email = "team@flext.sh"
+        name  = "FLEXT Team"
 
-[project.license]
-text = "MIT"
+    [project.license]
+        text = "MIT"
 
-[project.urls]
-Homepage = "https://github.com/flext-sh/flext"
-Repository = "https://github.com/flext-sh/flext"
-Documentation = "https://github.com/flext-sh/flext/blob/main/README.md"
+    [project.urls]
+        Documentation = "https://github.com/flext-sh/flext/blob/main/README.md"
+        Homepage      = "https://github.com/flext-sh/flext"
+        Repository    = "https://github.com/flext-sh/flext"
 
-[project.scripts]
-tap-oracle = "flext_tap_oracle.tap:cli"
-flext-tap-oracle = "flext_tap_oracle.tap:cli"
+    [project.scripts]
+        flext-tap-oracle = "flext_tap_oracle.tap:cli"
+        tap-oracle       = "flext_tap_oracle.tap:cli"
 
 [tool.ruff]
-extend = "../ruff-shared.toml"
+    extend = "../ruff-shared.toml"
 
 [tool.pyrefly]
-python-version = "3.13"
-search-path = [ "src", "tests",]
+    python-version = "3.13"
+    search-path = [
+        "src",
+        "tests",
+    ]
 
 [tool.poetry.dependencies]
-python = ">=3.13,<3.14"
-pydantic = ">=2.11.0"
+    pydantic = ">=2.11.0"
+    python   = ">=3.13,<3.14"
 
 [tool.pytest.ini_options]
-minversion = "8.0"
-addopts = [ "-ra", "--strict-markers", "--strict-config", "--maxfail=1", "--tb=short",]
-markers = [ "unit: Unit tests", "integration: Integration tests", "slow: Slow tests", "smoke: Smoke tests", "e2e: End-to-end tests", "performance: Performance tests", "stress: Stress tests", "error_handling: Error handling tests", "cli: CLI tests", "memory: Memory efficiency tests", "oracle: marks tests as Oracle database tests", "singer: marks tests as Singer protocol tests", "tap: marks tests as tap tests", "stream: marks tests as stream tests", "discovery: marks tests as entity discovery tests", "requires_oracle: tests that need Oracle database access",]
+    addopts = [
+        "--maxfail=1",
+        "--strict-config",
+        "--strict-markers",
+        "--tb=short",
+        "-ra",
+    ]
+    markers = [
+        "cli: CLI tests",
+        "discovery: marks tests as entity discovery tests",
+        "e2e: End-to-end tests",
+        "error_handling: Error handling tests",
+        "integration: Integration tests",
+        "memory: Memory efficiency tests",
+        "oracle: marks tests as Oracle database tests",
+        "performance: Performance tests",
+        "requires_oracle: tests that need Oracle database access",
+        "singer: marks tests as Singer protocol tests",
+        "slow: Slow tests",
+        "smoke: Smoke tests",
+        "stream: marks tests as stream tests",
+        "stress: Stress tests",
+        "tap: marks tests as tap tests",
+        "unit: Unit tests",
+    ]
+    minversion = "8.0"
 
 [tool.coverage.run]
-source = [ "src",]
-branch = true
-omit = [ "*/tests/*", "*/test_*", "*/__pycache__/*", "*/site-packages/*",]
+    branch = true
+    omit = [
+        "*/__pycache__/*",
+        "*/site-packages/*",
+        "*/test_*",
+        "*/tests/*",
+    ]
+    source = [
+        "src",
+    ]
 
 [tool.coverage.report]
-exclude_lines = [ "pragma: no cover", "def __repr__", "if self.debug:", "if settings.DEBUG", "raise AssertionError", "raise NotImplementedError", "if 0:", "if __name__ == .__main__.:", "class .*\\bProtocol\\):", "@(abc\\.)?abstractmethod",]
-show_missing = true
-precision = 2
+    exclude_lines = [
+        "@(abc\\.)?abstractmethod",
+        "class .*\\bProtocol\\):",
+        "def __repr__",
+        "if 0:",
+        "if __name__ == .__main__.:",
+        "if self.debug:",
+        "if settings.DEBUG",
+        "pragma: no cover",
+        "raise AssertionError",
+        "raise NotImplementedError",
+    ]
+    precision = 2
+    show_missing = true
 
 [tool.coverage.html]
-directory = "htmlcov"
+    directory = "htmlcov"
 
-[tool.ruff.lint.isort]
-known-first-party = [ "flext_tap_oracle",]
+    [tool.ruff.lint.isort]
+        known-first-party = [
+            "flext_tap_oracle",
+        ]
 
-[tool.poetry.dependencies.flext-core]
-path = "../flext-core"
-develop = true
+    [tool.poetry.dependencies.flext-core]
+        develop = true
+        path    = "../flext-core"
 
-[tool.poetry.dependencies.flext-meltano]
-path = "../flext-meltano"
-develop = true
+    [tool.poetry.dependencies.flext-meltano]
+        develop = true
+        path    = "../flext-meltano"
 
-[tool.poetry.dependencies.flext-observability]
-path = "../flext-observability"
-develop = true
+    [tool.poetry.dependencies.flext-observability]
+        develop = true
+        path    = "../flext-observability"
 
-[tool.poetry.dependencies.flext-db-oracle]
-path = "../flext-db-oracle"
-develop = true
+    [tool.poetry.dependencies.flext-db-oracle]
+        develop = true
+        path    = "../flext-db-oracle"
 
 [tool.poetry.group.dev.dependencies]
-pytest = ">=8.0.0"
-pytest-cov = ">=4.0.0"
-pytest-mock = ">=3.12.0"
-pytest-xdist = ">=3.6.0"
-pytest-timeout = ">=2.3.1"
-pytest-sugar = ">=1.0.0"
-pytest-clarity = ">=1.0.1"
-pytest-benchmark = ">=4.0.0"
-ruff = ">=0.8.0"
-pre-commit = ">=4.0.0"
-bandit = ">=1.8.0"
-mkdocs = ">=1.6.0"
-mkdocs-material = ">=9.5.0"
-mkdocs-mermaid2-plugin = ">=1.1.0"
-black = ">=25.1.0"
-vulture = ">=2.14"
-radon = ">=6.0.1"
-detect-secrets = ">=1.5.0"
-pip-audit = ">=2.9.0"
-commitizen = ">=4.8.3"
-pyrefly = "^0.34.0"
+    bandit                 = ">=1.8.0"
+    black                  = ">=25.1.0"
+    commitizen             = ">=4.8.3"
+    detect-secrets         = ">=1.5.0"
+    mkdocs                 = ">=1.6.0"
+    mkdocs-material        = ">=9.5.0"
+    mkdocs-mermaid2-plugin = ">=1.1.0"
+    pip-audit              = ">=2.9.0"
+    pre-commit             = ">=4.0.0"
+    pyrefly                = "^0.34.0"
+    pytest                 = ">=8.0.0"
+    pytest-benchmark       = ">=4.0.0"
+    pytest-clarity         = ">=1.0.1"
+    pytest-cov             = ">=4.0.0"
+    pytest-mock            = ">=3.12.0"
+    pytest-sugar           = ">=1.0.0"
+    pytest-timeout         = ">=2.3.1"
+    pytest-xdist           = ">=3.6.0"
+    radon                  = ">=6.0.1"
+    ruff                   = ">=0.8.0"
+    vulture                = ">=2.14"

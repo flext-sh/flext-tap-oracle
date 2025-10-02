@@ -6,19 +6,14 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-# Re-export flext-db-oracle infrastructure that this tap uses extensively
 from flext_db_oracle import (
     FlextDbOracleApi,
     FlextDbOracleConfig,
 )
-
-# FLEXT-MELTANO INTEGRATION
 from flext_meltano import (
     FlextMeltanoBridge,
     FlextMeltanoConfig,
 )
-
-# PRIMARY IMPORTS - [Project]Utilities, [Project]Config, [Project]Models, [Project]Typings patterns
 from flext_tap_oracle.config import (
     FlextTapOracleConfig,
     create_oracle_tap_config,
@@ -31,8 +26,6 @@ from flext_tap_oracle.models import (
     TapReplicationMethod,
 )
 from flext_tap_oracle.protocols import FlextTapOracleProtocols
-
-# Client - Main tap implementation with domain services
 from flext_tap_oracle.tap_client import (
     FlextOracleConnectionTestService,
     FlextOracleDiscoveryService,
@@ -41,8 +34,6 @@ from flext_tap_oracle.tap_client import (
     create_oracle_discovery_service,
     create_oracle_tap_service,
 )
-
-# Exceptions - Comprehensive error handling
 from flext_tap_oracle.tap_exceptions import (
     FlextTapOracleConfigurationError,
     FlextTapOracleConnectionError,
@@ -55,8 +46,6 @@ from flext_tap_oracle.tap_exceptions import (
     FlextTapOracleStreamError,
     FlextTapOracleValidationError,
 )
-
-# Streams - Oracle stream definitions and processing
 from flext_tap_oracle.tap_streams import (
     FlextOracleStream,
     create_oracle_stream,

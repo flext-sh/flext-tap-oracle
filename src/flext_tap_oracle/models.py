@@ -7,8 +7,16 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from typing import Any, Literal, Self
+from typing import Literal, Self
 
+from flext_core import FlextConstants, FlextModels, FlextResult, FlextTypes
+from flext_db_oracle import (
+    FlextDbOracleColumn,
+    FlextDbOracleQueryResult,
+    FlextDbOracleSchema,
+    FlextDbOracleTable,
+)
+from flext_meltano import FlextSingerStream as Stream
 from pydantic import (
     ConfigDict,
     Field,
@@ -19,14 +27,6 @@ from pydantic import (
     model_validator,
 )
 
-from flext_core import FlextConstants, FlextModels, FlextResult, FlextTypes
-from flext_db_oracle import (
-    FlextDbOracleColumn,
-    FlextDbOracleQueryResult,
-    FlextDbOracleSchema,
-    FlextDbOracleTable,
-)
-from flext_meltano import FlextSingerStream as Stream
 from flext_tap_oracle.utilities import FlextTapOracleUtilities
 
 
@@ -101,7 +101,7 @@ class FlextTapOracleModels(FlextModels):
 
     @computed_field
     @property
-    def oracle_tap_system_summary(self) -> dict[str, Any]:
+    def oracle_tap_system_summary(self) -> dict[str, object]:
         """Comprehensive Singer Oracle tap system summary with database extraction capabilities."""
         return {
             "total_models": self.active_oracle_tap_models_count,
@@ -163,8 +163,8 @@ class FlextTapOracleModels(FlextModels):
 
     @field_serializer("*", when_used="json")
     def serialize_with_oracle_metadata(
-        self, value: Any, _info: FieldSerializationInfo
-    ) -> Any:
+        self, value: object, _info: FieldSerializationInfo
+    ) -> object:
         """Add Singer Oracle tap metadata to all serialized fields."""
         if isinstance(value, dict):
             return {
@@ -218,7 +218,7 @@ class FlextTapOracleModels(FlextModels):
 
         # Singer stream configuration
         stream_name: str = Field(..., description="Singer stream name")
-        replication_method: Literal["FULL_TABLE", "INCREMENTAL"] = Field(
+        replication_method: Literal[FULL_TABLE, INCREMENTAL] = Field(
             default="FULL_TABLE",
             description="Replication method for this stream",
         )
@@ -241,7 +241,7 @@ class FlextTapOracleModels(FlextModels):
 
         @computed_field
         @property
-        def stream_metadata_summary(self) -> dict[str, Any]:
+        def stream_metadata_summary(self) -> dict[str, object]:
             """Oracle stream metadata summary."""
             return {
                 "stream_name": self.stream_name,
@@ -369,7 +369,7 @@ class FlextTapOracleModels(FlextModels):
 
         @computed_field
         @property
-        def discovery_scope_summary(self) -> dict[str, Any]:
+        def discovery_scope_summary(self) -> dict[str, object]:
             """Oracle discovery scope summary."""
             return {
                 "target_schemas": len(self.schema_names),
@@ -444,7 +444,7 @@ class FlextTapOracleModels(FlextModels):
 
         @computed_field
         @property
-        def extraction_config_summary(self) -> dict[str, Any]:
+        def extraction_config_summary(self) -> dict[str, object]:
             """Oracle extraction configuration summary."""
             return {
                 "batch_processing": {
@@ -529,7 +529,7 @@ class FlextTapOracleModels(FlextModels):
 
         @computed_field
         @property
-        def performance_analysis_summary(self) -> dict[str, Any]:
+        def performance_analysis_summary(self) -> dict[str, object]:
             """Oracle tap performance analysis summary."""
             duration = 0.0
             if self.start_time and self.end_time:
@@ -606,7 +606,7 @@ class FlextTapOracleModels(FlextModels):
             default=True,
             description="Whether stream is selected for extraction",
         )
-        replication_method: Literal["FULL_TABLE", "INCREMENTAL"] = Field(
+        replication_method: Literal[FULL_TABLE, INCREMENTAL] = Field(
             default="FULL_TABLE",
             description="Replication method for this stream",
         )
@@ -624,7 +624,7 @@ class FlextTapOracleModels(FlextModels):
 
         @computed_field
         @property
-        def stream_info_summary(self) -> dict[str, Any]:
+        def stream_info_summary(self) -> dict[str, object]:
             """Oracle stream information summary."""
             return {
                 "stream_identity": {
@@ -736,7 +736,7 @@ class FlextTapOracleModels(FlextModels):
 
         @computed_field
         @property
-        def discovery_result_summary(self) -> dict[str, Any]:
+        def discovery_result_summary(self) -> dict[str, object]:
             """Oracle discovery result summary."""
             selected_streams = len([s for s in self.stream_info if s.is_selected])
 
@@ -880,7 +880,7 @@ class FlextTapOracleModels(FlextModels):
 
         @computed_field
         @property
-        def execution_stats_summary(self) -> dict[str, Any]:
+        def execution_stats_summary(self) -> dict[str, object]:
             """Oracle tap execution statistics summary."""
             success_rate = 0.0
             if self.streams_processed > 0:
@@ -1005,33 +1005,21 @@ class FlextTapOracleModels(FlextModels):
                 * 100,
             }
 
+    # Nested type aliases and additional types (moved from standalone definitions)
+    # Re-export types from flext-db-oracle with tap-specific aliases
+    TapOracleTable = FlextDbOracleTable
+    TapOracleColumn = FlextDbOracleColumn
+    TapOracleSchema = FlextDbOracleSchema
+    TapOracleQueryResult = FlextDbOracleQueryResult
+
+    # Tap-specific type definitions
+    TapReplicationMethod = Literal["FULL_TABLE", "INCREMENTAL"]
+    TapStreamSelection = Literal["selected", "automatic", "excluded"]
+    TapExecutionMode = Literal["discovery", "extraction", "test", "validate"]
+
     # Legacy type aliases for backward compatibility
     TapStreamMetadata = dict[str, object]
     TapConfiguration = dict[str, object]
-
-
-# ZERO TOLERANCE CONSOLIDATION - FlextTapOracleUtilities moved to utilities.py
-#
-# CRITICAL: FlextTapOracleUtilities was DUPLICATED between models.py and utilities.py.
-# This was a ZERO TOLERANCE violation of the user's explicit requirements.
-#
-# Note: Import moved to top of file for consistency
-
-
-# =====================================================
-# TYPE ALIASES AND ADDITIONAL TYPES
-# =====================================================
-
-# Re-export types from flext-db-oracle with tap-specific aliases
-TapOracleTable = FlextDbOracleTable
-TapOracleColumn = FlextDbOracleColumn
-TapOracleSchema = FlextDbOracleSchema
-TapOracleQueryResult = FlextDbOracleQueryResult
-
-# Tap-specific type definitions
-TapReplicationMethod = Literal["FULL_TABLE", "INCREMENTAL"]
-TapStreamSelection = Literal["selected", "automatic", "excluded"]
-TapExecutionMode = Literal["discovery", "extraction", "test", "validate"]
 
 
 # =====================================================

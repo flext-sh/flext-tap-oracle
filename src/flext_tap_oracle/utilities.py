@@ -10,7 +10,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import Any, ClassVar
+from typing import ClassVar
 
 from flext_core import (
     FlextContainer,
@@ -20,6 +20,7 @@ from flext_core import (
     FlextUtilities,
 )
 from flext_db_oracle import FlextDbOracleTable
+
 from flext_tap_oracle.models import FlextTapOracleModels
 from flext_tap_oracle.tap_exceptions import (
     FlextTapOracleConfigurationError,
@@ -58,14 +59,14 @@ class FlextTapOracleUtilities(FlextUtilities):
         self._container = FlextContainer.get_global()
         self._logger = FlextLogger(__name__)
 
-    def execute(self) -> FlextResult[dict[str, Any]]:
+    def execute(self) -> FlextResult[dict[str, object]]:
         """Execute the main domain service operation.
 
         Returns:
-            FlextResult[dict[str, Any]]: Service status and capabilities.
+            FlextResult[dict[str, object]]: Service status and capabilities.
 
         """
-        return FlextResult[dict[str, Any]].ok({
+        return FlextResult[dict[str, object]].ok({
             "status": "operational",
             "service": "flext-tap-oracle-utilities",
             "capabilities": [
@@ -234,7 +235,7 @@ class FlextTapOracleUtilities(FlextUtilities):
             oracle_table: FlextDbOracleTable,
             stream_prefix: str = "oracle",
             replication_method: str = "FULL_TABLE",
-        ) -> FlextResult[Any]:
+        ) -> FlextResult[object]:
             """Create stream info from Oracle table metadata."""
             try:
                 stream_name = f"{stream_prefix}_{oracle_table.name.lower()}"
@@ -249,18 +250,18 @@ class FlextTapOracleUtilities(FlextUtilities):
                     else None,
                 )
 
-                return FlextResult[Any].ok(stream_info)
+                return FlextResult[object].ok(stream_info)
 
             except Exception as e:
-                return FlextResult[Any].fail(
+                return FlextResult[object].fail(
                     f"Failed to create stream info from Oracle table: {e}",
                 )
 
         @staticmethod
         def create_discovery_result(
-            tables: list[Any],
+            tables: list[object],
             schema_name: str,
-        ) -> FlextResult[Any]:
+        ) -> FlextResult[object]:
             """Create discovery result from Oracle tables."""
             try:
                 # Convert tables to stream info
@@ -278,10 +279,10 @@ class FlextTapOracleUtilities(FlextUtilities):
                     stream_infos=stream_infos,
                 )
 
-                return FlextResult[Any].ok(discovery_result)
+                return FlextResult[object].ok(discovery_result)
 
             except Exception as e:
-                return FlextResult[Any].fail(
+                return FlextResult[object].fail(
                     f"Failed to create discovery result: {e}",
                 )
 
@@ -439,9 +440,9 @@ class FlextTapOracleUtilities(FlextUtilities):
             except Exception as e:
                 return FlextResult[dict].fail(f"Metrics calculation failed: {e}")
 
-    def execute(self) -> FlextResult[dict[str, Any]]:
+    def execute(self) -> FlextResult[dict[str, object]]:
         """Execute utilities service operation hronously."""
-        return FlextResult[dict[str, Any]].ok({
+        return FlextResult[dict[str, object]].ok({
             "status": "operational",
             "service": "flext-tap-oracle-utilities",
             "timestamp": "current_time",
