@@ -81,7 +81,7 @@
         "enable_circuit_breaker": true,
         "circuit_breaker_failures": 5,
         "circuit_breaker_timeout": 60,
-        "enable_async": true,
+        "enable": true,
         "enable_metrics": true,
         "enable_flattening": false,
         "flattening_max_depth": 5,

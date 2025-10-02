@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import os
 import socket
-from collections.abc import AsyncGenerator, Generator
+from collections.abc import Generator
 
 import pytest
 
@@ -598,7 +598,7 @@ def mock_oracle_tap() -> type[object]:
             self._catalog = None
             self.__state: FlextTypes.Core.Dict = {}
 
-        async def discover(self) -> dict[str, object]:
+        def discover(self) -> dict[str, object]:
             """Discover schema using mock data."""
             return {
                 "streams": [
@@ -616,11 +616,11 @@ def mock_oracle_tap() -> type[object]:
                 ],
             }
 
-        async def sync(
+        def sync(
             self,
             catalog: dict[str, object],
             _state: dict[str, object],
-        ) -> AsyncGenerator[dict[str, object]]:
+        ) -> Generator[dict[str, object]]:
             """Sync data using mock extraction."""
             if not isinstance(catalog, dict) or "streams" not in catalog:
                 return
@@ -668,15 +668,15 @@ def mock_oracle_connection() -> type[object]:
             self.config = config
             self.connected = False
 
-        async def connect(self) -> bool:
+        def connect(self) -> bool:
             self.connected = True
             return True
 
-        async def disconnect(self) -> bool:
+        def disconnect(self) -> bool:
             self.connected = False
             return True
 
-        async def execute_query(
+        def execute_query(
             self,
             query: str,
             _parameters: FlextTypes.Core.Dict | None = None,
@@ -692,7 +692,7 @@ def mock_oracle_connection() -> type[object]:
                 return _ColumnsQueryStrategy()
             return _DefaultQueryStrategy()
 
-        async def get_table_schema(self, table_name: str) -> FlextTypes.Core.Dict:
+        def get_table_schema(self, table_name: str) -> FlextTypes.Core.Dict:
             """Get table schema information."""
             return {
                 "table_name": table_name,

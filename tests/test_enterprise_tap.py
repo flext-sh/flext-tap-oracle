@@ -9,7 +9,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import asyncio
 from collections.abc import Generator
 from unittest.mock import AsyncMock, Mock, patch
 
@@ -298,8 +297,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         if metrics != {}:
             raise AssertionError(f"Expected {{}}, got {metrics}")
 
-    @pytest.mark.asyncio
-    async def test_async_operation_support(
+    def test_async_operation_support(
         self,
         database_config: dict[str, object],
         mock_oracle_connection: Mock,
@@ -314,7 +312,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         # Mock the stream discovery to return our async stream
         with patch.object(tap, "discover_streams", return_value=[mock_stream]):
             # This would normally run async operations
-            await tap.run_async()
+            tap.run_async()
 
             # Verify async method was called
             mock_stream.sync_async.assert_called_once()
@@ -329,7 +327,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         tap = FlextOracleTapBaseService(config=database_config)
         mock_connection = Mock()
 
-        tables = asyncio.run(tap._get_discoverable_tables())
+        tables = tap._get_discoverable_tables()
         if tables != ["USERS", "ORDERS", "PRODUCTS"]:
             raise AssertionError(
                 f"Expected {['USERS', 'ORDERS', 'PRODUCTS']}, got {tables}"
@@ -364,7 +362,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         with patch.object(tap, "_schema_service") as mock_schema_service:
             mock_schema_service.get_schema_tables = AsyncMock(return_value=mock_result)
 
-            tables = asyncio.run(tap._get_discoverable_tables())
+            tables = tap._get_discoverable_tables()
             if tables != ["TABLE1", "TABLE2", "TABLE3"]:
                 raise AssertionError(
                     f"Expected {['TABLE1', 'TABLE2', 'TABLE3']}, got {tables}"
@@ -400,7 +398,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         with patch.object(tap, "_schema_service") as mock_schema_service:
             mock_schema_service.get_schema_tables = AsyncMock(return_value=mock_result)
 
-            tables = asyncio.run(tap._get_discoverable_tables())
+            tables = tap._get_discoverable_tables()
             if tables != ["USERS", "ORDERS", "PRODUCTS"]:
                 raise AssertionError(
                     f"Expected {['USERS', 'ORDERS', 'PRODUCTS']}, got {tables}"
@@ -440,7 +438,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         with patch.object(tap, "_schema_service") as mock_schema_service:
             mock_schema_service.get_schema_tables = AsyncMock(return_value=mock_result)
 
-            tables = asyncio.run(tap._get_discoverable_tables())
+            tables = tap._get_discoverable_tables()
             # Should match USERS, USER_PROFILES, ORDERS, ORDER_ITEMS
             if len(tables) != 4:
                 raise AssertionError(f"Expected {4}, got {len(tables)}")
@@ -473,18 +471,18 @@ class TestFlextOracleTapBaseServiceEnterprise:
             mock_stream.sync_async = AsyncMock()
             mock_streams.append(mock_stream)
 
-        async def test_concurrent_processing() -> None:
+        def test_concurrent_processing() -> None:
             # Simulate processing multiple streams
             semaphore = asyncio.Semaphore(database_config["max_parallel_streams"])
 
-            async def process_stream(stream: Mock) -> None:
+            def process_stream(stream: Mock) -> None:
                 async with semaphore:
-                    await stream.sync_async()
+                    stream.sync_async()
 
-            await asyncio.gather(*[process_stream(stream) for stream in mock_streams])
+            asyncio.gather(*[process_stream(stream) for stream in mock_streams])
 
         # Run the test
-        asyncio.run(test_concurrent_processing())
+        test_concurrent_processing()
 
         # Verify all streams were processed
         for stream in mock_streams:

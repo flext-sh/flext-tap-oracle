@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
 from typing import Any, Literal, Self
 
 from pydantic import (
@@ -13,6 +14,7 @@ from pydantic import (
     Field,
     FieldSerializationInfo,
     computed_field,
+    field_serializer,
     field_validator,
     model_validator,
 )
@@ -25,6 +27,7 @@ from flext_db_oracle import (
     FlextDbOracleTable,
 )
 from flext_meltano import FlextSingerStream as Stream
+from flext_tap_oracle.utilities import FlextTapOracleUtilities
 
 
 class FlextTapOracleModels(FlextModels):
@@ -131,18 +134,22 @@ class FlextTapOracleModels(FlextModels):
     def validate_oracle_tap_system_consistency(self) -> Self:
         """Validate Singer Oracle tap system consistency and configuration."""
         # Singer Oracle tap database validation
-        if hasattr(self, "_oracle_connection") and self._oracle_connection:
-            if not hasattr(self, "OracleTapStreamMetadata"):
-                msg = (
-                    "OracleTapStreamMetadata required when Oracle connection configured"
-                )
-                raise ValueError(msg)
+        if (
+            hasattr(self, "_oracle_connection")
+            and self._oracle_connection
+            and not hasattr(self, "OracleTapStreamMetadata")
+        ):
+            msg = "OracleTapStreamMetadata required when Oracle connection configured"
+            raise ValueError(msg)
 
         # Discovery operation validation
-        if hasattr(self, "_discovery_mode") and self._discovery_mode:
-            if not hasattr(self, "OracleTapDiscoveryConfig"):
-                msg = "OracleTapDiscoveryConfig required for discovery operations"
-                raise ValueError(msg)
+        if (
+            hasattr(self, "_discovery_mode")
+            and self._discovery_mode
+            and not hasattr(self, "OracleTapDiscoveryConfig")
+        ):
+            msg = "OracleTapDiscoveryConfig required for discovery operations"
+            raise ValueError(msg)
 
         # Singer protocol compliance validation
         if hasattr(self, "_singer_mode") and self._singer_mode:
@@ -1008,11 +1015,7 @@ class FlextTapOracleModels(FlextModels):
 # CRITICAL: FlextTapOracleUtilities was DUPLICATED between models.py and utilities.py.
 # This was a ZERO TOLERANCE violation of the user's explicit requirements.
 #
-# RESOLUTION: Import from utilities.py to eliminate duplication completely.
-
-from flext_tap_oracle.utilities import FlextTapOracleUtilities
-
-# Note: This import ensures backward compatibility while eliminating duplication
+# Note: Import moved to top of file for consistency
 
 
 # =====================================================

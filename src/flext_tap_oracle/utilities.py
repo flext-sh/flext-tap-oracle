@@ -439,8 +439,8 @@ class FlextTapOracleUtilities(FlextUtilities):
             except Exception as e:
                 return FlextResult[dict].fail(f"Metrics calculation failed: {e}")
 
-    async def execute_async(self) -> FlextResult[dict[str, Any]]:
-        """Execute utilities service operation asynchronously."""
+    def execute(self) -> FlextResult[dict[str, Any]]:
+        """Execute utilities service operation hronously."""
         return FlextResult[dict[str, Any]].ok({
             "status": "operational",
             "service": "flext-tap-oracle-utilities",
