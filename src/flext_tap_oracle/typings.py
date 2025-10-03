@@ -39,19 +39,17 @@ class FlextTapOracleTypes(FlextTypes):
         """Oracle extraction complex types."""
 
         type ExtractionConfiguration = dict[
-            str, FlextTypes.Core.ConfigValue | dict[str, object]
+            str, FlextTypes.ConfigValue | FlextTypes.Dict
         ]
-        type ExtractionState = dict[str, FlextTypes.Core.JsonValue | object]
-        type ExtractionMetrics = dict[str, int | float | bool | dict[str, object]]
+        type ExtractionState = dict[str, FlextTypes.JsonValue | object]
+        type ExtractionMetrics = dict[str, int | float | bool | FlextTypes.Dict]
         type BatchConfiguration = dict[
-            str, int | bool | dict[str, FlextTypes.Core.ConfigValue]
+            str, int | bool | dict[str, FlextTypes.ConfigValue]
         ]
         type StreamDefinition = dict[
-            str, str | list[str] | dict[str, FlextTypes.Core.JsonValue]
+            str, str | FlextTypes.StringList | dict[str, FlextTypes.JsonValue]
         ]
-        type TableMetadata = dict[
-            str, FlextTypes.Core.JsonValue | list[dict[str, object]]
-        ]
+        type TableMetadata = dict[str, FlextTypes.JsonValue | list[FlextTypes.Dict]]
 
     # =========================================================================
     # ORACLE DATABASE TYPES - Complex database interaction types
@@ -61,13 +59,13 @@ class FlextTapOracleTypes(FlextTypes):
         """Oracle database complex types."""
 
         type DatabaseConfiguration = dict[
-            str, str | int | bool | dict[str, FlextTypes.Core.ConfigValue]
+            str, str | int | bool | dict[str, FlextTypes.ConfigValue]
         ]
-        type ConnectionPool = dict[str, int | bool | dict[str, object]]
-        type QueryConfiguration = dict[str, str | int | bool | list[str]]
-        type TableSchema = dict[str, list[dict[str, FlextTypes.Core.JsonValue]]]
-        type ColumnDefinition = dict[str, str | bool | int | dict[str, object]]
-        type IndexInformation = dict[str, str | list[str] | dict[str, object]]
+        type ConnectionPool = dict[str, int | bool | FlextTypes.Dict]
+        type QueryConfiguration = dict[str, str | int | bool | FlextTypes.StringList]
+        type TableSchema = dict[str, list[dict[str, FlextTypes.JsonValue]]]
+        type ColumnDefinition = dict[str, str | bool | int | FlextTypes.Dict]
+        type IndexInformation = dict[str, str | FlextTypes.StringList | FlextTypes.Dict]
 
     # =========================================================================
     # SINGER PROTOCOL TYPES - Complex Singer protocol types
@@ -76,14 +74,12 @@ class FlextTapOracleTypes(FlextTypes):
     class Singer:
         """Singer protocol complex types."""
 
-        type CatalogEntry = dict[str, str | dict[str, FlextTypes.Core.JsonValue]]
-        type StreamSchema = dict[str, dict[str, FlextTypes.Core.JsonValue]]
-        type TapConfiguration = dict[
-            str, FlextTypes.Core.ConfigValue | dict[str, object]
-        ]
-        type StateBookmark = dict[str, FlextTypes.Core.JsonValue | object]
-        type RecordMessage = dict[str, str | dict[str, FlextTypes.Core.JsonValue]]
-        type SchemaMessage = dict[str, str | dict[str, FlextTypes.Core.JsonValue]]
+        type CatalogEntry = dict[str, str | dict[str, FlextTypes.JsonValue]]
+        type StreamSchema = dict[str, dict[str, FlextTypes.JsonValue]]
+        type TapConfiguration = dict[str, FlextTypes.ConfigValue | FlextTypes.Dict]
+        type StateBookmark = dict[str, FlextTypes.JsonValue | object]
+        type RecordMessage = dict[str, str | dict[str, FlextTypes.JsonValue]]
+        type SchemaMessage = dict[str, str | dict[str, FlextTypes.JsonValue]]
 
     # =========================================================================
     # ORACLE TAP CONFIGURATION TYPES - Complex configuration types
@@ -92,18 +88,18 @@ class FlextTapOracleTypes(FlextTypes):
     class Configuration:
         """Oracle tap configuration complex types."""
 
-        type TapOracleConfig = dict[
-            str, FlextTypes.Core.ConfigValue | dict[str, object]
-        ]
-        type ConnectionSettings = dict[str, str | int | bool | dict[str, object]]
+        type TapOracleConfig = dict[str, FlextTypes.ConfigValue | FlextTypes.Dict]
+        type ConnectionSettings = dict[str, str | int | bool | FlextTypes.Dict]
         type ExtractionSettings = dict[
-            str, int | bool | dict[str, FlextTypes.Core.ConfigValue]
+            str, int | bool | dict[str, FlextTypes.ConfigValue]
         ]
-        type PerformanceSettings = dict[str, int | float | bool | dict[str, object]]
+        type PerformanceSettings = dict[str, int | float | bool | FlextTypes.Dict]
         type SecuritySettings = dict[
-            str, str | bool | dict[str, FlextTypes.Core.ConfigValue]
+            str, str | bool | dict[str, FlextTypes.ConfigValue]
         ]
-        type StreamSettings = dict[str, bool | str | list[str] | dict[str, object]]
+        type StreamSettings = dict[
+            str, bool | str | FlextTypes.StringList | FlextTypes.Dict
+        ]
 
     # =========================================================================
     # SINGER TAP ORACLE PROJECT TYPES - Domain-specific project types extending FlextTypes
@@ -143,18 +139,16 @@ class FlextTapOracleTypes(FlextTypes):
         ]
 
         # Singer tap Oracle-specific project configurations
-        type SingerTapOracleProjectConfig = dict[
-            str, FlextTypes.Core.ConfigValue | object
-        ]
-        type OracleExtractorConfig = dict[str, str | int | bool | list[str]]
-        type SingerProtocolConfig = dict[str, bool | str | dict[str, object]]
-        type TapOraclePipelineConfig = dict[str, FlextTypes.Core.ConfigValue | object]
+        type SingerTapOracleProjectConfig = dict[str, FlextTypes.ConfigValue | object]
+        type OracleExtractorConfig = dict[str, str | int | bool | FlextTypes.StringList]
+        type SingerProtocolConfig = dict[str, bool | str | FlextTypes.Dict]
+        type TapOraclePipelineConfig = dict[str, FlextTypes.ConfigValue | object]
 
 
 # =============================================================================
 # PUBLIC API EXPORTS - Oracle tap TypeVars and types
 # =============================================================================
 
-__all__: list[str] = [
+__all__: FlextTypes.StringList = [
     "FlextTapOracleTypes",
 ]

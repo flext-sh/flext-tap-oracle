@@ -12,6 +12,8 @@ from __future__ import annotations
 
 from typing import ClassVar
 
+from flext_db_oracle import FlextDbOracleTable
+
 from flext_core import (
     FlextContainer,
     FlextLogger,
@@ -19,8 +21,6 @@ from flext_core import (
     FlextTypes,
     FlextUtilities,
 )
-from flext_db_oracle import FlextDbOracleTable
-
 from flext_tap_oracle.models import FlextTapOracleModels
 from flext_tap_oracle.tap_exceptions import (
     FlextTapOracleConfigurationError,
@@ -59,14 +59,14 @@ class FlextTapOracleUtilities(FlextUtilities):
         self._container = FlextContainer.get_global()
         self._logger = FlextLogger(__name__)
 
-    def execute(self) -> FlextResult[dict[str, object]]:
+    def execute(self) -> FlextResult[FlextTypes.Dict]:
         """Execute the main domain service operation.
 
         Returns:
-            FlextResult[dict[str, object]]: Service status and capabilities.
+            FlextResult[FlextTypes.Dict]: Service status and capabilities.
 
         """
-        return FlextResult[dict[str, object]].ok({
+        return FlextResult[FlextTypes.Dict].ok({
             "status": "operational",
             "service": "flext-tap-oracle-utilities",
             "capabilities": [
@@ -259,7 +259,7 @@ class FlextTapOracleUtilities(FlextUtilities):
 
         @staticmethod
         def create_discovery_result(
-            tables: list[object],
+            tables: FlextTypes.List,
             schema_name: str,
         ) -> FlextResult[object]:
             """Create discovery result from Oracle tables."""
@@ -440,16 +440,7 @@ class FlextTapOracleUtilities(FlextUtilities):
             except Exception as e:
                 return FlextResult[dict].fail(f"Metrics calculation failed: {e}")
 
-    def execute(self) -> FlextResult[dict[str, object]]:
-        """Execute utilities service operation hronously."""
-        return FlextResult[dict[str, object]].ok({
-            "status": "operational",
-            "service": "flext-tap-oracle-utilities",
-            "timestamp": "current_time",
-            "version": "1.0.0",
-        })
 
-
-__all__: FlextTypes.Core.StringList = [
+__all__: FlextTypes.StringList = [
     "FlextTapOracleUtilities",
 ]

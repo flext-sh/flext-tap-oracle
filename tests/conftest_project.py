@@ -15,6 +15,7 @@ import socket
 from collections.abc import Generator
 
 import pytest
+from flext_tests import FlextTestDocker
 
 from flext_core import FlextResult, FlextTypes
 from flext_tap_oracle import (
@@ -22,7 +23,6 @@ from flext_tap_oracle import (
     FlextTapOracleConfig,
     create_oracle_tap_config,
 )
-from flext_tests import FlextTestDocker
 
 
 # Docker container management with FlextTestDocker
@@ -128,7 +128,7 @@ def skip_e2e_if_no_oracle(request: pytest.FixtureRequest) -> None:
 
 # Oracle connection fixtures
 @pytest.fixture
-def oracle_tap_config() -> FlextTypes.Core.Dict:
+def oracle_tap_config() -> FlextTypes.Dict:
     """Oracle tap configuration for testing."""
     return {
         "host": "localhost",
@@ -149,7 +149,7 @@ def oracle_tap_config() -> FlextTypes.Core.Dict:
 
 
 @pytest.fixture
-def oracle_tap(oracle_tap_config: FlextTypes.Core.Dict) -> FlextOracleTapService:
+def oracle_tap(oracle_tap_config: FlextTypes.Dict) -> FlextOracleTapService:
     """Oracle tap service instance for testing."""
     # Convert dict to proper config and create service
     config_result = FlextResult[FlextTapOracleConfig].ok(
@@ -175,7 +175,7 @@ def oracle_tap(oracle_tap_config: FlextTypes.Core.Dict) -> FlextOracleTapService
 
 # Singer protocol fixtures
 @pytest.fixture
-def singer_catalog() -> FlextTypes.Core.Dict:
+def singer_catalog() -> FlextTypes.Dict:
     """Singer catalog for testing."""
     return {
         "streams": [
@@ -239,7 +239,7 @@ def singer_catalog() -> FlextTypes.Core.Dict:
 
 
 @pytest.fixture
-def singer_state() -> FlextTypes.Core.Dict:
+def singer_state() -> FlextTypes.Dict:
     """Singer state for testing."""
     return {
         "bookmarks": {
@@ -256,7 +256,7 @@ def singer_state() -> FlextTypes.Core.Dict:
 
 
 @pytest.fixture
-def sample_oracle_tables() -> list[FlextTypes.Core.Dict]:
+def sample_oracle_tables() -> list[FlextTypes.Dict]:
     """Sample Oracle table definitions for testing."""
     return [
         {
@@ -336,7 +336,7 @@ def sample_oracle_tables() -> list[FlextTypes.Core.Dict]:
 
 
 @pytest.fixture
-def sample_oracle_data() -> dict[str, list[FlextTypes.Core.Dict]]:
+def sample_oracle_data() -> dict[str, list[FlextTypes.Dict]]:
     """Sample Oracle data for testing."""
     return {
         "employees": [
@@ -384,7 +384,7 @@ def sample_oracle_data() -> dict[str, list[FlextTypes.Core.Dict]]:
 
 # Stream configuration fixtures
 @pytest.fixture
-def stream_config() -> FlextTypes.Core.Dict:
+def stream_config() -> FlextTypes.Dict:
     """Stream configuration for testing."""
     return {
         "selected": True,
@@ -397,7 +397,7 @@ def stream_config() -> FlextTypes.Core.Dict:
 
 
 @pytest.fixture
-def discovery_config() -> FlextTypes.Core.Dict:
+def discovery_config() -> FlextTypes.Dict:
     """Discovery configuration for testing."""
     return {
         "include_views": False,
@@ -412,7 +412,7 @@ def discovery_config() -> FlextTypes.Core.Dict:
 
 # SQL query fixtures
 @pytest.fixture
-def oracle_queries() -> FlextTypes.Core.Headers:
+def oracle_queries() -> FlextTypes.StringDict:
     """Oracle SQL queries for testing."""
     return {
         "list_tables": """
@@ -459,7 +459,7 @@ def oracle_queries() -> FlextTypes.Core.Headers:
 
 # Singer message fixtures
 @pytest.fixture
-def singer_schema_message() -> FlextTypes.Core.Dict:
+def singer_schema_message() -> FlextTypes.Dict:
     """Singer schema message for testing."""
     return {
         "type": "SCHEMA",
@@ -478,7 +478,7 @@ def singer_schema_message() -> FlextTypes.Core.Dict:
 
 
 @pytest.fixture
-def singer_record_messages() -> list[FlextTypes.Core.Dict]:
+def singer_record_messages() -> list[FlextTypes.Dict]:
     """Singer record messages for testing."""
     return [
         {
@@ -507,7 +507,7 @@ def singer_record_messages() -> list[FlextTypes.Core.Dict]:
 
 
 @pytest.fixture
-def singer_state_message() -> FlextTypes.Core.Dict:
+def singer_state_message() -> FlextTypes.Dict:
     """Singer state message for testing."""
     return {
         "type": "STATE",
@@ -525,7 +525,7 @@ def singer_state_message() -> FlextTypes.Core.Dict:
 
 # Performance test fixtures
 @pytest.fixture
-def performance_test_config() -> FlextTypes.Core.Dict:
+def performance_test_config() -> FlextTypes.Dict:
     """Performance test configuration."""
     return {
         "large_table_rows": 100000,
@@ -538,7 +538,7 @@ def performance_test_config() -> FlextTypes.Core.Dict:
 
 # Error handling fixtures
 @pytest.fixture
-def error_scenarios() -> list[FlextTypes.Core.Dict]:
+def error_scenarios() -> list[FlextTypes.Dict]:
     """Error scenarios for testing."""
     return [
         {
@@ -592,13 +592,13 @@ def mock_oracle_tap() -> type[object]:
     """Mock Oracle tap for testing."""
 
     class MockOracleTap:
-        def __init__(self, config: dict[str, object]) -> None:
+        def __init__(self, config: FlextTypes.Dict) -> None:
             """Initialize the instance."""
             self.config = config
             self._catalog = None
-            self.__state: FlextTypes.Core.Dict = {}
+            self.__state: FlextTypes.Dict = {}
 
-        def discover(self) -> dict[str, object]:
+        def discover(self) -> FlextTypes.Dict:
             """Discover schema using mock data."""
             return {
                 "streams": [
@@ -618,9 +618,9 @@ def mock_oracle_tap() -> type[object]:
 
         def sync(
             self,
-            catalog: dict[str, object],
-            _state: dict[str, object],
-        ) -> Generator[dict[str, object]]:
+            catalog: FlextTypes.Dict,
+            _state: FlextTypes.Dict,
+        ) -> Generator[FlextTypes.Dict]:
             """Sync data using mock extraction."""
             if not isinstance(catalog, dict) or "streams" not in catalog:
                 return
@@ -663,7 +663,7 @@ def mock_oracle_connection() -> type[object]:
     """Mock Oracle connection for testing."""
 
     class MockOracleConnection:
-        def __init__(self, config: dict[str, object]) -> None:
+        def __init__(self, config: FlextTypes.Dict) -> None:
             """Initialize the instance."""
             self.config = config
             self.connected = False
@@ -679,8 +679,8 @@ def mock_oracle_connection() -> type[object]:
         def execute_query(
             self,
             query: str,
-            _parameters: FlextTypes.Core.Dict | None = None,
-        ) -> list[FlextTypes.Core.Dict]:
+            _parameters: FlextTypes.Dict | None = None,
+        ) -> list[FlextTypes.Dict]:
             """Execute query and return mock results using Strategy Pattern."""
             return self._get_query_strategy(query).execute()
 
@@ -692,7 +692,7 @@ def mock_oracle_connection() -> type[object]:
                 return _ColumnsQueryStrategy()
             return _DefaultQueryStrategy()
 
-        def get_table_schema(self, table_name: str) -> FlextTypes.Core.Dict:
+        def get_table_schema(self, table_name: str) -> FlextTypes.Dict:
             """Get table schema information."""
             return {
                 "table_name": table_name,
@@ -709,7 +709,7 @@ def mock_oracle_connection() -> type[object]:
 class _MockQueryStrategy:
     """Base class for mock query strategies - Strategy Pattern."""
 
-    def execute(self) -> list[FlextTypes.Core.Dict]:
+    def execute(self) -> list[FlextTypes.Dict]:
         """Execute mock query and return results."""
         raise NotImplementedError
 
@@ -717,7 +717,7 @@ class _MockQueryStrategy:
 class _TablesQueryStrategy(_MockQueryStrategy):
     """Strategy for tables query - Single Responsibility."""
 
-    def execute(self) -> list[FlextTypes.Core.Dict]:
+    def execute(self) -> list[FlextTypes.Dict]:
         """Return mock table data."""
         return [
             {
@@ -736,7 +736,7 @@ class _TablesQueryStrategy(_MockQueryStrategy):
 class _ColumnsQueryStrategy(_MockQueryStrategy):
     """Strategy for columns query - Single Responsibility."""
 
-    def execute(self) -> list[FlextTypes.Core.Dict]:
+    def execute(self) -> list[FlextTypes.Dict]:
         """Return mock column data."""
         return [
             {
@@ -759,6 +759,6 @@ class _ColumnsQueryStrategy(_MockQueryStrategy):
 class _DefaultQueryStrategy(_MockQueryStrategy):
     """Default strategy for generic queries - Single Responsibility."""
 
-    def execute(self) -> list[FlextTypes.Core.Dict]:
+    def execute(self) -> list[FlextTypes.Dict]:
         """Return mock default data."""
         return [{"id": 1, "name": "Test Record"}]

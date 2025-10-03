@@ -9,7 +9,6 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from typing import Literal, Self
 
-from flext_core import FlextConstants, FlextModels, FlextResult, FlextTypes
 from flext_db_oracle import (
     FlextDbOracleColumn,
     FlextDbOracleQueryResult,
@@ -27,6 +26,7 @@ from pydantic import (
     model_validator,
 )
 
+from flext_core import FlextConstants, FlextModels, FlextResult, FlextTypes
 from flext_tap_oracle.utilities import FlextTapOracleUtilities
 
 
@@ -101,7 +101,7 @@ class FlextTapOracleModels(FlextModels):
 
     @computed_field
     @property
-    def oracle_tap_system_summary(self) -> dict[str, object]:
+    def oracle_tap_system_summary(self) -> FlextTypes.Dict:
         """Comprehensive Singer Oracle tap system summary with database extraction capabilities."""
         return {
             "total_models": self.active_oracle_tap_models_count,
@@ -189,7 +189,7 @@ class FlextTapOracleModels(FlextModels):
         return value
 
     # Legacy type aliases for backward compatibility
-    OracleRecord = dict[str, object]
+    OracleRecord = FlextTypes.Dict
     OracleRecords = list[OracleRecord]
 
     class OracleTapStreamMetadata(FlextModels.Entity):
@@ -218,7 +218,7 @@ class FlextTapOracleModels(FlextModels):
 
         # Singer stream configuration
         stream_name: str = Field(..., description="Singer stream name")
-        replication_method: Literal[FULL_TABLE, INCREMENTAL] = Field(
+        replication_method: Literal["FULL_TABLE", "INCREMENTAL"] = Field(
             default="FULL_TABLE",
             description="Replication method for this stream",
         )
@@ -241,7 +241,7 @@ class FlextTapOracleModels(FlextModels):
 
         @computed_field
         @property
-        def stream_metadata_summary(self) -> dict[str, object]:
+        def stream_metadata_summary(self) -> FlextTypes.Dict:
             """Oracle stream metadata summary."""
             return {
                 "stream_name": self.stream_name,
@@ -336,13 +336,13 @@ class FlextTapOracleModels(FlextModels):
         )
 
         # Discovery scope
-        schema_names: list[str] = Field(
+        schema_names: FlextTypes.StringList = Field(
             default_factory=list, description="Oracle schemas to discover"
         )
-        table_patterns: list[str] = Field(
+        table_patterns: FlextTypes.StringList = Field(
             default_factory=list, description="Table name patterns to include"
         )
-        exclude_patterns: list[str] = Field(
+        exclude_patterns: FlextTypes.StringList = Field(
             default_factory=list, description="Table name patterns to exclude"
         )
 
@@ -369,7 +369,7 @@ class FlextTapOracleModels(FlextModels):
 
         @computed_field
         @property
-        def discovery_scope_summary(self) -> dict[str, object]:
+        def discovery_scope_summary(self) -> FlextTypes.Dict:
             """Oracle discovery scope summary."""
             return {
                 "target_schemas": len(self.schema_names),
@@ -444,7 +444,7 @@ class FlextTapOracleModels(FlextModels):
 
         @computed_field
         @property
-        def extraction_config_summary(self) -> dict[str, object]:
+        def extraction_config_summary(self) -> FlextTypes.Dict:
             """Oracle extraction configuration summary."""
             return {
                 "batch_processing": {
@@ -529,7 +529,7 @@ class FlextTapOracleModels(FlextModels):
 
         @computed_field
         @property
-        def performance_analysis_summary(self) -> dict[str, object]:
+        def performance_analysis_summary(self) -> FlextTypes.Dict:
             """Oracle tap performance analysis summary."""
             duration = 0.0
             if self.start_time and self.end_time:
@@ -606,7 +606,7 @@ class FlextTapOracleModels(FlextModels):
             default=True,
             description="Whether stream is selected for extraction",
         )
-        replication_method: Literal[FULL_TABLE, INCREMENTAL] = Field(
+        replication_method: Literal["FULL_TABLE", "INCREMENTAL"] = Field(
             default="FULL_TABLE",
             description="Replication method for this stream",
         )
@@ -624,7 +624,7 @@ class FlextTapOracleModels(FlextModels):
 
         @computed_field
         @property
-        def stream_info_summary(self) -> dict[str, object]:
+        def stream_info_summary(self) -> FlextTypes.Dict:
             """Oracle stream information summary."""
             return {
                 "stream_identity": {
@@ -663,7 +663,7 @@ class FlextTapOracleModels(FlextModels):
             """Validate stream info business rules."""
             return FlextResult[None].ok(None)
 
-        def to_singer_stream_info(self: object) -> FlextTypes.Core.Dict:
+        def to_singer_stream_info(self: object) -> FlextTypes.Dict:
             """Convert to Singer stream information format."""
             return {
                 "tap_stream_id": self.stream_name,
@@ -725,18 +725,18 @@ class FlextTapOracleModels(FlextModels):
         )
 
         # Filtering results
-        filtered_tables: FlextTypes.Core.StringList = Field(
+        filtered_tables: FlextTypes.StringList = Field(
             default_factory=list,
             description="Table names after applying filters",
         )
-        excluded_tables: FlextTypes.Core.StringList = Field(
+        excluded_tables: FlextTypes.StringList = Field(
             default_factory=list,
             description="Table names that were excluded",
         )
 
         @computed_field
         @property
-        def discovery_result_summary(self) -> dict[str, object]:
+        def discovery_result_summary(self) -> FlextTypes.Dict:
             """Oracle discovery result summary."""
             selected_streams = len([s for s in self.stream_info if s.is_selected])
 
@@ -793,7 +793,7 @@ class FlextTapOracleModels(FlextModels):
                     return table
             return None
 
-        def to_singer_catalog(self: object) -> FlextTypes.Core.Dict:
+        def to_singer_catalog(self: object) -> FlextTypes.Dict:
             """Convert to Singer catalog format."""
             return {
                 "streams": [
@@ -860,7 +860,7 @@ class FlextTapOracleModels(FlextModels):
             default=0,
             description="Number of errors encountered",
         )
-        failed_streams: FlextTypes.Core.StringList = Field(
+        failed_streams: FlextTypes.StringList = Field(
             default_factory=list,
             description="Names of failed streams",
         )
@@ -880,7 +880,7 @@ class FlextTapOracleModels(FlextModels):
 
         @computed_field
         @property
-        def execution_stats_summary(self) -> dict[str, object]:
+        def execution_stats_summary(self) -> FlextTypes.Dict:
             """Oracle tap execution statistics summary."""
             success_rate = 0.0
             if self.streams_processed > 0:
@@ -989,7 +989,7 @@ class FlextTapOracleModels(FlextModels):
                 },
             )
 
-        def to_summary(self: object) -> FlextTypes.Core.Dict:
+        def to_summary(self: object) -> FlextTypes.Dict:
             """Create execution summary."""
             return {
                 "execution_id": self.execution_id,
@@ -1018,8 +1018,8 @@ class FlextTapOracleModels(FlextModels):
     TapExecutionMode = Literal["discovery", "extraction", "test", "validate"]
 
     # Legacy type aliases for backward compatibility
-    TapStreamMetadata = dict[str, object]
-    TapConfiguration = dict[str, object]
+    TapStreamMetadata = FlextTypes.Dict
+    TapConfiguration = FlextTypes.Dict
 
 
 # =====================================================
@@ -1037,7 +1037,7 @@ class FlextTapOracleModels(FlextModels):
 # MAIN EXPORTS
 # =====================================================
 
-__all__: FlextTypes.Core.StringList = [
+__all__: FlextTypes.StringList = [
     "FlextDbOracleColumn",
     "FlextDbOracleQueryResult",
     "FlextDbOracleSchema",
@@ -1045,11 +1045,4 @@ __all__: FlextTypes.Core.StringList = [
     "FlextTapOracleModels",
     "FlextTapOracleUtilities",
     "Stream",
-    "TapExecutionMode",
-    "TapOracleColumn",
-    "TapOracleQueryResult",
-    "TapOracleSchema",
-    "TapOracleTable",
-    "TapReplicationMethod",
-    "TapStreamSelection",
 ]

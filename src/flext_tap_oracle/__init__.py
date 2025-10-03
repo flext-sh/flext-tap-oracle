@@ -14,6 +14,7 @@ from flext_meltano import (
     FlextMeltanoBridge,
     FlextMeltanoConfig,
 )
+
 from flext_tap_oracle.config import (
     FlextTapOracleConfig,
     create_oracle_tap_config,

@@ -8,8 +8,9 @@ from __future__ import annotations
 
 from typing import ClassVar, Final
 
-from flext_core import FlextConstants
 from flext_db_oracle import FlextDbOracleConstants
+
+from flext_core import FlextConstants, FlextTypes
 
 
 class FlextTapOracleConstants(FlextConstants):
@@ -42,7 +43,7 @@ class FlextTapOracleConstants(FlextConstants):
     class Replication:
         """Oracle replication method constants."""
 
-        REPLICATION_METHODS: ClassVar[Final[list[str]]] = [
+        REPLICATION_METHODS: ClassVar[Final[FlextTypes.StringList]] = [
             "FULL_TABLE",
             "INCREMENTAL",
             "LOG_BASED",
