@@ -9,15 +9,17 @@ from __future__ import annotations
 from collections.abc import Iterable, Mapping
 from typing import override
 
+from flext_core import FlextContainer, FlextLogger, FlextResult, FlextTypes
 from flext_db_oracle import (
     FlextDbOracleApi,
     FlextDbOracleConnection,
     FlextDbOracleMetadataManager,
     FlextDbOracleObservabilityManager,
 )
-from flext_meltano import FlextTapAbstract as Tap, FlextTapStream as Stream
 
-from flext_core import FlextContainer, FlextLogger, FlextResult, FlextTypes
+# Import from singer-sdk directly - flext-meltano provides abstractions but not base classes
+# Use FLEXT Meltano wrappers instead of direct singer_sdk imports (domain separation)
+from flext_meltano import FlextStream as Stream, FlextTap as Tap
 
 
 class FlextTapOracleStreams:

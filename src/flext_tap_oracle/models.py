@@ -9,6 +9,7 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from typing import Literal, Self
 
+from flext_core import FlextConstants, FlextModels, FlextResult, FlextTypes
 from flext_db_oracle import (
     FlextDbOracleColumn,
     FlextDbOracleQueryResult,
@@ -26,8 +27,9 @@ from pydantic import (
     model_validator,
 )
 
-from flext_core import FlextConstants, FlextModels, FlextResult, FlextTypes
-from flext_tap_oracle.utilities import FlextTapOracleUtilities
+# Note: FlextTapOracleUtilities NOT imported here to avoid circular import
+# (utilities.py imports FlextTapOracleModels)
+# Import FlextTapOracleUtilities from flext_tap_oracle.utilities or top-level __init__ instead
 
 
 class FlextTapOracleModels(FlextModels):
@@ -1025,6 +1027,16 @@ class FlextTapOracleModels(FlextModels):
 # =====================================================
 # FUNCTIONS MOVED TO UTILITIES PATTERN
 # =====================================================
+# MODULE-LEVEL ALIASES FOR BACKWARD COMPATIBILITY
+# =====================================================
+
+# Re-export class-level aliases at module level for direct imports
+TapOracleColumn = FlextTapOracleModels.TapOracleColumn
+TapOracleSchema = FlextTapOracleModels.TapOracleSchema
+TapOracleTable = FlextTapOracleModels.TapOracleTable
+TapReplicationMethod = FlextTapOracleModels.TapReplicationMethod
+
+# =====================================================
 #
 # The following functions have been moved to FlextTapOracleUtilities:
 # - create_stream_info_from_oracle_table -> FlextTapOracleUtilities.StreamManagement.create_stream_info_from_oracle_table
@@ -1043,6 +1055,12 @@ __all__: FlextTypes.StringList = [
     "FlextDbOracleSchema",
     "FlextDbOracleTable",
     "FlextTapOracleModels",
-    "FlextTapOracleUtilities",
+    # Note: FlextTapOracleUtilities removed to avoid circular import
+    # Import from flext_tap_oracle.utilities or flext_tap_oracle directly
     "Stream",
+    # Tap-specific aliases (defined in FlextTapOracleModels class)
+    "TapOracleColumn",
+    "TapOracleSchema",
+    "TapOracleTable",
+    "TapReplicationMethod",
 ]

@@ -1,6 +1,6 @@
 """Singer Oracle tap protocols for FLEXT ecosystem."""
 
-from typing import Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 
 from flext_core import FlextProtocols, FlextResult, FlextTypes
 
@@ -28,9 +28,7 @@ class FlextTapOracleProtocols:
         class OracleConnectionProtocol(FlextProtocols.Domain.Service, Protocol):
             """Protocol for Oracle database connection management."""
 
-            def connect(
-                self, config: FlextTypes.Dict
-            ) -> FlextResult[FlextTypes.Any]: ...
+            def connect(self, config: FlextTypes.Dict) -> FlextResult[Any]: ...
             def disconnect(self) -> FlextResult[None]: ...
             def test_connection(self, config: FlextTypes.Dict) -> FlextResult[bool]: ...
 
@@ -65,8 +63,8 @@ class FlextTapOracleProtocols:
 
             def map_oracle_type(self, oracle_type: str) -> FlextResult[str]: ...
             def convert_value(
-                self, value: FlextTypes.Any, oracle_type: str
-            ) -> FlextResult[FlextTypes.Any]: ...
+                self, value: Any, oracle_type: str
+            ) -> FlextResult[Any]: ...
 
         @runtime_checkable
         class StreamGenerationProtocol(FlextProtocols.Domain.Service, Protocol):

@@ -12,8 +12,6 @@ from __future__ import annotations
 
 from typing import ClassVar
 
-from flext_db_oracle import FlextDbOracleTable
-
 from flext_core import (
     FlextContainer,
     FlextLogger,
@@ -21,6 +19,8 @@ from flext_core import (
     FlextTypes,
     FlextUtilities,
 )
+from flext_db_oracle import FlextDbOracleTable
+
 from flext_tap_oracle.models import FlextTapOracleModels
 from flext_tap_oracle.tap_exceptions import (
     FlextTapOracleConfigurationError,
@@ -290,7 +290,7 @@ class FlextTapOracleUtilities(FlextUtilities):
         """Oracle tap configuration validation utilities."""
 
         @staticmethod
-        def validate_oracle_config(config: dict) -> FlextResult[dict]:
+        def validate_oracle_config(config: dict) -> FlextResult[FlextTypes.Dict]:
             """Validate Oracle configuration parameters."""
             try:
                 required_fields = [
@@ -302,27 +302,33 @@ class FlextTapOracleUtilities(FlextUtilities):
                 ]
                 for field in required_fields:
                     if field not in config:
-                        return FlextResult[dict].fail(
+                        return FlextResult[FlextTypes.Dict].fail(
                             f"Missing required Oracle field: {field}"
                         )
                     if not config[field]:
-                        return FlextResult[dict].fail(f"Empty Oracle field: {field}")
+                        return FlextResult[FlextTypes.Dict].fail(
+                            f"Empty Oracle field: {field}"
+                        )
 
                 # Validate port is numeric
                 try:
                     port = int(config["port"])
                     if port <= 0 or port > FlextTapOracleUtilities.MAX_PORT_NUMBER:
-                        return FlextResult[dict].fail(
+                        return FlextResult[FlextTypes.Dict].fail(
                             f"Oracle port must be between 1 and {FlextTapOracleUtilities.MAX_PORT_NUMBER}"
                         )
                     config["port"] = port
                 except ValueError:
-                    return FlextResult[dict].fail("Oracle port must be numeric")
+                    return FlextResult[FlextTypes.Dict].fail(
+                        "Oracle port must be numeric"
+                    )
 
-                return FlextResult[dict].ok(config)
+                return FlextResult[FlextTypes.Dict].ok(config)
 
             except Exception as e:
-                return FlextResult[dict].fail(f"Oracle config validation failed: {e}")
+                return FlextResult[FlextTypes.Dict].fail(
+                    f"Oracle config validation failed: {e}"
+                )
 
         @staticmethod
         def build_connection_string(config: dict) -> FlextResult[str]:
@@ -348,7 +354,7 @@ class FlextTapOracleUtilities(FlextUtilities):
                 return FlextResult[str].fail(f"Connection string building failed: {e}")
 
         @staticmethod
-        def test_oracle_connectivity(config: dict) -> FlextResult[dict]:
+        def test_oracle_connectivity(config: dict) -> FlextResult[FlextTypes.Dict]:
             """Test Oracle connectivity with configuration."""
             try:
                 # Validate configuration first
@@ -356,7 +362,7 @@ class FlextTapOracleUtilities(FlextUtilities):
                     config
                 )
                 if validation_result.is_failure:
-                    return FlextResult[dict].fail(validation_result.error)
+                    return FlextResult[FlextTypes.Dict].fail(validation_result.error)
 
                 # Note: In a real implementation, this would test actual connectivity
                 # For now, return structure validation
@@ -368,10 +374,12 @@ class FlextTapOracleUtilities(FlextUtilities):
                     "connection_test": "structural_validation_passed",
                 }
 
-                return FlextResult[dict].ok(connectivity_result)
+                return FlextResult[FlextTypes.Dict].ok(connectivity_result)
 
             except Exception as e:
-                return FlextResult[dict].fail(f"Oracle connectivity test failed: {e}")
+                return FlextResult[FlextTypes.Dict].fail(
+                    f"Oracle connectivity test failed: {e}"
+                )
 
     class PerformanceOptimization:
         """Oracle tap performance optimization utilities."""
@@ -411,7 +419,7 @@ class FlextTapOracleUtilities(FlextUtilities):
             start_time: float,
             end_time: float,
             records_processed: int,
-        ) -> FlextResult[dict]:
+        ) -> FlextResult[FlextTypes.Dict]:
             """Calculate extraction performance metrics."""
             try:
                 duration = end_time - start_time
@@ -435,10 +443,12 @@ class FlextTapOracleUtilities(FlextUtilities):
                     ),
                 }
 
-                return FlextResult[dict].ok(metrics)
+                return FlextResult[FlextTypes.Dict].ok(metrics)
 
             except Exception as e:
-                return FlextResult[dict].fail(f"Metrics calculation failed: {e}")
+                return FlextResult[FlextTypes.Dict].fail(
+                    f"Metrics calculation failed: {e}"
+                )
 
 
 __all__: FlextTypes.StringList = [

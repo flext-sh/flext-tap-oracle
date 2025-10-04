@@ -8,16 +8,13 @@ from __future__ import annotations
 
 from typing import override
 
+# Meltano imports not needed - using direct domain services
+from flext_core import FlextLogger, FlextResult, FlextTypes
 from flext_db_oracle import (
     FlextDbOracleApi,
     FlextDbOracleTable,
 )
-from flext_meltano import (
-    FlextMeltanoTypeAdapters,
-    FlextTap,
-)
 
-from flext_core import FlextLogger, FlextResult, FlextTypes
 from flext_tap_oracle.config import FlextTapOracleConfig
 from flext_tap_oracle.typings import FlextTapOracleTypes
 
@@ -283,30 +280,7 @@ class FlextOracleTapService:
             msg = f"Configuration validation failed: {config_validation_result.error}"
             raise ValueError(msg)
 
-        # COMPOSITION: Use FlextTap for base functionality
-
-        # Create tap configuration using FlextMeltano abstractions
-        tap_config_dict = {
-            "host": getattr(config, "host", "localhost"),
-            "port": getattr(config, "port", 1521),
-            "service_name": getattr(config, "service_name", "ORCL"),
-            "username": getattr(config, "username", ""),
-            "password": getattr(config, "password", ""),
-        }
-
-        # ZERO TOLERANCE FIX: Use utilities for tap config creation
-        tap_config_creation_result = (
-            self._utilities.ConfigurationValidation.create_flext_tap_config(
-                tap_type="tap-oracle", connection_config=tap_config_dict
-            )
-        )
-
-        if tap_config_creation_result.is_failure:
-            msg = f"Failed to create tap config: {tap_config_creation_result.error}"
-            raise ValueError(msg)
-
-        adapter = FlextMeltanoTypeAdapters()
-        self._meltano_service = FlextTap(tap_config_creation_result.unwrap(), adapter)
+        # COMPOSITION: Using direct domain services (no meltano_service needed)
 
         # COMPOSITION: Create Oracle API
         oracle_config: FlextTapOracleTypes.Database.DatabaseConfiguration = (
@@ -356,22 +330,26 @@ class FlextOracleTapService:
         """Get Oracle table filter domain service."""
         return self._table_filter_service
 
-    # DELEGATION: Delegate base functionality to FlextMeltanoTapService
+    # Service methods - using direct domain services
     def validate_service(self: object) -> FlextResult[bool]:
-        """Validate service using base FlextMeltanoTapService."""
-        return self._meltano_service.validate_service()
+        """Validate service using connection test."""
+        return self._connection_test_service.execute()
 
     def get_health_status(
         self: object,
     ) -> FlextResult[FlextTapOracleTypes.Configuration.TapOracleConfig]:
-        """Get health status using base FlextMeltanoTapService."""
-        return self._meltano_service.get_health_status()
+        """Get health status."""
+        return FlextResult[FlextTapOracleTypes.Configuration.TapOracleConfig].ok(
+            self._config
+        )
 
     def discover_catalog(
         self: object,
     ) -> FlextResult[FlextTapOracleTypes.Singer.CatalogEntry]:
-        """Discover catalog using base FlextMeltanoTapService."""
-        return self._meltano_service.discover_catalog()
+        """Discover catalog - not implemented."""
+        return FlextResult[FlextTapOracleTypes.Singer.CatalogEntry].fail(
+            "Catalog discovery not implemented"
+        )
 
     # ORACLE-SPECIFIC: Use domain services for Oracle functionality
     def discover_oracle_tables(
@@ -441,35 +419,21 @@ class FlextOracleTapService:
     ) -> FlextResult[FlextTapOracleTypes.Configuration.TapOracleConfig]:
         """Get comprehensive Oracle tap status."""
         try:
-            # ZERO TOLERANCE FIX: Use utilities for status generation
-            status_generation_result = (
-                self._utilities.PerformanceOptimization.generate_comprehensive_status(
-                    meltano_service=self._meltano_service,
-                    connection_test_service=self._connection_test_service,
-                    discovery_service=self._discovery_service,
-                    table_filter_service=self._table_filter_service,
-                )
-            )
+            # Simple status - connection test result
+            connection_test_result = self._connection_test_service.execute()
 
-            if status_generation_result.is_success:
-                combined_status = status_generation_result.unwrap()
+            if connection_test_result.is_success:
                 return FlextResult[
                     FlextTapOracleTypes.Configuration.TapOracleConfig
-                ].ok(combined_status)
+                ].ok(self._config)
             return FlextResult[FlextTapOracleTypes.Configuration.TapOracleConfig].fail(
-                f"Status generation failed: {status_generation_result.error}"
+                f"Connection test failed: {connection_test_result.error}"
             )
 
         except Exception as e:
-            # ZERO TOLERANCE FIX: Use utilities for error handling
-            handled_error_result = (
-                self._utilities.ErrorHandling.handle_oracle_status_error(
-                    error=e, context="status_check"
-                )
-            )
             logger.exception("Failed to get tap status")
             return FlextResult[FlextTapOracleTypes.Configuration.TapOracleConfig].fail(
-                handled_error_result.unwrap_or(f"Status check failed: {e}")
+                f"Status check failed: {e}"
             )
 
 

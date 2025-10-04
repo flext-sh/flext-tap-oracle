@@ -15,9 +15,9 @@ import socket
 from collections.abc import Generator
 
 import pytest
+from flext_core import FlextResult, FlextTypes
 from flext_tests import FlextTestDocker
 
-from flext_core import FlextResult, FlextTypes
 from flext_tap_oracle import (
     FlextOracleTapService,
     FlextTapOracleConfig,
