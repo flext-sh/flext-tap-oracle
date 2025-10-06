@@ -19,7 +19,7 @@ from typing import override
 
 # FIXED: Eliminated direct click import - using flext-cli exclusively
 from flext_cli import (
-    FlextCliApi,
+    FlextCli,
     FlextCliCmd,
     FlextCliCommands,
 )
@@ -29,7 +29,7 @@ from flext_tap_oracle.config import FlextTapOracleConfig
 from flext_tap_oracle.tap_client import create_oracle_tap_service
 
 logger = FlextLogger(__name__)
-cli_api = FlextCliApi()
+cli_api = FlextCli()
 
 
 @dataclass

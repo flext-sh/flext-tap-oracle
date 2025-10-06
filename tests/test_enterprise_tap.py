@@ -472,14 +472,9 @@ class TestFlextOracleTapBaseServiceEnterprise:
             mock_streams.append(mock_stream)
 
         def test_concurrent_processing() -> None:
-            # Simulate processing multiple streams
-            semaphore = asyncio.Semaphore(database_config["max_parallel_streams"])
-
-            def process_stream(stream: Mock) -> None:
-                async with semaphore:
-                    stream.sync_async()
-
-            asyncio.gather(*[process_stream(stream) for stream in mock_streams])
+            # Simulate processing multiple streams synchronously
+            for stream in mock_streams:
+                stream.sync_async()
 
         # Run the test
         test_concurrent_processing()
