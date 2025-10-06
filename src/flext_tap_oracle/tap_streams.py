@@ -36,7 +36,7 @@ class FlextTapOracleStreams:
     """
 
     # Shared logger for all stream operations
-    _logger = FlextLogger(__name__)
+    logger = FlextLogger(__name__)
 
     class OracleStream(Stream):
         """Oracle stream using MAXIMUM flext-db-oracle infrastructure.
@@ -130,7 +130,7 @@ class FlextTapOracleStreams:
                     )
 
                     if query_result.is_failure:
-                        FlextTapOracleStreams._logger.error(
+                        FlextTapOracleStreams.logger.error(
                             f"Failed to execute query: {query_result.error}"
                         )
                         return
@@ -155,7 +155,7 @@ class FlextTapOracleStreams:
                         yield processed_record
 
             except Exception as e:
-                FlextTapOracleStreams._logger.exception(
+                FlextTapOracleStreams.logger.exception(
                     f"Error getting records from {self.table_name}"
                 )
                 msg = f"Failed to get records: {e}"
@@ -169,7 +169,7 @@ class FlextTapOracleStreams:
             """Process results using flext-db-oracle table metadata."""
             # Extract column metadata from FlextDbOracleTable
             if not hasattr(table_metadata, "columns"):
-                FlextTapOracleStreams._logger.warning(
+                FlextTapOracleStreams.logger.warning(
                     "Table metadata missing columns, using fallback"
                 )
                 yield from self._process_results_fallback(query_data)
@@ -181,7 +181,7 @@ class FlextTapOracleStreams:
             ):
                 data_rows = query_data
             else:
-                FlextTapOracleStreams._logger.warning(
+                FlextTapOracleStreams.logger.warning(
                     "Unexpected query data structure, using fallback"
                 )
                 yield from self._process_results_fallback(query_data)
@@ -194,7 +194,7 @@ class FlextTapOracleStreams:
                     elif isinstance(row_data, dict):
                         record = row_data
                     else:
-                        FlextTapOracleStreams._logger.warning(
+                        FlextTapOracleStreams.logger.warning(
                             "Unexpected row data type: %s", type(row_data)
                         )
                         continue
@@ -205,7 +205,7 @@ class FlextTapOracleStreams:
                     )
                     yield record
                 except Exception:
-                    FlextTapOracleStreams._logger.exception(
+                    FlextTapOracleStreams.logger.exception(
                         "Failed to process record using flext-db-oracle metadata",
                     )
                     continue
@@ -225,7 +225,7 @@ class FlextTapOracleStreams:
             ):
                 data_rows = query_data
             else:
-                FlextTapOracleStreams._logger.warning(
+                FlextTapOracleStreams.logger.warning(
                     "Cannot process query data in fallback mode"
                 )
                 return
@@ -246,7 +246,7 @@ class FlextTapOracleStreams:
                         record = {"data": str(row_data)}
                     yield record
                 except Exception:
-                    FlextTapOracleStreams._logger.exception(
+                    FlextTapOracleStreams.logger.exception(
                         "Failed to process record in fallback mode"
                     )
                     continue
@@ -327,7 +327,7 @@ class FlextTapOracleStreams:
                     "error": "Metadata not available",
                 }
             except Exception as e:
-                FlextTapOracleStreams._logger.exception("Failed to get table info")
+                FlextTapOracleStreams.logger.exception("Failed to get table info")
                 return {"table_name": self.table_name, "error": str(e)}
 
         def estimate_row_count(self: object) -> int | None:
@@ -341,7 +341,7 @@ class FlextTapOracleStreams:
                     .replace("#", "")
                     .isalnum()
                 ):
-                    FlextTapOracleStreams._logger.warning(
+                    FlextTapOracleStreams.logger.warning(
                         "Invalid table name for count estimation: %s",
                         self.table_name,
                     )
@@ -365,7 +365,7 @@ class FlextTapOracleStreams:
                         return int(next(iter(first_row.values())))
                 return None
             except Exception as e:
-                FlextTapOracleStreams._logger.warning(
+                FlextTapOracleStreams.logger.warning(
                     "Failed to estimate row count for %s: %s",
                     self.table_name,
                     e,
