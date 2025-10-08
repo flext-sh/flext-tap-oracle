@@ -12,7 +12,7 @@ from flext_core import FlextConstants, FlextTypes
 from flext_db_oracle import FlextDbOracleConstants
 
 
-class FlextTapOracleConstants(FlextConstants):
+class FlextMeltanoTapOracleConstants(FlextConstants):
     """Oracle tap extraction-specific constants following FLEXT unified pattern.
 
     Inherits from FlextConstants for universal constants, defines only
@@ -97,4 +97,4 @@ class FlextTapOracleConstants(FlextConstants):
         TEST_QUERY: Final[str] = FlextDbOracleConstants.Query.TEST_QUERY
 
 
-__all__ = ["FlextTapOracleConstants"]
+__all__ = ["FlextMeltanoTapOracleConstants"]

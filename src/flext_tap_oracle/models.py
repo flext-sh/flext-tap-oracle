@@ -27,12 +27,12 @@ from pydantic import (
     model_validator,
 )
 
-# Note: FlextTapOracleUtilities NOT imported here to avoid circular import
-# (utilities.py imports FlextTapOracleModels)
-# Import FlextTapOracleUtilities from flext_tap_oracle.utilities or top-level __init__ instead
+# Note: FlextMeltanoTapOracleUtilities NOT imported here to avoid circular import
+# (utilities.py imports FlextMeltanoTapOracleModels)
+# Import FlextMeltanoTapOracleUtilities from flext_tap_oracle.utilities or top-level __init__ instead
 
 
-class FlextTapOracleModels(FlextModels):
+class FlextMeltanoTapOracleModels(FlextModels):
     """Comprehensive models for Oracle tap operations extending FlextModels.
 
     Provides standardized models for all Oracle tap domain entities including:
@@ -721,7 +721,7 @@ class FlextTapOracleModels(FlextModels):
         )
 
         # Processed stream information
-        stream_info: list[FlextTapOracleModels.OracleTapStreamInfo] = Field(
+        stream_info: list[FlextMeltanoTapOracleModels.OracleTapStreamInfo] = Field(
             default_factory=list,
             description="Processed stream information for tap use",
         )
@@ -784,7 +784,7 @@ class FlextTapOracleModels(FlextModels):
 
         def get_selected_streams(
             self: object,
-        ) -> list[FlextTapOracleModels.OracleTapStreamInfo]:
+        ) -> list[FlextMeltanoTapOracleModels.OracleTapStreamInfo]:
             """Get only selected streams."""
             return [stream for stream in self.stream_info if stream.is_selected]
 
@@ -944,7 +944,7 @@ class FlextTapOracleModels(FlextModels):
 
         def update_performance_metrics(
             self: object,
-        ) -> FlextTapOracleModels.OracleTapExecutionStats:
+        ) -> FlextMeltanoTapOracleModels.OracleTapExecutionStats:
             """Return new instance with updated calculated performance metrics."""
             if self.duration_seconds > 0:
                 return self.model_copy(
@@ -962,7 +962,7 @@ class FlextTapOracleModels(FlextModels):
             records: int,
             bytes_processed: int,
             processing_time: float,
-        ) -> FlextTapOracleModels.OracleTapExecutionStats:
+        ) -> FlextMeltanoTapOracleModels.OracleTapExecutionStats:
             """Return new instance with added statistics for a processed stream."""
             updated = self.model_copy(
                 update={
@@ -977,7 +977,7 @@ class FlextTapOracleModels(FlextModels):
 
         def mark_stream_error(
             self, stream_name: str
-        ) -> FlextTapOracleModels.OracleTapExecutionStats:
+        ) -> FlextMeltanoTapOracleModels.OracleTapExecutionStats:
             """Return new instance with marked stream error."""
             new_failed_streams = (
                 self.failed_streams.copy() if self.failed_streams else []
@@ -1031,16 +1031,16 @@ class FlextTapOracleModels(FlextModels):
 # =====================================================
 
 # Re-export class-level aliases at module level for direct imports
-TapOracleColumn = FlextTapOracleModels.TapOracleColumn
-TapOracleSchema = FlextTapOracleModels.TapOracleSchema
-TapOracleTable = FlextTapOracleModels.TapOracleTable
-TapReplicationMethod = FlextTapOracleModels.TapReplicationMethod
+TapOracleColumn = FlextMeltanoTapOracleModels.TapOracleColumn
+TapOracleSchema = FlextMeltanoTapOracleModels.TapOracleSchema
+TapOracleTable = FlextMeltanoTapOracleModels.TapOracleTable
+TapReplicationMethod = FlextMeltanoTapOracleModels.TapReplicationMethod
 
 # =====================================================
 #
-# The following functions have been moved to FlextTapOracleUtilities:
-# - create_stream_info_from_oracle_table -> FlextTapOracleUtilities.StreamManagement.create_stream_info_from_oracle_table
-# - create_discovery_result -> FlextTapOracleUtilities.StreamManagement.create_discovery_result
+# The following functions have been moved to FlextMeltanoTapOracleUtilities:
+# - create_stream_info_from_oracle_table -> FlextMeltanoTapOracleUtilities.StreamManagement.create_stream_info_from_oracle_table
+# - create_discovery_result -> FlextMeltanoTapOracleUtilities.StreamManagement.create_discovery_result
 #
 # Use the utilities pattern instead of standalone functions.
 
@@ -1054,11 +1054,11 @@ __all__: FlextTypes.StringList = [
     "FlextDbOracleQueryResult",
     "FlextDbOracleSchema",
     "FlextDbOracleTable",
-    "FlextTapOracleModels",
-    # Note: FlextTapOracleUtilities removed to avoid circular import
+    "FlextMeltanoTapOracleModels",
+    # Note: FlextMeltanoTapOracleUtilities removed to avoid circular import
     # Import from flext_tap_oracle.utilities or flext_tap_oracle directly
     "Stream",
-    # Tap-specific aliases (defined in FlextTapOracleModels class)
+    # Tap-specific aliases (defined in FlextMeltanoTapOracleModels class)
     "TapOracleColumn",
     "TapOracleSchema",
     "TapOracleTable",

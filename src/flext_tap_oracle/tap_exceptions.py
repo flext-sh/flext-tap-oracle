@@ -15,7 +15,7 @@ from typing import override
 from flext_core import FlextConstants, FlextExceptions, FlextTypes
 
 
-class FlextTapOracleExceptions:
+class FlextMeltanoTapOracleExceptions:
     """Oracle tap exception hierarchy extending FlextExceptions.
 
     Provides structured error handling with Oracle-specific context:
@@ -421,28 +421,32 @@ class FlextTapOracleExceptions:
 
 
 # Backward compatibility aliases - property-based exports
-FlextTapOracleError = FlextTapOracleExceptions.TapError
-FlextTapOracleValidationError = FlextTapOracleExceptions.ValidationError
-FlextTapOracleConnectionError = FlextTapOracleExceptions.OracleConnectionError
-FlextTapOracleConfigurationError = FlextTapOracleExceptions.ConfigurationError
-FlextTapOracleProcessingError = FlextTapOracleExceptions.ProcessingError
-FlextTapOracleQueryError = FlextTapOracleExceptions.QueryError
-FlextTapOracleStreamError = FlextTapOracleExceptions.StreamError
-FlextTapOracleDiscoveryError = FlextTapOracleExceptions.DiscoveryError
-FlextTapOracleMetadataError = FlextTapOracleExceptions.MetadataError
-FlextTapOracleExtractionError = FlextTapOracleExceptions.ExtractionError
+FlextMeltanoTapOracleError = FlextMeltanoTapOracleExceptions.TapError
+FlextMeltanoTapOracleValidationError = FlextMeltanoTapOracleExceptions.ValidationError
+FlextMeltanoTapOracleConnectionError = (
+    FlextMeltanoTapOracleExceptions.OracleConnectionError
+)
+FlextMeltanoTapOracleConfigurationError = (
+    FlextMeltanoTapOracleExceptions.ConfigurationError
+)
+FlextMeltanoTapOracleProcessingError = FlextMeltanoTapOracleExceptions.ProcessingError
+FlextMeltanoTapOracleQueryError = FlextMeltanoTapOracleExceptions.QueryError
+FlextMeltanoTapOracleStreamError = FlextMeltanoTapOracleExceptions.StreamError
+FlextMeltanoTapOracleDiscoveryError = FlextMeltanoTapOracleExceptions.DiscoveryError
+FlextMeltanoTapOracleMetadataError = FlextMeltanoTapOracleExceptions.MetadataError
+FlextMeltanoTapOracleExtractionError = FlextMeltanoTapOracleExceptions.ExtractionError
 
 
 __all__: FlextTypes.StringList = [
-    "FlextTapOracleConfigurationError",
-    "FlextTapOracleConnectionError",
-    "FlextTapOracleDiscoveryError",
-    "FlextTapOracleError",
-    "FlextTapOracleExceptions",
-    "FlextTapOracleExtractionError",
-    "FlextTapOracleMetadataError",
-    "FlextTapOracleProcessingError",
-    "FlextTapOracleQueryError",
-    "FlextTapOracleStreamError",
-    "FlextTapOracleValidationError",
+    "FlextMeltanoTapOracleConfigurationError",
+    "FlextMeltanoTapOracleConnectionError",
+    "FlextMeltanoTapOracleDiscoveryError",
+    "FlextMeltanoTapOracleError",
+    "FlextMeltanoTapOracleExceptions",
+    "FlextMeltanoTapOracleExtractionError",
+    "FlextMeltanoTapOracleMetadataError",
+    "FlextMeltanoTapOracleProcessingError",
+    "FlextMeltanoTapOracleQueryError",
+    "FlextMeltanoTapOracleStreamError",
+    "FlextMeltanoTapOracleValidationError",
 ]

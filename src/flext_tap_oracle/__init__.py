@@ -16,17 +16,17 @@ from flext_meltano import (
 )
 
 from flext_tap_oracle.config import (
-    FlextTapOracleConfig,
+    FlextMeltanoTapOracleConfig,
     create_oracle_tap_config,
 )
 from flext_tap_oracle.models import (
-    FlextTapOracleModels,
+    FlextMeltanoTapOracleModels,
     TapOracleColumn,
     TapOracleSchema,
     TapOracleTable,
     TapReplicationMethod,
 )
-from flext_tap_oracle.protocols import FlextTapOracleProtocols
+from flext_tap_oracle.protocols import FlextMeltanoTapOracleProtocols
 from flext_tap_oracle.tap_client import (
     FlextOracleConnectionTestService,
     FlextOracleDiscoveryService,
@@ -36,50 +36,50 @@ from flext_tap_oracle.tap_client import (
     create_oracle_tap_service,
 )
 from flext_tap_oracle.tap_exceptions import (
-    FlextTapOracleConfigurationError,
-    FlextTapOracleConnectionError,
-    FlextTapOracleDiscoveryError,
-    FlextTapOracleError,
-    FlextTapOracleExtractionError,
-    FlextTapOracleMetadataError,
-    FlextTapOracleProcessingError,
-    FlextTapOracleQueryError,
-    FlextTapOracleStreamError,
-    FlextTapOracleValidationError,
+    FlextMeltanoTapOracleConfigurationError,
+    FlextMeltanoTapOracleConnectionError,
+    FlextMeltanoTapOracleDiscoveryError,
+    FlextMeltanoTapOracleError,
+    FlextMeltanoTapOracleExtractionError,
+    FlextMeltanoTapOracleMetadataError,
+    FlextMeltanoTapOracleProcessingError,
+    FlextMeltanoTapOracleQueryError,
+    FlextMeltanoTapOracleStreamError,
+    FlextMeltanoTapOracleValidationError,
 )
 from flext_tap_oracle.tap_streams import (
     FlextOracleStream,
     create_oracle_stream,
     create_oracle_stream_from_table,
 )
-from flext_tap_oracle.typings import FlextTapOracleTypes
-from flext_tap_oracle.utilities import FlextTapOracleUtilities
+from flext_tap_oracle.typings import FlextMeltanoTapOracleTypes
+from flext_tap_oracle.utilities import FlextMeltanoTapOracleUtilities
 
 __all__ = [
     "FlextDbOracleApi",
     "FlextDbOracleConfig",
     "FlextMeltanoBridge",
     "FlextMeltanoConfig",
+    "FlextMeltanoTapOracleConfig",
+    "FlextMeltanoTapOracleConfigurationError",
+    "FlextMeltanoTapOracleConnectionError",
+    "FlextMeltanoTapOracleDiscoveryError",
+    "FlextMeltanoTapOracleError",
+    "FlextMeltanoTapOracleExtractionError",
+    "FlextMeltanoTapOracleMetadataError",
+    "FlextMeltanoTapOracleModels",
+    "FlextMeltanoTapOracleProcessingError",
+    "FlextMeltanoTapOracleProtocols",
+    "FlextMeltanoTapOracleQueryError",
+    "FlextMeltanoTapOracleStreamError",
+    "FlextMeltanoTapOracleTypes",
+    "FlextMeltanoTapOracleUtilities",
+    "FlextMeltanoTapOracleValidationError",
     "FlextOracleConnectionTestService",
     "FlextOracleDiscoveryService",
     "FlextOracleStream",
     "FlextOracleTableFilterService",
     "FlextOracleTapService",
-    "FlextTapOracleConfig",
-    "FlextTapOracleConfigurationError",
-    "FlextTapOracleConnectionError",
-    "FlextTapOracleDiscoveryError",
-    "FlextTapOracleError",
-    "FlextTapOracleExtractionError",
-    "FlextTapOracleMetadataError",
-    "FlextTapOracleModels",
-    "FlextTapOracleProcessingError",
-    "FlextTapOracleProtocols",
-    "FlextTapOracleQueryError",
-    "FlextTapOracleStreamError",
-    "FlextTapOracleTypes",
-    "FlextTapOracleUtilities",
-    "FlextTapOracleValidationError",
     "TapOracleColumn",
     "TapOracleSchema",
     "TapOracleTable",

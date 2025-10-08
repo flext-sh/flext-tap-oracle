@@ -23,7 +23,7 @@ from flext_core import FlextTypes
 
 
 # Oracle tap domain TypeVars
-class FlextTapOracleTypes(FlextTypes):
+class FlextMeltanoTapOracleTypes(FlextTypes):
     """Oracle tap-specific type definitions extending FlextTypes.
 
     Domain-specific type system for Oracle database extraction operations.
@@ -150,5 +150,5 @@ class FlextTapOracleTypes(FlextTypes):
 # =============================================================================
 
 __all__: FlextTypes.StringList = [
-    "FlextTapOracleTypes",
+    "FlextMeltanoTapOracleTypes",
 ]
