@@ -6,8 +6,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_tap_oracle.__version__ import __version__, __version_info__
-
 from flext_db_oracle import (
     FlextDbOracleApi,
     FlextDbOracleConfig,
@@ -17,6 +15,7 @@ from flext_meltano import (
     FlextMeltanoConfig,
 )
 
+from flext_tap_oracle.__version__ import __version__, __version_info__
 from flext_tap_oracle.config import (
     FlextMeltanoTapOracleConfig,
     create_oracle_tap_config,
@@ -86,6 +85,8 @@ __all__ = [
     "TapOracleSchema",
     "TapOracleTable",
     "TapReplicationMethod",
+    "__version__",
+    "__version_info__",
     "create_oracle_discovery_service",
     "create_oracle_stream",
     "create_oracle_stream_from_table",
