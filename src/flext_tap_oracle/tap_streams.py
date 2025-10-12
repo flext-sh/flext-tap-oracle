@@ -9,7 +9,7 @@ from __future__ import annotations
 from collections.abc import Iterable, Mapping
 from typing import override
 
-from flext_core import FlextContainer, FlextLogger, FlextResult, FlextTypes
+from flext_core import FlextCore
 from flext_db_oracle import (
     FlextDbOracleApi,
     FlextDbOracleConnection,
@@ -32,11 +32,11 @@ class FlextMeltanoTapOracleStreams:
     - Performance optimization for large tables
     - Complete integration with flext-db-oracle infrastructure
 
-    All nested classes and methods follow SOLID principles and FlextResult patterns.
+    All nested classes and methods follow SOLID principles and FlextCore.Result patterns.
     """
 
     # Shared logger for all stream operations
-    logger = FlextLogger(__name__)
+    logger = FlextCore.Logger(__name__)
 
     class OracleStream(Stream):
         """Oracle stream using MAXIMUM flext-db-oracle infrastructure.
@@ -54,7 +54,7 @@ class FlextMeltanoTapOracleStreams:
             tap: Tap,
             name: str,
             table_name: str,
-            schema: FlextTypes.Dict,
+            schema: FlextCore.Types.Dict,
             oracle_api: FlextDbOracleApi,
         ) -> None:
             """Initialize Oracle stream with maximum flext-db-oracle integration."""
@@ -74,17 +74,19 @@ class FlextMeltanoTapOracleStreams:
                 connection = self.oracle_api.connection
                 if connection is None:
                     # Fallback: create connection from tap config using CORRECT method
-                    tap_config: FlextTypes.Dict = getattr(
+                    tap_config: FlextCore.Types.Dict = getattr(
                         self._tap, "typed_config", None
                     )
                     if tap_config and hasattr(tap_config, "get_oracle_config"):
-                        oracle_config: FlextTypes.Dict = tap_config.get_oracle_config()
+                        oracle_config: FlextCore.Types.Dict = (
+                            tap_config.get_oracle_config()
+                        )
                         connection = FlextDbOracleConnection(oracle_config)
                     else:
                         msg = "Cannot create metadata manager without valid Oracle connection"
                         raise RuntimeError(msg)
-                self._metadata_manager: FlextTypes.Dict = FlextDbOracleMetadataManager(
-                    connection
+                self._metadata_manager: FlextCore.Types.Dict = (
+                    FlextDbOracleMetadataManager(connection)
                 )
             return self._metadata_manager
 
@@ -92,8 +94,8 @@ class FlextMeltanoTapOracleStreams:
         def observability_manager(self: object) -> FlextDbOracleObservabilityManager:
             """Get flext-db-oracle observability manager with lazy initialization."""
             if self._observability_manager is None:
-                # Use REAL constructor - requires FlextContainer and context_name
-                container = FlextContainer.get_global()
+                # Use REAL constructor - requires FlextCore.Container and context_name
+                container = FlextCore.Container.get_global()
                 context_name = f"oracle_stream_{self.table_name}"
                 self._observability_manager = FlextDbOracleObservabilityManager(
                     container,
@@ -104,7 +106,7 @@ class FlextMeltanoTapOracleStreams:
         def get_records(
             self,
             _context: Mapping[str, object] | None = None,
-        ) -> Iterable[FlextTypes.Dict]:
+        ) -> Iterable[FlextCore.Types.Dict]:
             """Get records from Oracle table using flext-db-oracle exclusively - NO direct SQLAlchemy."""
             oracle_api = self._create_oracle_api()
             tap_config = self.tap_config
@@ -165,7 +167,7 @@ class FlextMeltanoTapOracleStreams:
             self,
             query_data: object,  # TDbOracleQueryResult from flext-db-oracle
             table_metadata: object,  # FlextDbOracleTable instance
-        ) -> Iterable[FlextTypes.Dict]:
+        ) -> Iterable[FlextCore.Types.Dict]:
             """Process results using flext-db-oracle table metadata."""
             # Extract column metadata from FlextDbOracleTable
             if not hasattr(table_metadata, "columns"):
@@ -213,10 +215,10 @@ class FlextMeltanoTapOracleStreams:
         def _process_results_fallback(
             self,
             query_data: object,
-        ) -> Iterable[FlextTypes.Dict]:
+        ) -> Iterable[FlextCore.Types.Dict]:
             """Fallback processing without metadata (minimal implementation)."""
             # Use schema properties as column names
-            column_names: FlextTypes.Dict = list(
+            column_names: FlextCore.Types.Dict = list(
                 self.schema.get("properties", {}).keys()
             )
             # Handle different query_data structures
@@ -253,11 +255,11 @@ class FlextMeltanoTapOracleStreams:
 
         def _transform_oracle_types_with_table_metadata(
             self,
-            record: FlextTypes.Dict,
-            column_metadata: FlextTypes.List,  # FlextDbOracleColumn instances
-        ) -> FlextTypes.Dict:
+            record: FlextCore.Types.Dict,
+            column_metadata: FlextCore.Types.List,  # FlextDbOracleColumn instances
+        ) -> FlextCore.Types.Dict:
             """Transform Oracle data types using flext-db-oracle type knowledge."""
-            transformed_record: FlextTypes.Dict = {}
+            transformed_record: FlextCore.Types.Dict = {}
             # Create metadata lookup by column name
             meta_lookup = {}
             for col_meta in column_metadata:
@@ -305,7 +307,7 @@ class FlextMeltanoTapOracleStreams:
             return transformed_record
 
         # ADDITIONAL ORACLE STREAM METHODS
-        def get_table_info(self: object) -> FlextTypes.Dict:
+        def get_table_info(self: object) -> FlextCore.Types.Dict:
             """Get Oracle table information using flext-db-oracle metadata."""
             try:
                 table_metadata_result = self.metadata_manager.get_table_metadata(
@@ -350,8 +352,8 @@ class FlextMeltanoTapOracleStreams:
                     return None
                 # Safe query construction using template - table name pre-validated
                 safe_table_name = self.table_name.replace('"', '""')  # Escape quotes
-                query_template: FlextTypes.Dict = 'SELECT COUNT(*) FROM "{}"'
-                result: FlextResult[object] = self.oracle_api.query(
+                query_template: FlextCore.Types.Dict = 'SELECT COUNT(*) FROM "{}"'
+                result: FlextCore.Result[object] = self.oracle_api.query(
                     query_template.format(safe_table_name)
                 )
                 if (
@@ -374,7 +376,7 @@ class FlextMeltanoTapOracleStreams:
                 )
                 return None
 
-        def get_stream_metadata(self: object) -> FlextTypes.Dict:
+        def get_stream_metadata(self: object) -> FlextCore.Types.Dict:
             """Get comprehensive stream metadata."""
             return {
                 "name": self.name,
@@ -392,7 +394,7 @@ class FlextMeltanoTapOracleStreams:
             tap: Tap,
             name: str,
             table_name: str,
-            schema: FlextTypes.Dict,
+            schema: FlextCore.Types.Dict,
             oracle_api: FlextDbOracleApi,
         ) -> FlextMeltanoTapOracleStreams.OracleStream:
             """Create Oracle stream.
@@ -439,7 +441,7 @@ class FlextMeltanoTapOracleStreams:
             stream_name = f"{stream_prefix}_{table_name.lower()}"
 
             # Build basic schema from table metadata
-            schema: FlextTypes.Dict = {"type": "object", "properties": {}}
+            schema: FlextCore.Types.Dict = {"type": "object", "properties": {}}
             if hasattr(table_metadata, "columns"):
                 for column in table_metadata.columns:
                     col_name = getattr(column, "name", "unknown")
@@ -453,7 +455,7 @@ class FlextMeltanoTapOracleStreams:
                     elif col_type.upper().startswith("FLOAT"):
                         pass
 
-                    properties: FlextTypes.Dict = schema.get("properties", {})
+                    properties: FlextCore.Types.Dict = schema.get("properties", {})
                     if isinstance(properties, dict):
                         properties[col_name] = {"type": "singer_type"}
                         schema["properties"] = properties

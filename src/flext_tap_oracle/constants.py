@@ -8,14 +8,14 @@ from __future__ import annotations
 
 from typing import ClassVar, Final
 
-from flext_core import FlextConstants, FlextTypes
+from flext_core import FlextCore
 from flext_db_oracle import FlextDbOracleConstants
 
 
-class FlextMeltanoTapOracleConstants(FlextConstants):
+class FlextMeltanoTapOracleConstants(FlextCore.Constants):
     """Oracle tap extraction-specific constants following FLEXT unified pattern.
 
-    Inherits from FlextConstants for universal constants, defines only
+    Inherits from FlextCore.Constants for universal constants, defines only
     Oracle tap-specific constants using nested namespace classes.
 
     Composes with FlextDbOracleConstants to avoid duplication and ensure consistency.
@@ -35,14 +35,16 @@ class FlextMeltanoTapOracleConstants(FlextConstants):
     class Singer:
         """Singer tap configuration constants."""
 
-        # Use FlextConstants for performance settings
-        DEFAULT_BATCH_SIZE: Final[int] = FlextConstants.Performance.DEFAULT_BATCH_SIZE
-        MAX_BATCH_SIZE: Final[int] = FlextConstants.Performance.MAX_BATCH_ITEMS
+        # Use FlextCore.Constants for performance settings
+        DEFAULT_BATCH_SIZE: Final[int] = (
+            FlextCore.Constants.Performance.DEFAULT_BATCH_SIZE
+        )
+        MAX_BATCH_SIZE: Final[int] = FlextCore.Constants.Performance.MAX_BATCH_ITEMS
 
     class Replication:
         """Oracle replication method constants."""
 
-        REPLICATION_METHODS: ClassVar[Final[FlextTypes.StringList]] = [
+        REPLICATION_METHODS: ClassVar[Final[FlextCore.Types.StringList]] = [
             "FULL_TABLE",
             "INCREMENTAL",
             "LOG_BASED",
@@ -53,9 +55,9 @@ class FlextMeltanoTapOracleConstants(FlextConstants):
     class Validation:
         """Oracle tap validation constants."""
 
-        # Use FlextConstants for validation limits
-        MIN_BATCH_SIZE: Final[int] = FlextConstants.Performance.MIN_TAKE
-        MAX_TIMEOUT: Final[int] = FlextConstants.Performance.MAX_TIMEOUT_SECONDS
+        # Use FlextCore.Constants for validation limits
+        MIN_BATCH_SIZE: Final[int] = FlextCore.Constants.Performance.MIN_TAKE
+        MAX_TIMEOUT: Final[int] = FlextCore.Constants.Performance.MAX_TIMEOUT_SECONDS
 
         # Use FlextDbOracleConstants for Oracle-specific validation
         MAX_TABLE_NAME_LENGTH: Final[int] = (

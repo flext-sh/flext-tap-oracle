@@ -1,6 +1,6 @@
 """FLEXT Tap Oracle Utilities - Domain-specific utilities for Oracle tap operations.
 
-This module provides comprehensive Oracle tap utilities extending FlextUtilities
+This module provides comprehensive Oracle tap utilities extending FlextCore.Utilities
 with nested classes for error handling, stream management, discovery operations,
 and configuration validation. Follows FLEXT standards with single-class pattern.
 
@@ -12,13 +12,7 @@ from __future__ import annotations
 
 from typing import ClassVar
 
-from flext_core import (
-    FlextContainer,
-    FlextLogger,
-    FlextResult,
-    FlextTypes,
-    FlextUtilities,
-)
+from flext_core import FlextCore
 from flext_db_oracle import FlextDbOracleTable
 
 from flext_tap_oracle.models import FlextMeltanoTapOracleModels
@@ -32,8 +26,8 @@ from flext_tap_oracle.tap_exceptions import (
 )
 
 
-class FlextMeltanoTapOracleUtilities(FlextUtilities):
-    """Unified Oracle tap utilities class extending FlextUtilities with nested classes.
+class FlextMeltanoTapOracleUtilities(FlextCore.Utilities):
+    """Unified Oracle tap utilities class extending FlextCore.Utilities with nested classes.
 
     Provides comprehensive Oracle tap utilities with nested classes for:
     - Error handling and exception creation
@@ -56,17 +50,17 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
     def __init__(self) -> None:
         """Initialize FlextMeltanoTapOracleUtilities service."""
         super().__init__()
-        self._container = FlextContainer.get_global()
-        self.logger = FlextLogger(__name__)
+        self._container = FlextCore.Container.get_global()
+        self.logger = FlextCore.Logger(__name__)
 
-    def execute(self) -> FlextResult[FlextTypes.Dict]:
+    def execute(self) -> FlextCore.Result[FlextCore.Types.Dict]:
         """Execute the main domain service operation.
 
         Returns:
-            FlextResult[FlextTypes.Dict]: Service status and capabilities.
+            FlextCore.Result[FlextCore.Types.Dict]: Service status and capabilities.
 
         """
-        return FlextResult[FlextTypes.Dict].ok({
+        return FlextCore.Result[FlextCore.Types.Dict].ok({
             "status": "operational",
             "service": "flext-tap-oracle-utilities",
             "capabilities": [
@@ -80,12 +74,12 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
         })
 
     @property
-    def logger(self) -> FlextLogger:
+    def logger(self) -> FlextCore.Logger:
         """Get logger instance."""
         return self.logger
 
     @property
-    def container(self) -> FlextContainer:
+    def container(self) -> FlextCore.Container:
         """Get container instance."""
         return self._container
 
@@ -190,7 +184,7 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
             exception: Exception,
             operation: str = "unknown",
             **context: object,
-        ) -> FlextResult[None]:
+        ) -> FlextCore.Result[None]:
             """Handle Oracle exceptions with proper error mapping."""
             try:
                 error_message = f"Oracle {operation} failed: {exception}"
@@ -218,10 +212,10 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
                         error_message, **context
                     )
 
-                return FlextResult[None].fail(str(error))
+                return FlextCore.Result[None].fail(str(error))
 
             except Exception as e:
-                return FlextResult[None].fail(f"Exception handling failed: {e}")
+                return FlextCore.Result[None].fail(f"Exception handling failed: {e}")
 
     class StreamManagement:
         """Oracle tap stream management utilities."""
@@ -231,7 +225,7 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
             oracle_table: FlextDbOracleTable,
             stream_prefix: str = "oracle",
             replication_method: str = "FULL_TABLE",
-        ) -> FlextResult[object]:
+        ) -> FlextCore.Result[object]:
             """Create stream info from Oracle table metadata."""
             try:
                 stream_name = f"{stream_prefix}_{oracle_table.name.lower()}"
@@ -246,18 +240,18 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
                     else None,
                 )
 
-                return FlextResult[object].ok(stream_info)
+                return FlextCore.Result[object].ok(stream_info)
 
             except Exception as e:
-                return FlextResult[object].fail(
+                return FlextCore.Result[object].fail(
                     f"Failed to create stream info from Oracle table: {e}",
                 )
 
         @staticmethod
         def create_discovery_result(
-            tables: FlextTypes.List,
+            tables: FlextCore.Types.List,
             schema_name: str,
-        ) -> FlextResult[object]:
+        ) -> FlextCore.Result[object]:
             """Create discovery result from Oracle tables."""
             try:
                 # Convert tables to stream info
@@ -275,10 +269,10 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
                     stream_infos=stream_infos,
                 )
 
-                return FlextResult[object].ok(discovery_result)
+                return FlextCore.Result[object].ok(discovery_result)
 
             except Exception as e:
-                return FlextResult[object].fail(
+                return FlextCore.Result[object].fail(
                     f"Failed to create discovery result: {e}",
                 )
 
@@ -286,7 +280,9 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
         """Oracle tap configuration validation utilities."""
 
         @staticmethod
-        def validate_oracle_config(config: dict) -> FlextResult[FlextTypes.Dict]:
+        def validate_oracle_config(
+            config: dict,
+        ) -> FlextCore.Result[FlextCore.Types.Dict]:
             """Validate Oracle configuration parameters."""
             try:
                 required_fields = [
@@ -298,11 +294,11 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
                 ]
                 for field in required_fields:
                     if field not in config:
-                        return FlextResult[FlextTypes.Dict].fail(
+                        return FlextCore.Result[FlextCore.Types.Dict].fail(
                             f"Missing required Oracle field: {field}"
                         )
                     if not config[field]:
-                        return FlextResult[FlextTypes.Dict].fail(
+                        return FlextCore.Result[FlextCore.Types.Dict].fail(
                             f"Empty Oracle field: {field}"
                         )
 
@@ -313,31 +309,31 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
                         port <= 0
                         or port > FlextMeltanoTapOracleUtilities.MAX_PORT_NUMBER
                     ):
-                        return FlextResult[FlextTypes.Dict].fail(
+                        return FlextCore.Result[FlextCore.Types.Dict].fail(
                             f"Oracle port must be between 1 and {FlextMeltanoTapOracleUtilities.MAX_PORT_NUMBER}"
                         )
                     config["port"] = port
                 except ValueError:
-                    return FlextResult[FlextTypes.Dict].fail(
+                    return FlextCore.Result[FlextCore.Types.Dict].fail(
                         "Oracle port must be numeric"
                     )
 
-                return FlextResult[FlextTypes.Dict].ok(config)
+                return FlextCore.Result[FlextCore.Types.Dict].ok(config)
 
             except Exception as e:
-                return FlextResult[FlextTypes.Dict].fail(
+                return FlextCore.Result[FlextCore.Types.Dict].fail(
                     f"Oracle config validation failed: {e}"
                 )
 
         @staticmethod
-        def build_connection_string(config: dict) -> FlextResult[str]:
+        def build_connection_string(config: dict) -> FlextCore.Result[str]:
             """Build Oracle connection string from configuration."""
             try:
                 validation_result = FlextMeltanoTapOracleUtilities.ConfigurationValidation.validate_oracle_config(
                     config
                 )
                 if validation_result.is_failure:
-                    return FlextResult[str].fail(validation_result.error)
+                    return FlextCore.Result[str].fail(validation_result.error)
 
                 validated_config = validation_result.unwrap()
 
@@ -347,13 +343,17 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
                     f"/{validated_config['service_name']}"
                 )
 
-                return FlextResult[str].ok(connection_string)
+                return FlextCore.Result[str].ok(connection_string)
 
             except Exception as e:
-                return FlextResult[str].fail(f"Connection string building failed: {e}")
+                return FlextCore.Result[str].fail(
+                    f"Connection string building failed: {e}"
+                )
 
         @staticmethod
-        def test_oracle_connectivity(config: dict) -> FlextResult[FlextTypes.Dict]:
+        def test_oracle_connectivity(
+            config: dict,
+        ) -> FlextCore.Result[FlextCore.Types.Dict]:
             """Test Oracle connectivity with configuration."""
             try:
                 # Validate configuration first
@@ -361,7 +361,9 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
                     config
                 )
                 if validation_result.is_failure:
-                    return FlextResult[FlextTypes.Dict].fail(validation_result.error)
+                    return FlextCore.Result[FlextCore.Types.Dict].fail(
+                        validation_result.error
+                    )
 
                 # Note: In a real implementation, this would test actual connectivity
                 # For now, return structure validation
@@ -373,10 +375,10 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
                     "connection_test": "structural_validation_passed",
                 }
 
-                return FlextResult[FlextTypes.Dict].ok(connectivity_result)
+                return FlextCore.Result[FlextCore.Types.Dict].ok(connectivity_result)
 
             except Exception as e:
-                return FlextResult[FlextTypes.Dict].fail(
+                return FlextCore.Result[FlextCore.Types.Dict].fail(
                     f"Oracle connectivity test failed: {e}"
                 )
 
@@ -392,7 +394,7 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
         def optimize_extraction_query(
             base_query: str,
             table_stats: dict,
-        ) -> FlextResult[str]:
+        ) -> FlextCore.Result[str]:
             """Optimize extraction query based on table statistics."""
             try:
                 optimized_query = base_query
@@ -408,17 +410,17 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
                     pk_column = table_stats["primary_key"]
                     optimized_query = f"/*+ INDEX_ASC({pk_column}) */ {optimized_query}"
 
-                return FlextResult[str].ok(optimized_query)
+                return FlextCore.Result[str].ok(optimized_query)
 
             except Exception as e:
-                return FlextResult[str].fail(f"Query optimization failed: {e}")
+                return FlextCore.Result[str].fail(f"Query optimization failed: {e}")
 
         @staticmethod
         def calculate_extraction_metrics(
             start_time: float,
             end_time: float,
             records_processed: int,
-        ) -> FlextResult[FlextTypes.Dict]:
+        ) -> FlextCore.Result[FlextCore.Types.Dict]:
             """Calculate extraction performance metrics."""
             try:
                 duration = end_time - start_time
@@ -442,14 +444,14 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
                     ),
                 }
 
-                return FlextResult[FlextTypes.Dict].ok(metrics)
+                return FlextCore.Result[FlextCore.Types.Dict].ok(metrics)
 
             except Exception as e:
-                return FlextResult[FlextTypes.Dict].fail(
+                return FlextCore.Result[FlextCore.Types.Dict].fail(
                     f"Metrics calculation failed: {e}"
                 )
 
 
-__all__: FlextTypes.StringList = [
+__all__: FlextCore.Types.StringList = [
     "FlextMeltanoTapOracleUtilities",
 ]
