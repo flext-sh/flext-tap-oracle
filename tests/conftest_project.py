@@ -151,7 +151,7 @@ def oracle_tap_config() -> FlextCore.Types.Dict:
 @pytest.fixture
 def oracle_tap(oracle_tap_config: FlextCore.Types.Dict) -> FlextOracleTapService:
     """Oracle tap service instance for testing."""
-    # Convert dict to proper config and create service
+    # Convert dict[str, object] to proper config and create service
     config_result = FlextCore.Result[FlextMeltanoTapOracleConfig].ok(
         FlextMeltanoTapOracleConfig.get_global_instance().model_validate(
             oracle_tap_config

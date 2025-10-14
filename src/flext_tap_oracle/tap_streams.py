@@ -141,16 +141,16 @@ class FlextMeltanoTapOracleStreams:
                     rows = query_result.data or []
 
                     for row in rows:
-                        # Convert row to dict format expected by Singer
+                        # Convert row to dict[str, object] format expected by Singer
                         if hasattr(row, "_asdict"):
                             # Handle named tuple rows
                             record = row._asdict()
                         elif isinstance(row, dict):
-                            # Handle dict rows
+                            # Handle dict[str, object] rows
                             record = row
                         else:
                             # Handle other row formats
-                            record = dict(row) if row else {}
+                            record = dict[str, object](row) if row else {}
 
                         # Apply any necessary transformations
                         processed_record = self._process_record(record)
@@ -192,7 +192,9 @@ class FlextMeltanoTapOracleStreams:
             for row_data in data_rows:
                 try:
                     if isinstance(row_data, (list, tuple)):
-                        record = dict(zip(column_names, row_data, strict=False))
+                        record = dict[str, object](
+                            zip(column_names, row_data, strict=False)
+                        )
                     elif isinstance(row_data, dict):
                         record = row_data
                     else:
@@ -235,7 +237,9 @@ class FlextMeltanoTapOracleStreams:
                 try:
                     if isinstance(row_data, (list, tuple)):
                         if column_names:
-                            record = dict(zip(column_names, row_data, strict=False))
+                            record = dict[str, object](
+                                zip(column_names, row_data, strict=False)
+                            )
                         else:
                             # Generic column naming
                             record = {
