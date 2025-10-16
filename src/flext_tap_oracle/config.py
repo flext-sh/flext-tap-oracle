@@ -341,30 +341,24 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
         env_overrides: FlextTypes.Dict = {}
 
         if environment == "production":
-            env_overrides.update(
-                {
-                    "batch_size": FlextConstants.Performance.DEFAULT_BATCH_SIZE,
-                    "max_parallel_streams": FlextConstants.Container.DEFAULT_WORKERS,
-                    "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT
-                    * 10,  # 5 minutes for production
-                }
-            )
+            env_overrides.update({
+                "batch_size": FlextConstants.Performance.DEFAULT_BATCH_SIZE,
+                "max_parallel_streams": FlextConstants.Container.DEFAULT_WORKERS,
+                "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT
+                * 10,  # 5 minutes for production
+            })
         elif environment == "development":
-            env_overrides.update(
-                {
-                    "batch_size": FlextConstants.Performance.BatchProcessing.DEFAULT_SIZE,  # Smaller batches for development
-                    "max_parallel_streams": 1,
-                    "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT * 2,
-                }
-            )
+            env_overrides.update({
+                "batch_size": FlextConstants.Performance.BatchProcessing.DEFAULT_SIZE,  # Smaller batches for development
+                "max_parallel_streams": 1,
+                "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT * 2,
+            })
         elif environment == "staging":
-            env_overrides.update(
-                {
-                    "batch_size": FlextConstants.Performance.DEFAULT_BATCH_SIZE // 2,
-                    "max_parallel_streams": 2,
-                    "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT * 6,
-                }
-            )
+            env_overrides.update({
+                "batch_size": FlextConstants.Performance.DEFAULT_BATCH_SIZE // 2,
+                "max_parallel_streams": 2,
+                "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT * 6,
+            })
 
         all_overrides = {**env_overrides, **overrides}
         return cls.get_or_create_shared_instance(

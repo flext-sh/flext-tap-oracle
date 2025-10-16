@@ -67,20 +67,18 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
             FlextResult[FlextTypes.Dict]: Service status and capabilities.
 
         """
-        return FlextResult[FlextTypes.Dict].ok(
-            {
-                "status": "operational",
-                "service": "flext-tap-oracle-utilities",
-                "capabilities": [
-                    "error_handling",
-                    "stream_management",
-                    "discovery_operations",
-                    "configuration_validation",
-                    "performance_optimization",
-                    "data_extraction",
-                ],
-            }
-        )
+        return FlextResult[FlextTypes.Dict].ok({
+            "status": "operational",
+            "service": "flext-tap-oracle-utilities",
+            "capabilities": [
+                "error_handling",
+                "stream_management",
+                "discovery_operations",
+                "configuration_validation",
+                "performance_optimization",
+                "data_extraction",
+            ],
+        })
 
     @property
     def logger(self) -> FlextLogger:

@@ -14,7 +14,6 @@ class FlextMeltanoTapOracleProtocols:
     - 100% backward compatibility through aliases
     """
 
-
     class TapOracle:
         """Singer Tap Oracle domain protocols for Oracle database extraction."""
 
