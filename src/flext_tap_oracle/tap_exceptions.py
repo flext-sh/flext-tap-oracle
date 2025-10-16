@@ -1,6 +1,6 @@
 """Oracle Tap Exceptions - Comprehensive Error Handling.
 
-Exception hierarchy for flext-tap-oracle extending FlextCore.Exceptions with
+Exception hierarchy for flext-tap-oracle extending FlextExceptions with
 Oracle tap-specific context fields for database operations, schema discovery,
 and Singer protocol data extraction.
 
@@ -12,11 +12,11 @@ from __future__ import annotations
 
 from typing import override
 
-from flext_core import FlextCore
+from flext_core import FlextConstants, FlextExceptions, FlextTypes
 
 
 class FlextMeltanoTapOracleExceptions:
-    """Oracle tap exception hierarchy extending FlextCore.Exceptions.
+    """Oracle tap exception hierarchy extending FlextExceptions.
 
     Provides structured error handling with Oracle-specific context:
     - Query errors with SQL and Oracle error codes
@@ -25,7 +25,7 @@ class FlextMeltanoTapOracleExceptions:
     - Connection errors with Oracle database context
     """
 
-    class TapError(FlextCore.Exceptions.BaseError):
+    class TapError(FlextExceptions.BaseError):
         """Base error for Oracle tap operations with Singer context."""
 
         @override
@@ -55,13 +55,13 @@ class FlextMeltanoTapOracleExceptions:
 
             super().__init__(
                 message,
-                code=error_code or FlextCore.Constants.Errors.GENERIC_ERROR,
+                code=error_code or FlextConstants.Errors.GENERIC_ERROR,
                 context=context,
                 correlation_id=correlation_id,
             )
 
-    class ValidationError(FlextCore.Exceptions.ValidationError):
-        """Oracle tap validation error - extends FlextCore.Exceptions."""
+    class ValidationError(FlextExceptions.ValidationError):
+        """Oracle tap validation error - extends FlextExceptions."""
 
         @override
         def __init__(
@@ -96,8 +96,8 @@ class FlextMeltanoTapOracleExceptions:
                 },
             )
 
-    class OracleConnectionError(FlextCore.Exceptions.ConnectionError):
-        """Oracle tap connection error - extends FlextCore.Exceptions."""
+    class OracleConnectionError(FlextExceptions.ConnectionError):
+        """Oracle tap connection error - extends FlextExceptions."""
 
         @override
         def __init__(
@@ -138,8 +138,8 @@ class FlextMeltanoTapOracleExceptions:
                 },
             )
 
-    class ConfigurationError(FlextCore.Exceptions.ConfigurationError):
-        """Oracle tap configuration error - extends FlextCore.Exceptions."""
+    class ConfigurationError(FlextExceptions.ConfigurationError):
+        """Oracle tap configuration error - extends FlextExceptions."""
 
         @override
         def __init__(
@@ -171,8 +171,8 @@ class FlextMeltanoTapOracleExceptions:
                 },
             )
 
-    class ProcessingError(FlextCore.Exceptions.ProcessingError):
-        """Oracle tap processing error - extends FlextCore.Exceptions."""
+    class ProcessingError(FlextExceptions.ProcessingError):
+        """Oracle tap processing error - extends FlextExceptions."""
 
         @override
         def __init__(
@@ -437,7 +437,7 @@ FlextMeltanoTapOracleMetadataError = FlextMeltanoTapOracleExceptions.MetadataErr
 FlextMeltanoTapOracleExtractionError = FlextMeltanoTapOracleExceptions.ExtractionError
 
 
-__all__: FlextCore.Types.StringList = [
+__all__: FlextTypes.StringList = [
     "FlextMeltanoTapOracleConfigurationError",
     "FlextMeltanoTapOracleConnectionError",
     "FlextMeltanoTapOracleDiscoveryError",
