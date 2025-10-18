@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import ClassVar, Final
 
-from flext_core import FlextConstants, FlextTypes
+from flext_core import FlextConstants
 from flext_db_oracle import FlextDbOracleConstants
 
 
@@ -43,7 +43,7 @@ class FlextMeltanoTapOracleConstants(FlextConstants):
     class Replication:
         """Oracle replication method constants."""
 
-        REPLICATION_METHODS: ClassVar[Final[FlextTypes.StringList]] = [
+        REPLICATION_METHODS: ClassVar[Final[list[str]]] = [
             "FULL_TABLE",
             "INCREMENTAL",
             "LOG_BASED",

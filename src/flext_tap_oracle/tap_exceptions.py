@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from typing import override
 
-from flext_core import FlextConstants, FlextExceptions, FlextTypes
+from flext_core import FlextConstants, FlextExceptions
 
 
 class FlextMeltanoTapOracleExceptions:
@@ -437,7 +437,7 @@ FlextMeltanoTapOracleMetadataError = FlextMeltanoTapOracleExceptions.MetadataErr
 FlextMeltanoTapOracleExtractionError = FlextMeltanoTapOracleExceptions.ExtractionError
 
 
-__all__: FlextTypes.StringList = [
+__all__: list[str] = [
     "FlextMeltanoTapOracleConfigurationError",
     "FlextMeltanoTapOracleConnectionError",
     "FlextMeltanoTapOracleDiscoveryError",

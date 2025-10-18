@@ -17,7 +17,6 @@ from flext_core import (
     FlextContainer,
     FlextLogger,
     FlextResult,
-    FlextTypes,
     FlextUtilities,
 )
 from flext_db_oracle import FlextDbOracleTable
@@ -60,14 +59,14 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
         self._container = FlextContainer.get_global()
         self.logger = FlextLogger(__name__)
 
-    def execute(self) -> FlextResult[FlextTypes.Dict]:
+    def execute(self) -> FlextResult[dict[str, object]]:
         """Execute the main domain service operation.
 
         Returns:
-            FlextResult[FlextTypes.Dict]: Service status and capabilities.
+            FlextResult[dict[str, object]]: Service status and capabilities.
 
         """
-        return FlextResult[FlextTypes.Dict].ok({
+        return FlextResult[dict[str, object]].ok({
             "status": "operational",
             "service": "flext-tap-oracle-utilities",
             "capabilities": [
@@ -256,7 +255,7 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
 
         @staticmethod
         def create_discovery_result(
-            tables: FlextTypes.List,
+            tables: list[object],
             schema_name: str,
         ) -> FlextResult[object]:
             """Create discovery result from Oracle tables."""
@@ -289,7 +288,7 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
         @staticmethod
         def validate_oracle_config(
             config: dict,
-        ) -> FlextResult[FlextTypes.Dict]:
+        ) -> FlextResult[dict[str, object]]:
             """Validate Oracle configuration parameters."""
             try:
                 required_fields = [
@@ -301,11 +300,11 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
                 ]
                 for field in required_fields:
                     if field not in config:
-                        return FlextResult[FlextTypes.Dict].fail(
+                        return FlextResult[dict[str, object]].fail(
                             f"Missing required Oracle field: {field}"
                         )
                     if not config[field]:
-                        return FlextResult[FlextTypes.Dict].fail(
+                        return FlextResult[dict[str, object]].fail(
                             f"Empty Oracle field: {field}"
                         )
 
@@ -316,19 +315,19 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
                         port <= 0
                         or port > FlextMeltanoTapOracleUtilities.MAX_PORT_NUMBER
                     ):
-                        return FlextResult[FlextTypes.Dict].fail(
+                        return FlextResult[dict[str, object]].fail(
                             f"Oracle port must be between 1 and {FlextMeltanoTapOracleUtilities.MAX_PORT_NUMBER}"
                         )
                     config["port"] = port
                 except ValueError:
-                    return FlextResult[FlextTypes.Dict].fail(
+                    return FlextResult[dict[str, object]].fail(
                         "Oracle port must be numeric"
                     )
 
-                return FlextResult[FlextTypes.Dict].ok(config)
+                return FlextResult[dict[str, object]].ok(config)
 
             except Exception as e:
-                return FlextResult[FlextTypes.Dict].fail(
+                return FlextResult[dict[str, object]].fail(
                     f"Oracle config validation failed: {e}"
                 )
 
@@ -358,7 +357,7 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
         @staticmethod
         def test_oracle_connectivity(
             config: dict,
-        ) -> FlextResult[FlextTypes.Dict]:
+        ) -> FlextResult[dict[str, object]]:
             """Test Oracle connectivity with configuration."""
             try:
                 # Validate configuration first
@@ -366,7 +365,7 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
                     config
                 )
                 if validation_result.is_failure:
-                    return FlextResult[FlextTypes.Dict].fail(validation_result.error)
+                    return FlextResult[dict[str, object]].fail(validation_result.error)
 
                 # Note: In a real implementation, this would test actual connectivity
                 # For now, return structure validation
@@ -378,10 +377,10 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
                     "connection_test": "structural_validation_passed",
                 }
 
-                return FlextResult[FlextTypes.Dict].ok(connectivity_result)
+                return FlextResult[dict[str, object]].ok(connectivity_result)
 
             except Exception as e:
-                return FlextResult[FlextTypes.Dict].fail(
+                return FlextResult[dict[str, object]].fail(
                     f"Oracle connectivity test failed: {e}"
                 )
 
@@ -423,7 +422,7 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
             start_time: float,
             end_time: float,
             records_processed: int,
-        ) -> FlextResult[FlextTypes.Dict]:
+        ) -> FlextResult[dict[str, object]]:
             """Calculate extraction performance metrics."""
             try:
                 duration = end_time - start_time
@@ -447,14 +446,14 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
                     ),
                 }
 
-                return FlextResult[FlextTypes.Dict].ok(metrics)
+                return FlextResult[dict[str, object]].ok(metrics)
 
             except Exception as e:
-                return FlextResult[FlextTypes.Dict].fail(
+                return FlextResult[dict[str, object]].fail(
                     f"Metrics calculation failed: {e}"
                 )
 
 
-__all__: FlextTypes.StringList = [
+__all__: list[str] = [
     "FlextMeltanoTapOracleUtilities",
 ]

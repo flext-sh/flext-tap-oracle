@@ -23,7 +23,7 @@ from flext_cli import (
     FlextCliCmd,
     FlextCliCommands,
 )
-from flext_core import FlextLogger, FlextResult, FlextTypes
+from flext_core import FlextLogger, FlextResult
 
 from flext_tap_oracle.config import FlextMeltanoTapOracleConfig
 from flext_tap_oracle.tap_client import create_oracle_tap_service
@@ -142,12 +142,12 @@ class OracleTapDiscoverCommand(FlextCliCmd):
                     "Configuration file is required for discovery",
                 )
 
-            config_data: FlextTypes.Dict = Path(self.params.config_file).read_text(
+            config_data: dict[str, object] = Path(self.params.config_file).read_text(
                 encoding="utf-8"
             )
             # Use singleton instance instead of direct model_validate_json
             config_instance = FlextMeltanoTapOracleConfig.get_global_instance()
-            config: FlextTypes.Dict = config_instance.model_validate_json(config_data)
+            config: dict[str, object] = config_instance.model_validate_json(config_data)
 
             # Create Oracle tap service
             tap_service_result: FlextResult[object] = create_oracle_tap_service(config)
@@ -179,7 +179,7 @@ class OracleTapDiscoverCommand(FlextCliCmd):
                     discovery_build.error or "Failed to build discovery result",
                 )
 
-            catalog_dict: FlextTypes.Dict = discovery_build.data.to_singer_catalog()
+            catalog_dict: dict[str, object] = discovery_build.data.to_singer_catalog()
 
             # Output catalog (Singer standard)
             if self.params.output_file:
@@ -255,12 +255,12 @@ class OracleTapSyncCommand(FlextCliCmd):
                     "Configuration file is required for sync",
                 )
 
-            config_data: FlextTypes.Dict = Path(self.params.config_file).read_text(
+            config_data: dict[str, object] = Path(self.params.config_file).read_text(
                 encoding="utf-8"
             )
             # Use singleton instance instead of direct model_validate_json
             config_instance = FlextMeltanoTapOracleConfig.get_global_instance()
-            config: FlextTypes.Dict = config_instance.model_validate_json(config_data)
+            config: dict[str, object] = config_instance.model_validate_json(config_data)
 
             # Create Oracle tap service
             tap_service_result: FlextResult[object] = create_oracle_tap_service(config)

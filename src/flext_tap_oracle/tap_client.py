@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import override
 
-from flext_core import FlextLogger, FlextResult, FlextTypes
+from flext_core import FlextLogger, FlextResult
 
 # Meltano imports not needed - using direct domain services
 from flext_db_oracle import (
@@ -18,6 +18,7 @@ from flext_db_oracle import (
 
 from flext_tap_oracle.config import FlextMeltanoTapOracleConfig
 from flext_tap_oracle.typings import FlextMeltanoTapOracleTypes
+from flext_tap_oracle.utilities import FlextMeltanoTapOracleUtilities
 
 logger = FlextLogger(__name__)
 # =====================================================
@@ -42,8 +43,6 @@ class FlextOracleDiscoveryService:
 
         """
         # ZERO TOLERANCE FIX: Initialize utilities for ALL business logic
-        from flext_tap_oracle.utilities import FlextMeltanoTapOracleUtilities
-
         self._utilities = FlextMeltanoTapOracleUtilities()
         self.oracle_api: FlextDbOracleApi = oracle_api
         self.schema_name: str | None = schema_name
@@ -109,8 +108,6 @@ class FlextOracleConnectionTestService:
     def __init__(self, oracle_api: FlextDbOracleApi) -> None:
         """Initialize the instance."""
         # ZERO TOLERANCE FIX: Initialize utilities for ALL business logic
-        from flext_tap_oracle.utilities import FlextMeltanoTapOracleUtilities
-
         self._utilities = FlextMeltanoTapOracleUtilities()
         self.oracle_api = oracle_api
 
@@ -165,14 +162,12 @@ class FlextOracleTableFilterService:
 
         """
         # ZERO TOLERANCE FIX: Initialize utilities for ALL business logic
-        from flext_tap_oracle.utilities import FlextMeltanoTapOracleUtilities
-
         self._utilities = FlextMeltanoTapOracleUtilities()
         self.tap_config = tap_config
         self.discovery_service = discovery_service
 
     @override
-    def execute(self: object) -> FlextResult[FlextTypes.StringList]:
+    def execute(self: object) -> FlextResult[list[str]]:
         """Execute table filtering based on tap configuration."""
         try:
             tap_configuration: FlextMeltanoTapOracleTypes.Configuration.TapOracleConfig = self.tap_config.get_tap_config()
@@ -185,7 +180,7 @@ class FlextOracleTableFilterService:
                 )
             )
             if config_validation_result.is_failure:
-                return FlextResult[FlextTypes.StringList].fail(
+                return FlextResult[list[str]].fail(
                     f"Configuration validation failed: {config_validation_result.error}"
                 )
 
@@ -195,7 +190,7 @@ class FlextOracleTableFilterService:
                     "Using configured table filter: %s",
                     tap_configuration.tables_filter,
                 )
-                return FlextResult[FlextTypes.StringList].ok(
+                return FlextResult[list[str]].ok(
                     list(tap_configuration.tables_filter),
                 )
 
@@ -203,7 +198,7 @@ class FlextOracleTableFilterService:
             tables_result: FlextResult[object] = self.discovery_service.execute()
             if tables_result.is_failure:
                 error_msg = tables_result.error or "Unknown discovery error"
-                return FlextResult[FlextTypes.StringList].fail(error_msg)
+                return FlextResult[list[str]].fail(error_msg)
 
             if tables_result.data is None:
                 return FlextResult[None].fail("No table data returned")
@@ -222,8 +217,8 @@ class FlextOracleTableFilterService:
                 logger.info(
                     "Applied filtering, %d tables remaining", len(filtered_tables)
                 )
-                return FlextResult[FlextTypes.StringList].ok(filtered_tables)
-            return FlextResult[FlextTypes.StringList].fail(
+                return FlextResult[list[str]].ok(filtered_tables)
+            return FlextResult[list[str]].fail(
                 f"Table filtering failed: {filtering_result.error}"
             )
 
@@ -235,7 +230,7 @@ class FlextOracleTableFilterService:
                 )
             )
             logger.exception("Table filtering error")
-            return FlextResult[FlextTypes.StringList].fail(
+            return FlextResult[list[str]].fail(
                 handled_error_result.unwrap_or(f"Table filtering error: {e}")
             )
 
@@ -264,8 +259,6 @@ class FlextOracleTapService:
     def __init__(self, config: FlextMeltanoTapOracleConfig) -> None:
         """Initialize Oracle tap service using COMPOSITION pattern."""
         # ZERO TOLERANCE FIX: Initialize utilities for ALL business logic
-        from flext_tap_oracle.utilities import FlextMeltanoTapOracleUtilities
-
         self._utilities = FlextMeltanoTapOracleUtilities()
         self._config: FlextMeltanoTapOracleTypes.Configuration.TapOracleConfig = config
 
@@ -371,7 +364,7 @@ class FlextOracleTapService:
 
     def get_filtered_tables(
         self: object,
-    ) -> FlextResult[FlextTypes.StringList]:
+    ) -> FlextResult[list[str]]:
         """Get filtered table list using domain service."""
         return self._table_filter_service.execute()
 
@@ -492,7 +485,7 @@ def create_oracle_discovery_service(
         )
 
 
-__all__: FlextTypes.StringList = [
+__all__: list[str] = [
     "FlextOracleConnectionTestService",
     "FlextOracleDiscoveryService",
     "FlextOracleTableFilterService",

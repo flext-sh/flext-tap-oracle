@@ -2,7 +2,7 @@
 
 from typing import Protocol, runtime_checkable
 
-from flext_core import FlextProtocols, FlextResult, FlextTypes
+from flext_core import FlextProtocols, FlextResult
 
 
 class FlextMeltanoTapOracleProtocols:
@@ -21,34 +21,36 @@ class FlextMeltanoTapOracleProtocols:
         class OracleConnectionProtocol(FlextProtocols.Service, Protocol):
             """Protocol for Oracle database connection management."""
 
-            def connect(self, config: FlextTypes.Dict) -> FlextResult[object]: ...
+            def connect(self, config: dict[str, object]) -> FlextResult[object]: ...
             def disconnect(self) -> FlextResult[None]: ...
-            def test_connection(self, config: FlextTypes.Dict) -> FlextResult[bool]: ...
+            def test_connection(
+                self, config: dict[str, object]
+            ) -> FlextResult[bool]: ...
 
         @runtime_checkable
         class SchemaDiscoveryProtocol(FlextProtocols.Service, Protocol):
             """Protocol for Oracle schema discovery."""
 
             def discover_schemas(
-                self, config: FlextTypes.Dict
-            ) -> FlextResult[list[FlextTypes.Dict]]: ...
+                self, config: dict[str, object]
+            ) -> FlextResult[list[dict[str, object]]]: ...
             def discover_tables(
                 self, schema: str
-            ) -> FlextResult[list[FlextTypes.Dict]]: ...
+            ) -> FlextResult[list[dict[str, object]]]: ...
             def get_table_metadata(
                 self, schema: str, table: str
-            ) -> FlextResult[FlextTypes.Dict]: ...
+            ) -> FlextResult[dict[str, object]]: ...
 
         @runtime_checkable
         class DataExtractionProtocol(FlextProtocols.Service, Protocol):
             """Protocol for Oracle data extraction."""
 
             def extract_table_data(
-                self, table: str, config: FlextTypes.Dict
-            ) -> FlextResult[list[FlextTypes.Dict]]: ...
+                self, table: str, config: dict[str, object]
+            ) -> FlextResult[list[dict[str, object]]]: ...
             def extract_incremental(
-                self, table: str, state: FlextTypes.Dict
-            ) -> FlextResult[list[FlextTypes.Dict]]: ...
+                self, table: str, state: dict[str, object]
+            ) -> FlextResult[list[dict[str, object]]]: ...
 
         @runtime_checkable
         class TypeMappingProtocol(FlextProtocols.Service, Protocol):
@@ -64,11 +66,11 @@ class FlextMeltanoTapOracleProtocols:
             """Protocol for Singer stream generation."""
 
             def generate_catalog(
-                self, config: FlextTypes.Dict
-            ) -> FlextResult[FlextTypes.Dict]: ...
+                self, config: dict[str, object]
+            ) -> FlextResult[dict[str, object]]: ...
             def sync_stream(
-                self, stream: str, state: FlextTypes.Dict
-            ) -> FlextResult[FlextTypes.Dict]: ...
+                self, stream: str, state: dict[str, object]
+            ) -> FlextResult[dict[str, object]]: ...
 
         @runtime_checkable
         class PerformanceProtocol(FlextProtocols.Service, Protocol):
@@ -81,15 +83,19 @@ class FlextMeltanoTapOracleProtocols:
         class ValidationProtocol(FlextProtocols.Service, Protocol):
             """Protocol for Oracle data validation."""
 
-            def validate_config(self, config: FlextTypes.Dict) -> FlextResult[bool]: ...
-            def validate_schema(self, schema: FlextTypes.Dict) -> FlextResult[bool]: ...
+            def validate_config(
+                self, config: dict[str, object]
+            ) -> FlextResult[bool]: ...
+            def validate_schema(
+                self, schema: dict[str, object]
+            ) -> FlextResult[bool]: ...
 
         @runtime_checkable
         class MonitoringProtocol(FlextProtocols.Service, Protocol):
             """Protocol for Oracle extraction monitoring."""
 
             def track_progress(self, table: str, records: int) -> FlextResult[None]: ...
-            def get_statistics(self) -> FlextResult[FlextTypes.Dict]: ...
+            def get_statistics(self) -> FlextResult[dict[str, object]]: ...
 
     OracleConnectionProtocol = TapOracle.OracleConnectionProtocol
     SchemaDiscoveryProtocol = TapOracle.SchemaDiscoveryProtocol

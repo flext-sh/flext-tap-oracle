@@ -10,7 +10,7 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from typing import Literal, Self
 
-from flext_core import FlextConstants, FlextModels, FlextResult, FlextTypes
+from flext_core import FlextConstants, FlextModels, FlextResult
 from flext_db_oracle import (
     FlextDbOracleColumn,
     FlextDbOracleQueryResult,
@@ -102,7 +102,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
         return count
 
     @computed_field
-    def oracle_tap_system_summary(self) -> FlextTypes.Dict:
+    def oracle_tap_system_summary(self) -> dict[str, object]:
         """Comprehensive Singer Oracle tap system summary with database extraction capabilities."""
         return {
             "total_models": self.active_oracle_tap_models_count,
@@ -190,7 +190,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
         return value
 
     # Legacy type aliases for backward compatibility
-    OracleRecord = FlextTypes.Dict
+    OracleRecord = dict[str, object]
     OracleRecords = list[OracleRecord]
 
     class OracleTapStreamMetadata(FlextModels.Entity):
@@ -241,7 +241,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
         column_count: int | None = Field(default=None, description="Number of columns")
 
         @computed_field
-        def stream_metadata_summary(self) -> FlextTypes.Dict:
+        def stream_metadata_summary(self) -> dict[str, object]:
             """Oracle stream metadata summary."""
             return {
                 "stream_name": self.stream_name,
@@ -336,13 +336,13 @@ class FlextMeltanoTapOracleModels(FlextModels):
         )
 
         # Discovery scope
-        schema_names: FlextTypes.StringList = Field(
+        schema_names: list[str] = Field(
             default_factory=list, description="Oracle schemas to discover"
         )
-        table_patterns: FlextTypes.StringList = Field(
+        table_patterns: list[str] = Field(
             default_factory=list, description="Table name patterns to include"
         )
-        exclude_patterns: FlextTypes.StringList = Field(
+        exclude_patterns: list[str] = Field(
             default_factory=list, description="Table name patterns to exclude"
         )
 
@@ -368,7 +368,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
         )
 
         @computed_field
-        def discovery_scope_summary(self) -> FlextTypes.Dict:
+        def discovery_scope_summary(self) -> dict[str, object]:
             """Oracle discovery scope summary."""
             return {
                 "target_schemas": len(self.schema_names),
@@ -442,7 +442,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
         )
 
         @computed_field
-        def extraction_config_summary(self) -> FlextTypes.Dict:
+        def extraction_config_summary(self) -> dict[str, object]:
             """Oracle extraction configuration summary."""
             return {
                 "batch_processing": {
@@ -526,7 +526,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
         )
 
         @computed_field
-        def performance_analysis_summary(self) -> FlextTypes.Dict:
+        def performance_analysis_summary(self) -> dict[str, object]:
             """Oracle tap performance analysis summary."""
             duration = 0.0
             if self.start_time and self.end_time:
@@ -620,7 +620,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
         )
 
         @computed_field
-        def stream_info_summary(self) -> FlextTypes.Dict:
+        def stream_info_summary(self) -> dict[str, object]:
             """Oracle stream information summary."""
             return {
                 "stream_identity": {
@@ -659,7 +659,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
             """Validate stream info business rules."""
             return FlextResult[None].ok(None)
 
-        def to_singer_stream_info(self: object) -> FlextTypes.Dict:
+        def to_singer_stream_info(self: object) -> dict[str, object]:
             """Convert to Singer stream information format."""
             return {
                 "tap_stream_id": self.stream_name,
@@ -721,17 +721,17 @@ class FlextMeltanoTapOracleModels(FlextModels):
         )
 
         # Filtering results
-        filtered_tables: FlextTypes.StringList = Field(
+        filtered_tables: list[str] = Field(
             default_factory=list,
             description="Table names after applying filters",
         )
-        excluded_tables: FlextTypes.StringList = Field(
+        excluded_tables: list[str] = Field(
             default_factory=list,
             description="Table names that were excluded",
         )
 
         @computed_field
-        def discovery_result_summary(self) -> FlextTypes.Dict:
+        def discovery_result_summary(self) -> dict[str, object]:
             """Oracle discovery result summary."""
             selected_streams = len([s for s in self.stream_info if s.is_selected])
 
@@ -788,7 +788,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
                     return table
             return None
 
-        def to_singer_catalog(self: object) -> FlextTypes.Dict:
+        def to_singer_catalog(self: object) -> dict[str, object]:
             """Convert to Singer catalog format."""
             return {
                 "streams": [
@@ -855,7 +855,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
             default=0,
             description="Number of errors encountered",
         )
-        failed_streams: FlextTypes.StringList = Field(
+        failed_streams: list[str] = Field(
             default_factory=list,
             description="Names of failed streams",
         )
@@ -874,7 +874,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
         )
 
         @computed_field
-        def execution_stats_summary(self) -> FlextTypes.Dict:
+        def execution_stats_summary(self) -> dict[str, object]:
             """Oracle tap execution statistics summary."""
             success_rate = 0.0
             if self.streams_processed > 0:
@@ -983,7 +983,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
                 },
             )
 
-        def to_summary(self: object) -> FlextTypes.Dict:
+        def to_summary(self: object) -> dict[str, object]:
             """Create execution summary."""
             return {
                 "execution_id": self.execution_id,
@@ -1012,8 +1012,8 @@ class FlextMeltanoTapOracleModels(FlextModels):
     TapExecutionMode = Literal["discovery", "extraction", "test", "validate"]
 
     # Legacy type aliases for backward compatibility
-    TapStreamMetadata = FlextTypes.Dict
-    TapConfiguration = FlextTypes.Dict
+    TapStreamMetadata = dict[str, object]
+    TapConfiguration = dict[str, object]
 
 
 # =====================================================
@@ -1041,7 +1041,7 @@ TapReplicationMethod = FlextMeltanoTapOracleModels.TapReplicationMethod
 # MAIN EXPORTS
 # =====================================================
 
-__all__: FlextTypes.StringList = [
+__all__: list[str] = [
     "FlextDbOracleColumn",
     "FlextDbOracleQueryResult",
     "FlextDbOracleSchema",
