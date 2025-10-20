@@ -63,24 +63,6 @@
 [tool.ruff]
     extend = "../ruff-shared.toml"
 
-[tool.pyrefly]
-    python-version = "3.13"
-    search-path = [
-        "../flext-core/src",
-        "../flext-db-oracle/src",
-        "../flext-meltano/src",
-        "../flext-observability/src",
-        "src",
-        "tests",
-    ]
-
-
-        # SubConfig: Disable unknown-name error for models.py
-        # This handles forward references to classes defined later in the same file
-        [[tool.pyrefly.sub-config]]
-            matches = "**/models.py"
-            [tool.pyrefly.sub-config.errors]
-                unknown-name = false
 [tool.poetry.dependencies]
     pydantic = ">=2.11.0"
     python   = ">=3.13,<3.14"
@@ -112,37 +94,6 @@
         "unit: Unit tests",
     ]
     minversion = "8.0"
-
-[tool.coverage.run]
-    branch = true
-    omit = [
-        "*/__pycache__/*",
-        "*/site-packages/*",
-        "*/test_*",
-        "*/tests/*",
-    ]
-    source = [
-        "src",
-    ]
-
-[tool.coverage.report]
-    exclude_lines = [
-        "@(abc\\.)?abstractmethod",
-        "class .*\\bProtocol\\):",
-        "def __repr__",
-        "if 0:",
-        "if __name__ == .__main__.:",
-        "if self.debug:",
-        "if settings.DEBUG",
-        "pragma: no cover",
-        "raise AssertionError",
-        "raise NotImplementedError",
-    ]
-    precision = 2
-    show_missing = true
-
-[tool.coverage.html]
-    directory = "htmlcov"
 
     [tool.ruff.lint.isort]
         known-first-party = [
