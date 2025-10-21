@@ -1,4 +1,4 @@
-"""Oracle Tap Exceptions - Comprehensive Error Handling.
+"""Oracle Tap Exceptions - Complete Error Handling.
 
 Exception hierarchy for flext-tap-oracle extending FlextExceptions with
 Oracle tap-specific context fields for database operations, schema discovery,

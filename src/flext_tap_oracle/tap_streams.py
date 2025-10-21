@@ -23,7 +23,7 @@ from flext_meltano import FlextMeltanoStream as Stream, FlextMeltanoTap as Tap
 
 
 class FlextMeltanoTapOracleStreams:
-    """Unified streams class for Oracle tap operations with comprehensive stream management.
+    """Unified streams class for Oracle tap operations with complete stream management.
 
     Consolidates ALL Oracle tap stream-related functionality:
     - OracleStream implementation for data extraction
@@ -381,7 +381,7 @@ class FlextMeltanoTapOracleStreams:
                 return None
 
         def get_stream_metadata(self: object) -> dict[str, object]:
-            """Get comprehensive stream metadata."""
+            """Get complete stream metadata."""
             return {
                 "name": self.name,
                 "table_name": self.table_name,
@@ -391,7 +391,7 @@ class FlextMeltanoTapOracleStreams:
             }
 
     class StreamFactory:
-        """Factory class for creating Oracle streams with comprehensive configuration."""
+        """Factory class for creating Oracle streams with complete configuration."""
 
         @staticmethod
         def create_oracle_stream(
@@ -404,14 +404,14 @@ class FlextMeltanoTapOracleStreams:
             """Create Oracle stream.
 
             Args:
-              tap: Parent tap instance
-              name: Stream name
-              table_name: Oracle table name
-              schema: Stream schema definition
-              oracle_api: Oracle database API instance
+            tap: Parent tap instance
+            name: Stream name
+            table_name: Oracle table name
+            schema: Stream schema definition
+            oracle_api: Oracle database API instance
 
             Returns:
-              Configured Oracle stream instance
+            Configured Oracle stream instance
 
             """
             return FlextMeltanoTapOracleStreams.OracleStream(
@@ -432,13 +432,13 @@ class FlextMeltanoTapOracleStreams:
             """Create Oracle stream from table metadata.
 
             Args:
-              tap: Parent tap instance
-              table_metadata: Oracle table metadata from flext-db-oracle
-              oracle_api: Oracle database API instance
-              stream_prefix: Prefix for stream name
+            tap: Parent tap instance
+            table_metadata: Oracle table metadata from flext-db-oracle
+            oracle_api: Oracle database API instance
+            stream_prefix: Prefix for stream name
 
             Returns:
-              Configured Oracle stream instance
+            Configured Oracle stream instance
 
             """
             table_name = getattr(table_metadata, "name", "unknown")

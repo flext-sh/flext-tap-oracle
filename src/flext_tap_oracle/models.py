@@ -34,7 +34,7 @@ from pydantic import (
 
 
 class FlextMeltanoTapOracleModels(FlextModels):
-    """Comprehensive models for Oracle tap operations extending FlextModels.
+    """Complete models for Oracle tap operations extending FlextModels.
 
     Provides standardized models for all Oracle tap domain entities including:
     - Singer stream metadata and configuration
@@ -103,7 +103,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
 
     @computed_field
     def oracle_tap_system_summary(self) -> dict[str, object]:
-        """Comprehensive Singer Oracle tap system summary with database extraction capabilities."""
+        """Complete Singer Oracle tap system summary with database extraction capabilities."""
         return {
             "total_models": self.active_oracle_tap_models_count,
             "tap_type": "singer_oracle_database_extractor",
@@ -484,7 +484,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
             extra="forbid",
             frozen=False,
             json_schema_extra={
-                "description": "Oracle tap performance metrics with comprehensive monitoring",
+                "description": "Oracle tap performance metrics with complete monitoring",
                 "examples": [
                     {
                         "extraction_id": "ext_123",
@@ -690,7 +690,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
             extra="forbid",
             frozen=False,
             json_schema_extra={
-                "description": "Oracle discovery result with comprehensive metadata",
+                "description": "Oracle discovery result with complete metadata",
                 "examples": [
                     {
                         "schema_name": "HR",

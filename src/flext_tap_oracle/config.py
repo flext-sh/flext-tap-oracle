@@ -430,12 +430,12 @@ def create_oracle_tap_config(
     """Create Oracle tap configuration using grouped parameters.
 
     Args:
-        oracle_params: Oracle database connection parameters
-        tap_params: Optional tap-specific parameters
-        meltano_params: Optional Meltano parameters
+    oracle_params: Oracle database connection parameters
+    tap_params: Optional tap-specific parameters
+    meltano_params: Optional Meltano parameters
 
     Returns:
-        FlextResult containing validated Oracle tap configuration
+    FlextResult containing validated Oracle tap configuration
 
     """
     try:
@@ -452,7 +452,7 @@ def create_oracle_tap_config(
         meltano_config.setdefault("project_root", ".")
         meltano_config.setdefault(
             "environment",
-            FlextConstants.Config.DEFAULT_ENVIRONMENT,
+            FlextConstants.Configuration.DEFAULT_ENVIRONMENT,
         )
 
         # Merge Oracle parameters with other configurations

@@ -38,11 +38,11 @@ class FlextOracleDiscoveryService:
         """Initialize Oracle table discovery service.
 
         Args:
-            oracle_api: FLEXT Oracle database API instance
-            schema_name: Oracle schema name (defaults to 'USER')
+        oracle_api: FLEXT Oracle database API instance
+        schema_name: Oracle schema name (defaults to 'USER')
 
         """
-        # ZERO TOLERANCE FIX: Initialize utilities for ALL business logic
+        # Zero Tolerance FIX: Initialize utilities for ALL business logic
         self._utilities = FlextMeltanoTapOracleUtilities()
         self.oracle_api: FlextDbOracleApi = oracle_api
         self.schema_name: str | None = schema_name
@@ -54,7 +54,7 @@ class FlextOracleDiscoveryService:
             schema_name = self.schema_name or "USER"  # Default Oracle schema
             logger.info("Discovering Oracle tables in schema: %s", schema_name)
 
-            # ZERO TOLERANCE FIX: Use utilities for connection validation
+            # Zero Tolerance FIX: Use utilities for connection validation
             connection_validation_result = (
                 self._utilities.ConfigurationValidation.validate_oracle_connection(
                     connection=self.oracle_api.connection, schema_name=schema_name
@@ -72,7 +72,7 @@ class FlextOracleDiscoveryService:
                     "No Oracle connection available",
                 )
 
-            # ZERO TOLERANCE FIX: Use utilities for table discovery
+            # Zero Tolerance FIX: Use utilities for table discovery
             discovery_result = self._utilities.StreamManagement.discover_oracle_tables(
                 connection=connection, schema_name=schema_name
             )
@@ -89,7 +89,7 @@ class FlextOracleDiscoveryService:
             )
 
         except Exception as e:
-            # ZERO TOLERANCE FIX: Use utilities for error handling
+            # Zero Tolerance FIX: Use utilities for error handling
             handled_error_result = (
                 self._utilities.ErrorHandling.handle_oracle_discovery_error(
                     error=e, schema_name=schema_name, context="table_discovery"
@@ -107,7 +107,7 @@ class FlextOracleConnectionTestService:
     @override
     def __init__(self, oracle_api: FlextDbOracleApi) -> None:
         """Initialize the instance."""
-        # ZERO TOLERANCE FIX: Initialize utilities for ALL business logic
+        # Zero Tolerance FIX: Initialize utilities for ALL business logic
         self._utilities = FlextMeltanoTapOracleUtilities()
         self.oracle_api = oracle_api
 
@@ -117,7 +117,7 @@ class FlextOracleConnectionTestService:
         try:
             logger.info("Testing Oracle connection")
 
-            # ZERO TOLERANCE FIX: Use utilities for connection testing
+            # Zero Tolerance FIX: Use utilities for connection testing
             connection_test_result = (
                 self._utilities.ConfigurationValidation.test_oracle_connection(
                     oracle_api=self.oracle_api
@@ -133,7 +133,7 @@ class FlextOracleConnectionTestService:
             return FlextResult[bool].fail(str(error_msg))
 
         except Exception as e:
-            # ZERO TOLERANCE FIX: Use utilities for error handling
+            # Zero Tolerance FIX: Use utilities for error handling
             handled_error_result = (
                 self._utilities.ErrorHandling.handle_oracle_connection_error(
                     error=e, context="connection_test"
@@ -157,11 +157,11 @@ class FlextOracleTableFilterService:
         """Initialize Oracle table filtering service.
 
         Args:
-            tap_config: FLEXT Oracle tap configuration
-            discovery_service: Oracle table discovery service
+        tap_config: FLEXT Oracle tap configuration
+        discovery_service: Oracle table discovery service
 
         """
-        # ZERO TOLERANCE FIX: Initialize utilities for ALL business logic
+        # Zero Tolerance FIX: Initialize utilities for ALL business logic
         self._utilities = FlextMeltanoTapOracleUtilities()
         self.tap_config = tap_config
         self.discovery_service = discovery_service
@@ -172,7 +172,7 @@ class FlextOracleTableFilterService:
         try:
             tap_configuration: FlextMeltanoTapOracleTypes.Configuration.TapOracleConfig = self.tap_config.get_tap_config()
 
-            # ZERO TOLERANCE FIX: Use utilities for configuration validation
+            # Zero Tolerance FIX: Use utilities for configuration validation
             config_validation_result = (
                 self._utilities.ConfigurationValidation.validate_table_filter_config(
                     tables_filter=tap_configuration.tables_filter,
@@ -205,7 +205,7 @@ class FlextOracleTableFilterService:
 
             table_names = [table.name for table in tables_result.data]
 
-            # ZERO TOLERANCE FIX: Use utilities for table filtering
+            # Zero Tolerance FIX: Use utilities for table filtering
             filtering_result = self._utilities.StreamManagement.filter_oracle_tables(
                 discovered_tables=table_names,
                 exclude_tables=tap_configuration.exclude_tables or [],
@@ -223,7 +223,7 @@ class FlextOracleTableFilterService:
             )
 
         except Exception as e:
-            # ZERO TOLERANCE FIX: Use utilities for error handling
+            # Zero Tolerance FIX: Use utilities for error handling
             handled_error_result = (
                 self._utilities.ErrorHandling.handle_oracle_filtering_error(
                     error=e, context="table_filtering"
@@ -258,11 +258,11 @@ class FlextOracleTapService:
     @override
     def __init__(self, config: FlextMeltanoTapOracleConfig) -> None:
         """Initialize Oracle tap service using COMPOSITION pattern."""
-        # ZERO TOLERANCE FIX: Initialize utilities for ALL business logic
+        # Zero Tolerance FIX: Initialize utilities for ALL business logic
         self._utilities = FlextMeltanoTapOracleUtilities()
         self._config: FlextMeltanoTapOracleTypes.Configuration.TapOracleConfig = config
 
-        # ZERO TOLERANCE FIX: Use utilities for configuration validation
+        # Zero Tolerance FIX: Use utilities for configuration validation
         config_validation_result = (
             self._utilities.ConfigurationValidation.validate_tap_oracle_config(
                 config=config
@@ -376,7 +376,7 @@ class FlextOracleTapService:
         try:
             logger.info("Initializing Oracle tap service")
 
-            # ZERO TOLERANCE FIX: Use utilities for initialization process
+            # Zero Tolerance FIX: Use utilities for initialization process
             initialization_result = (
                 self._utilities.StreamManagement.initialize_oracle_tap(
                     oracle_api=self._oracle_api,
@@ -397,7 +397,7 @@ class FlextOracleTapService:
             ].fail(f"Initialization failed: {initialization_result.error}")
 
         except Exception as e:
-            # ZERO TOLERANCE FIX: Use utilities for error handling
+            # Zero Tolerance FIX: Use utilities for error handling
             handled_error_result = (
                 self._utilities.ErrorHandling.handle_oracle_initialization_error(
                     error=e, context="tap_initialization"
@@ -411,7 +411,7 @@ class FlextOracleTapService:
     def get_tap_status(
         self: object,
     ) -> FlextResult[FlextMeltanoTapOracleTypes.Configuration.TapOracleConfig]:
-        """Get comprehensive Oracle tap status."""
+        """Get complete Oracle tap status."""
         try:
             # Simple status - connection test result
             connection_test_result = self._connection_test_service.execute()
@@ -442,10 +442,10 @@ def create_oracle_tap_service(
     """Create Oracle tap service using COMPOSITION.
 
     Args:
-      config: Oracle tap configuration
+    config: Oracle tap configuration
 
     Returns:
-      FlextResult containing Oracle tap service
+    FlextResult containing Oracle tap service
 
     """
     try:
@@ -465,11 +465,11 @@ def create_oracle_discovery_service(
     """Create Oracle discovery service.
 
     Args:
-      oracle_api: Oracle database API instance
-      schema_name: Optional schema name for discovery
+    oracle_api: Oracle database API instance
+    schema_name: Optional schema name for discovery
 
     Returns:
-      FlextResult containing Oracle discovery service
+    FlextResult containing Oracle discovery service
 
     """
     try:
