@@ -18,6 +18,8 @@ from flext_db_oracle import FlextDbOracleModels
 from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import SettingsConfigDict
 
+from flext_tap_oracle.constants import FlextMeltanoTapOracleConstants
+
 
 class FlextMeltanoTapOracleConfig(FlextConfig):
     """Oracle Tap Configuration using enhanced FlextConfig patterns.
@@ -61,7 +63,7 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
     )
 
     oracle_port: int = Field(
-        default=FlextConstants.Platform.DATABASE_DEFAULT_PORT,
+        default=FlextMeltanoTapOracleConstants.Oracle.DEFAULT_PORT,
         ge=1,
         le=65535,
         description="Oracle database port",
@@ -95,16 +97,16 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
     )
 
     batch_size: int = Field(
-        default=FlextConstants.Performance.DEFAULT_BATCH_SIZE,
+        default=FlextMeltanoTapOracleConstants.Singer.DEFAULT_BATCH_SIZE,
         ge=1,
-        le=FlextConstants.Performance.MAX_BATCH_SIZE_VALIDATION,
+        le=FlextMeltanoTapOracleConstants.Singer.MAX_BATCH_SIZE,
         description="Batch size for data extraction",
     )
 
     max_parallel_streams: int = Field(
         default=FlextConstants.Container.DEFAULT_WORKERS,
         ge=1,
-        le=FlextConstants.Container.MAX_WORKERS,
+        le=FlextConstants.Container.DEFAULT_WORKERS * 2,
         description="Maximum parallel streams for extraction",
     )
 
@@ -130,7 +132,7 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
 
     # Performance Configuration using FlextConstants
     fetch_size: int = Field(
-        default=FlextConstants.Performance.BatchProcessing.MAX_ITEMS,
+        default=FlextMeltanoTapOracleConstants.Oracle.DEFAULT_FETCH_SIZE,
         ge=100,
         le=100000,
         description="Oracle fetch size for queries",
@@ -227,7 +229,7 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
 
         # Validate parallel streams vs batch size
         max_safe_parallel = FlextConstants.Container.MAX_WORKERS
-        max_safe_batch = FlextConstants.Performance.BatchProcessing.MAX_ITEMS // 2
+        max_safe_batch = FlextMeltanoTapOracleConstants.Singer.MAX_BATCH_SIZE // 2
         if (
             self.max_parallel_streams > max_safe_parallel
             and self.batch_size > max_safe_batch
@@ -260,7 +262,7 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
 
             # Validate performance settings
             max_safe_parallel = FlextConstants.Container.MAX_WORKERS
-            max_safe_batch = FlextConstants.Performance.BatchProcessing.MAX_ITEMS // 2
+            max_safe_batch = FlextMeltanoTapOracleConstants.Singer.MAX_BATCH_SIZE // 2
             if (
                 self.max_parallel_streams > max_safe_parallel
                 and self.batch_size > max_safe_batch
@@ -338,20 +340,20 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
 
         if environment == "production":
             env_overrides.update({
-                "batch_size": FlextConstants.Performance.DEFAULT_BATCH_SIZE,
+                "batch_size": FlextMeltanoTapOracleConstants.Singer.MAX_BATCH_SIZE,
                 "max_parallel_streams": FlextConstants.Container.DEFAULT_WORKERS,
                 "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT
                 * 10,  # 5 minutes for production
             })
         elif environment == "development":
             env_overrides.update({
-                "batch_size": FlextConstants.Performance.BatchProcessing.DEFAULT_SIZE,  # Smaller batches for development
+                "batch_size": FlextMeltanoTapOracleConstants.Singer.DEFAULT_BATCH_SIZE,
                 "max_parallel_streams": 1,
                 "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT * 2,
             })
         elif environment == "staging":
             env_overrides.update({
-                "batch_size": FlextConstants.Performance.DEFAULT_BATCH_SIZE // 2,
+                "batch_size": FlextMeltanoTapOracleConstants.Singer.DEFAULT_BATCH_SIZE * 2,
                 "max_parallel_streams": 2,
                 "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT * 6,
             })
@@ -371,10 +373,10 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
         """Create configuration for development environment."""
         dev_overrides: dict[str, object] = {
             "oracle_host": "localhost",
-            "oracle_port": FlextConstants.Platform.DATABASE_DEFAULT_PORT,
+            "oracle_port": FlextMeltanoTapOracleConstants.Oracle.DEFAULT_PORT,
             "oracle_service_name": "ORCL",
             "oracle_username": "tap_dev",
-            "batch_size": FlextConstants.Performance.BatchProcessing.DEFAULT_SIZE,
+            "batch_size": FlextMeltanoTapOracleConstants.Singer.DEFAULT_BATCH_SIZE,
             "max_parallel_streams": 1,
             "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT * 2,
             **overrides,
@@ -387,10 +389,10 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
     def create_for_production(cls, **overrides: object) -> Self:
         """Create configuration for production environment."""
         prod_overrides: dict[str, object] = {
-            "batch_size": FlextConstants.Performance.BatchProcessing.MAX_ITEMS,
+            "batch_size": FlextMeltanoTapOracleConstants.Singer.MAX_BATCH_SIZE,
             "max_parallel_streams": FlextConstants.Container.DEFAULT_WORKERS,
             "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT * 10,
-            "fetch_size": FlextConstants.Performance.BatchProcessing.MAX_ITEMS * 5,
+            "fetch_size": FlextMeltanoTapOracleConstants.Oracle.DEFAULT_FETCH_SIZE * 5,
             "enable_incremental": True,
             **overrides,
         }
@@ -403,10 +405,10 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
         """Create configuration for testing environment."""
         test_overrides: dict[str, object] = {
             "oracle_host": "test-oracle",
-            "oracle_port": FlextConstants.Platform.DATABASE_DEFAULT_PORT,
+            "oracle_port": FlextMeltanoTapOracleConstants.Oracle.DEFAULT_PORT,
             "oracle_service_name": "XE",
             "oracle_username": "test_user",
-            "batch_size": FlextConstants.Performance.BatchProcessing.DEFAULT_SIZE // 10,
+            "batch_size": FlextMeltanoTapOracleConstants.Singer.DEFAULT_BATCH_SIZE // 10,
             "max_parallel_streams": 1,
             "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT,
             **overrides,

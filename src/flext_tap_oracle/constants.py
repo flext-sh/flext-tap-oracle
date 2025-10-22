@@ -37,8 +37,8 @@ class FlextMeltanoTapOracleConstants(FlextConstants):
         """Singer tap configuration constants."""
 
         # Use FlextConstants for performance settings
-        DEFAULT_BATCH_SIZE: Final[int] = FlextConstants.Performance.DEFAULT_BATCH_SIZE
-        MAX_BATCH_SIZE: Final[int] = FlextConstants.Performance.MAX_BATCH_ITEMS
+        DEFAULT_BATCH_SIZE: Final[int] = FlextConstants.Performance.BatchProcessing.DEFAULT_SIZE
+        MAX_BATCH_SIZE: Final[int] = FlextConstants.Performance.BatchProcessing.MAX_ITEMS
 
     class Replication:
         """Oracle replication method constants."""
@@ -55,25 +55,22 @@ class FlextMeltanoTapOracleConstants(FlextConstants):
         """Oracle tap validation constants."""
 
         # Use FlextConstants for validation limits
-        MIN_BATCH_SIZE: Final[int] = FlextConstants.Performance.MIN_TAKE
+        MIN_BATCH_SIZE: Final[int] = 1  # Minimum batch size is 1 record
         MAX_TIMEOUT: Final[int] = FlextConstants.Performance.MAX_TIMEOUT_SECONDS
 
         # Use FlextDbOracleConstants for Oracle-specific validation
-        MAX_TABLE_NAME_LENGTH: Final[int] = (
-            FlextDbOracleConstants.Validation.MAX_TABLE_NAME_LENGTH
-        )
-        MAX_COLUMN_NAME_LENGTH: Final[int] = (
-            FlextDbOracleConstants.Validation.MAX_COLUMN_NAME_LENGTH
-        )
+        # Oracle identifiers are limited to 30 characters
+        MAX_TABLE_NAME_LENGTH: Final[int] = 30
+        MAX_COLUMN_NAME_LENGTH: Final[int] = 30
 
     class Connection:
         """Oracle tap connection configuration."""
 
-        DEFAULT_HOST: Final[str] = FlextDbOracleConstants.Defaults.DEFAULT_HOST
+        DEFAULT_HOST: Final[str] = "localhost"
         DEFAULT_SERVICE_NAME: Final[str] = (
-            FlextDbOracleConstants.Defaults.DEFAULT_SERVICE_NAME
+            FlextDbOracleConstants.Connection.DEFAULT_SERVICE_NAME
         )
-        DEFAULT_USERNAME: Final[str] = FlextDbOracleConstants.Defaults.DEFAULT_USERNAME
+        DEFAULT_USERNAME: Final[str] = FlextDbOracleConstants.Connection.DEFAULT_USERNAME
 
         # Pool configuration
         DEFAULT_POOL_MIN: Final[int] = (
@@ -93,7 +90,7 @@ class FlextMeltanoTapOracleConstants(FlextConstants):
             FlextDbOracleConstants.Query.DEFAULT_QUERY_LIMIT
         )
         DEFAULT_COMMIT_SIZE: Final[int] = (
-            FlextDbOracleConstants.Performance.DEFAULT_COMMIT_SIZE
+            FlextConstants.Performance.BatchProcessing.DEFAULT_SIZE
         )
         TEST_QUERY: Final[str] = FlextDbOracleConstants.Query.TEST_QUERY
 

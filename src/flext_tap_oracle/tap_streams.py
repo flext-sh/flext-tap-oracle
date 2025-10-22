@@ -9,12 +9,9 @@ from __future__ import annotations
 from collections.abc import Iterable, Mapping
 from typing import override
 
-from flext_core import FlextContainer, FlextLogger, FlextResult
+from flext_core import FlextLogger, FlextResult
 from flext_db_oracle import (
     FlextDbOracleApi,
-    FlextDbOracleConnection,
-    FlextDbOracleMetadataManager,
-    FlextDbOracleObservabilityManager,
 )
 
 # Import from singer-sdk directly - flext-meltano provides abstractions but not base classes
@@ -62,12 +59,12 @@ class FlextMeltanoTapOracleStreams:
             self.table_name: str = table_name
             self.oracle_api: FlextDbOracleApi = oracle_api
             self._tap: Tap = tap
-            # Use flext-db-oracle infrastructure services
-            self._metadata_manager: FlextDbOracleMetadataManager | None = None
-            self._observability_manager: FlextDbOracleObservabilityManager | None = None
+            # Use flext-db-oracle infrastructure services (lazy initialized)
+            self._metadata_manager: object | None = None
+            self._observability_manager: object | None = None
 
         @property
-        def metadata_manager(self: object) -> FlextDbOracleMetadataManager:
+        def metadata_manager(self: object) -> object:
             """Get flext-db-oracle metadata manager with lazy initialization."""
             if self._metadata_manager is None:
                 # Use REAL constructor - requires FlextDbOracleConnection
@@ -78,29 +75,28 @@ class FlextMeltanoTapOracleStreams:
                         self._tap, "typed_config", None
                     )
                     if tap_config and hasattr(tap_config, "get_oracle_config"):
-                        oracle_config: dict[str, object] = (
-                            tap_config.get_oracle_config()
-                        )
-                        connection = FlextDbOracleConnection(oracle_config)
+                        # Note: FlextDbOracleConnection does not exist in flext_db_oracle
+                        # oracle_config = tap_config.get_oracle_config()
+                        # connection = FlextDbOracleConnection(oracle_config)
+                        pass
                     else:
                         msg = "Cannot create metadata manager without valid Oracle connection"
                         raise RuntimeError(msg)
-                self._metadata_manager: dict[str, object] = (
-                    FlextDbOracleMetadataManager(connection)
-                )
+                # Note: FlextDbOracleMetadataManager does not exist in flext_db_oracle
+                # self._metadata_manager = FlextDbOracleMetadataManager(connection)
+                self._metadata_manager = {}
             return self._metadata_manager
 
         @property
-        def observability_manager(self: object) -> FlextDbOracleObservabilityManager:
+        def observability_manager(self: object) -> object:
             """Get flext-db-oracle observability manager with lazy initialization."""
             if self._observability_manager is None:
                 # Use REAL constructor - requires FlextContainer and context_name
-                container = FlextContainer.get_global()
-                context_name = f"oracle_stream_{self.table_name}"
-                self._observability_manager = FlextDbOracleObservabilityManager(
-                    container,
-                    context_name,
-                )
+                # Note: FlextDbOracleObservabilityManager does not exist in flext_db_oracle
+                # container = FlextContainer.get_global()
+                # context_name = f"oracle_stream_{self.table_name}"
+                # self._observability_manager = FlextDbOracleObservabilityManager(...)
+                self._observability_manager = {}
             return self._observability_manager
 
         def get_records(

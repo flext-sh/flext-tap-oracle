@@ -11,13 +11,8 @@ from datetime import UTC, datetime
 from typing import Literal, Self
 
 from flext_core import FlextConstants, FlextModels, FlextResult
-from flext_db_oracle import (
-    FlextDbOracleColumn,
-    FlextDbOracleQueryResult,
-    FlextDbOracleSchema,
-    FlextDbOracleTable,
-)
-from flext_meltano import FlextSingerStream as Stream
+from flext_db_oracle import FlextDbOracleModels
+from flext_meltano import FlextMeltanoStream as Stream
 from pydantic import (
     ConfigDict,
     Field,
@@ -315,7 +310,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
             """Validate tap-specific business rules."""
             return FlextResult[None].ok(None)
 
-    class OracleTapDiscoveryConfig(FlextModels.BaseConfig):
+    class OracleTapDiscoveryConfig(FlextModels.Entity):
         """Configuration for Oracle tap discovery operations."""
 
         # Pydantic 2.11 Configuration - Discovery Features
@@ -396,7 +391,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
                 raise ValueError(msg)
             return self
 
-    class OracleTapExtractionConfig(FlextModels.BaseConfig):
+    class OracleTapExtractionConfig(FlextModels.Entity):
         """Configuration for Oracle tap extraction operations."""
 
         # Pydantic 2.11 Configuration - Extraction Features
@@ -475,7 +470,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
                 raise ValueError(msg)
             return self
 
-    class OracleTapPerformanceMetrics(FlextModels.BaseModel):
+    class OracleTapPerformanceMetrics(FlextModels.Entity):
         """Performance metrics for Oracle tap operations."""
 
         # Pydantic 2.11 Configuration - Performance Features
@@ -709,7 +704,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
         total_tables: int = Field(..., description="Total number of tables discovered")
 
         # Raw Oracle metadata
-        oracle_tables: list[FlextDbOracleTable] = Field(
+        oracle_tables: list[FlextDbOracleModels.Table] = Field(
             default_factory=list,
             description="Raw Oracle table metadata from flext-db-oracle",
         )
@@ -781,7 +776,9 @@ class FlextMeltanoTapOracleModels(FlextModels):
             """Get only selected streams."""
             return [stream for stream in self.stream_info if stream.is_selected]
 
-        def get_table_by_name(self, table_name: str) -> FlextDbOracleTable | None:
+        def get_table_by_name(
+            self, table_name: str
+        ) -> FlextDbOracleModels.Table | None:
             """Get Oracle table metadata by name."""
             for table in self.oracle_tables:
                 if table.name == table_name:
@@ -1001,10 +998,10 @@ class FlextMeltanoTapOracleModels(FlextModels):
 
     # Nested type aliases and additional types (moved from standalone definitions)
     # Re-export types from flext-db-oracle with tap-specific aliases
-    TapOracleTable = FlextDbOracleTable
-    TapOracleColumn = FlextDbOracleColumn
-    TapOracleSchema = FlextDbOracleSchema
-    TapOracleQueryResult = FlextDbOracleQueryResult
+    TapOracleTable = FlextDbOracleModels.Table
+    TapOracleColumn = FlextDbOracleModels.Column
+    TapOracleSchema = FlextDbOracleModels.Schema
+    TapOracleQueryResult = FlextDbOracleModels.QueryResult
 
     # Tap-specific type definitions
     TapReplicationMethod = Literal["FULL_TABLE", "INCREMENTAL"]
@@ -1042,15 +1039,8 @@ TapReplicationMethod = FlextMeltanoTapOracleModels.TapReplicationMethod
 # =====================================================
 
 __all__: list[str] = [
-    "FlextDbOracleColumn",
-    "FlextDbOracleQueryResult",
-    "FlextDbOracleSchema",
-    "FlextDbOracleTable",
     "FlextMeltanoTapOracleModels",
-    # Note: FlextMeltanoTapOracleUtilities removed to avoid circular import
-    # Import from flext_tap_oracle.utilities or flext_tap_oracle directly
     "Stream",
-    # Tap-specific aliases (defined in FlextMeltanoTapOracleModels class)
     "TapOracleColumn",
     "TapOracleSchema",
     "TapOracleTable",

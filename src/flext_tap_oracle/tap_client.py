@@ -13,7 +13,7 @@ from flext_core import FlextLogger, FlextResult
 # Meltano imports not needed - using direct domain services
 from flext_db_oracle import (
     FlextDbOracleApi,
-    FlextDbOracleTable,
+    FlextDbOracleModels,
 )
 
 from flext_tap_oracle.config import FlextMeltanoTapOracleConfig
@@ -48,7 +48,7 @@ class FlextOracleDiscoveryService:
         self.schema_name: str | None = schema_name
 
     @override
-    def execute(self: object) -> FlextResult[list[FlextDbOracleTable]]:
+    def execute(self: object) -> FlextResult[list[FlextDbOracleModels.Table]]:
         """Execute Oracle table discovery using flext-db-oracle infrastructure."""
         try:
             schema_name = self.schema_name or "USER"  # Default Oracle schema
@@ -61,14 +61,14 @@ class FlextOracleDiscoveryService:
                 )
             )
             if connection_validation_result.is_failure:
-                return FlextResult[list[FlextDbOracleTable]].fail(
+                return FlextResult[list[FlextDbOracleModels.Table]].fail(
                     f"Connection validation failed: {connection_validation_result.error}"
                 )
 
             # Get metadata manager from oracle_api
             connection = self.oracle_api.connection
             if connection is None:
-                return FlextResult[list[FlextDbOracleTable]].fail(
+                return FlextResult[list[FlextDbOracleModels.Table]].fail(
                     "No Oracle connection available",
                 )
 
@@ -80,11 +80,11 @@ class FlextOracleDiscoveryService:
             if discovery_result.is_success:
                 tables = discovery_result.unwrap()
                 logger.info("Discovered %d Oracle tables", len(tables))
-                return FlextResult[list[FlextDbOracleTable]].ok(tables)
+                return FlextResult[list[FlextDbOracleModels.Table]].ok(tables)
 
             error_msg = discovery_result.error or "No tables found"
             logger.warning("Oracle table discovery failed: %s", error_msg)
-            return FlextResult[list[FlextDbOracleTable]].fail(
+            return FlextResult[list[FlextDbOracleModels.Table]].fail(
                 f"Table discovery failed: {error_msg}",
             )
 
@@ -96,7 +96,7 @@ class FlextOracleDiscoveryService:
                 )
             )
             logger.exception("Oracle table discovery error")
-            return FlextResult[list[FlextDbOracleTable]].fail(
+            return FlextResult[list[FlextDbOracleModels.Table]].fail(
                 handled_error_result.unwrap_or(f"Table discovery error: {e}")
             )
 
@@ -347,7 +347,7 @@ class FlextOracleTapService:
     def discover_oracle_tables(
         self,
         schema_name: str | None = None,
-    ) -> FlextResult[list[FlextDbOracleTable]]:
+    ) -> FlextResult[list[FlextDbOracleModels.Table]]:
         """Discover Oracle tables using domain service."""
         if schema_name:
             # Create new service with specific schema_name (FlextService[T] is immutable)

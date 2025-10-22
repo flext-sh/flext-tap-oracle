@@ -171,7 +171,7 @@ class FlextMeltanoTapOracleExceptions:
                 },
             )
 
-    class ProcessingError(FlextExceptions.ProcessingError):
+    class ProcessingError(FlextExceptions.OperationError):
         """Oracle tap processing error - extends FlextExceptions."""
 
         @override

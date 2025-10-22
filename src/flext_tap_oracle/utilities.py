@@ -19,7 +19,7 @@ from flext_core import (
     FlextResult,
     FlextUtilities,
 )
-from flext_db_oracle import FlextDbOracleTable
+from flext_db_oracle import FlextDbOracleModels
 
 from flext_tap_oracle.models import FlextMeltanoTapOracleModels
 from flext_tap_oracle.tap_exceptions import (
@@ -228,7 +228,7 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
 
         @staticmethod
         def create_stream_info_from_oracle_table(
-            oracle_table: FlextDbOracleTable,
+            oracle_table: FlextDbOracleModels.Table,
             stream_prefix: str = "oracle",
             replication_method: str = "FULL_TABLE",
         ) -> FlextResult[object]:
