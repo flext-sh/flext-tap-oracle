@@ -90,6 +90,7 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
     # Tap-specific Configuration using FlextConstants where applicable
     stream_prefix: str = Field(
         default="oracle",
+        min_length=1,
         description="Prefix for Singer stream names",
     )
 
@@ -157,11 +158,10 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
     @field_validator("stream_prefix")
     @classmethod
     def validate_stream_prefix(cls, v: str) -> str:
-        """Validate stream prefix follows Oracle naming conventions."""
-        if not v or not v.strip():
-            msg = "Stream prefix cannot be empty"
-            raise ValueError(msg)
+        """Validate stream prefix follows Oracle naming conventions.
 
+        Checks regex, length, and applies lowercase transformation.
+        """
         # Oracle identifiers: start with letter, contain letters/digits/underscore
         if not re.match(r"^[a-zA-Z][a-zA-Z0-9_]*$", v):
             msg = f"Invalid stream prefix: {v}. Must start with letter and contain only letters, digits, and underscores"
