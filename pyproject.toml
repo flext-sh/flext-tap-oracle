@@ -23,7 +23,13 @@
         "flext-db-oracle>=0.9.0",
         "flext-meltano>=0.9.0",
         "flext-observability>=0.9.0",
-        "pydantic>=2.11.0",
+        "pydantic (>=2.12.3)",
+        "fastapi (>=0.119.0)",
+        "singer-sdk (>=0.52.0)",
+        "setuptools (>=80.9.0)",
+        "prometheus-client (>=0.23.0)",
+        "uvicorn (>=0.38.0)",
+        "pydantic-core (>=2.41.4)",
     ]
     description = "FLEXT Tap Oracle - Modern Singer Tap for Oracle Database"
     keywords = [
@@ -64,7 +70,7 @@
     extend = "../ruff-shared.toml"
 
 [tool.poetry.dependencies]
-    pydantic = ">=2.11.0"
+    pydantic = ">=2.12.3"
     python   = ">=3.13,<3.14"
 
 [tool.pytest.ini_options]
@@ -104,15 +110,15 @@
         develop = true
         path    = "../flext-core"
 
-    [tool.poetry.dependencies.flext-meltano]
+                        [tool.poetry.dependencies.flext-meltano]
         develop = true
         path    = "../flext-meltano"
 
-    [tool.poetry.dependencies.flext-observability]
+                                            [tool.poetry.dependencies.flext-observability]
         develop = true
         path    = "../flext-observability"
 
-    [tool.poetry.dependencies.flext-db-oracle]
+                                                                [tool.poetry.dependencies.flext-db-oracle]
         develop = true
         path    = "../flext-db-oracle"
 
@@ -130,7 +136,7 @@
     pytest                 = ">=8.0.0"
     pytest-benchmark       = ">=4.0.0"
     pytest-clarity         = ">=1.0.1"
-    pytest-cov             = ">=4.0.0"
+    pytest-cov = "=7.0.0"
     pytest-mock            = ">=3.12.0"
     pytest-sugar           = ">=1.0.0"
     pytest-timeout         = ">=2.3.1"
@@ -138,3 +144,9 @@
     radon                  = ">=6.0.1"
     ruff                   = ">=0.8.0"
     vulture                = ">=2.14"
+    [tool.poetry.group.typings.dependencies]
+    scipy-stubs = "^1.16.2.4"
+    types-jsonschema = "^4.25.1.20251009"
+    types-openpyxl = "^3.1.5.20250919"
+    types-xlrd = "^2.0.0.20251020"
+
