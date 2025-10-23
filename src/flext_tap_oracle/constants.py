@@ -37,8 +37,12 @@ class FlextMeltanoTapOracleConstants(FlextConstants):
         """Singer tap configuration constants."""
 
         # Use FlextConstants for performance settings
-        DEFAULT_BATCH_SIZE: Final[int] = FlextConstants.Performance.BatchProcessing.DEFAULT_SIZE
-        MAX_BATCH_SIZE: Final[int] = FlextConstants.Performance.BatchProcessing.MAX_ITEMS
+        DEFAULT_BATCH_SIZE: Final[int] = (
+            FlextConstants.Performance.BatchProcessing.DEFAULT_SIZE
+        )
+        MAX_BATCH_SIZE: Final[int] = (
+            FlextConstants.Performance.BatchProcessing.MAX_ITEMS
+        )
 
     class Replication:
         """Oracle replication method constants."""
@@ -70,7 +74,9 @@ class FlextMeltanoTapOracleConstants(FlextConstants):
         DEFAULT_SERVICE_NAME: Final[str] = (
             FlextDbOracleConstants.Connection.DEFAULT_SERVICE_NAME
         )
-        DEFAULT_USERNAME: Final[str] = FlextDbOracleConstants.Connection.DEFAULT_USERNAME
+        DEFAULT_USERNAME: Final[str] = (
+            FlextDbOracleConstants.Connection.DEFAULT_USERNAME
+        )
 
         # Pool configuration
         DEFAULT_POOL_MIN: Final[int] = (

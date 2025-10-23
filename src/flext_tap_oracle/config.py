@@ -353,7 +353,8 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
             })
         elif environment == "staging":
             env_overrides.update({
-                "batch_size": FlextMeltanoTapOracleConstants.Singer.DEFAULT_BATCH_SIZE * 2,
+                "batch_size": FlextMeltanoTapOracleConstants.Singer.DEFAULT_BATCH_SIZE
+                * 2,
                 "max_parallel_streams": 2,
                 "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT * 6,
             })
@@ -408,7 +409,8 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
             "oracle_port": FlextMeltanoTapOracleConstants.Oracle.DEFAULT_PORT,
             "oracle_service_name": "XE",
             "oracle_username": "test_user",
-            "batch_size": FlextMeltanoTapOracleConstants.Singer.DEFAULT_BATCH_SIZE // 10,
+            "batch_size": FlextMeltanoTapOracleConstants.Singer.DEFAULT_BATCH_SIZE
+            // 10,
             "max_parallel_streams": 1,
             "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT,
             **overrides,
