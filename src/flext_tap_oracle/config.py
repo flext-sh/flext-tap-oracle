@@ -282,7 +282,7 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
 
             return FlextResult[None].ok(None)
 
-        except Exception as e:
+        except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
             return FlextResult[None].fail(f"Business rules validation failed: {e}")
 
     # Configuration helper methods
@@ -473,7 +473,7 @@ def create_oracle_tap_config(
         )
         return FlextResult[FlextMeltanoTapOracleConfig].ok(config_instance)
 
-    except Exception as e:
+    except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
         return FlextResult[FlextMeltanoTapOracleConfig].fail(
             f"Oracle tap configuration creation failed: {e}",
         )

@@ -152,7 +152,7 @@ class FlextMeltanoTapOracleStreams:
                         processed_record = self._process_record(record)
                         yield processed_record
 
-            except Exception as e:
+            except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                 FlextMeltanoTapOracleStreams.logger.exception(
                     f"Error getting records from {self.table_name}"
                 )
@@ -204,7 +204,7 @@ class FlextMeltanoTapOracleStreams:
                         table_metadata.columns,
                     )
                     yield record
-                except Exception:
+                except (ValueError, TypeError, KeyError, AttributeError, OSError):
                     FlextMeltanoTapOracleStreams.logger.exception(
                         "Failed to process record using flext-db-oracle metadata",
                     )
@@ -247,7 +247,7 @@ class FlextMeltanoTapOracleStreams:
                         # Convert other types to string
                         record = {"data": str(row_data)}
                     yield record
-                except Exception:
+                except (ValueError, TypeError, KeyError, AttributeError, OSError):
                     FlextMeltanoTapOracleStreams.logger.exception(
                         "Failed to process record in fallback mode"
                     )
@@ -328,7 +328,7 @@ class FlextMeltanoTapOracleStreams:
                     "table_name": self.table_name,
                     "error": "Metadata not available",
                 }
-            except Exception as e:
+            except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                 FlextMeltanoTapOracleStreams.logger.exception(
                     "Failed to get table info"
                 )
@@ -368,7 +368,7 @@ class FlextMeltanoTapOracleStreams:
                         # Get first value from dict
                         return int(next(iter(first_row.values())))
                 return None
-            except Exception as e:
+            except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                 FlextMeltanoTapOracleStreams.logger.warning(
                     "Failed to estimate row count for %s: %s",
                     self.table_name,

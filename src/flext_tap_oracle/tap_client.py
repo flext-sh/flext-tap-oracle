@@ -8,17 +8,15 @@ from __future__ import annotations
 
 from typing import override
 
-from flext_core import FlextLogger, FlextResult
+from flext_core import FlextLogger, FlextResult, FlextService
 
-# Meltano imports not needed - using direct domain services
+# Oracle database API (Layer 2)
 from flext_db_oracle import (
     FlextDbOracleApi,
     FlextDbOracleModels,
 )
 
 from flext_tap_oracle.config import FlextMeltanoTapOracleConfig
-from flext_tap_oracle.typings import FlextMeltanoTapOracleTypes
-from flext_tap_oracle.utilities import FlextMeltanoTapOracleUtilities
 
 logger = FlextLogger(__name__)
 # =====================================================
@@ -29,7 +27,6 @@ logger = FlextLogger(__name__)
 class FlextOracleDiscoveryService:
     """Oracle table discovery service - simplified without Pydantic validation."""
 
-    @override
     def __init__(
         self,
         oracle_api: FlextDbOracleApi,
@@ -42,113 +39,74 @@ class FlextOracleDiscoveryService:
         schema_name: Oracle schema name (defaults to 'USER')
 
         """
-        # Zero Tolerance FIX: Initialize utilities for ALL business logic
-        self._utilities = FlextMeltanoTapOracleUtilities()
         self.oracle_api: FlextDbOracleApi = oracle_api
         self.schema_name: str | None = schema_name
 
-    @override
-    def execute(self: object) -> FlextResult[list[FlextDbOracleModels.Table]]:
-        """Execute Oracle table discovery using flext-db-oracle infrastructure."""
+    def execute(self) -> FlextResult[list[FlextDbOracleModels.Table]]:
+        """Execute Oracle table discovery using Layer 2 flext-db-oracle API."""
         try:
             schema_name = self.schema_name or "USER"  # Default Oracle schema
             logger.info("Discovering Oracle tables in schema: %s", schema_name)
 
-            # Zero Tolerance FIX: Use utilities for connection validation
-            connection_validation_result = (
-                self._utilities.ConfigurationValidation.validate_oracle_connection(
-                    connection=self.oracle_api.connection, schema_name=schema_name
-                )
+            # Use Layer 2 API directly to discover tables
+            tables_result = self.oracle_api.services.get_tables(schema=schema_name)
+            if tables_result.is_failure:
+                error_msg = tables_result.error or "Table discovery failed"
+                logger.warning("Oracle table discovery failed: %s", error_msg)
+                return FlextResult[list[FlextDbOracleModels.Table]].fail(error_msg)
+
+            # Convert string table names to FlextDbOracleModels.Table objects
+            table_names = tables_result.unwrap() or []
+            tables: list[FlextDbOracleModels.Table] = [
+                FlextDbOracleModels.Table(name=table_name, schema=schema_name)
+                for table_name in table_names
+            ]
+
+            logger.info(
+                "Discovered %d Oracle tables in schema %s", len(tables), schema_name
             )
-            if connection_validation_result.is_failure:
-                return FlextResult[list[FlextDbOracleModels.Table]].fail(
-                    f"Connection validation failed: {connection_validation_result.error}"
-                )
+            return FlextResult[list[FlextDbOracleModels.Table]].ok(tables)
 
-            # Get metadata manager from oracle_api
-            connection = self.oracle_api.connection
-            if connection is None:
-                return FlextResult[list[FlextDbOracleModels.Table]].fail(
-                    "No Oracle connection available",
-                )
-
-            # Zero Tolerance FIX: Use utilities for table discovery
-            discovery_result = self._utilities.StreamManagement.discover_oracle_tables(
-                connection=connection, schema_name=schema_name
-            )
-
-            if discovery_result.is_success:
-                tables = discovery_result.unwrap()
-                logger.info("Discovered %d Oracle tables", len(tables))
-                return FlextResult[list[FlextDbOracleModels.Table]].ok(tables)
-
-            error_msg = discovery_result.error or "No tables found"
-            logger.warning("Oracle table discovery failed: %s", error_msg)
-            return FlextResult[list[FlextDbOracleModels.Table]].fail(
-                f"Table discovery failed: {error_msg}",
-            )
-
-        except Exception as e:
-            # Zero Tolerance FIX: Use utilities for error handling
-            handled_error_result = (
-                self._utilities.ErrorHandling.handle_oracle_discovery_error(
-                    error=e, schema_name=schema_name, context="table_discovery"
-                )
-            )
+        except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+            # Use FlextResult error handling pattern
             logger.exception("Oracle table discovery error")
-            return FlextResult[list[FlextDbOracleModels.Table]].fail(
-                handled_error_result.unwrap_or(f"Table discovery error: {e}")
-            )
+            error_msg = f"Table discovery error in schema {self.schema_name}: {e}"
+            return FlextResult[list[FlextDbOracleModels.Table]].fail(error_msg)
 
 
 class FlextOracleConnectionTestService:
     """Oracle connection test service - simplified without Pydantic validation."""
 
-    @override
     def __init__(self, oracle_api: FlextDbOracleApi) -> None:
         """Initialize the instance."""
-        # Zero Tolerance FIX: Initialize utilities for ALL business logic
-        self._utilities = FlextMeltanoTapOracleUtilities()
         self.oracle_api = oracle_api
 
-    @override
-    def execute(self: object) -> FlextResult[bool]:
-        """Execute Oracle connection test using flext-db-oracle infrastructure."""
+    def execute(self) -> FlextResult[bool]:
+        """Execute Oracle connection test using Layer 2 flext-db-oracle API."""
         try:
             logger.info("Testing Oracle connection")
 
-            # Zero Tolerance FIX: Use utilities for connection testing
-            connection_test_result = (
-                self._utilities.ConfigurationValidation.test_oracle_connection(
-                    oracle_api=self.oracle_api
-                )
-            )
+            # Use Layer 2 API directly to test connection
+            test_result = self.oracle_api.test_connection()
 
-            if connection_test_result.is_success:
+            if test_result.is_success:
                 logger.info("Oracle connection test successful")
                 return FlextResult[bool].ok(True)
 
-            error_msg = connection_test_result.error or "Connection failed"
+            error_msg = test_result.error or "Connection test failed"
             logger.error("Oracle connection test failed: %s", error_msg)
-            return FlextResult[bool].fail(str(error_msg))
+            return FlextResult[bool].fail(error_msg)
 
-        except Exception as e:
-            # Zero Tolerance FIX: Use utilities for error handling
-            handled_error_result = (
-                self._utilities.ErrorHandling.handle_oracle_connection_error(
-                    error=e, context="connection_test"
-                )
-            )
+        except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+            # Use FlextResult error handling pattern
             logger.exception("Oracle connection test error")
-            return FlextResult[bool].fail(
-                handled_error_result.unwrap_or(f"Connection test error: {e}")
-            )
+            error_msg = f"Connection test error: {e}"
+            return FlextResult[bool].fail(error_msg)
 
 
 class FlextOracleTableFilterService:
     """Oracle table filtering service - simplified without Pydantic validation."""
 
-    @override
     def __init__(
         self,
         tap_config: FlextMeltanoTapOracleConfig,
@@ -161,130 +119,112 @@ class FlextOracleTableFilterService:
         discovery_service: Oracle table discovery service
 
         """
-        # Zero Tolerance FIX: Initialize utilities for ALL business logic
-        self._utilities = FlextMeltanoTapOracleUtilities()
         self.tap_config = tap_config
         self.discovery_service = discovery_service
 
-    @override
-    def execute(self: object) -> FlextResult[list[str]]:
-        """Execute table filtering based on tap configuration."""
+    def execute(self) -> FlextResult[list[str]]:
+        """Execute table filtering based on tap configuration using Layer 2 API."""
         try:
-            tap_configuration: FlextMeltanoTapOracleTypes.Configuration.TapOracleConfig = self.tap_config.get_tap_config()
+            tap_configuration = self.tap_config.get_tap_config()
 
-            # Zero Tolerance FIX: Use utilities for configuration validation
-            config_validation_result = (
-                self._utilities.ConfigurationValidation.validate_table_filter_config(
-                    tables_filter=tap_configuration.tables_filter,
-                    exclude_tables=tap_configuration.exclude_tables,
-                )
-            )
-            if config_validation_result.is_failure:
-                return FlextResult[list[str]].fail(
-                    f"Configuration validation failed: {config_validation_result.error}"
-                )
-
-            # If specific tables are configured, use them
-            if tap_configuration.tables_filter:
+            # If specific tables are configured, use them directly
+            if (
+                hasattr(tap_configuration, "tables_filter")
+                and tap_configuration.tables_filter
+            ):
                 logger.info(
                     "Using configured table filter: %s",
                     tap_configuration.tables_filter,
                 )
-                return FlextResult[list[str]].ok(
-                    list(tap_configuration.tables_filter),
-                )
+                return FlextResult[list[str]].ok(list(tap_configuration.tables_filter))
 
-            # Otherwise discover all tables and apply exclusions
-            tables_result: FlextResult[object] = self.discovery_service.execute()
+            # Otherwise discover all tables from Oracle using Layer 2 API
+            tables_result = self.discovery_service.execute()
             if tables_result.is_failure:
-                error_msg = tables_result.error or "Unknown discovery error"
+                error_msg = tables_result.error or "Table discovery failed"
+                logger.warning("Table discovery failed: %s", error_msg)
                 return FlextResult[list[str]].fail(error_msg)
 
-            if tables_result.data is None:
-                return FlextResult[None].fail("No table data returned")
+            if not tables_result.data:
+                return FlextResult[list[str]].fail("No Oracle tables discovered")
 
+            # Extract table names from discovered tables
             table_names = [table.name for table in tables_result.data]
 
-            # Zero Tolerance FIX: Use utilities for table filtering
-            filtering_result = self._utilities.StreamManagement.filter_oracle_tables(
-                discovered_tables=table_names,
-                exclude_tables=tap_configuration.exclude_tables or [],
-                performance_optimization=True,
-            )
-
-            if filtering_result.is_success:
-                filtered_tables = filtering_result.unwrap()
+            # Apply exclusion filter if configured
+            exclude_tables = getattr(tap_configuration, "exclude_tables", None) or []
+            if exclude_tables:
+                filtered_tables = [
+                    table for table in table_names if table not in exclude_tables
+                ]
                 logger.info(
-                    "Applied filtering, %d tables remaining", len(filtered_tables)
+                    "Applied exclusion filter: %d tables excluded, %d remaining",
+                    len(exclude_tables),
+                    len(filtered_tables),
                 )
                 return FlextResult[list[str]].ok(filtered_tables)
-            return FlextResult[list[str]].fail(
-                f"Table filtering failed: {filtering_result.error}"
-            )
 
-        except Exception as e:
-            # Zero Tolerance FIX: Use utilities for error handling
-            handled_error_result = (
-                self._utilities.ErrorHandling.handle_oracle_filtering_error(
-                    error=e, context="table_filtering"
-                )
+            logger.info(
+                "No table exclusions configured, using all %d tables", len(table_names)
             )
+            return FlextResult[list[str]].ok(table_names)
+
+        except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
             logger.exception("Table filtering error")
-            return FlextResult[list[str]].fail(
-                handled_error_result.unwrap_or(f"Table filtering error: {e}")
-            )
+            error_msg = f"Table filtering error: {e}"
+            return FlextResult[list[str]].fail(error_msg)
 
 
 # =====================================================
-# MAIN TAP SERVICE - Using COMPOSITION pattern
+# MAIN TAP SERVICE - Using INHERITANCE pattern
 # =====================================================
 
 
-class FlextOracleTapService:
-    """Oracle Tap Service using COMPOSITION with FlextMeltanoTapService + Domain Services.
+class FlextOracleTapService(FlextService[FlextMeltanoTapOracleConfig]):
+    """Oracle Tap Service using FLEXT Service Pattern.
 
-    Esta classe usa COMPOSIÇÃO ao invés de herança:
-    - FlextMeltanoTapService para funcionalidade base Singer/Meltano
-    - Domain Services (FlextService[T]) para lógica Oracle
+    This class extends FlextService[T] to provide Oracle-specific
+    database operations and domain services using the FLEXT architecture pattern.
+    Leverages Layer 2 (flext-db-oracle) for all Oracle operations.
 
     SOLID Principles:
-    - Single Responsibility: Cada domain service tem uma responsabilidade
-    - Open/Closed: Extensível via novos domain services
-    - Liskov Substitution: Domain services são intercambiáveis
-    - Interface Segregation: Interfaces específicas por domain service
+    - Single Responsibility: Each domain service has one responsibility
+    - Open/Closed: Extensible via new domain services
+    - Liskov Substitution: Substitutable for FlextService[FlextMeltanoTapOracleConfig]
+    - Interface Segregation: Specific interfaces per domain service
     - Dependency Inversion: Depends on abstractions (FlextService[T])
     """
 
     @override
     def __init__(self, config: FlextMeltanoTapOracleConfig) -> None:
-        """Initialize Oracle tap service using COMPOSITION pattern."""
-        # Zero Tolerance FIX: Initialize utilities for ALL business logic
-        self._utilities = FlextMeltanoTapOracleUtilities()
-        self._config: FlextMeltanoTapOracleTypes.Configuration.TapOracleConfig = config
+        """Initialize Oracle tap service with FLEXT Service Pattern."""
+        # Validate configuration - check required fields
+        if not config:
+            error_msg = "Configuration is required"
+            raise ValueError(error_msg)
 
-        # Zero Tolerance FIX: Use utilities for configuration validation
-        config_validation_result = (
-            self._utilities.ConfigurationValidation.validate_tap_oracle_config(
-                config=config
+        # Initialize parent class
+        super().__init__(config=config)
+
+        # Initialize Oracle-specific components
+        oracle_config = config.get_oracle_config()
+        self._oracle_api = FlextDbOracleApi(
+            **oracle_config
+            if isinstance(oracle_config, dict)
+            else oracle_config.model_dump()
+        )
+
+        # Create domain services for Oracle operations
+        # Get schema name from configuration
+        if isinstance(oracle_config, dict):
+            schema_name = oracle_config.get("schema_name") or oracle_config.get(
+                "service_name"
             )
-        )
-        if config_validation_result.is_failure:
-            msg = f"Configuration validation failed: {config_validation_result.error}"
-            raise ValueError(msg)
+        else:
+            schema_name = getattr(oracle_config, "schema_name", None) or getattr(
+                oracle_config, "service_name", None
+            )
 
-        # COMPOSITION: Using direct domain services (no meltano_service needed)
-
-        # COMPOSITION: Create Oracle API
-        oracle_config: FlextMeltanoTapOracleTypes.Database.DatabaseConfiguration = (
-            self._config.get_oracle_config()
-        )
-        self._oracle_api = FlextDbOracleApi(oracle_config)
-
-        # COMPOSITION: Create domain services (FlextService[T])
-        # Get schema name from service name or use default
-        schema_name = (
-            getattr(oracle_config, "schema_name", None) or oracle_config.service_name
-        )
         self._discovery_service = FlextOracleDiscoveryService(
             oracle_api=self._oracle_api,
             schema_name=schema_name,
@@ -293,55 +233,38 @@ class FlextOracleTapService:
             oracle_api=self._oracle_api,
         )
         self._table_filter_service = FlextOracleTableFilterService(
-            tap_config=self._config,
+            tap_config=config,
             discovery_service=self._discovery_service,
         )
 
     @property
-    def config(self: object) -> FlextMeltanoTapOracleConfig:
-        """Get Oracle tap configuration."""
-        return self._config
-
-    @property
-    def oracle_api(self: object) -> FlextDbOracleApi:
+    def oracle_api(self) -> FlextDbOracleApi:
         """Get Oracle API."""
         return self._oracle_api
 
     @property
-    def discovery_service(self: object) -> FlextOracleDiscoveryService:
+    def discovery_service(self) -> FlextOracleDiscoveryService:
         """Get Oracle discovery domain service."""
         return self._discovery_service
 
     @property
-    def connection_test_service(self: object) -> FlextOracleConnectionTestService:
+    def connection_test_service(self) -> FlextOracleConnectionTestService:
         """Get Oracle connection test domain service."""
         return self._connection_test_service
 
     @property
-    def table_filter_service(self: object) -> FlextOracleTableFilterService:
+    def table_filter_service(self) -> FlextOracleTableFilterService:
         """Get Oracle table filter domain service."""
         return self._table_filter_service
 
     # Service methods - using direct domain services
-    def validate_service(self: object) -> FlextResult[bool]:
+    def validate_service(self) -> FlextResult[bool]:
         """Validate service using connection test."""
         return self._connection_test_service.execute()
 
-    def get_health_status(
-        self: object,
-    ) -> FlextResult[FlextMeltanoTapOracleTypes.Configuration.TapOracleConfig]:
-        """Get health status."""
-        return FlextResult[FlextMeltanoTapOracleTypes.Configuration.TapOracleConfig].ok(
-            self._config
-        )
-
-    def discover_catalog(
-        self: object,
-    ) -> FlextResult[FlextMeltanoTapOracleTypes.Singer.CatalogEntry]:
-        """Discover catalog - not implemented."""
-        return FlextResult[FlextMeltanoTapOracleTypes.Singer.CatalogEntry].fail(
-            "Catalog discovery not implemented"
-        )
+    def get_health_status(self) -> FlextResult[bool]:
+        """Get service health status using connection test."""
+        return self._connection_test_service.execute()
 
     # ORACLE-SPECIFIC: Use domain services for Oracle functionality
     def discover_oracle_tables(
@@ -358,77 +281,68 @@ class FlextOracleTapService:
             return discovery_service.execute()
         return self._discovery_service.execute()
 
-    def test_oracle_connection(self: object) -> FlextResult[bool]:
+    def test_oracle_connection(self) -> FlextResult[bool]:
         """Test Oracle connection using domain service."""
         return self._connection_test_service.execute()
 
     def get_filtered_tables(
-        self: object,
+        self,
     ) -> FlextResult[list[str]]:
         """Get filtered table list using domain service."""
         return self._table_filter_service.execute()
 
     # HIGH-LEVEL ORCHESTRATION METHODS
-    def initialize_tap(
-        self: object,
-    ) -> FlextResult[FlextMeltanoTapOracleTypes.Configuration.TapOracleConfig]:
-        """Initialize Oracle tap with connection test and table discovery."""
+    def initialize_tap(self) -> FlextResult[bool]:
+        """Initialize Oracle tap by testing connection and discovering tables."""
         try:
             logger.info("Initializing Oracle tap service")
 
-            # Zero Tolerance FIX: Use utilities for initialization process
-            initialization_result = (
-                self._utilities.StreamManagement.initialize_oracle_tap(
-                    oracle_api=self._oracle_api,
-                    config=self._config,
-                    connection_test_service=self._connection_test_service,
-                    table_filter_service=self._table_filter_service,
+            # Test Oracle connection
+            connection_result = self.test_oracle_connection()
+            if connection_result.is_failure:
+                logger.error(
+                    f"Oracle connection test failed: {connection_result.error}"
                 )
-            )
-
-            if initialization_result.is_success:
-                initialization_status = initialization_result.unwrap()
-                logger.info("Oracle tap initialization completed successfully")
-                return FlextResult[
-                    FlextMeltanoTapOracleTypes.Configuration.TapOracleConfig
-                ].ok(initialization_status)
-            return FlextResult[
-                FlextMeltanoTapOracleTypes.Configuration.TapOracleConfig
-            ].fail(f"Initialization failed: {initialization_result.error}")
-
-        except Exception as e:
-            # Zero Tolerance FIX: Use utilities for error handling
-            handled_error_result = (
-                self._utilities.ErrorHandling.handle_oracle_initialization_error(
-                    error=e, context="tap_initialization"
+                return FlextResult[bool].fail(
+                    f"Connection test failed: {connection_result.error}"
                 )
-            )
+
+            # Discover tables
+            tables_result = self.get_filtered_tables()
+            if tables_result.is_failure:
+                logger.error(f"Table discovery failed: {tables_result.error}")
+                return FlextResult[bool].fail(
+                    f"Table discovery failed: {tables_result.error}"
+                )
+
+            logger.info("Oracle tap initialization completed successfully")
+            return FlextResult[bool].ok(True)
+
+        except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
             logger.exception("Oracle tap initialization failed")
-            return FlextResult[
-                FlextMeltanoTapOracleTypes.Configuration.TapOracleConfig
-            ].fail(handled_error_result.unwrap_or(f"Initialization failed: {e}"))
+            error_msg = f"Initialization failed: {e}"
+            return FlextResult[bool].fail(error_msg)
 
-    def get_tap_status(
-        self: object,
-    ) -> FlextResult[FlextMeltanoTapOracleTypes.Configuration.TapOracleConfig]:
-        """Get complete Oracle tap status."""
+    def get_tap_status(self) -> FlextResult[bool]:
+        """Get Oracle tap status by testing connection."""
         try:
-            # Simple status - connection test result
+            # Test Oracle connection using domain service
             connection_test_result = self._connection_test_service.execute()
 
             if connection_test_result.is_success:
-                return FlextResult[
-                    FlextMeltanoTapOracleTypes.Configuration.TapOracleConfig
-                ].ok(self._config)
-            return FlextResult[
-                FlextMeltanoTapOracleTypes.Configuration.TapOracleConfig
-            ].fail(f"Connection test failed: {connection_test_result.error}")
+                logger.info("Oracle tap status: healthy")
+                return FlextResult[bool].ok(True)
 
-        except Exception as e:
+            logger.warning(
+                f"Oracle tap status check failed: {connection_test_result.error}"
+            )
+            return FlextResult[bool].fail(
+                f"Connection test failed: {connection_test_result.error}"
+            )
+
+        except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
             logger.exception("Failed to get tap status")
-            return FlextResult[
-                FlextMeltanoTapOracleTypes.Configuration.TapOracleConfig
-            ].fail(f"Status check failed: {e}")
+            return FlextResult[bool].fail(f"Status check failed: {e}")
 
 
 # =====================================================
@@ -452,7 +366,7 @@ def create_oracle_tap_service(
         service = FlextOracleTapService(config=config)
         return FlextResult[FlextOracleTapService].ok(service)
 
-    except Exception as e:
+    except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
         return FlextResult[FlextOracleTapService].fail(
             f"Oracle tap service creation failed: {e}",
         )
@@ -479,7 +393,7 @@ def create_oracle_discovery_service(
         )
         return FlextResult[FlextOracleDiscoveryService].ok(service)
 
-    except Exception as e:
+    except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
         return FlextResult[FlextOracleDiscoveryService].fail(
             f"Oracle discovery service creation failed: {e}",
         )

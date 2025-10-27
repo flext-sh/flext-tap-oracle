@@ -193,7 +193,7 @@ class OracleTapDiscoverCommand(FlextCliCmd):
             self.cli_helper.print_success("Oracle schema discovery completed")
             return FlextResult[object].ok({"catalog": "catalog_dict"})
 
-        except Exception as e:
+        except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
             logger.exception("Oracle discovery failed")
             self.cli_helper.print_error(f"Discovery error: {e}")
             return FlextResult[object].fail(f"Discovery error: {e}")
@@ -304,7 +304,7 @@ class OracleTapSyncCommand(FlextCliCmd):
                 {"records_extracted": "record_count", "tables": "table_names"},
             )
 
-        except Exception as e:
+        except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
             logger.exception("Oracle sync failed")
             self.cli_helper.print_error(f"Sync error: {e}")
             return FlextResult[object].fail(f"Sync error: {e}")
@@ -370,7 +370,7 @@ def create_tap_oracle_cli() -> FlextResult[FlextCliCommands]:
             )
 
         return FlextResult[FlextCliCommands].ok(cli_main)
-    except Exception as e:
+    except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
         return FlextResult[FlextCliCommands].fail(f"CLI creation failed: {e}")
 
 
@@ -391,7 +391,7 @@ def handle_discover_command(**kwargs: object) -> FlextResult[None]:
             return FlextResult[None].fail(f"Discovery failed: {result.error}")
 
         return FlextResult[None].ok(None)
-    except Exception as e:
+    except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
         cli_api.display_error(f"Discovery error: {e}")
         return FlextResult[None].fail(f"Discovery error: {e}")
 
@@ -413,7 +413,7 @@ def handle_sync_command(**kwargs: object) -> FlextResult[None]:
             return FlextResult[None].fail(f"Sync failed: {result.error}")
 
         return FlextResult[None].ok(None)
-    except Exception as e:
+    except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
         cli_api.display_error(f"Sync error: {e}")
         return FlextResult[None].fail(f"Sync error: {e}")
 
@@ -437,7 +437,7 @@ def main() -> None:
     except KeyboardInterrupt:
         cli_api.display_info("Operation cancelled by user")
         raise SystemExit(0) from None
-    except Exception as e:
+    except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
         cli_api.display_error(f"Unexpected error: {e}")
         raise SystemExit(1) from e
 

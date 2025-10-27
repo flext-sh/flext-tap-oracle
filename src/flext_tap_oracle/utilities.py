@@ -220,7 +220,7 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
 
                 return FlextResult[None].fail(str(error))
 
-            except Exception as e:
+            except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                 return FlextResult[None].fail(f"Exception handling failed: {e}")
 
     class StreamManagement:
@@ -248,7 +248,7 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
 
                 return FlextResult[object].ok(stream_info)
 
-            except Exception as e:
+            except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                 return FlextResult[object].fail(
                     f"Failed to create stream info from Oracle table: {e}",
                 )
@@ -277,7 +277,7 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
 
                 return FlextResult[object].ok(discovery_result)
 
-            except Exception as e:
+            except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                 return FlextResult[object].fail(
                     f"Failed to create discovery result: {e}",
                 )
@@ -326,7 +326,7 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
 
                 return FlextResult[dict[str, object]].ok(config)
 
-            except Exception as e:
+            except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                 return FlextResult[dict[str, object]].fail(
                     f"Oracle config validation failed: {e}"
                 )
@@ -351,7 +351,7 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
 
                 return FlextResult[str].ok(connection_string)
 
-            except Exception as e:
+            except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                 return FlextResult[str].fail(f"Connection string building failed: {e}")
 
         @staticmethod
@@ -379,7 +379,7 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
 
                 return FlextResult[dict[str, object]].ok(connectivity_result)
 
-            except Exception as e:
+            except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                 return FlextResult[dict[str, object]].fail(
                     f"Oracle connectivity test failed: {e}"
                 )
@@ -414,7 +414,7 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
 
                 return FlextResult[str].ok(optimized_query)
 
-            except Exception as e:
+            except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                 return FlextResult[str].fail(f"Query optimization failed: {e}")
 
         @staticmethod
@@ -448,7 +448,7 @@ class FlextMeltanoTapOracleUtilities(FlextUtilities):
 
                 return FlextResult[dict[str, object]].ok(metrics)
 
-            except Exception as e:
+            except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                 return FlextResult[dict[str, object]].fail(
                     f"Metrics calculation failed: {e}"
                 )
