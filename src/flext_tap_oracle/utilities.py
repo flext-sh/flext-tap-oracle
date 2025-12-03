@@ -1,6 +1,6 @@
 """FLEXT Tap Oracle Utilities - Domain-specific utilities for Oracle tap operations.
 
-This module provides complete Oracle tap utilities extending FlextUtilities
+This module provides complete Oracle tap utilities extending u
 with nested classes for error handling, stream management, discovery operations,
 and configuration validation. Follows FLEXT standards with single-class pattern.
 
@@ -13,12 +13,7 @@ from __future__ import annotations
 
 from typing import ClassVar
 
-from flext_core import (
-    FlextContainer,
-    FlextLogger,
-    FlextResult,
-    FlextUtilities,
-)
+from flext_core import FlextContainer, FlextLogger, FlextResult, u
 from flext_db_oracle import FlextDbOracleModels
 
 from flext_tap_oracle.models import FlextMeltanoTapOracleModels
@@ -32,8 +27,8 @@ from flext_tap_oracle.tap_exceptions import (
 )
 
 
-class FlextMeltanoTapOracleUtilities(FlextUtilities):
-    """Unified Oracle tap utilities class extending FlextUtilities with nested classes.
+class FlextMeltanoTapOracleUtilities(u):
+    """Unified Oracle tap utilities class extending u classes.
 
     Provides complete Oracle tap utilities with nested classes for:
     - Error handling and exception creation
