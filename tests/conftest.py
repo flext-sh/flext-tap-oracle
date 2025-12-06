@@ -17,7 +17,7 @@ from collections.abc import Generator
 
 import pytest
 from flext_core import FlextResult
-from flext_tests import FlextTestDocker
+from flext_tests import FlextTestsDocker
 
 from flext_tap_oracle import (
     FlextMeltanoTapOracleConfig,
@@ -26,16 +26,16 @@ from flext_tap_oracle import (
 )
 
 
-# Docker container management with FlextTestDocker
+# Docker container management with FlextTestsDocker
 @pytest.fixture(scope="session")
-def docker_control() -> FlextTestDocker:
+def docker_control() -> FlextTestsDocker:
     """Provide Docker control instance for tests."""
-    return FlextTestDocker()
+    return FlextTestsDocker()
 
 
 @pytest.fixture(scope="session")
-def shared_oracle_container(docker_control: FlextTestDocker) -> Generator[str]:
-    """Managed Oracle container using FlextTestDocker with auto-start."""
+def shared_oracle_container(docker_control: FlextTestsDocker) -> Generator[str]:
+    """Managed Oracle container using FlextTestsDocker with auto-start."""
     result = docker_control.start_container("flext-oracle-db-test")
     if result.is_failure:
         pytest.skip(f"Failed to start Oracle container: {result.error}")
@@ -155,7 +155,7 @@ def oracle_tap(oracle_tap_config: dict[str, object]) -> FlextOracleTapService:
     # Convert dict[str, object] to proper config and create service
     config_result = FlextResult[FlextMeltanoTapOracleConfig].ok(
         FlextMeltanoTapOracleConfig.get_global_instance().model_validate(
-            oracle_tap_config
+            oracle_tap_config,
         ),
     )
     if config_result.is_success:

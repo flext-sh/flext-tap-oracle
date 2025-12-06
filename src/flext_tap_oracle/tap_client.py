@@ -63,7 +63,9 @@ class FlextOracleDiscoveryService:
             ]
 
             logger.info(
-                "Discovered %d Oracle tables in schema %s", len(tables), schema_name
+                "Discovered %d Oracle tables in schema %s",
+                len(tables),
+                schema_name,
             )
             return FlextResult[list[FlextDbOracleModels.Table]].ok(tables)
 
@@ -165,7 +167,8 @@ class FlextOracleTableFilterService:
                 return FlextResult[list[str]].ok(filtered_tables)
 
             logger.info(
-                "No table exclusions configured, using all %d tables", len(table_names)
+                "No table exclusions configured, using all %d tables",
+                len(table_names),
             )
             return FlextResult[list[str]].ok(table_names)
 
@@ -211,18 +214,20 @@ class FlextOracleTapService(FlextService[FlextMeltanoTapOracleConfig]):
         self._oracle_api = FlextDbOracleApi(
             **oracle_config
             if isinstance(oracle_config, dict)
-            else oracle_config.model_dump()
+            else oracle_config.model_dump(),
         )
 
         # Create domain services for Oracle operations
         # Get schema name from configuration
         if isinstance(oracle_config, dict):
             schema_name = oracle_config.get("schema_name") or oracle_config.get(
-                "service_name"
+                "service_name",
             )
         else:
             schema_name = getattr(oracle_config, "schema_name", None) or getattr(
-                oracle_config, "service_name", None
+                oracle_config,
+                "service_name",
+                None,
             )
 
         self._discovery_service = FlextOracleDiscoveryService(
@@ -301,10 +306,10 @@ class FlextOracleTapService(FlextService[FlextMeltanoTapOracleConfig]):
             connection_result = self.test_oracle_connection()
             if connection_result.is_failure:
                 logger.error(
-                    f"Oracle connection test failed: {connection_result.error}"
+                    f"Oracle connection test failed: {connection_result.error}",
                 )
                 return FlextResult[bool].fail(
-                    f"Connection test failed: {connection_result.error}"
+                    f"Connection test failed: {connection_result.error}",
                 )
 
             # Discover tables
@@ -312,7 +317,7 @@ class FlextOracleTapService(FlextService[FlextMeltanoTapOracleConfig]):
             if tables_result.is_failure:
                 logger.error(f"Table discovery failed: {tables_result.error}")
                 return FlextResult[bool].fail(
-                    f"Table discovery failed: {tables_result.error}"
+                    f"Table discovery failed: {tables_result.error}",
                 )
 
             logger.info("Oracle tap initialization completed successfully")
@@ -334,10 +339,10 @@ class FlextOracleTapService(FlextService[FlextMeltanoTapOracleConfig]):
                 return FlextResult[bool].ok(True)
 
             logger.warning(
-                f"Oracle tap status check failed: {connection_test_result.error}"
+                f"Oracle tap status check failed: {connection_test_result.error}",
             )
             return FlextResult[bool].fail(
-                f"Connection test failed: {connection_test_result.error}"
+                f"Connection test failed: {connection_test_result.error}",
             )
 
         except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:

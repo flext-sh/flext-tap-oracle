@@ -35,17 +35,21 @@ class FlextMeltanoTapOracleProtocols:
             """Protocol for Oracle schema discovery."""
 
             def discover_schemas(
-                self, config: dict[str, object]
+                self,
+                config: dict[str, object],
             ) -> FlextResult[list[dict[str, object]]]:
                 """Discover accessible Oracle schemas."""
 
             def discover_tables(
-                self, schema: str
+                self,
+                schema: str,
             ) -> FlextResult[list[dict[str, object]]]:
                 """Discover Oracle tables in specified schema."""
 
             def get_table_metadata(
-                self, schema: str, table: str
+                self,
+                schema: str,
+                table: str,
             ) -> FlextResult[dict[str, object]]:
                 """Get Oracle table metadata and column definitions."""
 
@@ -54,12 +58,16 @@ class FlextMeltanoTapOracleProtocols:
             """Protocol for Oracle data extraction."""
 
             def extract_table_data(
-                self, table: str, config: dict[str, object]
+                self,
+                table: str,
+                config: dict[str, object],
             ) -> FlextResult[list[dict[str, object]]]:
                 """Extract all data from Oracle table."""
 
             def extract_incremental(
-                self, table: str, state: dict[str, object]
+                self,
+                table: str,
+                state: dict[str, object],
             ) -> FlextResult[list[dict[str, object]]]:
                 """Extract incremental data from Oracle table using state."""
 
@@ -71,7 +79,9 @@ class FlextMeltanoTapOracleProtocols:
                 """Map Oracle data type to Singer type."""
 
             def convert_value(
-                self, value: object, oracle_type: str
+                self,
+                value: object,
+                oracle_type: str,
             ) -> FlextResult[object]:
                 """Convert Oracle value to Singer-compatible format."""
 
@@ -80,12 +90,15 @@ class FlextMeltanoTapOracleProtocols:
             """Protocol for Singer stream generation."""
 
             def generate_catalog(
-                self, config: dict[str, object]
+                self,
+                config: dict[str, object],
             ) -> FlextResult[dict[str, object]]:
                 """Generate Singer catalog from Oracle schema."""
 
             def sync_stream(
-                self, stream: str, state: dict[str, object]
+                self,
+                stream: str,
+                state: dict[str, object],
             ) -> FlextResult[dict[str, object]]:
                 """Sync Singer stream from Oracle table."""
 
@@ -119,23 +132,69 @@ class FlextMeltanoTapOracleProtocols:
             def get_statistics(self) -> FlextResult[dict[str, object]]:
                 """Get extraction statistics."""
 
-    OracleConnectionProtocol = TapOracle.OracleConnectionProtocol
-    SchemaDiscoveryProtocol = TapOracle.SchemaDiscoveryProtocol
-    DataExtractionProtocol = TapOracle.DataExtractionProtocol
-    TypeMappingProtocol = TapOracle.TypeMappingProtocol
-    StreamGenerationProtocol = TapOracle.StreamGenerationProtocol
-    PerformanceProtocol = TapOracle.PerformanceProtocol
-    ValidationProtocol = TapOracle.ValidationProtocol
-    MonitoringProtocol = TapOracle.MonitoringProtocol
+    @runtime_checkable
+    class OracleConnectionProtocol(TapOracle.OracleConnectionProtocol):
+        """OracleConnectionProtocol - real inheritance."""
 
-    TapOracleConnectionProtocol = TapOracle.OracleConnectionProtocol
-    TapOracleSchemaDiscoveryProtocol = TapOracle.SchemaDiscoveryProtocol
-    TapOracleDataExtractionProtocol = TapOracle.DataExtractionProtocol
-    TapOracleTypeMappingProtocol = TapOracle.TypeMappingProtocol
-    TapOracleStreamGenerationProtocol = TapOracle.StreamGenerationProtocol
-    TapOraclePerformanceProtocol = TapOracle.PerformanceProtocol
-    TapOracleValidationProtocol = TapOracle.ValidationProtocol
-    TapOracleMonitoringProtocol = TapOracle.MonitoringProtocol
+    @runtime_checkable
+    class SchemaDiscoveryProtocol(TapOracle.SchemaDiscoveryProtocol):
+        """SchemaDiscoveryProtocol - real inheritance."""
+
+    @runtime_checkable
+    class DataExtractionProtocol(TapOracle.DataExtractionProtocol):
+        """DataExtractionProtocol - real inheritance."""
+
+    @runtime_checkable
+    class TypeMappingProtocol(TapOracle.TypeMappingProtocol):
+        """TypeMappingProtocol - real inheritance."""
+
+    @runtime_checkable
+    class StreamGenerationProtocol(TapOracle.StreamGenerationProtocol):
+        """StreamGenerationProtocol - real inheritance."""
+
+    @runtime_checkable
+    class PerformanceProtocol(TapOracle.PerformanceProtocol):
+        """PerformanceProtocol - real inheritance."""
+
+    @runtime_checkable
+    class ValidationProtocol(TapOracle.ValidationProtocol):
+        """ValidationProtocol - real inheritance."""
+
+    @runtime_checkable
+    class MonitoringProtocol(TapOracle.MonitoringProtocol):
+        """MonitoringProtocol - real inheritance."""
+
+    @runtime_checkable
+    class TapOracleConnectionProtocol(TapOracle.OracleConnectionProtocol):
+        """TapOracleConnectionProtocol - real inheritance."""
+
+    @runtime_checkable
+    class TapOracleSchemaDiscoveryProtocol(TapOracle.SchemaDiscoveryProtocol):
+        """TapOracleSchemaDiscoveryProtocol - real inheritance."""
+
+    @runtime_checkable
+    class TapOracleDataExtractionProtocol(TapOracle.DataExtractionProtocol):
+        """TapOracleDataExtractionProtocol - real inheritance."""
+
+    @runtime_checkable
+    class TapOracleTypeMappingProtocol(TapOracle.TypeMappingProtocol):
+        """TapOracleTypeMappingProtocol - real inheritance."""
+
+    @runtime_checkable
+    class TapOracleStreamGenerationProtocol(TapOracle.StreamGenerationProtocol):
+        """TapOracleStreamGenerationProtocol - real inheritance."""
+
+    @runtime_checkable
+    class TapOraclePerformanceProtocol(TapOracle.PerformanceProtocol):
+        """TapOraclePerformanceProtocol - real inheritance."""
+
+    @runtime_checkable
+    class TapOracleValidationProtocol(TapOracle.ValidationProtocol):
+        """TapOracleValidationProtocol - real inheritance."""
+
+    @runtime_checkable
+    class TapOracleMonitoringProtocol(TapOracle.MonitoringProtocol):
+        """TapOracleMonitoringProtocol - real inheritance."""
 
 
 __all__ = [

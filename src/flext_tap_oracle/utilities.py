@@ -193,24 +193,28 @@ class FlextMeltanoTapOracleUtilities(u):
                 # Map common Oracle exceptions to specific error types
                 if "connection" in str(exception).lower():
                     error = FlextMeltanoTapOracleUtilities.ErrorHandling.create_connection_error(
-                        error_message, **context
+                        error_message,
+                        **context,
                     )
                 elif (
                     "sql" in str(exception).lower() or "query" in str(exception).lower()
                 ):
                     error = (
                         FlextMeltanoTapOracleUtilities.ErrorHandling.create_query_error(
-                            error_message, **context
+                            error_message,
+                            **context,
                         )
                     )
                 elif "discovery" in str(exception).lower():
                     error = FlextMeltanoTapOracleUtilities.ErrorHandling.create_discovery_error(
-                        error_message, **context
+                        error_message,
+                        **context,
                     )
                 else:
                     # Generic extraction error for other cases
                     error = FlextMeltanoTapOracleUtilities.ErrorHandling.create_extraction_error(
-                        error_message, **context
+                        error_message,
+                        **context,
                     )
 
                 return FlextResult[None].fail(str(error))
@@ -259,7 +263,7 @@ class FlextMeltanoTapOracleUtilities(u):
                 stream_infos = []
                 for table in tables:
                     stream_result = FlextMeltanoTapOracleUtilities.StreamManagement.create_stream_info_from_oracle_table(
-                        table
+                        table,
                     )
                     if stream_result.is_success:
                         stream_infos.append(stream_result.unwrap())
@@ -296,11 +300,11 @@ class FlextMeltanoTapOracleUtilities(u):
                 for field in required_fields:
                     if field not in config:
                         return FlextResult[dict[str, object]].fail(
-                            f"Missing required Oracle field: {field}"
+                            f"Missing required Oracle field: {field}",
                         )
                     if not config[field]:
                         return FlextResult[dict[str, object]].fail(
-                            f"Empty Oracle field: {field}"
+                            f"Empty Oracle field: {field}",
                         )
 
                 # Validate port is numeric
@@ -311,19 +315,19 @@ class FlextMeltanoTapOracleUtilities(u):
                         or port > FlextMeltanoTapOracleUtilities.MAX_PORT_NUMBER
                     ):
                         return FlextResult[dict[str, object]].fail(
-                            f"Oracle port must be between 1 and {FlextMeltanoTapOracleUtilities.MAX_PORT_NUMBER}"
+                            f"Oracle port must be between 1 and {FlextMeltanoTapOracleUtilities.MAX_PORT_NUMBER}",
                         )
                     config["port"] = port
                 except ValueError:
                     return FlextResult[dict[str, object]].fail(
-                        "Oracle port must be numeric"
+                        "Oracle port must be numeric",
                     )
 
                 return FlextResult[dict[str, object]].ok(config)
 
             except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                 return FlextResult[dict[str, object]].fail(
-                    f"Oracle config validation failed: {e}"
+                    f"Oracle config validation failed: {e}",
                 )
 
         @staticmethod
@@ -331,7 +335,7 @@ class FlextMeltanoTapOracleUtilities(u):
             """Build Oracle connection string from configuration."""
             try:
                 validation_result = FlextMeltanoTapOracleUtilities.ConfigurationValidation.validate_oracle_config(
-                    config
+                    config,
                 )
                 if validation_result.is_failure:
                     return FlextResult[str].fail(validation_result.error)
@@ -357,7 +361,7 @@ class FlextMeltanoTapOracleUtilities(u):
             try:
                 # Validate configuration first
                 validation_result = FlextMeltanoTapOracleUtilities.ConfigurationValidation.validate_oracle_config(
-                    config
+                    config,
                 )
                 if validation_result.is_failure:
                     return FlextResult[dict[str, object]].fail(validation_result.error)
@@ -376,7 +380,7 @@ class FlextMeltanoTapOracleUtilities(u):
 
             except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                 return FlextResult[dict[str, object]].fail(
-                    f"Oracle connectivity test failed: {e}"
+                    f"Oracle connectivity test failed: {e}",
                 )
 
     class PerformanceOptimization:
@@ -445,7 +449,7 @@ class FlextMeltanoTapOracleUtilities(u):
 
             except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                 return FlextResult[dict[str, object]].fail(
-                    f"Metrics calculation failed: {e}"
+                    f"Metrics calculation failed: {e}",
                 )
 
 

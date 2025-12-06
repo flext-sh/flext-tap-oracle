@@ -72,7 +72,9 @@ class FlextMeltanoTapOracleStreams:
                 if connection is None:
                     # Fallback: create connection from tap config using CORRECT method
                     tap_config: dict[str, object] = getattr(
-                        self._tap, "typed_config", None
+                        self._tap,
+                        "typed_config",
+                        None,
                     )
                     if tap_config and hasattr(tap_config, "get_oracle_config"):
                         # Note: FlextDbOracleConnection does not exist in flext_db_oracle
@@ -129,7 +131,7 @@ class FlextMeltanoTapOracleStreams:
 
                     if query_result.is_failure:
                         FlextMeltanoTapOracleStreams.logger.error(
-                            f"Failed to execute query: {query_result.error}"
+                            f"Failed to execute query: {query_result.error}",
                         )
                         return
 
@@ -154,7 +156,7 @@ class FlextMeltanoTapOracleStreams:
 
             except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                 FlextMeltanoTapOracleStreams.logger.exception(
-                    f"Error getting records from {self.table_name}"
+                    f"Error getting records from {self.table_name}",
                 )
                 msg = f"Failed to get records: {e}"
                 raise RuntimeError(msg) from e
@@ -168,19 +170,20 @@ class FlextMeltanoTapOracleStreams:
             # Extract column metadata from FlextDbOracleTable
             if not hasattr(table_metadata, "columns"):
                 FlextMeltanoTapOracleStreams.logger.warning(
-                    "Table metadata missing columns, using fallback"
+                    "Table metadata missing columns, using fallback",
                 )
                 yield from self._process_results_fallback(query_data)
                 return
             column_names = [col.name for col in table_metadata.columns]
             # Handle TDbOracleQueryResult data structure
             if hasattr(query_data, "__iter__") and not isinstance(
-                query_data, (str, bytes)
+                query_data,
+                (str, bytes),
             ):
                 data_rows = query_data
             else:
                 FlextMeltanoTapOracleStreams.logger.warning(
-                    "Unexpected query data structure, using fallback"
+                    "Unexpected query data structure, using fallback",
                 )
                 yield from self._process_results_fallback(query_data)
                 return
@@ -189,13 +192,14 @@ class FlextMeltanoTapOracleStreams:
                 try:
                     if isinstance(row_data, (list, tuple)):
                         record = dict[str, object](
-                            zip(column_names, row_data, strict=False)
+                            zip(column_names, row_data, strict=False),
                         )
                     elif isinstance(row_data, dict):
                         record = row_data
                     else:
                         FlextMeltanoTapOracleStreams.logger.warning(
-                            "Unexpected row data type: %s", type(row_data)
+                            "Unexpected row data type: %s",
+                            type(row_data),
                         )
                         continue
                     # Apply Oracle-specific transformations using flext-db-oracle knowledge
@@ -217,16 +221,17 @@ class FlextMeltanoTapOracleStreams:
             """Fallback processing without metadata (minimal implementation)."""
             # Use schema properties as column names
             column_names: dict[str, object] = list(
-                self.schema.get("properties", {}).keys()
+                self.schema.get("properties", {}).keys(),
             )
             # Handle different query_data structures
             if hasattr(query_data, "__iter__") and not isinstance(
-                query_data, (str, bytes)
+                query_data,
+                (str, bytes),
             ):
                 data_rows = query_data
             else:
                 FlextMeltanoTapOracleStreams.logger.warning(
-                    "Cannot process query data in fallback mode"
+                    "Cannot process query data in fallback mode",
                 )
                 return
             for row_data in data_rows:
@@ -234,7 +239,7 @@ class FlextMeltanoTapOracleStreams:
                     if isinstance(row_data, (list, tuple)):
                         if column_names:
                             record = dict[str, object](
-                                zip(column_names, row_data, strict=False)
+                                zip(column_names, row_data, strict=False),
                             )
                         else:
                             # Generic column naming
@@ -249,7 +254,7 @@ class FlextMeltanoTapOracleStreams:
                     yield record
                 except (ValueError, TypeError, KeyError, AttributeError, OSError):
                     FlextMeltanoTapOracleStreams.logger.exception(
-                        "Failed to process record in fallback mode"
+                        "Failed to process record in fallback mode",
                     )
                     continue
 
@@ -330,7 +335,7 @@ class FlextMeltanoTapOracleStreams:
                 }
             except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                 FlextMeltanoTapOracleStreams.logger.exception(
-                    "Failed to get table info"
+                    "Failed to get table info",
                 )
                 return {"table_name": self.table_name, "error": str(e)}
 
@@ -354,7 +359,7 @@ class FlextMeltanoTapOracleStreams:
                 safe_table_name = self.table_name.replace('"', '""')  # Escape quotes
                 query_template: dict[str, object] = 'SELECT COUNT(*) FROM "{}"'
                 result: FlextResult[object] = self.oracle_api.query(
-                    query_template.format(safe_table_name)
+                    query_template.format(safe_table_name),
                 )
                 if (
                     result.is_success
@@ -469,9 +474,14 @@ class FlextMeltanoTapOracleStreams:
             )
 
 
-# Backward compatibility exports - maintain API compatibility
-OracleStream = FlextMeltanoTapOracleStreams.OracleStream
-FlextOracleStream = FlextMeltanoTapOracleStreams.OracleStream
+# Backward compatibility classes with real inheritance
+class OracleStream(FlextMeltanoTapOracleStreams.OracleStream):
+    """OracleStream - real inheritance from FlextMeltanoTapOracleStreams.OracleStream."""
+
+
+class FlextOracleStream(FlextMeltanoTapOracleStreams.OracleStream):
+    """FlextOracleStream - real inheritance from FlextMeltanoTapOracleStreams.OracleStream."""
+
 
 # Factory function exports for backward compatibility
 create_oracle_stream = FlextMeltanoTapOracleStreams.StreamFactory.create_oracle_stream

@@ -143,7 +143,7 @@ class OracleTapDiscoverCommand(FlextCliCmd):
                 )
 
             config_data: dict[str, object] = Path(self.params.config_file).read_text(
-                encoding="utf-8"
+                encoding="utf-8",
             )
             # Use singleton instance instead of direct model_validate_json
             config_instance = FlextMeltanoTapOracleConfig.get_global_instance()
@@ -256,7 +256,7 @@ class OracleTapSyncCommand(FlextCliCmd):
                 )
 
             config_data: dict[str, object] = Path(self.params.config_file).read_text(
-                encoding="utf-8"
+                encoding="utf-8",
             )
             # Use singleton instance instead of direct model_validate_json
             config_instance = FlextMeltanoTapOracleConfig.get_global_instance()

@@ -60,7 +60,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
                     "tap_name": "tap-oracle",
                     "extraction_mode": "incremental_replication",
                     "oracle_connection": "oracle://user@host:1521/service",
-                }
+                },
             ],
             "tags": ["singer", "oracle", "tap", "extraction", "database"],
             "version": "2.11.0",
@@ -72,29 +72,19 @@ class FlextMeltanoTapOracleModels(FlextModels):
     @computed_field
     def active_oracle_tap_models_count(self) -> int:
         """Count of active Oracle tap models with database extraction capabilities."""
-        count = 0
-        # Count core Singer Oracle tap models
-        if hasattr(self, "OracleTapStreamMetadata"):
-            count += 1
-        if hasattr(self, "OracleTapDiscoveryConfig"):
-            count += 1
-        if hasattr(self, "OracleTapExtractionConfig"):
-            count += 1
-        if hasattr(self, "OracleTapPerformanceMetrics"):
-            count += 1
-        if hasattr(self, "OracleTapStreamInfo"):
-            count += 1
-        if hasattr(self, "OracleTapDiscoveryResult"):
-            count += 1
-        if hasattr(self, "OracleTapExecutionStats"):
-            count += 1
-        if hasattr(self, "OracleConnection"):
-            count += 1
-        if hasattr(self, "OracleQuery"):
-            count += 1
-        if hasattr(self, "OracleRecord"):
-            count += 1
-        return count
+        model_names = [
+            "OracleTapStreamMetadata",
+            "OracleTapDiscoveryConfig",
+            "OracleTapExtractionConfig",
+            "OracleTapPerformanceMetrics",
+            "OracleTapStreamInfo",
+            "OracleTapDiscoveryResult",
+            "OracleTapExecutionStats",
+            "OracleConnection",
+            "OracleQuery",
+            "OracleRecord",
+        ]
+        return sum(1 for name in model_names if hasattr(self, name))
 
     @computed_field
     def oracle_tap_system_summary(self) -> dict[str, object]:
@@ -159,7 +149,9 @@ class FlextMeltanoTapOracleModels(FlextModels):
 
     @field_serializer("*", when_used="json")
     def serialize_with_oracle_metadata(
-        self, value: object, _info: FieldSerializationInfo
+        self,
+        value: object,
+        _info: FieldSerializationInfo,
     ) -> object:
         """Add Singer Oracle tap metadata to all serialized fields."""
         if isinstance(value, dict):
@@ -173,7 +165,8 @@ class FlextMeltanoTapOracleModels(FlextModels):
                 },
             }
         if isinstance(value, (str, int, float, bool)) and hasattr(
-            self, "_include_oracle_metadata"
+            self,
+            "_include_oracle_metadata",
         ):
             return {
                 "value": value,
@@ -207,7 +200,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
                         "stream_name": "users",
                         "table_name": "USERS",
                         "replication_method": "INCREMENTAL",
-                    }
+                    },
                 ],
             },
         )
@@ -231,7 +224,8 @@ class FlextMeltanoTapOracleModels(FlextModels):
         table_name: str = Field(..., description="Oracle table name")
         schema_name: str | None = Field(default=None, description="Oracle schema name")
         estimated_rows: int | None = Field(
-            default=None, description="Estimated row count"
+            default=None,
+            description="Estimated row count",
         )
         column_count: int | None = Field(default=None, description="Number of columns")
 
@@ -325,28 +319,33 @@ class FlextMeltanoTapOracleModels(FlextModels):
                         "schema_names": ["HR", "SALES"],
                         "include_views": True,
                         "max_tables": 100,
-                    }
+                    },
                 ],
             },
         )
 
         # Discovery scope
         schema_names: list[str] = Field(
-            default_factory=list, description="Oracle schemas to discover"
+            default_factory=list,
+            description="Oracle schemas to discover",
         )
         table_patterns: list[str] = Field(
-            default_factory=list, description="Table name patterns to include"
+            default_factory=list,
+            description="Table name patterns to include",
         )
         exclude_patterns: list[str] = Field(
-            default_factory=list, description="Table name patterns to exclude"
+            default_factory=list,
+            description="Table name patterns to exclude",
         )
 
         # Discovery options
         include_views: bool = Field(
-            default=False, description="Include Oracle views in discovery"
+            default=False,
+            description="Include Oracle views in discovery",
         )
         include_system_tables: bool = Field(
-            default=False, description="Include system tables in discovery"
+            default=False,
+            description="Include system tables in discovery",
         )
         max_tables: int = Field(
             default=FlextConstants.Performance.BatchProcessing.DEFAULT_SIZE,
@@ -359,7 +358,8 @@ class FlextMeltanoTapOracleModels(FlextModels):
             description="Discovery timeout in seconds",
         )
         parallel_discovery: bool = Field(
-            default=True, description="Enable parallel discovery"
+            default=True,
+            description="Enable parallel discovery",
         )
 
         @computed_field
@@ -406,7 +406,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
                         "batch_size": 10000,
                         "parallel_streams": 4,
                         "incremental_column": "UPDATED_AT",
-                    }
+                    },
                 ],
             },
         )
@@ -417,23 +417,28 @@ class FlextMeltanoTapOracleModels(FlextModels):
             description="Number of rows per batch",
         )
         max_rows: int | None = Field(
-            default=None, description="Maximum rows to extract (None for unlimited)"
+            default=None,
+            description="Maximum rows to extract (None for unlimited)",
         )
 
         # Performance optimization
         parallel_streams: int = Field(
-            default=1, description="Number of parallel extraction streams"
+            default=1,
+            description="Number of parallel extraction streams",
         )
         enable_query_hints: bool = Field(
-            default=True, description="Enable Oracle query optimization hints"
+            default=True,
+            description="Enable Oracle query optimization hints",
         )
 
         # Incremental extraction
         incremental_column: str | None = Field(
-            default=None, description="Column for incremental extraction"
+            default=None,
+            description="Column for incremental extraction",
         )
         incremental_bookmark: str | None = Field(
-            default=None, description="Bookmark value for incremental extraction"
+            default=None,
+            description="Bookmark value for incremental extraction",
         )
 
         @computed_field
@@ -485,7 +490,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
                         "extraction_id": "ext_123",
                         "total_records": 50000,
                         "avg_records_per_second": 1000.0,
-                    }
+                    },
                 ],
             },
         )
@@ -494,30 +499,36 @@ class FlextMeltanoTapOracleModels(FlextModels):
         extraction_id: str = Field(description="Unique extraction identifier")
         start_time: str = Field(description="Extraction start timestamp")
         end_time: str | None = Field(
-            default=None, description="Extraction end timestamp"
+            default=None,
+            description="Extraction end timestamp",
         )
 
         # Volume metrics
         total_records: int = Field(default=0, description="Total records extracted")
         total_bytes: int = Field(default=0, description="Total bytes processed")
         streams_processed: int = Field(
-            default=0, description="Number of streams processed"
+            default=0,
+            description="Number of streams processed",
         )
 
         # Performance metrics
         avg_records_per_second: float = Field(
-            default=0.0, description="Average records per second"
+            default=0.0,
+            description="Average records per second",
         )
         avg_bytes_per_second: float = Field(
-            default=0.0, description="Average bytes per second"
+            default=0.0,
+            description="Average bytes per second",
         )
 
         # Oracle-specific metrics
         oracle_connection_time: float = Field(
-            default=0.0, description="Oracle connection establishment time"
+            default=0.0,
+            description="Oracle connection establishment time",
         )
         oracle_query_time: float = Field(
-            default=0.0, description="Total Oracle query execution time"
+            default=0.0,
+            description="Total Oracle query execution time",
         )
 
         @computed_field
@@ -525,8 +536,6 @@ class FlextMeltanoTapOracleModels(FlextModels):
             """Oracle tap performance analysis summary."""
             duration = 0.0
             if self.start_time and self.end_time:
-                from datetime import datetime
-
                 start = datetime.fromisoformat(self.start_time)
                 end = datetime.fromisoformat(self.end_time)
                 duration = (end - start).total_seconds()
@@ -583,7 +592,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
                         "stream_name": "users",
                         "table_name": "USERS",
                         "replication_method": "INCREMENTAL",
-                    }
+                    },
                 ],
             },
         )
@@ -611,7 +620,8 @@ class FlextMeltanoTapOracleModels(FlextModels):
         estimated_rows: int | None = Field(None, description="Estimated row count")
         column_count: int | None = Field(None, description="Number of columns")
         last_extracted: str | None = Field(
-            None, description="Last extraction timestamp"
+            None,
+            description="Last extraction timestamp",
         )
 
         @computed_field
@@ -691,7 +701,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
                         "schema_name": "HR",
                         "total_tables": 15,
                         "discovery_timestamp": "2023-01-01T00:00:00Z",
-                    }
+                    },
                 ],
             },
         )
@@ -699,7 +709,8 @@ class FlextMeltanoTapOracleModels(FlextModels):
         # Discovery metadata
         schema_name: str = Field(..., description="Oracle schema that was discovered")
         discovery_timestamp: str = Field(
-            ..., description="When discovery was performed"
+            ...,
+            description="When discovery was performed",
         )
         total_tables: int = Field(..., description="Total number of tables discovered")
 
@@ -777,7 +788,8 @@ class FlextMeltanoTapOracleModels(FlextModels):
             return [stream for stream in self.stream_info if stream.is_selected]
 
         def get_table_by_name(
-            self, table_name: str
+            self,
+            table_name: str,
         ) -> FlextDbOracleModels.Table | None:
             """Get Oracle table metadata by name."""
             for table in self.oracle_tables:
@@ -817,7 +829,7 @@ class FlextMeltanoTapOracleModels(FlextModels):
                         "execution_id": "exec_123",
                         "streams_processed": 5,
                         "total_records": 100000,
-                    }
+                    },
                 ],
             },
         )
@@ -829,7 +841,8 @@ class FlextMeltanoTapOracleModels(FlextModels):
 
         # Stream statistics
         streams_processed: int = Field(
-            default=0, description="Number of streams processed"
+            default=0,
+            description="Number of streams processed",
         )
         total_records: int = Field(default=0, description="Total records extracted")
         total_bytes: int = Field(default=0, description="Total bytes processed")
@@ -844,7 +857,8 @@ class FlextMeltanoTapOracleModels(FlextModels):
             description="Average bytes per second",
         )
         duration_seconds: float = Field(
-            default=0.0, description="Total execution duration"
+            default=0.0,
+            description="Total execution duration",
         )
 
         # Error tracking
@@ -863,7 +877,8 @@ class FlextMeltanoTapOracleModels(FlextModels):
             description="Oracle connection time",
         )
         oracle_query_time: float = Field(
-            default=0.0, description="Total Oracle query time"
+            default=0.0,
+            description="Total Oracle query time",
         )
         oracle_result_processing_time: float = Field(
             default=0.0,
@@ -965,7 +980,8 @@ class FlextMeltanoTapOracleModels(FlextModels):
             return updated.update_performance_metrics()
 
         def mark_stream_error(
-            self, stream_name: str
+            self,
+            stream_name: str,
         ) -> FlextMeltanoTapOracleModels.OracleTapExecutionStats:
             """Return new instance with marked stream error."""
             new_failed_streams = (
@@ -997,11 +1013,18 @@ class FlextMeltanoTapOracleModels(FlextModels):
             }
 
     # Nested type aliases and additional types (moved from standalone definitions)
-    # Re-export types from flext-db-oracle with tap-specific aliases
-    TapOracleTable = FlextDbOracleModels.Table
-    TapOracleColumn = FlextDbOracleModels.Column
-    TapOracleSchema = FlextDbOracleModels.Schema
-    TapOracleQueryResult = FlextDbOracleModels.QueryResult
+    # Re-export types from flext-db-oracle with tap-specific aliases - real inheritance
+    class TapOracleTable(FlextDbOracleModels.Table):
+        """Tap Oracle Table model - real inheritance."""
+
+    class TapOracleColumn(FlextDbOracleModels.Column):
+        """Tap Oracle Column model - real inheritance."""
+
+    class TapOracleSchema(FlextDbOracleModels.Schema):
+        """Tap Oracle Schema model - real inheritance."""
+
+    class TapOracleQueryResult(FlextDbOracleModels.QueryResult):
+        """Tap Oracle Query Result model - real inheritance."""
 
     # Tap-specific type definitions
     TapReplicationMethod = Literal["FULL_TABLE", "INCREMENTAL"]
@@ -1019,10 +1042,21 @@ class FlextMeltanoTapOracleModels(FlextModels):
 # MODULE-LEVEL ALIASES FOR BACKWARD COMPATIBILITY
 # =====================================================
 
-# Re-export class-level aliases at module level for direct imports
-TapOracleColumn = FlextMeltanoTapOracleModels.TapOracleColumn
-TapOracleSchema = FlextMeltanoTapOracleModels.TapOracleSchema
-TapOracleTable = FlextMeltanoTapOracleModels.TapOracleTable
+
+# Re-export class-level aliases at module level for direct imports - real inheritance
+class TapOracleColumn(FlextMeltanoTapOracleModels.TapOracleColumn):
+    """Tap Oracle Column - real inheritance."""
+
+
+class TapOracleSchema(FlextMeltanoTapOracleModels.TapOracleSchema):
+    """Tap Oracle Schema - real inheritance."""
+
+
+class TapOracleTable(FlextMeltanoTapOracleModels.TapOracleTable):
+    """Tap Oracle Table - real inheritance."""
+
+
+# TapReplicationMethod is a Literal type alias, not a class - keep as is
 TapReplicationMethod = FlextMeltanoTapOracleModels.TapReplicationMethod
 
 # =====================================================

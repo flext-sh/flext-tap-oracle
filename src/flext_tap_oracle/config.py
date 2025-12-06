@@ -257,7 +257,7 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
                 self.get_connection_string()
             except ValueError as e:
                 return FlextResult[None].fail(
-                    f"Connection string validation failed: {e}"
+                    f"Connection string validation failed: {e}",
                 )
 
             # Validate performance settings
@@ -268,7 +268,7 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
                 and self.batch_size > max_safe_batch
             ):
                 return FlextResult[None].fail(
-                    "High parallelism with large batch sizes may cause memory issues"
+                    "High parallelism with large batch sizes may cause memory issues",
                 )
 
             # Validate filters
@@ -277,7 +277,7 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
                 and len(self.tables_filter) > FlextConstants.Limits.MAX_LIST_SIZE
             ):
                 return FlextResult[None].fail(
-                    f"Too many tables specified: {len(self.tables_filter)}"
+                    f"Too many tables specified: {len(self.tables_filter)}",
                 )
 
             return FlextResult[None].ok(None)
@@ -333,7 +333,9 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
 
     @classmethod
     def create_for_environment(
-        cls, environment: str, **overrides: object
+        cls,
+        environment: str,
+        **overrides: object,
     ) -> FlextMeltanoTapOracleConfig:
         """Create configuration for specific environment using enhanced singleton pattern."""
         env_overrides: dict[str, object] = {}
@@ -361,7 +363,9 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
 
         all_overrides = {**env_overrides, **overrides}
         return cls.get_or_create_shared_instance(
-            project_name="flext-tap-oracle", environment=environment, **all_overrides
+            project_name="flext-tap-oracle",
+            environment=environment,
+            **all_overrides,
         )
 
     @classmethod
@@ -383,7 +387,8 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
             **overrides,
         }
         return cls.get_or_create_shared_instance(
-            project_name="flext-tap-oracle", **dev_overrides
+            project_name="flext-tap-oracle",
+            **dev_overrides,
         )
 
     @classmethod
@@ -398,7 +403,8 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
             **overrides,
         }
         return cls.get_or_create_shared_instance(
-            project_name="flext-tap-oracle", **prod_overrides
+            project_name="flext-tap-oracle",
+            **prod_overrides,
         )
 
     @classmethod
@@ -416,7 +422,8 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
             **overrides,
         }
         return cls.get_or_create_shared_instance(
-            project_name="flext-tap-oracle", **test_overrides
+            project_name="flext-tap-oracle",
+            **test_overrides,
         )
 
     @classmethod
@@ -468,7 +475,7 @@ def create_oracle_tap_config(
 
         config_instance = (
             FlextMeltanoTapOracleConfig.get_global_instance().model_validate(
-                config_data
+                config_data,
             )
         )
         return FlextResult[FlextMeltanoTapOracleConfig].ok(config_instance)
@@ -502,13 +509,13 @@ def validate_oracle_tap_configuration(
         <= FlextConstants.Network.MAX_PORT
     ):
         return FlextResult[None].fail(
-            f"Oracle port must be between {FlextConstants.Network.MIN_PORT} and {FlextConstants.Network.MAX_PORT}"
+            f"Oracle port must be between {FlextConstants.Network.MIN_PORT} and {FlextConstants.Network.MAX_PORT}",
         )
 
     # Validate either service_name or sid
     if not config.oracle_service_name and not config.oracle_sid:
         return FlextResult[None].fail(
-            "Either oracle_service_name or oracle_sid must be provided"
+            "Either oracle_service_name or oracle_sid must be provided",
         )
 
     # Validate batch size constraints

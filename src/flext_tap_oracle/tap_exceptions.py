@@ -43,7 +43,7 @@ class FlextMeltanoTapOracleExceptions:
 
             # Extract common parameters
             base_context, correlation_id, error_code = self._extract_common_kwargs(
-                kwargs
+                kwargs,
             )
 
             # Build context with Singer tap-specific fields
@@ -75,7 +75,7 @@ class FlextMeltanoTapOracleExceptions:
 
             # Extract common parameters
             base_context, correlation_id, error_code = self._extract_common_kwargs(
-                kwargs
+                kwargs,
             )
 
             # Build context with stream info
@@ -115,7 +115,7 @@ class FlextMeltanoTapOracleExceptions:
 
             # Extract common parameters
             base_context, correlation_id, error_code = self._extract_common_kwargs(
-                kwargs
+                kwargs,
             )
 
             # Build context with Oracle connection details
@@ -186,7 +186,7 @@ class FlextMeltanoTapOracleExceptions:
 
             # Extract common parameters
             base_context, correlation_id, error_code = self._extract_common_kwargs(
-                kwargs
+                kwargs,
             )
 
             # Build context with operation info
@@ -227,7 +227,7 @@ class FlextMeltanoTapOracleExceptions:
 
             # Extract common parameters
             base_context, correlation_id, error_code = self._extract_common_kwargs(
-                kwargs
+                kwargs,
             )
 
             # Build context with Oracle query details
@@ -271,7 +271,7 @@ class FlextMeltanoTapOracleExceptions:
 
             # Extract common parameters
             base_context, correlation_id, error_code = self._extract_common_kwargs(
-                kwargs
+                kwargs,
             )
 
             # Build context with stream details
@@ -312,7 +312,7 @@ class FlextMeltanoTapOracleExceptions:
 
             # Extract common parameters
             base_context, correlation_id, error_code = self._extract_common_kwargs(
-                kwargs
+                kwargs,
             )
 
             # Build context with discovery details
@@ -353,7 +353,7 @@ class FlextMeltanoTapOracleExceptions:
 
             # Extract common parameters
             base_context, correlation_id, error_code = self._extract_common_kwargs(
-                kwargs
+                kwargs,
             )
 
             # Build context with metadata details
@@ -395,7 +395,7 @@ class FlextMeltanoTapOracleExceptions:
 
             # Extract common parameters
             base_context, correlation_id, error_code = self._extract_common_kwargs(
-                kwargs
+                kwargs,
             )
 
             # Build context with extraction details
@@ -420,21 +420,57 @@ class FlextMeltanoTapOracleExceptions:
             )
 
 
-# Backward compatibility aliases - property-based exports
-FlextMeltanoTapOracleError = FlextMeltanoTapOracleExceptions.TapError
-FlextMeltanoTapOracleValidationError = FlextMeltanoTapOracleExceptions.ValidationError
-FlextMeltanoTapOracleConnectionError = (
-    FlextMeltanoTapOracleExceptions.OracleConnectionError
-)
-FlextMeltanoTapOracleConfigurationError = (
-    FlextMeltanoTapOracleExceptions.ConfigurationError
-)
-FlextMeltanoTapOracleProcessingError = FlextMeltanoTapOracleExceptions.ProcessingError
-FlextMeltanoTapOracleQueryError = FlextMeltanoTapOracleExceptions.QueryError
-FlextMeltanoTapOracleStreamError = FlextMeltanoTapOracleExceptions.StreamError
-FlextMeltanoTapOracleDiscoveryError = FlextMeltanoTapOracleExceptions.DiscoveryError
-FlextMeltanoTapOracleMetadataError = FlextMeltanoTapOracleExceptions.MetadataError
-FlextMeltanoTapOracleExtractionError = FlextMeltanoTapOracleExceptions.ExtractionError
+# Backward compatibility classes with real inheritance
+class FlextMeltanoTapOracleError(FlextMeltanoTapOracleExceptions.TapError):
+    """FlextMeltanoTapOracleError - real inheritance from TapError."""
+
+
+class FlextMeltanoTapOracleValidationError(
+    FlextMeltanoTapOracleExceptions.ValidationError,
+):
+    """FlextMeltanoTapOracleValidationError - real inheritance from ValidationError."""
+
+
+class FlextMeltanoTapOracleConnectionError(
+    FlextMeltanoTapOracleExceptions.OracleConnectionError,
+):
+    """FlextMeltanoTapOracleConnectionError - real inheritance from OracleConnectionError."""
+
+
+class FlextMeltanoTapOracleConfigurationError(
+    FlextMeltanoTapOracleExceptions.ConfigurationError,
+):
+    """FlextMeltanoTapOracleConfigurationError - real inheritance from ConfigurationError."""
+
+
+class FlextMeltanoTapOracleProcessingError(
+    FlextMeltanoTapOracleExceptions.ProcessingError,
+):
+    """FlextMeltanoTapOracleProcessingError - real inheritance from ProcessingError."""
+
+
+class FlextMeltanoTapOracleQueryError(FlextMeltanoTapOracleExceptions.QueryError):
+    """FlextMeltanoTapOracleQueryError - real inheritance from QueryError."""
+
+
+class FlextMeltanoTapOracleStreamError(FlextMeltanoTapOracleExceptions.StreamError):
+    """FlextMeltanoTapOracleStreamError - real inheritance from StreamError."""
+
+
+class FlextMeltanoTapOracleDiscoveryError(
+    FlextMeltanoTapOracleExceptions.DiscoveryError,
+):
+    """FlextMeltanoTapOracleDiscoveryError - real inheritance from DiscoveryError."""
+
+
+class FlextMeltanoTapOracleMetadataError(FlextMeltanoTapOracleExceptions.MetadataError):
+    """FlextMeltanoTapOracleMetadataError - real inheritance from MetadataError."""
+
+
+class FlextMeltanoTapOracleExtractionError(
+    FlextMeltanoTapOracleExceptions.ExtractionError,
+):
+    """FlextMeltanoTapOracleExtractionError - real inheritance from ExtractionError."""
 
 
 __all__: list[str] = [
