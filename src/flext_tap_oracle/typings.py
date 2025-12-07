@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from flext_core import t
+from flext_core import FlextTypes, t
 
 # =============================================================================
 # TAP-ORACLE-SPECIFIC TYPE VARIABLES - Domain-specific TypeVars for Oracle tap operations
@@ -40,11 +40,15 @@ class FlextMeltanoTapOracleTypes(t):
         """Oracle extraction complex types."""
 
         type ExtractionConfiguration = dict[str, object | dict[str, object]]
-        type ExtractionState = dict[str, t.JsonValue | object]
+        type ExtractionState = dict[str, FlextTypes.Json.JsonValue | object]
         type ExtractionMetrics = dict[str, int | float | bool | dict[str, object]]
         type BatchConfiguration = dict[str, int | bool | dict[str, object]]
-        type StreamDefinition = dict[str, str | list[str] | dict[str, t.JsonValue]]
-        type TableMetadata = dict[str, t.JsonValue | list[dict[str, object]]]
+        type StreamDefinition = dict[
+            str, str | list[str] | dict[str, FlextTypes.Json.JsonValue]
+        ]
+        type TableMetadata = dict[
+            str, FlextTypes.Json.JsonValue | list[dict[str, object]]
+        ]
 
     # =========================================================================
     # ORACLE DATABASE TYPES - Complex database interaction types
@@ -56,7 +60,7 @@ class FlextMeltanoTapOracleTypes(t):
         type DatabaseConfiguration = dict[str, str | int | bool | dict[str, object]]
         type ConnectionPool = dict[str, int | bool | dict[str, object]]
         type QueryConfiguration = dict[str, str | int | bool | list[str]]
-        type TableSchema = dict[str, list[dict[str, t.JsonValue]]]
+        type TableSchema = dict[str, list[dict[str, FlextTypes.Json.JsonValue]]]
         type ColumnDefinition = dict[str, str | bool | int | dict[str, object]]
         type IndexInformation = dict[str, str | list[str] | dict[str, object]]
 
@@ -67,12 +71,12 @@ class FlextMeltanoTapOracleTypes(t):
     class Singer:
         """Singer protocol complex types."""
 
-        type CatalogEntry = dict[str, str | dict[str, t.JsonValue]]
-        type StreamSchema = dict[str, dict[str, t.JsonValue]]
+        type CatalogEntry = dict[str, str | dict[str, FlextTypes.Json.JsonValue]]
+        type StreamSchema = dict[str, dict[str, FlextTypes.Json.JsonValue]]
         type TapConfiguration = dict[str, object | dict[str, object]]
-        type StateBookmark = dict[str, t.JsonValue | object]
-        type RecordMessage = dict[str, str | dict[str, t.JsonValue]]
-        type SchemaMessage = dict[str, str | dict[str, t.JsonValue]]
+        type StateBookmark = dict[str, FlextTypes.Json.JsonValue | object]
+        type RecordMessage = dict[str, str | dict[str, FlextTypes.Json.JsonValue]]
+        type SchemaMessage = dict[str, str | dict[str, FlextTypes.Json.JsonValue]]
 
     # =========================================================================
     # ORACLE TAP CONFIGURATION TYPES - Complex configuration types
@@ -92,11 +96,11 @@ class FlextMeltanoTapOracleTypes(t):
     # SINGER TAP ORACLE PROJECT TYPES - Domain-specific project types extending t
     # =========================================================================
 
-    class Project(t):
-        """Singer Tap Oracle-specific project types extending t.
+    class Project:
+        """Singer Tap Oracle-specific project types.
 
-        Adds Singer tap Oracle-specific project types while inheriting
-        generic types from t. Follows domain separation principle:
+        Adds Singer tap Oracle-specific project types.
+        Follows domain separation principle:
         Singer tap Oracle domain owns Oracle extraction and Singer protocol-specific types.
         """
 
@@ -131,11 +135,39 @@ class FlextMeltanoTapOracleTypes(t):
         type SingerProtocolConfig = dict[str, bool | str | dict[str, object]]
         type TapOraclePipelineConfig = dict[str, object]
 
+    class TapOracle:
+        """Tap Oracle types namespace for cross-project access.
+
+        Provides organized access to all Tap Oracle types for other FLEXT projects.
+        Usage: Other projects can reference `t.TapOracle.Extraction.*`, `t.TapOracle.Project.*`, etc.
+        This enables consistent namespace patterns for cross-project type access.
+
+        Examples:
+            from flext_tap_oracle.typings import t
+            config: t.TapOracle.Project.SingerTapOracleProjectConfig = ...
+            state: t.TapOracle.Extraction.ExtractionState = ...
+
+        Note: Namespace composition via inheritance - no aliases needed.
+        Access parent namespaces directly through inheritance.
+
+        """
+
+
+# Alias for simplified usage
+t = FlextMeltanoTapOracleTypes
+
+# Namespace composition via class inheritance
+# TapOracle namespace provides access to nested classes through inheritance
+# Access patterns:
+# - t.TapOracle.* for Tap Oracle-specific types
+# - t.Project.* for project types
+# - t.Core.* for core types (inherited from parent)
 
 # =============================================================================
 # PUBLIC API EXPORTS - Oracle tap TypeVars and types
 # =============================================================================
 
-__all__: list[str] = [
+__all__ = [
     "FlextMeltanoTapOracleTypes",
+    "t",
 ]
