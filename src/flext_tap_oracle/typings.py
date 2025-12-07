@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from flext_core import FlextTypes, t
+from flext_core import FlextTypes
 
 # =============================================================================
 # TAP-ORACLE-SPECIFIC TYPE VARIABLES - Domain-specific TypeVars for Oracle tap operations
@@ -24,7 +24,7 @@ from flext_core import FlextTypes, t
 
 
 # Oracle tap domain TypeVars
-class FlextMeltanoTapOracleTypes(t):
+class FlextMeltanoTapOracleTypes(FlextTypes):
     """Oracle tap-specific type definitions extending t.
 
     Domain-specific type system for Oracle database extraction operations.
