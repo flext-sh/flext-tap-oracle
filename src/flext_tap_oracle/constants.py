@@ -120,9 +120,7 @@ class FlextMeltanoTapOracleConstants(FlextConstants):
         DEFAULT_COMMIT_SIZE: Final[int] = (
             FlextConstants.Performance.BatchProcessing.DEFAULT_SIZE
         )
-        TEST_QUERY: Final[str] = (
-            FlextDbOracleConstants.DbOracle.Query.TEST_QUERY
-        )
+        TEST_QUERY: Final[str] = FlextDbOracleConstants.DbOracle.Query.TEST_QUERY
 
     # Type-safe literals - PEP 695 syntax for type checking
     # All Literal types reference StrEnum members where available - NO string duplication!

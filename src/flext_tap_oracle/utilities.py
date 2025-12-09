@@ -13,7 +13,8 @@ from __future__ import annotations
 
 from typing import ClassVar
 
-from flext_core import FlextContainer, FlextLogger, FlextResult, u
+from flext_core import FlextContainer, FlextLogger, FlextResult
+from flext_core.utilities import FlextUtilities as u_core
 from flext_db_oracle import FlextDbOracleModels
 
 from flext_tap_oracle.models import FlextMeltanoTapOracleModels
@@ -27,7 +28,7 @@ from flext_tap_oracle.tap_exceptions import (
 )
 
 
-class FlextMeltanoTapOracleUtilities(u):
+class FlextMeltanoTapOracleUtilities(u_core):
     """Unified Oracle tap utilities class extending u classes.
 
     Provides complete Oracle tap utilities with nested classes for:

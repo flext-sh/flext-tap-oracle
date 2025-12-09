@@ -1,4 +1,4 @@
-"""Oracle Tap Client - Complete Tap Implementation with Domain Services.
+"""Oracle Tap Client - Complete Tap Implementation with Services.
 
 Copyright (c) 2025 FLEXT Contributors
 SPDX-License-Identifier: MIT

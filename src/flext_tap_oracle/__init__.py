@@ -57,6 +57,9 @@ from flext_tap_oracle.tap_streams import (
 from flext_tap_oracle.typings import FlextMeltanoTapOracleTypes
 from flext_tap_oracle.utilities import FlextMeltanoTapOracleUtilities
 
+# Domain-specific aliases
+u = FlextMeltanoTapOracleUtilities  # Utilities (FlextMeltanoTapOracleUtilities extends FlextUtilities)
+
 __all__ = [
     "FlextDbOracleApi",
     "FlextDbOracleConfig",
@@ -93,4 +96,6 @@ __all__ = [
     "create_oracle_stream_from_table",
     "create_oracle_tap_config",
     "create_oracle_tap_service",
+    # Domain-specific aliases
+    "u",
 ]

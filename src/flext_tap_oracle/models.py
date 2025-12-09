@@ -11,6 +11,7 @@ from datetime import UTC, datetime
 from typing import Literal, Self
 
 from flext_core import FlextConstants, FlextModels, FlextResult
+from flext_core.utilities import u
 from flext_db_oracle import FlextDbOracleModels
 from flext_meltano import FlextMeltanoStream as Stream
 from pydantic import (
@@ -40,6 +41,14 @@ class FlextMeltanoTapOracleModels(FlextModels):
 
     All nested classes inherit FlextModels validation and patterns.
     """
+
+    def __init_subclass__(cls, **kwargs: object) -> None:
+        """Warn when FlextMeltanoTapOracleModels is subclassed directly."""
+        super().__init_subclass__(**kwargs)
+        u.Deprecation.warn_once(
+            f"subclass:{cls.__name__}",
+            "Subclassing FlextMeltanoTapOracleModels is deprecated. Use FlextModels.TapOracle instead.",
+        )
 
     # Pydantic 2.11 Configuration - Enterprise Singer Oracle Tap Features
     model_config = ConfigDict(
@@ -1072,6 +1081,10 @@ TapReplicationMethod = FlextMeltanoTapOracleModels.TapReplicationMethod
 # MAIN EXPORTS
 # =====================================================
 
+# Short aliases
+m = FlextMeltanoTapOracleModels
+m_tap_oracle = FlextMeltanoTapOracleModels
+
 __all__: list[str] = [
     "FlextMeltanoTapOracleModels",
     "Stream",
@@ -1079,4 +1092,6 @@ __all__: list[str] = [
     "TapOracleSchema",
     "TapOracleTable",
     "TapReplicationMethod",
+    "m",
+    "m_tap_oracle",
 ]
