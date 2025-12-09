@@ -289,10 +289,12 @@ class FlextMeltanoTapOracleStreams:
                         None,
                     )
                 # Apply Oracle-specific transformations based on type
-                if oracle_type and oracle_type.upper().startswith((
-                    "DATE",
-                    "TIMESTAMP",
-                )):
+                if oracle_type and oracle_type.upper().startswith(
+                    (
+                        "DATE",
+                        "TIMESTAMP",
+                    )
+                ):
                     # Convert Oracle datetime objects to ISO string
                     if hasattr(value, "isoformat"):
                         transformed_record[column_name] = value.isoformat()
