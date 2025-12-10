@@ -267,7 +267,7 @@ class FlextMeltanoTapOracleUtilities(u_core):
                         table,
                     )
                     if stream_result.is_success:
-                        stream_infos.append(stream_result.unwrap())
+                        stream_infos.append(stream_result.value)
 
                 discovery_result = FlextMeltanoTapOracleModels.OracleTapDiscoveryResult(
                     schema_name=schema_name,
@@ -341,7 +341,7 @@ class FlextMeltanoTapOracleUtilities(u_core):
                 if validation_result.is_failure:
                     return FlextResult[str].fail(validation_result.error)
 
-                validated_config = validation_result.unwrap()
+                validated_config = validation_result.value
 
                 connection_string = (
                     f"oracle://{validated_config['username']}:{validated_config['password']}"

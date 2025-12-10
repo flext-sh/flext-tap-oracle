@@ -56,7 +56,7 @@ class FlextOracleDiscoveryService:
                 return FlextResult[list[FlextDbOracleModels.Table]].fail(error_msg)
 
             # Convert string table names to FlextDbOracleModels.Table objects
-            table_names = tables_result.unwrap() or []
+            table_names = tables_result.value or []
             tables: list[FlextDbOracleModels.Table] = [
                 FlextDbOracleModels.Table(name=table_name, schema=schema_name)
                 for table_name in table_names

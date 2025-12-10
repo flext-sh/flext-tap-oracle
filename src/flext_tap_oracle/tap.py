@@ -426,7 +426,7 @@ def cli() -> None:
         logger.error(f"CLI creation failed: {cli_result.error}")
         sys.exit(1)
 
-    cli_main = cli_result.unwrap()
+    cli_main = cli_result.value
     cli_main.run()
 
 
