@@ -1,4 +1,4 @@
-"""FLEXT Tap Oracle Configuration - Enhanced FlextConfig Implementation.
+"""FLEXT Tap Oracle Configuration - Enhanced FlextSettings Implementation.
 
 Single unified configuration class for Oracle Singer tap operations following
 FLEXT 1.0.0 patterns with enhanced singleton, SecretStr, and Pydantic 2.11+ features.
@@ -13,7 +13,7 @@ from __future__ import annotations
 import re
 from typing import Self
 
-from flext_core import FlextConfig, FlextConstants, FlextResult
+from flext_core import FlextConstants, FlextResult, FlextSettings
 from flext_db_oracle import FlextDbOracleModels
 from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import SettingsConfigDict
@@ -21,15 +21,15 @@ from pydantic_settings import SettingsConfigDict
 from flext_tap_oracle.constants import FlextMeltanoTapOracleConstants
 
 
-class FlextMeltanoTapOracleConfig(FlextConfig):
-    """Oracle Tap Configuration using enhanced FlextConfig patterns.
+class FlextMeltanoTapOracleSettings(FlextSettings):
+    """Oracle Tap Configuration using enhanced FlextSettings patterns.
 
-    This class extends FlextConfig and includes all the configuration fields
+    This class extends FlextSettings and includes all the configuration fields
     needed for Oracle tap operations. Uses the enhanced singleton pattern
     with get_or_create_shared_instance for thread-safe configuration management.
 
     Follows standardized pattern:
-    - Extends FlextConfig from flext-core
+    - Extends FlextSettings from flext-core
     - Uses SecretStr for sensitive data (oracle_password)
     - All defaults from FlextConstants where possible
     - Uses enhanced singleton pattern with inverse dependency injection
@@ -52,7 +52,7 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
         validate_return=True,
         json_schema_extra={
             "title": "FLEXT Tap Oracle Configuration",
-            "description": "Oracle Singer tap configuration extending FlextConfig",
+            "description": "Oracle Singer tap configuration extending FlextSettings",
         },
     )
 
@@ -336,7 +336,7 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
         cls,
         environment: str,
         **overrides: object,
-    ) -> FlextMeltanoTapOracleConfig:
+    ) -> FlextMeltanoTapOracleSettings:
         """Create configuration for specific environment using enhanced singleton pattern."""
         env_overrides: dict[str, object] = {}
 
@@ -370,7 +370,7 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
 
     @classmethod
     def get_global_instance(cls) -> Self:
-        """Get the global singleton instance using enhanced FlextConfig pattern."""
+        """Get the global singleton instance using enhanced FlextSettings pattern."""
         return cls.get_or_create_shared_instance(project_name="flext-tap-oracle")
 
     @classmethod
@@ -428,7 +428,7 @@ class FlextMeltanoTapOracleConfig(FlextConfig):
 
     @classmethod
     def reset_global_instance(cls) -> None:
-        """Reset the global FlextMeltanoTapOracleConfig instance (mainly for testing)."""
+        """Reset the global FlextMeltanoTapOracleSettings instance (mainly for testing)."""
         cls.reset_shared_instance()
 
 
@@ -437,7 +437,7 @@ def create_oracle_tap_config(
     oracle_params: dict[str, object],
     tap_params: dict[str, object] | None = None,
     meltano_params: dict[str, object] | None = None,
-) -> FlextResult[FlextMeltanoTapOracleConfig]:
+) -> FlextResult[FlextMeltanoTapOracleSettings]:
     """Create Oracle tap configuration using grouped parameters.
 
     Args:
@@ -474,22 +474,22 @@ def create_oracle_tap_config(
         }
 
         config_instance = (
-            FlextMeltanoTapOracleConfig.get_global_instance().model_validate(
+            FlextMeltanoTapOracleSettings.get_global_instance().model_validate(
                 config_data,
             )
         )
-        return FlextResult[FlextMeltanoTapOracleConfig].ok(config_instance)
+        return FlextResult[FlextMeltanoTapOracleSettings].ok(config_instance)
 
     except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-        return FlextResult[FlextMeltanoTapOracleConfig].fail(
+        return FlextResult[FlextMeltanoTapOracleSettings].fail(
             f"Oracle tap configuration creation failed: {e}",
         )
 
 
 def validate_oracle_tap_configuration(
-    config: FlextMeltanoTapOracleConfig,
+    config: FlextMeltanoTapOracleSettings,
 ) -> FlextResult[None]:
-    """Validate Oracle tap configuration using FlextConfig patterns - ZERO DUPLICATION."""
+    """Validate Oracle tap configuration using FlextSettings patterns - ZERO DUPLICATION."""
     # Required string fields validation
     required_fields = [
         (config.oracle_host, "Oracle host is required"),
@@ -530,7 +530,7 @@ def validate_oracle_tap_configuration(
 
 
 __all__: list[str] = [
-    "FlextMeltanoTapOracleConfig",
+    "FlextMeltanoTapOracleSettings",
     "create_oracle_tap_config",
     "validate_oracle_tap_configuration",
 ]

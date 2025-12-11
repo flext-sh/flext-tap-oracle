@@ -19,11 +19,11 @@ from flext_db_oracle import FlextDbOracleModels
 
 from flext_tap_oracle.models import FlextMeltanoTapOracleModels
 from flext_tap_oracle.tap_exceptions import (
-    FlextMeltanoTapOracleConfigurationError,
     FlextMeltanoTapOracleConnectionError,
     FlextMeltanoTapOracleDiscoveryError,
     FlextMeltanoTapOracleExtractionError,
     FlextMeltanoTapOracleQueryError,
+    FlextMeltanoTapOracleSettingsurationError,
     FlextMeltanoTapOracleStreamError,
 )
 
@@ -157,13 +157,13 @@ class FlextMeltanoTapOracleUtilities(u_core):
             message: str = "Configuration validation failed",
             config_section: str | None = None,
             **kwargs: object,
-        ) -> FlextMeltanoTapOracleConfigurationError:
+        ) -> FlextMeltanoTapOracleSettingsurationError:
             """Create configuration errors with section context."""
             context = kwargs.copy()
             if config_section is not None:
                 context["config_section"] = config_section
 
-            return FlextMeltanoTapOracleConfigurationError(message, context=context)
+            return FlextMeltanoTapOracleSettingsurationError(message, context=context)
 
         @staticmethod
         def create_extraction_error(

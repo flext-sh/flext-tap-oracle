@@ -40,15 +40,13 @@ class FlextMeltanoTapOracleTypes(FlextTypes):
         """Oracle extraction complex types."""
 
         type ExtractionConfiguration = dict[str, object | dict[str, object]]
-        type ExtractionState = dict[str, FlextTypes.Json.JsonValue | object]
+        type ExtractionState = dict[str, FlextTypes.JsonValue | object]
         type ExtractionMetrics = dict[str, int | float | bool | dict[str, object]]
         type BatchConfiguration = dict[str, int | bool | dict[str, object]]
         type StreamDefinition = dict[
-            str, str | list[str] | dict[str, FlextTypes.Json.JsonValue]
+            str, str | list[str] | dict[str, FlextTypes.JsonValue]
         ]
-        type TableMetadata = dict[
-            str, FlextTypes.Json.JsonValue | list[dict[str, object]]
-        ]
+        type TableMetadata = dict[str, FlextTypes.JsonValue | list[dict[str, object]]]
 
     # =========================================================================
     # ORACLE DATABASE TYPES - Complex database interaction types
@@ -60,7 +58,7 @@ class FlextMeltanoTapOracleTypes(FlextTypes):
         type DatabaseConfiguration = dict[str, str | int | bool | dict[str, object]]
         type ConnectionPool = dict[str, int | bool | dict[str, object]]
         type QueryConfiguration = dict[str, str | int | bool | list[str]]
-        type TableSchema = dict[str, list[dict[str, FlextTypes.Json.JsonValue]]]
+        type TableSchema = dict[str, list[dict[str, FlextTypes.JsonValue]]]
         type ColumnDefinition = dict[str, str | bool | int | dict[str, object]]
         type IndexInformation = dict[str, str | list[str] | dict[str, object]]
 
@@ -71,12 +69,12 @@ class FlextMeltanoTapOracleTypes(FlextTypes):
     class Singer:
         """Singer protocol complex types."""
 
-        type CatalogEntry = dict[str, str | dict[str, FlextTypes.Json.JsonValue]]
-        type StreamSchema = dict[str, dict[str, FlextTypes.Json.JsonValue]]
+        type CatalogEntry = dict[str, str | dict[str, FlextTypes.JsonValue]]
+        type StreamSchema = dict[str, dict[str, FlextTypes.JsonValue]]
         type TapConfiguration = dict[str, object | dict[str, object]]
-        type StateBookmark = dict[str, FlextTypes.Json.JsonValue | object]
-        type RecordMessage = dict[str, str | dict[str, FlextTypes.Json.JsonValue]]
-        type SchemaMessage = dict[str, str | dict[str, FlextTypes.Json.JsonValue]]
+        type StateBookmark = dict[str, FlextTypes.JsonValue | object]
+        type RecordMessage = dict[str, str | dict[str, FlextTypes.JsonValue]]
+        type SchemaMessage = dict[str, str | dict[str, FlextTypes.JsonValue]]
 
     # =========================================================================
     # ORACLE TAP CONFIGURATION TYPES - Complex configuration types

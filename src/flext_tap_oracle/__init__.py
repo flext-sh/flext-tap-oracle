@@ -9,16 +9,16 @@ from __future__ import annotations
 
 from flext_db_oracle import (
     FlextDbOracleApi,
-    FlextDbOracleConfig,
+    FlextDbOracleSettings,
 )
 from flext_meltano import (
     FlextMeltanoBridge,
-    FlextMeltanoConfig,
+    FlextMeltanoSettings,
 )
 
 from flext_tap_oracle.__version__ import __version__, __version_info__
 from flext_tap_oracle.config import (
-    FlextMeltanoTapOracleConfig,
+    FlextMeltanoTapOracleSettings,
     create_oracle_tap_config,
 )
 from flext_tap_oracle.models import (
@@ -38,7 +38,6 @@ from flext_tap_oracle.tap_client import (
     create_oracle_tap_service,
 )
 from flext_tap_oracle.tap_exceptions import (
-    FlextMeltanoTapOracleConfigurationError,
     FlextMeltanoTapOracleConnectionError,
     FlextMeltanoTapOracleDiscoveryError,
     FlextMeltanoTapOracleError,
@@ -46,6 +45,7 @@ from flext_tap_oracle.tap_exceptions import (
     FlextMeltanoTapOracleMetadataError,
     FlextMeltanoTapOracleProcessingError,
     FlextMeltanoTapOracleQueryError,
+    FlextMeltanoTapOracleSettingsurationError,
     FlextMeltanoTapOracleStreamError,
     FlextMeltanoTapOracleValidationError,
 )
@@ -62,11 +62,9 @@ u = FlextMeltanoTapOracleUtilities  # Utilities (FlextMeltanoTapOracleUtilities 
 
 __all__ = [
     "FlextDbOracleApi",
-    "FlextDbOracleConfig",
+    "FlextDbOracleSettings",
     "FlextMeltanoBridge",
-    "FlextMeltanoConfig",
-    "FlextMeltanoTapOracleConfig",
-    "FlextMeltanoTapOracleConfigurationError",
+    "FlextMeltanoSettings",
     "FlextMeltanoTapOracleConnectionError",
     "FlextMeltanoTapOracleDiscoveryError",
     "FlextMeltanoTapOracleError",
@@ -76,6 +74,8 @@ __all__ = [
     "FlextMeltanoTapOracleProcessingError",
     "FlextMeltanoTapOracleProtocols",
     "FlextMeltanoTapOracleQueryError",
+    "FlextMeltanoTapOracleSettings",
+    "FlextMeltanoTapOracleSettingsurationError",
     "FlextMeltanoTapOracleStreamError",
     "FlextMeltanoTapOracleTypes",
     "FlextMeltanoTapOracleUtilities",

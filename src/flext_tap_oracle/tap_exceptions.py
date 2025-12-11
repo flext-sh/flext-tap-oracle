@@ -437,10 +437,10 @@ class FlextMeltanoTapOracleConnectionError(
     """FlextMeltanoTapOracleConnectionError - real inheritance from OracleConnectionError."""
 
 
-class FlextMeltanoTapOracleConfigurationError(
+class FlextMeltanoTapOracleSettingsurationError(
     FlextMeltanoTapOracleExceptions.ConfigurationError,
 ):
-    """FlextMeltanoTapOracleConfigurationError - real inheritance from ConfigurationError."""
+    """FlextMeltanoTapOracleSettingsurationError - real inheritance from ConfigurationError."""
 
 
 class FlextMeltanoTapOracleProcessingError(
@@ -474,7 +474,6 @@ class FlextMeltanoTapOracleExtractionError(
 
 
 __all__: list[str] = [
-    "FlextMeltanoTapOracleConfigurationError",
     "FlextMeltanoTapOracleConnectionError",
     "FlextMeltanoTapOracleDiscoveryError",
     "FlextMeltanoTapOracleError",
@@ -483,6 +482,7 @@ __all__: list[str] = [
     "FlextMeltanoTapOracleMetadataError",
     "FlextMeltanoTapOracleProcessingError",
     "FlextMeltanoTapOracleQueryError",
+    "FlextMeltanoTapOracleSettingsurationError",
     "FlextMeltanoTapOracleStreamError",
     "FlextMeltanoTapOracleValidationError",
 ]

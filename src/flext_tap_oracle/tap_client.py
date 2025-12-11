@@ -16,7 +16,7 @@ from flext_db_oracle import (
     FlextDbOracleModels,
 )
 
-from flext_tap_oracle.config import FlextMeltanoTapOracleConfig
+from flext_tap_oracle.config import FlextMeltanoTapOracleSettings
 
 logger = FlextLogger(__name__)
 # =====================================================
@@ -111,7 +111,7 @@ class FlextOracleTableFilterService:
 
     def __init__(
         self,
-        tap_config: FlextMeltanoTapOracleConfig,
+        tap_config: FlextMeltanoTapOracleSettings,
         discovery_service: FlextOracleDiscoveryService,
     ) -> None:
         """Initialize Oracle table filtering service.
@@ -183,7 +183,7 @@ class FlextOracleTableFilterService:
 # =====================================================
 
 
-class FlextOracleTapService(FlextService[FlextMeltanoTapOracleConfig]):
+class FlextOracleTapService(FlextService[FlextMeltanoTapOracleSettings]):
     """Oracle Tap Service using FLEXT Service Pattern.
 
     This class extends FlextService[T] to provide Oracle-specific
@@ -193,13 +193,13 @@ class FlextOracleTapService(FlextService[FlextMeltanoTapOracleConfig]):
     SOLID Principles:
     - Single Responsibility: Each domain service has one responsibility
     - Open/Closed: Extensible via new domain services
-    - Liskov Substitution: Substitutable for FlextService[FlextMeltanoTapOracleConfig]
+    - Liskov Substitution: Substitutable for FlextService[FlextMeltanoTapOracleSettings]
     - Interface Segregation: Specific interfaces per domain service
     - Dependency Inversion: Depends on abstractions (FlextService[T])
     """
 
     @override
-    def __init__(self, config: FlextMeltanoTapOracleConfig) -> None:
+    def __init__(self, config: FlextMeltanoTapOracleSettings) -> None:
         """Initialize Oracle tap service with FLEXT Service Pattern."""
         # Validate configuration - check required fields
         if not config:
@@ -356,7 +356,7 @@ class FlextOracleTapService(FlextService[FlextMeltanoTapOracleConfig]):
 
 
 def create_oracle_tap_service(
-    config: FlextMeltanoTapOracleConfig,
+    config: FlextMeltanoTapOracleSettings,
 ) -> FlextResult[FlextOracleTapService]:
     """Create Oracle tap service using COMPOSITION.
 
