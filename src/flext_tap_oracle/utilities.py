@@ -14,7 +14,7 @@ from __future__ import annotations
 from typing import ClassVar
 
 from flext_core import FlextContainer, FlextLogger, FlextResult
-from flext_core.utilities import FlextUtilities as u_core
+from flext_core.utilities import u_core
 from flext_db_oracle import FlextDbOracleModels
 
 from flext_tap_oracle.models import FlextMeltanoTapOracleModels

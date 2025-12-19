@@ -17,10 +17,6 @@ from flext_meltano import (
 )
 
 from flext_tap_oracle.__version__ import __version__, __version_info__
-from flext_tap_oracle.config import (
-    FlextMeltanoTapOracleSettings,
-    create_oracle_tap_config,
-)
 from flext_tap_oracle.models import (
     FlextMeltanoTapOracleModels,
     TapOracleColumn,
@@ -29,6 +25,10 @@ from flext_tap_oracle.models import (
     TapReplicationMethod,
 )
 from flext_tap_oracle.protocols import FlextMeltanoTapOracleProtocols
+from flext_tap_oracle.settings import (
+    FlextMeltanoTapOracleSettings,
+    create_oracle_tap_config,
+)
 from flext_tap_oracle.tap_client import (
     FlextOracleConnectionTestService,
     FlextOracleDiscoveryService,

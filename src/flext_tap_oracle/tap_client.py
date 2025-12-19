@@ -16,7 +16,7 @@ from flext_db_oracle import (
     FlextDbOracleModels,
 )
 
-from flext_tap_oracle.config import FlextMeltanoTapOracleSettings
+from flext_tap_oracle.settings import FlextMeltanoTapOracleSettings
 
 logger = FlextLogger(__name__)
 # =====================================================
