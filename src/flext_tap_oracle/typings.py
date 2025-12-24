@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from flext import FlextTypes
+from flext_core import FlextTypes
 
 # =============================================================================
 # TAP-ORACLE-SPECIFIC TYPE VARIABLES - Domain-specific TypeVars for Oracle tap operations
@@ -44,7 +44,8 @@ class FlextMeltanoTapOracleTypes(FlextTypes):
         type ExtractionMetrics = dict[str, int | float | bool | dict[str, object]]
         type BatchConfiguration = dict[str, int | bool | dict[str, object]]
         type StreamDefinition = dict[
-            str, str | list[str] | dict[str, FlextTypes.JsonValue],
+            str,
+            str | list[str] | dict[str, FlextTypes.JsonValue],
         ]
         type TableMetadata = dict[str, FlextTypes.JsonValue | list[dict[str, object]]]
 

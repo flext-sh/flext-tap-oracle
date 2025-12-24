@@ -10,9 +10,8 @@ from __future__ import annotations
 from enum import StrEnum
 from typing import Final, Literal
 
+from flext_core import FlextConstants
 from flext_db_oracle import FlextDbOracleConstants
-
-from flext import FlextConstants
 
 
 class FlextMeltanoTapOracleConstants(FlextConstants):
