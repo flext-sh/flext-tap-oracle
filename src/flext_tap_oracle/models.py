@@ -10,7 +10,6 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from typing import Literal, Self
 
-from flext_core import FlextConstants, FlextModels, FlextResult
 from flext_core.utilities import u
 from flext_db_oracle import FlextDbOracleModels
 from flext_meltano import FlextMeltanoStream as Stream
@@ -23,6 +22,8 @@ from pydantic import (
     field_validator,
     model_validator,
 )
+
+from flext import FlextConstants, FlextModels, FlextResult
 
 # Note: FlextMeltanoTapOracleUtilities NOT imported here to avoid circular import
 # (utilities.py imports FlextMeltanoTapOracleModels)

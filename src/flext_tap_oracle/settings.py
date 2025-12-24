@@ -13,11 +13,11 @@ from __future__ import annotations
 import re
 from typing import Self
 
-from flext_core import FlextConstants, FlextResult, FlextSettings
 from flext_db_oracle import FlextDbOracleModels
 from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import SettingsConfigDict
 
+from flext import FlextConstants, FlextResult, FlextSettings
 from flext_tap_oracle.constants import FlextMeltanoTapOracleConstants
 
 

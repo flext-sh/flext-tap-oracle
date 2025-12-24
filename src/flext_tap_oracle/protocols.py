@@ -46,7 +46,7 @@ class FlextMeltanoTapOracleProtocols(p_meltano, p_db_oracle):
                 """Protocol for Oracle database connection management."""
 
                 def connect(
-                    self, config: dict[str, object]
+                    self, config: dict[str, object],
                 ) -> p_meltano.Result[object]:
                     """Connect to Oracle database with provided configuration."""
                     ...
@@ -56,7 +56,7 @@ class FlextMeltanoTapOracleProtocols(p_meltano, p_db_oracle):
                     ...
 
                 def test_connection(
-                    self, config: dict[str, object]
+                    self, config: dict[str, object],
                 ) -> p_meltano.Result[bool]:
                     """Test Oracle database connection with validation."""
                     ...
@@ -159,13 +159,13 @@ class FlextMeltanoTapOracleProtocols(p_meltano, p_db_oracle):
                 """Protocol for Oracle data validation."""
 
                 def validate_config(
-                    self, config: dict[str, object]
+                    self, config: dict[str, object],
                 ) -> p_meltano.Result[bool]:
                     """Validate tap configuration."""
                     ...
 
                 def validate_schema(
-                    self, schema: dict[str, object]
+                    self, schema: dict[str, object],
                 ) -> p_meltano.Result[bool]:
                     """Validate Oracle schema definition."""
                     ...
@@ -175,7 +175,7 @@ class FlextMeltanoTapOracleProtocols(p_meltano, p_db_oracle):
                 """Protocol for Oracle extraction monitoring."""
 
                 def track_progress(
-                    self, table: str, records: int
+                    self, table: str, records: int,
                 ) -> p_meltano.Result[bool]:
                     """Track Oracle table extraction progress."""
                     ...

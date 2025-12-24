@@ -23,8 +23,8 @@ from flext_cli import (
     FlextCliCmd,
     FlextCliCommands,
 )
-from flext_core import FlextLogger, FlextResult
 
+from flext import FlextLogger, FlextResult
 from flext_tap_oracle.settings import FlextMeltanoTapOracleSettings
 from flext_tap_oracle.tap_client import create_oracle_tap_service
 
