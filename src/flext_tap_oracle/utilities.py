@@ -17,7 +17,7 @@ from flext_core import FlextContainer, FlextExceptions, FlextLogger, FlextResult
 from flext_core.utilities import u_core
 from flext_db_oracle import FlextDbOracleModels
 
-from flext_tap_oracle.models import FlextMeltanoTapOracleModels
+from flext_tap_oracle.models import m
 
 
 class FlextMeltanoTapOracleUtilities(u_core):
@@ -181,7 +181,7 @@ class FlextMeltanoTapOracleUtilities(u_core):
 
                     # Map common Oracle exceptions to specific error types
                     if "connection" in str(exception).lower():
-                        error = FlextMeltanoTapOracleUtilities.ErrorHandling.create_connection_error(
+                        error = u.ErrorHandling.create_connection_error(
                             error_message,
                             **context,
                         )
@@ -189,18 +189,18 @@ class FlextMeltanoTapOracleUtilities(u_core):
                         "sql" in str(exception).lower()
                         or "query" in str(exception).lower()
                     ):
-                        error = FlextMeltanoTapOracleUtilities.ErrorHandling.create_query_error(
+                        error = u.ErrorHandling.create_query_error(
                             error_message,
                             **context,
                         )
                     elif "discovery" in str(exception).lower():
-                        error = FlextMeltanoTapOracleUtilities.ErrorHandling.create_discovery_error(
+                        error = u.ErrorHandling.create_discovery_error(
                             error_message,
                             **context,
                         )
                     else:
                         # Generic extraction error for other cases
-                        error = FlextMeltanoTapOracleUtilities.ErrorHandling.create_extraction_error(
+                        error = u.ErrorHandling.create_extraction_error(
                             error_message,
                             **context,
                         )
@@ -223,7 +223,7 @@ class FlextMeltanoTapOracleUtilities(u_core):
                 try:
                     stream_name = f"{stream_prefix}_{oracle_table.name.lower()}"
 
-                    stream_info = FlextMeltanoTapOracleModels.OracleTapStreamInfo(
+                    stream_info = m.OracleTapStreamInfo(
                         stream_name=stream_name,
                         table_name=oracle_table.name,
                         schema_name=getattr(oracle_table, "schema_name", None),
@@ -250,18 +250,18 @@ class FlextMeltanoTapOracleUtilities(u_core):
                     # Convert tables to stream info
                     stream_infos = []
                     for table in tables:
-                        stream_result = FlextMeltanoTapOracleUtilities.StreamManagement.create_stream_info_from_oracle_table(
-                            table,
+                        stream_result = (
+                            u.StreamManagement.create_stream_info_from_oracle_table(
+                                table,
+                            )
                         )
                         if stream_result.is_success:
                             stream_infos.append(stream_result.value)
 
-                    discovery_result = (
-                        FlextMeltanoTapOracleModels.OracleTapDiscoveryResult(
-                            schema_name=schema_name,
-                            discovered_tables=len(tables),
-                            stream_infos=stream_infos,
-                        )
+                    discovery_result = m.OracleTapDiscoveryResult(
+                        schema_name=schema_name,
+                        discovered_tables=len(tables),
+                        stream_infos=stream_infos,
                     )
 
                     return FlextResult[object].ok(discovery_result)
@@ -300,12 +300,9 @@ class FlextMeltanoTapOracleUtilities(u_core):
                     # Validate port is numeric
                     try:
                         port = int(config["port"])
-                        if (
-                            port <= 0
-                            or port > FlextMeltanoTapOracleUtilities.MAX_PORT_NUMBER
-                        ):
+                        if port <= 0 or port > u.MAX_PORT_NUMBER:
                             return FlextResult[dict[str, object]].fail(
-                                f"Oracle port must be between 1 and {FlextMeltanoTapOracleUtilities.MAX_PORT_NUMBER}",
+                                f"Oracle port must be between 1 and {u.MAX_PORT_NUMBER}",
                             )
                         config["port"] = port
                     except ValueError:
@@ -324,8 +321,10 @@ class FlextMeltanoTapOracleUtilities(u_core):
             def build_connection_string(config: dict[str, object]) -> FlextResult[str]:
                 """Build Oracle connection string from configuration."""
                 try:
-                    validation_result = FlextMeltanoTapOracleUtilities.ConfigurationValidation.validate_oracle_config(
-                        config,
+                    validation_result = (
+                        u.ConfigurationValidation.validate_oracle_config(
+                            config,
+                        )
                     )
                     if validation_result.is_failure:
                         return FlextResult[str].fail(validation_result.error)
@@ -352,8 +351,10 @@ class FlextMeltanoTapOracleUtilities(u_core):
                 """Test Oracle connectivity with configuration."""
                 try:
                     # Validate configuration first
-                    validation_result = FlextMeltanoTapOracleUtilities.ConfigurationValidation.validate_oracle_config(
-                        config,
+                    validation_result = (
+                        u.ConfigurationValidation.validate_oracle_config(
+                            config,
+                        )
                     )
                     if validation_result.is_failure:
                         return FlextResult[dict[str, object]].fail(
@@ -396,7 +397,7 @@ class FlextMeltanoTapOracleUtilities(u_core):
 
                     # Add optimizations based on table size
                     row_count = table_stats.get("row_count", 0)
-                    if row_count > FlextMeltanoTapOracleUtilities.LARGE_TABLE_THRESHOLD:
+                    if row_count > u.LARGE_TABLE_THRESHOLD:
                         # Add parallel hints for large tables
                         optimized_query = f"/*+ PARALLEL(4) */ {optimized_query}"
 
@@ -429,14 +430,11 @@ class FlextMeltanoTapOracleUtilities(u_core):
                         "records_per_second": round(records_per_second, 2),
                         "performance_rating": (
                             "excellent"
-                            if records_per_second
-                            > FlextMeltanoTapOracleUtilities.EXCELLENT_PERFORMANCE_THRESHOLD
+                            if records_per_second > u.EXCELLENT_PERFORMANCE_THRESHOLD
                             else "good"
-                            if records_per_second
-                            > FlextMeltanoTapOracleUtilities.GOOD_PERFORMANCE_THRESHOLD
+                            if records_per_second > u.GOOD_PERFORMANCE_THRESHOLD
                             else "moderate"
-                            if records_per_second
-                            > FlextMeltanoTapOracleUtilities.MODERATE_PERFORMANCE_THRESHOLD
+                            if records_per_second > u.MODERATE_PERFORMANCE_THRESHOLD
                             else "slow"
                         ),
                     }

@@ -340,8 +340,7 @@ class FlextMeltanoTapOracleStreams:
                 # Validate table name is a valid Oracle identifier before using in SQL
                 if (
                     not self.table_name
-                    or not self.table_name
-                    .replace("_", "")
+                    or not self.table_name.replace("_", "")
                     .replace("$", "")
                     .replace("#", "")
                     .isalnum()

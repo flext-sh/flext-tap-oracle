@@ -742,7 +742,7 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             # Processed stream information
-            stream_info: list[FlextMeltanoTapOracleModels.OracleTapStreamInfo] = Field(
+            stream_info: list[m.OracleTapStreamInfo] = Field(
                 default_factory=list,
                 description="Processed stream information for tap use",
             )
@@ -804,7 +804,7 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             def get_selected_streams(
                 self: object,
-            ) -> list[FlextMeltanoTapOracleModels.OracleTapStreamInfo]:
+            ) -> list[m.OracleTapStreamInfo]:
                 """Get only selected streams."""
                 return [stream for stream in self.stream_info if stream.is_selected]
 
@@ -972,7 +972,7 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             def update_performance_metrics(
                 self: object,
-            ) -> FlextMeltanoTapOracleModels.OracleTapExecutionStats:
+            ) -> m.OracleTapExecutionStats:
                 """Return new instance with updated calculated performance metrics."""
                 if self.duration_seconds > 0:
                     return self.model_copy(
@@ -990,7 +990,7 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 records: int,
                 bytes_processed: int,
                 processing_time: float,
-            ) -> FlextMeltanoTapOracleModels.OracleTapExecutionStats:
+            ) -> m.OracleTapExecutionStats:
                 """Return new instance with added statistics for a processed stream."""
                 updated = self.model_copy(
                     update={
@@ -1006,7 +1006,7 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             def mark_stream_error(
                 self,
                 stream_name: str,
-            ) -> FlextMeltanoTapOracleModels.OracleTapExecutionStats:
+            ) -> m.OracleTapExecutionStats:
                 """Return new instance with marked stream error."""
                 new_failed_streams = (
                     self.failed_streams.copy() if self.failed_streams else []

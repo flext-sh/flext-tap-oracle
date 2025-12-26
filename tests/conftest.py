@@ -591,7 +591,7 @@ def pytest_configure(config: pytest.Config) -> None:
 
 # Mock services
 @pytest.fixture
-def mock_oracle_tap() -> type[object]:
+def mock_oracle_tap() -> type[object]:  # Could use tm.TapOracle.TestOracleConnection
     """Mock Oracle tap for testing."""
 
     class MockOracleTap:
@@ -662,7 +662,9 @@ def mock_oracle_tap() -> type[object]:
 
 
 @pytest.fixture
-def mock_oracle_connection() -> type[object]:
+def mock_oracle_connection() -> type[
+    object
+]:  # Could use tm.TapOracle.TestOracleConnection
     """Mock Oracle connection for testing."""
 
     class MockOracleConnection:
