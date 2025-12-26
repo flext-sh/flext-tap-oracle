@@ -10,12 +10,7 @@ from collections.abc import Iterable, Mapping
 from typing import override
 
 from flext_core import FlextLogger, FlextResult
-from flext_db_oracle import (
-    FlextDbOracleApi,
-)
-
-# Import from singer-sdk directly - flext-meltano provides abstractions but not base classes
-# Use FLEXT Meltano wrappers instead of direct singer_sdk imports (domain separation)
+from flext_db_oracle import FlextDbOracleApi
 from flext_meltano import FlextMeltanoStream as Stream, FlextMeltanoTap as Tap
 
 

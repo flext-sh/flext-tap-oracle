@@ -7,95 +7,39 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_db_oracle import (
-    FlextDbOracleApi,
-    FlextDbOracleSettings,
-)
-from flext_meltano import (
-    FlextMeltanoBridge,
-    FlextMeltanoSettings,
-)
-
 from flext_tap_oracle.__version__ import __version__, __version_info__
-from flext_tap_oracle.models import (
-    FlextMeltanoTapOracleModels,
-    TapOracleColumn,
-    TapOracleSchema,
-    TapOracleTable,
-    TapReplicationMethod,
-)
-from flext_tap_oracle.protocols import FlextMeltanoTapOracleProtocols
-from flext_tap_oracle.settings import (
-    FlextMeltanoTapOracleSettings,
-    create_oracle_tap_config,
-)
-from flext_tap_oracle.tap_client import (
+from flext_tap_oracle.client import (
     FlextOracleConnectionTestService,
     FlextOracleDiscoveryService,
     FlextOracleTableFilterService,
     FlextOracleTapService,
-    create_oracle_discovery_service,
-    create_oracle_tap_service,
 )
-from flext_tap_oracle.tap_exceptions import (
-    FlextMeltanoTapOracleConnectionError,
-    FlextMeltanoTapOracleDiscoveryError,
-    FlextMeltanoTapOracleError,
-    FlextMeltanoTapOracleExtractionError,
-    FlextMeltanoTapOracleMetadataError,
-    FlextMeltanoTapOracleProcessingError,
-    FlextMeltanoTapOracleQueryError,
-    FlextMeltanoTapOracleSettingsurationError,
-    FlextMeltanoTapOracleStreamError,
-    FlextMeltanoTapOracleValidationError,
-)
-from flext_tap_oracle.tap_streams import (
-    FlextOracleStream,
-    create_oracle_stream,
-    create_oracle_stream_from_table,
-)
-from flext_tap_oracle.typings import FlextMeltanoTapOracleTypes
-from flext_tap_oracle.utilities import FlextMeltanoTapOracleUtilities
-
-# Domain-specific aliases
-u = FlextMeltanoTapOracleUtilities  # Utilities (FlextMeltanoTapOracleUtilities extends FlextUtilities)
+from flext_tap_oracle.constants import FlextMeltanoTapOracleConstants, c
+from flext_tap_oracle.models import FlextMeltanoTapOracleModels, m
+from flext_tap_oracle.protocols import FlextMeltanoTapOracleProtocols, p
+from flext_tap_oracle.settings import FlextMeltanoTapOracleSettings
+from flext_tap_oracle.streams import FlextOracleStream
+from flext_tap_oracle.typings import FlextMeltanoTapOracleTypes, t
+from flext_tap_oracle.utilities import FlextMeltanoTapOracleUtilities, u
 
 __all__ = [
-    "FlextDbOracleApi",
-    "FlextDbOracleSettings",
-    "FlextMeltanoBridge",
-    "FlextMeltanoSettings",
-    "FlextMeltanoTapOracleConnectionError",
-    "FlextMeltanoTapOracleDiscoveryError",
-    "FlextMeltanoTapOracleError",
-    "FlextMeltanoTapOracleExtractionError",
-    "FlextMeltanoTapOracleMetadataError",
+    "FlextMeltanoTapOracleConstants",
     "FlextMeltanoTapOracleModels",
-    "FlextMeltanoTapOracleProcessingError",
     "FlextMeltanoTapOracleProtocols",
-    "FlextMeltanoTapOracleQueryError",
     "FlextMeltanoTapOracleSettings",
-    "FlextMeltanoTapOracleSettingsurationError",
-    "FlextMeltanoTapOracleStreamError",
     "FlextMeltanoTapOracleTypes",
     "FlextMeltanoTapOracleUtilities",
-    "FlextMeltanoTapOracleValidationError",
     "FlextOracleConnectionTestService",
     "FlextOracleDiscoveryService",
     "FlextOracleStream",
+    "FlextOracleStream",
     "FlextOracleTableFilterService",
     "FlextOracleTapService",
-    "TapOracleColumn",
-    "TapOracleSchema",
-    "TapOracleTable",
-    "TapReplicationMethod",
     "__version__",
     "__version_info__",
-    "create_oracle_discovery_service",
-    "create_oracle_stream",
-    "create_oracle_stream_from_table",
-    "create_oracle_tap_config",
-    "create_oracle_tap_service",
-    # Domain-specific aliases
+    "c",
+    "m",
+    "p",
+    "t",
     "u",
 ]

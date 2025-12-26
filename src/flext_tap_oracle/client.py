@@ -9,8 +9,6 @@ from __future__ import annotations
 from typing import override
 
 from flext_core import FlextLogger, FlextResult, FlextService
-
-# Oracle database API (Layer 2)
 from flext_db_oracle import (
     FlextDbOracleApi,
     FlextDbOracleModels,

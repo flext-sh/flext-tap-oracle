@@ -14,11 +14,10 @@ import re
 from typing import Self
 
 from flext_core import FlextConstants, FlextResult, FlextSettings
-from flext_db_oracle import FlextDbOracleModels
 from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import SettingsConfigDict
 
-from flext_tap_oracle.constants import FlextMeltanoTapOracleConstants
+from flext_tap_oracle.constants import c
 
 
 class FlextMeltanoTapOracleSettings(FlextSettings):
@@ -63,7 +62,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
     )
 
     oracle_port: int = Field(
-        default=FlextMeltanoTapOracleConstants.Oracle.DEFAULT_PORT,
+        default=c.TapOracle.Oracle.DEFAULT_PORT,
         ge=1,
         le=65535,
         description="Oracle database port",
@@ -97,16 +96,16 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
     )
 
     batch_size: int = Field(
-        default=FlextMeltanoTapOracleConstants.Singer.DEFAULT_BATCH_SIZE,
+        default=c.TapOracle.Singer.DEFAULT_BATCH_SIZE,
         ge=1,
-        le=FlextMeltanoTapOracleConstants.Singer.MAX_BATCH_SIZE,
+        le=c.TapOracle.Singer.MAX_BATCH_SIZE,
         description="Batch size for data extraction",
     )
 
     max_parallel_streams: int = Field(
-        default=FlextConstants.Container.DEFAULT_WORKERS,
+        default=4,
         ge=1,
-        le=FlextConstants.Container.DEFAULT_WORKERS * 2,
+        le=8,
         description="Maximum parallel streams for extraction",
     )
 
@@ -132,14 +131,14 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
 
     # Performance Configuration using FlextConstants
     fetch_size: int = Field(
-        default=FlextMeltanoTapOracleConstants.Oracle.DEFAULT_FETCH_SIZE,
+        default=c.TapOracle.Oracle.DEFAULT_FETCH_SIZE,
         ge=100,
         le=100000,
         description="Oracle fetch size for queries",
     )
 
     query_timeout: int = Field(
-        default=FlextConstants.Network.DEFAULT_TIMEOUT,
+        default=30,
         ge=1,
         le=3600,
         description="Query timeout in seconds",
@@ -169,8 +168,9 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
             msg = f"Invalid stream prefix: {v}. Must start with letter and contain only letters, digits, and underscores"
             raise ValueError(msg)
 
-        if len(v) > FlextConstants.Limits.MAX_STRING_LENGTH:
-            msg = f"Stream prefix too long: {len(v)} > {FlextConstants.Limits.MAX_STRING_LENGTH}"
+        max_length = c.TapValidation.MAX_STREAM_PREFIX_LENGTH
+        if len(v) > max_length:
+            msg = f"Stream prefix too long: {len(v)} > {max_length}"
             raise ValueError(msg)
 
         return v.lower()
@@ -182,8 +182,9 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
         if v is None:
             return v
 
-        if len(v) > FlextConstants.Limits.MAX_LIST_SIZE:
-            msg = f"Too many tables specified: {len(v)} > {FlextConstants.Limits.MAX_LIST_SIZE}"
+        max_count = c.TapValidation.MAX_TABLES_FILTER_COUNT
+        if len(v) > max_count:
+            msg = f"Too many tables specified: {len(v)} > {max_count}"
             raise ValueError(msg)
 
         for table in v:
@@ -200,9 +201,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
         if v is None:
             return v
 
-        max_schemas = (
-            FlextConstants.Limits.MAX_LIST_SIZE // 10
-        )  # Reasonable schema limit
+        max_schemas = c.TapValidation.MAX_SCHEMAS_FILTER_COUNT
         if len(v) > max_schemas:
             msg = f"Too many schemas specified: {len(v)} > {max_schemas}"
             raise ValueError(msg)
@@ -228,8 +227,8 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
             raise ValueError(msg)
 
         # Validate parallel streams vs batch size
-        max_safe_parallel = FlextConstants.Container.MAX_WORKERS
-        max_safe_batch = FlextMeltanoTapOracleConstants.Singer.MAX_BATCH_SIZE // 2
+        max_safe_parallel = c.TapValidation.MAX_SAFE_PARALLEL_STREAMS
+        max_safe_batch = c.TapOracle.Singer.MAX_BATCH_SIZE // 2
         if (
             self.max_parallel_streams > max_safe_parallel
             and self.batch_size > max_safe_batch
@@ -261,8 +260,8 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
                 )
 
             # Validate performance settings
-            max_safe_parallel = FlextConstants.Container.MAX_WORKERS
-            max_safe_batch = FlextMeltanoTapOracleConstants.Singer.MAX_BATCH_SIZE // 2
+            max_safe_parallel = c.TapValidation.MAX_SAFE_PARALLEL_STREAMS
+            max_safe_batch = c.TapOracle.Singer.MAX_BATCH_SIZE // 2
             if (
                 self.max_parallel_streams > max_safe_parallel
                 and self.batch_size > max_safe_batch
@@ -286,19 +285,19 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
             return FlextResult[None].fail(f"Business rules validation failed: {e}")
 
     # Configuration helper methods
-    def get_oracle_config(self) -> FlextDbOracleModels.OracleConfig:
+    def get_oracle_config(self) -> dict[str, object]:
         """Get Oracle configuration for flext-db-oracle integration."""
-        return FlextDbOracleModels.OracleConfig(
-            host=self.oracle_host,
-            port=self.oracle_port,
-            service_name=self.oracle_service_name,
-            sid=self.oracle_sid,
-            username=self.oracle_username,
-            password=self.oracle_password.get_secret_value(),
-            pool_min=1,
-            pool_max=self.max_parallel_streams + 2,  # Extra connections for metadata
-            timeout=self.query_timeout,
-        )
+        return {
+            "host": self.oracle_host,
+            "port": self.oracle_port,
+            "service_name": self.oracle_service_name,
+            "sid": self.oracle_sid,
+            "username": self.oracle_username,
+            "password": self.oracle_password.get_secret_value(),
+            "pool_min": 1,
+            "pool_max": self.max_parallel_streams + 2,  # Extra connections for metadata
+            "timeout": self.query_timeout,
+        }
 
     def get_tap_config(self) -> dict[str, object]:
         """Get tap-specific configuration dictionary."""
@@ -342,97 +341,80 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
 
         if environment == "production":
             env_overrides.update({
-                "batch_size": FlextMeltanoTapOracleConstants.Singer.MAX_BATCH_SIZE,
-                "max_parallel_streams": FlextConstants.Container.DEFAULT_WORKERS,
-                "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT
-                * 10,  # 5 minutes for production
+                "batch_size": c.TapOracle.Singer.MAX_BATCH_SIZE,
+                "max_parallel_streams": 4,
+                "query_timeout": 30 * 10,  # 5 minutes for production
             })
         elif environment == "development":
             env_overrides.update({
-                "batch_size": FlextMeltanoTapOracleConstants.Singer.DEFAULT_BATCH_SIZE,
+                "batch_size": c.TapOracle.Singer.DEFAULT_BATCH_SIZE,
                 "max_parallel_streams": 1,
-                "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT * 2,
+                "query_timeout": 60,
             })
         elif environment == "staging":
             env_overrides.update({
-                "batch_size": FlextMeltanoTapOracleConstants.Singer.DEFAULT_BATCH_SIZE
-                * 2,
+                "batch_size": c.Singer.DEFAULT_BATCH_SIZE * 2,
                 "max_parallel_streams": 2,
-                "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT * 6,
+                "query_timeout": 180,
             })
 
         all_overrides = {**env_overrides, **overrides}
-        return cls.get_or_create_shared_instance(
-            project_name="flext-tap-oracle",
-            environment=environment,
-            **all_overrides,
-        )
+        return cls(**all_overrides)
 
     @classmethod
     def get_global_instance(cls) -> Self:
         """Get the global singleton instance using enhanced FlextSettings pattern."""
-        return cls.get_or_create_shared_instance(project_name="flext-tap-oracle")
+        return cls()
 
     @classmethod
     def create_for_development(cls, **overrides: object) -> Self:
         """Create configuration for development environment."""
         dev_overrides: dict[str, object] = {
             "oracle_host": "localhost",
-            "oracle_port": FlextMeltanoTapOracleConstants.Oracle.DEFAULT_PORT,
+            "oracle_port": c.TapOracle.Oracle.DEFAULT_PORT,
             "oracle_service_name": "ORCL",
             "oracle_username": "tap_dev",
-            "batch_size": FlextMeltanoTapOracleConstants.Singer.DEFAULT_BATCH_SIZE,
+            "batch_size": c.Singer.DEFAULT_BATCH_SIZE,
             "max_parallel_streams": 1,
-            "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT * 2,
+            "query_timeout": 60,
             **overrides,
         }
-        return cls.get_or_create_shared_instance(
-            project_name="flext-tap-oracle",
-            **dev_overrides,
-        )
+        return cls(**dev_overrides)
 
     @classmethod
     def create_for_production(cls, **overrides: object) -> Self:
         """Create configuration for production environment."""
         prod_overrides: dict[str, object] = {
-            "batch_size": FlextMeltanoTapOracleConstants.Singer.MAX_BATCH_SIZE,
-            "max_parallel_streams": FlextConstants.Container.DEFAULT_WORKERS,
-            "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT * 10,
-            "fetch_size": FlextMeltanoTapOracleConstants.Oracle.DEFAULT_FETCH_SIZE * 5,
+            "batch_size": c.Singer.MAX_BATCH_SIZE,
+            "max_parallel_streams": 4,
+            "query_timeout": 300,
+            "fetch_size": c.TapOracle.Oracle.DEFAULT_FETCH_SIZE * 5,
             "enable_incremental": True,
             **overrides,
         }
-        return cls.get_or_create_shared_instance(
-            project_name="flext-tap-oracle",
-            **prod_overrides,
-        )
+        return cls(**prod_overrides)
 
     @classmethod
     def create_for_testing(cls, **overrides: object) -> Self:
         """Create configuration for testing environment."""
         test_overrides: dict[str, object] = {
             "oracle_host": "test-oracle",
-            "oracle_port": FlextMeltanoTapOracleConstants.Oracle.DEFAULT_PORT,
+            "oracle_port": c.TapOracle.Oracle.DEFAULT_PORT,
             "oracle_service_name": "XE",
             "oracle_username": "test_user",
-            "batch_size": FlextMeltanoTapOracleConstants.Singer.DEFAULT_BATCH_SIZE
-            // 10,
+            "batch_size": 100,
             "max_parallel_streams": 1,
-            "query_timeout": FlextConstants.Network.DEFAULT_TIMEOUT,
+            "query_timeout": 30,
             **overrides,
         }
-        return cls.get_or_create_shared_instance(
-            project_name="flext-tap-oracle",
-            **test_overrides,
-        )
+        return cls(**test_overrides)
 
     @classmethod
     def reset_global_instance(cls) -> None:
         """Reset the global FlextMeltanoTapOracleSettings instance (mainly for testing)."""
-        cls.reset_shared_instance()
+        # No shared instance to reset
 
 
-# Factory function for backward compatibility (will be removed in future versions)
 def create_oracle_tap_config(
     oracle_params: dict[str, object],
     tap_params: dict[str, object] | None = None,
@@ -441,43 +423,30 @@ def create_oracle_tap_config(
     """Create Oracle tap configuration using grouped parameters.
 
     Args:
-    oracle_params: Oracle database connection parameters
-    tap_params: Optional tap-specific parameters
-    meltano_params: Optional Meltano parameters
+        oracle_params: Oracle database connection parameters
+        tap_params: Optional tap-specific parameters
+        meltano_params: Optional Meltano parameters
 
     Returns:
-    FlextResult containing validated Oracle tap configuration
+        FlextResult containing validated Oracle tap configuration
 
     """
     try:
-        # Apply defaults
         tap_config = tap_params or {}
         meltano_config = meltano_params or {}
 
-        # Set default values using semantic constants
-        tap_config.setdefault(
-            "batch_size",
-            FlextConstants.Performance.DEFAULT_BATCH_SIZE,
-        )
+        tap_config.setdefault("batch_size", 1000)
         tap_config.setdefault("stream_prefix", "oracle")
         meltano_config.setdefault("project_root", ".")
-        meltano_config.setdefault(
-            "environment",
-            FlextConstants.Configuration.DEFAULT_ENVIRONMENT,
-        )
+        meltano_config.setdefault("environment", "production")
 
-        # Merge Oracle parameters with other configurations
         config_data = {
             **oracle_params,
             **tap_config,
             **meltano_config,
         }
 
-        config_instance = (
-            FlextMeltanoTapOracleSettings.get_global_instance().model_validate(
-                config_data,
-            )
-        )
+        config_instance = FlextMeltanoTapOracleSettings.model_validate(config_data)
         return FlextResult[FlextMeltanoTapOracleSettings].ok(config_instance)
 
     except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
@@ -489,44 +458,8 @@ def create_oracle_tap_config(
 def validate_oracle_tap_configuration(
     config: FlextMeltanoTapOracleSettings,
 ) -> FlextResult[None]:
-    """Validate Oracle tap configuration using FlextSettings patterns - ZERO DUPLICATION."""
-    # Required string fields validation
-    required_fields = [
-        (config.oracle_host, "Oracle host is required"),
-        (config.oracle_username, "Oracle username is required"),
-        (config.oracle_password.get_secret_value(), "Oracle password is required"),
-    ]
-
-    # Validate required string fields
-    for field_value, error_message in required_fields:
-        if not (field_value and str(field_value).strip()):
-            return FlextResult[None].fail(error_message)
-
-    # Validate Oracle port range
-    if not (
-        FlextConstants.Network.MIN_PORT
-        <= config.oracle_port
-        <= FlextConstants.Network.MAX_PORT
-    ):
-        return FlextResult[None].fail(
-            f"Oracle port must be between {FlextConstants.Network.MIN_PORT} and {FlextConstants.Network.MAX_PORT}",
-        )
-
-    # Validate either service_name or sid
-    if not config.oracle_service_name and not config.oracle_sid:
-        return FlextResult[None].fail(
-            "Either oracle_service_name or oracle_sid must be provided",
-        )
-
-    # Validate batch size constraints
-    if config.batch_size < 1:
-        return FlextResult[None].fail("Batch size must be at least 1")
-
-    # Validate query timeout
-    if config.query_timeout < 1:
-        return FlextResult[None].fail("Query timeout must be at least 1 second")
-
-    return FlextResult[None].ok(None)
+    """Validate Oracle tap configuration using FlextSettings patterns."""
+    return config.validate_business_rules()
 
 
 __all__: list[str] = [
