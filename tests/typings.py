@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from flext_core import FlextTestsTypes
+from flext_core import FlextTestsTypes, FlextTypes as t
 
 
 class TestsFlextMeltanoTapOracleTypes(FlextTestsTypes):
@@ -51,7 +51,7 @@ class TestsFlextMeltanoTapOracleTypes(FlextTestsTypes):
         # Test data types
         type MockOracleRecord = dict[str, str | int | float | bool]
         type MockOracleTable = list[MockOracleRecord]
-        type TestScenario = dict[str, object]
+        type TestScenario = dict[str, t.GeneralValueType]
 
         # Test result types
         type TestValidationResult = dict[str, bool | str | list[str]]

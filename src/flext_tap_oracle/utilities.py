@@ -11,9 +11,13 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import ClassVar
-
-from flext_core import FlextContainer, FlextExceptions, FlextLogger, FlextResult
+from flext_core import (
+    FlextContainer,
+    FlextExceptions,
+    FlextLogger,
+    FlextResult,
+    FlextTypes as t,
+)
 from flext_core.utilities import u_core
 from flext_db_oracle import FlextDbOracleModels
 
@@ -43,14 +47,14 @@ class FlextMeltanoTapOracleUtilities(u_core):
             self._container = FlextContainer.get_global()
             self.logger = FlextLogger(__name__)
 
-        def execute(self) -> FlextResult[dict[str, object]]:
+        def execute(self) -> FlextResult[dict[str, t.GeneralValueType]]:
             """Execute the main domain service operation.
 
             Returns:
-            FlextResult[dict[str, object]]: Service status and capabilities.
+            FlextResult[dict[str, t.GeneralValueType]]: Service status and capabilities.
 
             """
-            return FlextResult[dict[str, object]].ok({
+            return FlextResult[dict[str, t.GeneralValueType]].ok({
                 "status": "operational",
                 "service": "flext-tap-oracle-utilities",
                 "capabilities": [
@@ -242,7 +246,7 @@ class FlextMeltanoTapOracleUtilities(u_core):
 
             @staticmethod
             def create_discovery_result(
-                tables: list[object],
+                tables: list[t.GeneralValueType],
                 schema_name: str,
             ) -> FlextResult[object]:
                 """Create discovery result from Oracle tables."""
@@ -277,7 +281,7 @@ class FlextMeltanoTapOracleUtilities(u_core):
             @staticmethod
             def validate_oracle_config(
                 config: dict,
-            ) -> FlextResult[dict[str, object]]:
+            ) -> FlextResult[dict[str, t.GeneralValueType]]:
                 """Validate Oracle configuration parameters."""
                 try:
                     required_fields = [
@@ -289,11 +293,11 @@ class FlextMeltanoTapOracleUtilities(u_core):
                     ]
                     for field in required_fields:
                         if field not in config:
-                            return FlextResult[dict[str, object]].fail(
+                            return FlextResult[dict[str, t.GeneralValueType]].fail(
                                 f"Missing required Oracle field: {field}",
                             )
                         if not config[field]:
-                            return FlextResult[dict[str, object]].fail(
+                            return FlextResult[dict[str, t.GeneralValueType]].fail(
                                 f"Empty Oracle field: {field}",
                             )
 
@@ -301,24 +305,26 @@ class FlextMeltanoTapOracleUtilities(u_core):
                     try:
                         port = int(config["port"])
                         if port <= 0 or port > u.MAX_PORT_NUMBER:
-                            return FlextResult[dict[str, object]].fail(
+                            return FlextResult[dict[str, t.GeneralValueType]].fail(
                                 f"Oracle port must be between 1 and {u.MAX_PORT_NUMBER}",
                             )
                         config["port"] = port
                     except ValueError:
-                        return FlextResult[dict[str, object]].fail(
+                        return FlextResult[dict[str, t.GeneralValueType]].fail(
                             "Oracle port must be numeric",
                         )
 
-                    return FlextResult[dict[str, object]].ok(config)
+                    return FlextResult[dict[str, t.GeneralValueType]].ok(config)
 
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-                    return FlextResult[dict[str, object]].fail(
+                    return FlextResult[dict[str, t.GeneralValueType]].fail(
                         f"Oracle config validation failed: {e}",
                     )
 
             @staticmethod
-            def build_connection_string(config: dict[str, object]) -> FlextResult[str]:
+            def build_connection_string(
+                config: dict[str, t.GeneralValueType],
+            ) -> FlextResult[str]:
                 """Build Oracle connection string from configuration."""
                 try:
                     validation_result = (
@@ -346,8 +352,8 @@ class FlextMeltanoTapOracleUtilities(u_core):
 
             @staticmethod
             def test_oracle_connectivity(
-                config: dict[str, object],
-            ) -> FlextResult[dict[str, object]]:
+                config: dict[str, t.GeneralValueType],
+            ) -> FlextResult[dict[str, t.GeneralValueType]]:
                 """Test Oracle connectivity with configuration."""
                 try:
                     # Validate configuration first
@@ -357,7 +363,7 @@ class FlextMeltanoTapOracleUtilities(u_core):
                         )
                     )
                     if validation_result.is_failure:
-                        return FlextResult[dict[str, object]].fail(
+                        return FlextResult[dict[str, t.GeneralValueType]].fail(
                             validation_result.error
                         )
 
@@ -371,25 +377,28 @@ class FlextMeltanoTapOracleUtilities(u_core):
                         "connection_test": "structural_validation_passed",
                     }
 
-                    return FlextResult[dict[str, object]].ok(connectivity_result)
+                    return FlextResult[dict[str, t.GeneralValueType]].ok(
+                        connectivity_result
+                    )
 
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-                    return FlextResult[dict[str, object]].fail(
+                    return FlextResult[dict[str, t.GeneralValueType]].fail(
                         f"Oracle connectivity test failed: {e}",
                     )
 
         class PerformanceOptimization:
-            """Oracle tap performance optimization utilities."""
+            """Oracle tap performance optimization utilities.
 
-            # Performance optimization constants
-            DEFAULT_BATCH_SIZE: ClassVar[int] = 1000
-            MAX_PARALLEL_STREAMS: ClassVar[int] = 5
-            MEMORY_THRESHOLD_MB: ClassVar[int] = 512
+            Constants are accessed via constants module:
+                c.TapOracle.Performance.DEFAULT_BATCH_SIZE
+                c.TapOracle.Performance.MAX_PARALLEL_STREAMS
+                c.TapOracle.Performance.MEMORY_THRESHOLD_MB
+            """
 
             @staticmethod
             def optimize_extraction_query(
                 base_query: str,
-                table_stats: dict[str, object],
+                table_stats: dict[str, t.GeneralValueType],
             ) -> FlextResult[str]:
                 """Optimize extraction query based on table statistics."""
                 try:
@@ -418,7 +427,7 @@ class FlextMeltanoTapOracleUtilities(u_core):
                 start_time: float,
                 end_time: float,
                 records_processed: int,
-            ) -> FlextResult[dict[str, object]]:
+            ) -> FlextResult[dict[str, t.GeneralValueType]]:
                 """Calculate extraction performance metrics."""
                 try:
                     duration = end_time - start_time
@@ -439,10 +448,10 @@ class FlextMeltanoTapOracleUtilities(u_core):
                         ),
                     }
 
-                    return FlextResult[dict[str, object]].ok(metrics)
+                    return FlextResult[dict[str, t.GeneralValueType]].ok(metrics)
 
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-                    return FlextResult[dict[str, object]].fail(
+                    return FlextResult[dict[str, t.GeneralValueType]].fail(
                         f"Metrics calculation failed: {e}",
                     )
 

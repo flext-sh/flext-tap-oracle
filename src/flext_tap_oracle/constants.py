@@ -80,6 +80,13 @@ class FlextMeltanoTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstan
 
             DEFAULT_METHOD: Final[str] = Method.INCREMENTAL
 
+        class Performance:
+            """Oracle tap performance optimization constants."""
+
+            DEFAULT_BATCH_SIZE: Final[int] = 1000
+            MAX_PARALLEL_STREAMS: Final[int] = 5
+            MEMORY_THRESHOLD_MB: Final[int] = 512
+
         class TapValidation:
             """Oracle tap validation constants.
 

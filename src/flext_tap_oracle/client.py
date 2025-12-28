@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import override
+from typing import cast, override
 
 from flext_core import FlextLogger, FlextResult, FlextService
 from flext_db_oracle import (
@@ -181,7 +181,7 @@ class FlextOracleTableFilterService:
 # =====================================================
 
 
-class FlextOracleTapService(FlextService[FlextMeltanoTapOracleSettings]):
+class FlextOracleTapService(FlextService[list[FlextDbOracleModels.Table]]):
     """Oracle Tap Service using FLEXT Service Pattern.
 
     This class extends FlextService[T] to provide Oracle-specific
@@ -209,28 +209,21 @@ class FlextOracleTapService(FlextService[FlextMeltanoTapOracleSettings]):
 
         # Initialize Oracle-specific components
         oracle_config = config.get_oracle_config()
-        self._oracle_api = FlextDbOracleApi(
-            **oracle_config
-            if isinstance(oracle_config, dict)
-            else oracle_config.model_dump(),
-        )
+        # Convert config to FlextDbOracleSettings
+        from flext_db_oracle import FlextDbOracleSettings
+
+        oracle_settings = FlextDbOracleSettings(**oracle_config)
+        self._oracle_api = FlextDbOracleApi(oracle_settings)
 
         # Create domain services for Oracle operations
         # Get schema name from configuration
-        if isinstance(oracle_config, dict):
-            schema_name = oracle_config.get("schema_name") or oracle_config.get(
-                "service_name",
-            )
-        else:
-            schema_name = getattr(oracle_config, "schema_name", None) or getattr(
-                oracle_config,
-                "service_name",
-                None,
-            )
+        schema_name = oracle_config.get("schema_name") or oracle_config.get(
+            "service_name",
+        )
 
         self._discovery_service = FlextOracleDiscoveryService(
             oracle_api=self._oracle_api,
-            schema_name=schema_name,
+            schema_name=cast("str | None", schema_name),
         )
         self._connection_test_service = FlextOracleConnectionTestService(
             oracle_api=self._oracle_api,
@@ -261,6 +254,11 @@ class FlextOracleTapService(FlextService[FlextMeltanoTapOracleSettings]):
         return self._table_filter_service
 
     # Service methods - using direct domain services
+    @override
+    def execute(self) -> FlextResult[list[FlextDbOracleModels.Table]]:
+        """Execute Oracle tap service - discover tables."""
+        return self._discovery_service.execute()
+
     def validate_service(self) -> FlextResult[bool]:
         """Validate service using connection test."""
         return self._connection_test_service.execute()

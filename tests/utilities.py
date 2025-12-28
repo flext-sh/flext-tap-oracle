@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from flext_core import FlextTypes as t
 from flext_tests import FlextTestsUtilities
 
 
@@ -48,8 +49,8 @@ class TestsFlextMeltanoTapOracleUtilities(FlextTestsUtilities):
             service_name: str = "XE",
             username: str = "test",
             password: str = "test",
-            **kwargs,
-        ) -> dict[str, object]:
+            **kwargs: t.GeneralValueType,
+        ) -> dict[str, t.GeneralValueType]:
             """Create test Oracle configuration."""
             config = {
                 "host": host,
@@ -66,8 +67,8 @@ class TestsFlextMeltanoTapOracleUtilities(FlextTestsUtilities):
             stream_name: str,
             table_name: str,
             replication_method: str = "FULL_TABLE",
-            **kwargs,
-        ) -> dict[str, object]:
+            **kwargs: t.GeneralValueType,
+        ) -> dict[str, t.GeneralValueType]:
             """Create test Singer stream configuration."""
             stream = {
                 "stream_name": stream_name,
@@ -79,7 +80,9 @@ class TestsFlextMeltanoTapOracleUtilities(FlextTestsUtilities):
             return stream
 
         @staticmethod
-        def validate_oracle_connection_config(config: dict[str, object]) -> bool:
+        def validate_oracle_connection_config(
+            config: dict[str, t.GeneralValueType],
+        ) -> bool:
             """Validate Oracle connection configuration for testing."""
             required_fields = ["host", "port", "service_name", "username", "password"]
             return all(field in config and config[field] for field in required_fields)
@@ -88,8 +91,8 @@ class TestsFlextMeltanoTapOracleUtilities(FlextTestsUtilities):
         def generate_mock_oracle_data(
             table_name: str,
             row_count: int = 10,
-            **kwargs,
-        ) -> list[dict[str, object]]:
+            **kwargs: t.GeneralValueType,
+        ) -> list[dict[str, t.GeneralValueType]]:
             """Generate mock Oracle data for testing."""
             data = []
             for i in range(row_count):
