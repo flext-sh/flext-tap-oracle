@@ -110,40 +110,46 @@
         develop = true
         path    = "../flext-core"
 
-                        [tool.poetry.dependencies.flext-meltano]
+                                                                [tool.poetry.dependencies.flext-meltano]
         develop = true
         path    = "../flext-meltano"
 
-                                            [tool.poetry.dependencies.flext-observability]
+                                                                                                                            [tool.poetry.dependencies.flext-observability]
         develop = true
         path    = "../flext-observability"
 
-                                                                [tool.poetry.dependencies.flext-db-oracle]
+                                                                                                                                                                                        [tool.poetry.dependencies.flext-db-oracle]
         develop = true
         path    = "../flext-db-oracle"
 
 [tool.poetry.group.dev.dependencies]
     bandit                 = ">=1.8.0"
     black                  = ">=25.1.0"
-    commitizen             = ">=4.8.3"
+    commitizen             = "^4.8.3"
     detect-secrets         = ">=1.5.0"
     mkdocs                 = ">=1.6.0"
     mkdocs-material        = ">=9.5.0"
     mkdocs-mermaid2-plugin = ">=1.1.0"
     pip-audit              = ">=2.9.0"
     pre-commit             = ">=4.0.0"
-    pyrefly                = "^0.34.0"
-    pytest                 = ">=8.0.0"
+    pyrefly                = "^0.46.3"
+    pytest                 = "^9.0.2"
     pytest-benchmark       = ">=4.0.0"
     pytest-clarity         = ">=1.0.1"
-    pytest-cov = "=7.0.0"
+    pytest-cov = "^7.0.0"
     pytest-mock            = ">=3.12.0"
     pytest-sugar           = ">=1.0.0"
     pytest-timeout         = ">=2.3.1"
     pytest-xdist           = ">=3.6.0"
     radon                  = ">=6.0.1"
-    ruff                   = ">=0.8.0"
+    ruff                   = ">=0.12.3"
     vulture                = ">=2.14"
+opentelemetry-api = ">=1.39.1"
+opentelemetry-sdk = ">=1.39.1"
+prompt-toolkit = ">=3.0.52"
+sqlparse = ">=0.5.5"
+pytest-randomly = "^4.0.1"
+opentelemetry-exporter-prometheus = ">=0.60b1"
     [tool.poetry.group.typings.dependencies]
     scipy-stubs = "^1.16.2.4"
     types-jsonschema = "^4.25.1.20251009"

@@ -221,7 +221,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         ) as mock_async_bridge:
             # Mock successful connection test result
             mock_result = Mock()
-            mock_result.success = True
+            mock_result.is_success = True
             mock_async_bridge.return_value = mock_result
 
             # Test successful connection
@@ -260,7 +260,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         ) as mock_async_bridge:
             # Mock successful connection test result
             mock_result = Mock()
-            mock_result.success = True
+            mock_result.is_success = True
             mock_async_bridge.return_value = mock_result
 
             result = tap.test_connection()
@@ -362,7 +362,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
             mock_table_metadata.append(mock_table)
 
         mock_result = Mock()
-        mock_result.success = True
+        mock_result.is_success = True
         mock_result.data = mock_table_metadata
 
         # Mock the schema service
@@ -398,7 +398,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
             mock_table_metadata.append(mock_table)
 
         mock_result = Mock()
-        mock_result.success = True
+        mock_result.is_success = True
         mock_result.data = mock_table_metadata
 
         # Mock the schema service
@@ -438,7 +438,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
             mock_table_metadata.append(mock_table)
 
         mock_result = Mock()
-        mock_result.success = True
+        mock_result.is_success = True
         mock_result.data = mock_table_metadata
 
         # Mock the schema service
@@ -543,7 +543,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         ) as mock_async_bridge:
             # Mock successful connection test result
             mock_result = Mock()
-            mock_result.success = True
+            mock_result.is_success = True
             mock_async_bridge.return_value = mock_result
 
             # 1. Test connection to all sources

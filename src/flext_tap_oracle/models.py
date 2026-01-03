@@ -317,7 +317,7 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
                 return self
 
-            def validate_business_rules(self: object) -> FlextResult[None]:
+            def validate_business_rules(self) -> FlextResult[None]:
                 """Validate tap-specific business rules."""
                 return FlextResult[None].ok(None)
 
@@ -677,11 +677,11 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     raise ValueError(msg)
                 return self
 
-            def validate_business_rules(self: object) -> FlextResult[None]:
+            def validate_business_rules(self) -> FlextResult[None]:
                 """Validate stream info business rules."""
                 return FlextResult[None].ok(None)
 
-            def to_singer_stream_info(self: object) -> dict[str, t.GeneralValueType]:
+            def to_singer_stream_info(self) -> dict[str, t.GeneralValueType]:
                 """Convert to Singer stream information format."""
                 return {
                     "tap_stream_id": self.stream_name,
@@ -798,12 +798,12 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     raise ValueError(msg)
                 return self
 
-            def validate_business_rules(self: object) -> FlextResult[None]:
+            def validate_business_rules(self) -> FlextResult[None]:
                 """Validate discovery result business rules."""
                 return FlextResult[None].ok(None)
 
             def get_selected_streams(
-                self: object,
+                self,
             ) -> list[m.OracleTapStreamInfo]:
                 """Get only selected streams."""
                 return [stream for stream in self.stream_info if stream.is_selected]
@@ -818,7 +818,7 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                         return table
                 return None
 
-            def to_singer_catalog(self: object) -> dict[str, t.GeneralValueType]:
+            def to_singer_catalog(self) -> dict[str, t.GeneralValueType]:
                 """Convert to Singer catalog format."""
                 return {
                     "streams": [
@@ -966,12 +966,12 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     raise ValueError(msg)
                 return self
 
-            def validate_business_rules(self: object) -> FlextResult[None]:
+            def validate_business_rules(self) -> FlextResult[None]:
                 """Validate execution stats business rules."""
                 return FlextResult[None].ok(None)
 
             def update_performance_metrics(
-                self: object,
+                self,
             ) -> m.OracleTapExecutionStats:
                 """Return new instance with updated calculated performance metrics."""
                 if self.duration_seconds > 0:
@@ -1020,7 +1020,7 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     },
                 )
 
-            def to_summary(self: object) -> dict[str, t.GeneralValueType]:
+            def to_summary(self) -> dict[str, t.GeneralValueType]:
                 """Create execution summary."""
                 return {
                     "execution_id": self.execution_id,

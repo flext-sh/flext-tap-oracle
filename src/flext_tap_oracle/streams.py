@@ -59,7 +59,7 @@ class FlextMeltanoTapOracleStreams:
             self._observability_manager: object | None = None
 
         @property
-        def metadata_manager(self: object) -> object:
+        def metadata_manager(self) -> object:
             """Get flext-db-oracle metadata manager with lazy initialization."""
             if self._metadata_manager is None:
                 # Use REAL constructor - requires FlextDbOracleConnection
@@ -85,7 +85,7 @@ class FlextMeltanoTapOracleStreams:
             return self._metadata_manager
 
         @property
-        def observability_manager(self: object) -> object:
+        def observability_manager(self) -> object:
             """Get flext-db-oracle observability manager with lazy initialization."""
             if self._observability_manager is None:
                 # Use REAL constructor - requires FlextContainer and context_name
@@ -307,13 +307,13 @@ class FlextMeltanoTapOracleStreams:
             return transformed_record
 
         # ADDITIONAL ORACLE STREAM METHODS
-        def get_table_info(self: object) -> dict[str, t.GeneralValueType]:
+        def get_table_info(self) -> dict[str, t.GeneralValueType]:
             """Get Oracle table information using flext-db-oracle metadata."""
             try:
                 table_metadata_result = self.metadata_manager.get_table_metadata(
                     self.table_name,
                 )
-                if table_metadata_result.success and table_metadata_result.data:
+                if table_metadata_result.is_success and table_metadata_result.data:
                     table = table_metadata_result.data
                     return {
                         "table_name": self.table_name,
@@ -334,13 +334,14 @@ class FlextMeltanoTapOracleStreams:
                 )
                 return {"table_name": self.table_name, "error": str(e)}
 
-        def estimate_row_count(self: object) -> int | None:
+        def estimate_row_count(self) -> int | None:
             """Estimate table row count using Oracle system views."""
             try:
                 # Validate table name is a valid Oracle identifier before using in SQL
                 if (
                     not self.table_name
-                    or not self.table_name.replace("_", "")
+                    or not self.table_name
+                    .replace("_", "")
                     .replace("$", "")
                     .replace("#", "")
                     .isalnum()
@@ -376,7 +377,7 @@ class FlextMeltanoTapOracleStreams:
                 )
                 return None
 
-        def get_stream_metadata(self: object) -> dict[str, t.GeneralValueType]:
+        def get_stream_metadata(self) -> dict[str, t.GeneralValueType]:
             """Get complete stream metadata."""
             return {
                 "name": self.name,

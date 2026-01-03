@@ -12,6 +12,7 @@ from flext_core import FlextLogger, FlextResult, FlextService
 from flext_db_oracle import (
     FlextDbOracleApi,
     FlextDbOracleModels,
+    FlextDbOracleSettings,
 )
 
 from flext_tap_oracle.settings import FlextMeltanoTapOracleSettings
@@ -210,7 +211,6 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.Table]]):
         # Initialize Oracle-specific components
         oracle_config = config.get_oracle_config()
         # Convert config to FlextDbOracleSettings
-        from flext_db_oracle import FlextDbOracleSettings
 
         oracle_settings = FlextDbOracleSettings(**oracle_config)
         self._oracle_api = FlextDbOracleApi(oracle_settings)
