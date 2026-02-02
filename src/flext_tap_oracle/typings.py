@@ -16,7 +16,6 @@ from __future__ import annotations
 
 from typing import Literal
 
-from flext_core import FlextTypes as _t
 from flext_db_oracle import FlextDbOracleTypes
 from flext_meltano import FlextMeltanoTypes
 
@@ -29,12 +28,11 @@ class FlextMeltanoTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
     Uses Python 3.13+ type syntax and patterns.
     """
 
-    class Project:
-        """Combined Oracle tap project types.
+    class TapOracle:
+        """Tap Oracle namespace for type definitions.
 
-        Combines Meltano tap functionality with Oracle database operations.
-        Resolves inheritance conflicts between FlextMeltanoTypes.Project
-        and FlextDbOracleTypes.Project.
+        Contains all Oracle tap-specific complex type definitions
+        organized by functional domains.
         """
 
         # Combined project types from both domains
@@ -67,19 +65,6 @@ class FlextMeltanoTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
             "oracle-tap",
             "oracle-target",
         ]
-
-        # Oracle tap-specific project configurations
-        type OracleTapProjectConfig = dict[str, _t.Types.JsonValue]
-        type MeltanoTapConfig = dict[str, _t.Types.JsonValue]
-        type DatabaseConnectionConfig = dict[str, _t.Types.JsonValue]
-        type TapOracleConfig = dict[str, str | bool | _t.Types.JsonValue | list[str]]
-
-    class TapOracle:
-        """Tap Oracle namespace for type definitions.
-
-        Contains all Oracle tap-specific complex type definitions
-        organized by functional domains.
-        """
 
         # =========================================================================
         # ORACLE TAP EXTRACTION TYPES - Complex extraction operation types
