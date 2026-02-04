@@ -32,7 +32,6 @@ __all__ = [
     "FlextOracleConnectionTestService",
     "FlextOracleDiscoveryService",
     "FlextOracleStream",
-    "FlextOracleStream",
     "FlextOracleTableFilterService",
     "FlextOracleTapService",
     "__version__",

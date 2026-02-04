@@ -41,7 +41,7 @@ class FlextOracleDiscoveryService:
         self.oracle_api: FlextDbOracleApi = oracle_api
         self.schema_name: str | None = schema_name
 
-    def execute(self) -> FlextResult[list[FlextDbOracleModels.Table]]:
+    def execute(self) -> FlextResult[list[FlextDbOracleModels.DbOracle.Table]]:
         """Execute Oracle table discovery using Layer 2 flext-db-oracle API."""
         try:
             schema_name = self.schema_name or "USER"  # Default Oracle schema
@@ -52,12 +52,12 @@ class FlextOracleDiscoveryService:
             if tables_result.is_failure:
                 error_msg = tables_result.error or "Table discovery failed"
                 logger.warning("Oracle table discovery failed: %s", error_msg)
-                return FlextResult[list[FlextDbOracleModels.Table]].fail(error_msg)
+                return FlextResult[list[FlextDbOracleModels.DbOracle.Table]].fail(error_msg)
 
-            # Convert string table names to FlextDbOracleModels.Table objects
+            # Convert string table names to FlextDbOracleModels.DbOracle.Table objects
             table_names = tables_result.value or []
-            tables: list[FlextDbOracleModels.Table] = [
-                FlextDbOracleModels.Table(name=table_name, schema=schema_name)
+            tables: list[FlextDbOracleModels.DbOracle.Table] = [
+                FlextDbOracleModels.DbOracle.Table(name=table_name, schema=schema_name)
                 for table_name in table_names
             ]
 
@@ -66,13 +66,13 @@ class FlextOracleDiscoveryService:
                 len(tables),
                 schema_name,
             )
-            return FlextResult[list[FlextDbOracleModels.Table]].ok(tables)
+            return FlextResult[list[FlextDbOracleModels.DbOracle.Table]].ok(tables)
 
         except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
             # Use FlextResult error handling pattern
             logger.exception("Oracle table discovery error")
             error_msg = f"Table discovery error in schema {self.schema_name}: {e}"
-            return FlextResult[list[FlextDbOracleModels.Table]].fail(error_msg)
+            return FlextResult[list[FlextDbOracleModels.DbOracle.Table]].fail(error_msg)
 
 
 class FlextOracleConnectionTestService:
@@ -182,7 +182,7 @@ class FlextOracleTableFilterService:
 # =====================================================
 
 
-class FlextOracleTapService(FlextService[list[FlextDbOracleModels.Table]]):
+class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table]]):
     """Oracle Tap Service using FLEXT Service Pattern.
 
     This class extends FlextService[T] to provide Oracle-specific
@@ -255,7 +255,7 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.Table]]):
 
     # Service methods - using direct domain services
     @override
-    def execute(self) -> FlextResult[list[FlextDbOracleModels.Table]]:
+    def execute(self) -> FlextResult[list[FlextDbOracleModels.DbOracle.Table]]:
         """Execute Oracle tap service - discover tables."""
         return self._discovery_service.execute()
 
@@ -271,7 +271,7 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.Table]]):
     def discover_oracle_tables(
         self,
         schema_name: str | None = None,
-    ) -> FlextResult[list[FlextDbOracleModels.Table]]:
+    ) -> FlextResult[list[FlextDbOracleModels.DbOracle.Table]]:
         """Discover Oracle tables using domain service."""
         if schema_name:
             # Create new service with specific schema_name (FlextService[T] is immutable)
