@@ -6,6 +6,8 @@
 
 **FLEXT-Tap-Oracle** extracts data from Oracle Databases (19c+), enabling reliable ELT for critical business applications. It provides full table replication, incremental updates, and schema discovery.
 
+Part of the [FLEXT](https://github.com/flext/flext) ecosystem.
+
 ## 🚀 Key Features
 
 - **Database Support**: Oracle 19c, 21c, 23c via `python-oracledb`.
