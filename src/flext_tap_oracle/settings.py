@@ -238,24 +238,24 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
 
         return self
 
-    def validate_business_rules(self) -> FlextResult[None]:
+    def validate_business_rules(self) -> FlextResult[bool]:
         """Validate Oracle tap configuration business rules."""
         try:
             # Validate Oracle configuration
             if not self.oracle_host:
-                return FlextResult[None].fail("Oracle host is required")
+                return FlextResult[bool].fail("Oracle host is required")
 
             if not self.oracle_username:
-                return FlextResult[None].fail("Oracle username is required")
+                return FlextResult[bool].fail("Oracle username is required")
 
             if not self.oracle_password.get_secret_value():
-                return FlextResult[None].fail("Oracle password is required")
+                return FlextResult[bool].fail("Oracle password is required")
 
             # Validate connection string can be generated
             try:
                 self.get_connection_string()
             except ValueError as e:
-                return FlextResult[None].fail(
+                return FlextResult[bool].fail(
                     f"Connection string validation failed: {e}",
                 )
 
@@ -266,7 +266,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
                 self.max_parallel_streams > max_safe_parallel
                 and self.batch_size > max_safe_batch
             ):
-                return FlextResult[None].fail(
+                return FlextResult[bool].fail(
                     "High parallelism with large batch sizes may cause memory issues",
                 )
 
@@ -275,14 +275,14 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
                 self.tables_filter
                 and len(self.tables_filter) > FlextConstants.Limits.MAX_LIST_SIZE
             ):
-                return FlextResult[None].fail(
+                return FlextResult[bool].fail(
                     f"Too many tables specified: {len(self.tables_filter)}",
                 )
 
-            return FlextResult[None].ok(None)
+            return FlextResult[bool].ok(value=True)
 
         except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-            return FlextResult[None].fail(f"Business rules validation failed: {e}")
+            return FlextResult[bool].fail(f"Business rules validation failed: {e}")
 
     # Configuration helper methods
     def get_oracle_config(self) -> dict[str, t.GeneralValueType]:
@@ -457,7 +457,7 @@ def create_oracle_tap_config(
 
 def validate_oracle_tap_configuration(
     config: FlextMeltanoTapOracleSettings,
-) -> FlextResult[None]:
+) -> FlextResult[bool]:
     """Validate Oracle tap configuration using FlextSettings patterns."""
     return config.validate_business_rules()
 

@@ -317,9 +317,9 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
                 return self
 
-            def validate_business_rules(self) -> FlextResult[None]:
+            def validate_business_rules(self) -> FlextResult[bool]:
                 """Validate tap-specific business rules."""
-                return FlextResult[None].ok(None)
+                return FlextResult[bool].ok(value=True)
 
         class OracleTapDiscoveryConfig(FlextModels.Entity):
             """Configuration for Oracle tap discovery operations."""
@@ -677,9 +677,9 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     raise ValueError(msg)
                 return self
 
-            def validate_business_rules(self) -> FlextResult[None]:
+            def validate_business_rules(self) -> FlextResult[bool]:
                 """Validate stream info business rules."""
-                return FlextResult[None].ok(None)
+                return FlextResult[bool].ok(value=True)
 
             def to_singer_stream_info(self) -> dict[str, t.GeneralValueType]:
                 """Convert to Singer stream information format."""
@@ -798,9 +798,9 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     raise ValueError(msg)
                 return self
 
-            def validate_business_rules(self) -> FlextResult[None]:
+            def validate_business_rules(self) -> FlextResult[bool]:
                 """Validate discovery result business rules."""
-                return FlextResult[None].ok(None)
+                return FlextResult[bool].ok(value=True)
 
             def get_selected_streams(
                 self,
@@ -966,9 +966,9 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     raise ValueError(msg)
                 return self
 
-            def validate_business_rules(self) -> FlextResult[None]:
+            def validate_business_rules(self) -> FlextResult[bool]:
                 """Validate execution stats business rules."""
-                return FlextResult[None].ok(None)
+                return FlextResult[bool].ok(value=True)
 
             def update_performance_metrics(
                 self,

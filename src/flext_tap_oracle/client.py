@@ -94,7 +94,7 @@ class FlextOracleConnectionTestService:
 
             if test_result.is_success:
                 logger.info("Oracle connection test successful")
-                return FlextResult[bool].ok(True)
+                return FlextResult[bool].ok(value=True)
 
             error_msg = test_result.error or "Connection test failed"
             logger.error("Oracle connection test failed: %s", error_msg)
@@ -319,7 +319,7 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table
                 )
 
             logger.info("Oracle tap initialization completed successfully")
-            return FlextResult[bool].ok(True)
+            return FlextResult[bool].ok(value=True)
 
         except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
             logger.exception("Oracle tap initialization failed")
@@ -334,7 +334,7 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table
 
             if connection_test_result.is_success:
                 logger.info("Oracle tap status: healthy")
-                return FlextResult[bool].ok(True)
+                return FlextResult[bool].ok(value=True)
 
             logger.warning(
                 f"Oracle tap status check failed: {connection_test_result.error}",

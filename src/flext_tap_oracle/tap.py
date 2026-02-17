@@ -114,13 +114,13 @@ class OracleTapDiscoverCommand(FlextCliCmd):
         self.params = params
         # self.cli_helper = FlextCliHelper()  # FlextCliHelper doesn't exist
 
-    def validate_business_rules(self) -> FlextResult[None]:
+    def validate_business_rules(self) -> FlextResult[bool]:
         """Validate business rules for Oracle tap discovery."""
         if self.params.config_file and not Path(self.params.config_file).exists():
-            return FlextResult[None].fail(
+            return FlextResult[bool].fail(
                 f"Configuration file not found: {self.params.config_file}",
             )
-        return FlextResult[None].ok(None)
+        return FlextResult[bool].ok(value=True)
 
     @override
     def execute(self) -> FlextResult[object]:
@@ -222,21 +222,21 @@ class OracleTapSyncCommand(FlextCliCmd):
         self.params = params
         # self.cli_helper = FlextCliHelper()  # FlextCliHelper doesn't exist
 
-    def validate_business_rules(self) -> FlextResult[None]:
+    def validate_business_rules(self) -> FlextResult[bool]:
         """Validate business rules for Oracle tap sync."""
         if self.params.config_file and not Path(self.params.config_file).exists():
-            return FlextResult[None].fail(
+            return FlextResult[bool].fail(
                 f"Configuration file not found: {self.params.config_file}",
             )
         if self.params.catalog_file and not Path(self.params.catalog_file).exists():
-            return FlextResult[None].fail(
+            return FlextResult[bool].fail(
                 f"Catalog file not found: {self.params.catalog_file}",
             )
         if self.params.state_file and not Path(self.params.state_file).exists():
-            return FlextResult[None].fail(
+            return FlextResult[bool].fail(
                 f"State file not found: {self.params.state_file}",
             )
-        return FlextResult[None].ok(None)
+        return FlextResult[bool].ok(value=True)
 
     @override
     def execute(self) -> FlextResult[object]:
@@ -380,7 +380,7 @@ def create_tap_oracle_cli() -> FlextResult[FlextCliCommands]:
         return FlextResult[FlextCliCommands].fail(f"CLI creation failed: {e}")
 
 
-def handle_discover_command(**kwargs: object) -> FlextResult[None]:
+def handle_discover_command(**kwargs: object) -> FlextResult[bool]:
     """Handle discover command using flext-cli patterns - NO click decorators."""
     try:
         params = OracleTapDiscoverParams.from_click_args(**kwargs)
@@ -394,15 +394,15 @@ def handle_discover_command(**kwargs: object) -> FlextResult[None]:
         result: FlextResult[object] = command.execute()
         if result.is_failure:
             cli_api.display_error(f"Discovery failed: {result.error}")
-            return FlextResult[None].fail(f"Discovery failed: {result.error}")
+            return FlextResult[bool].fail(f"Discovery failed: {result.error}")
 
-        return FlextResult[None].ok(None)
+        return FlextResult[bool].ok(value=True)
     except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
         cli_api.display_error(f"Discovery error: {e}")
-        return FlextResult[None].fail(f"Discovery error: {e}")
+        return FlextResult[bool].fail(f"Discovery error: {e}")
 
 
-def handle_sync_command(**kwargs: object) -> FlextResult[None]:
+def handle_sync_command(**kwargs: object) -> FlextResult[bool]:
     """Handle sync command using flext-cli patterns - NO click decorators."""
     try:
         params = OracleTapSyncParams.from_click_args(**kwargs)
@@ -416,12 +416,12 @@ def handle_sync_command(**kwargs: object) -> FlextResult[None]:
         result: FlextResult[object] = command.execute()
         if result.is_failure:
             cli_api.display_error(f"Sync failed: {result.error}")
-            return FlextResult[None].fail(f"Sync failed: {result.error}")
+            return FlextResult[bool].fail(f"Sync failed: {result.error}")
 
-        return FlextResult[None].ok(None)
+        return FlextResult[bool].ok(value=True)
     except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
         cli_api.display_error(f"Sync error: {e}")
-        return FlextResult[None].fail(f"Sync error: {e}")
+        return FlextResult[bool].fail(f"Sync error: {e}")
 
 
 def cli() -> None:

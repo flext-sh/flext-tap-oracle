@@ -178,7 +178,7 @@ class FlextMeltanoTapOracleUtilities(u_core):
                 exception: Exception,
                 operation: str = "unknown",
                 **context: object,
-            ) -> FlextResult[None]:
+            ) -> FlextResult[bool]:
                 """Handle Oracle exceptions with proper error mapping."""
                 try:
                     error_message = f"Oracle {operation} failed: {exception}"
@@ -209,10 +209,10 @@ class FlextMeltanoTapOracleUtilities(u_core):
                             **context,
                         )
 
-                    return FlextResult[None].fail(str(error))
+                    return FlextResult[bool].fail(str(error))
 
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-                    return FlextResult[None].fail(f"Exception handling failed: {e}")
+                    return FlextResult[bool].fail(f"Exception handling failed: {e}")
 
         class StreamManagement:
             """Oracle tap stream management utilities."""
