@@ -161,7 +161,9 @@
         ]
 
     [tool.pyrefly]
-        search-path = ["src", "tests"]
+        search-path = [
+            "../typings",
+            "../typings/generated","src", "tests"]
         [[tool.pyrefly.sub-config]]
         matches = "**/flext_tap_oracle/**/*.py"
         [tool.pyrefly.sub-config.errors]
