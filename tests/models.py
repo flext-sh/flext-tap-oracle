@@ -32,7 +32,7 @@ class TestsFlextMeltanoTapOracleModels(FlextTestsModels):
 
     # Composition: expose FlextModels domain model classes
     Entity = FlextModels.Entity
-    Value = FlextModels.Value
+    Value = m.Value
     AggregateRoot = FlextModels.AggregateRoot
     DomainEvent = FlextModels.DomainEvent
     Collections = FlextModels.Collections
