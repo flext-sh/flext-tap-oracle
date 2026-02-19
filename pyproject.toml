@@ -1,235 +1,216 @@
 [build-system]
-    build-backend = "poetry.core.masonry.api"
-    requires = [
-        "poetry-core>=1.9.0",
-    ]
+build-backend = "poetry.core.masonry.api"
+requires = [
+  "poetry-core>=2",
+]
 
 [project]
-    classifiers = [
-        "Development Status :: 5 - Production/Stable",
-        "Intended Audience :: Developers",
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.13",
-        "Topic :: Database",
-        "Topic :: Office/Business",
-        "Topic :: Software Development :: Libraries :: Python Modules",
-        "Topic :: System :: Systems Administration",
-        "Typing :: Typed",
-    ]
-    dependencies = [
-        "flext-core>=0.8.0",
-        "flext-db-oracle>=0.9.0",
-        "flext-meltano>=0.9.0",
-        "flext-observability>=0.9.0",
-        "pydantic (>=2.12.3)",
-        "fastapi (>=0.119.0)",
-        "singer-sdk (>=0.52.0)",
-        "setuptools (>=80.9.0)",
-        "prometheus-client (>=0.23.0)",
-        "uvicorn (>=0.38.0)",
-        "pydantic-core (>=2.41.4)",
-    ]
-    description = "FLEXT Tap Oracle - Modern Singer Tap for Oracle Database"
-    keywords = [
-        "database",
-        "enterprise",
-        "etl",
-        "flext",
-        "integration",
-        "oracle",
-        "singer",
-        "tap",
-    ]
-    name = "flext-tap-oracle"
-    readme = "README.md"
-    requires-python = ">=3.13,<3.14"
-    version = "0.10.0-dev"
-    [[project.authors]]
-        email = "team@flext.sh"
-        name  = "FLEXT Team"
+name = "flext-tap-oracle"
+version = "0.10.0-dev"
+description = "FLEXT Tap Oracle - Modern Singer Tap for Oracle Database"
+readme = "README.md"
+keywords = [
+  "database",
+  "enterprise",
+  "etl",
+  "flext",
+  "integration",
+  "oracle",
+  "singer",
+  "tap",
+]
+license = "MIT"
+maintainers = [ { email = "team@flext.sh", name = "FLEXT Team" } ]
+authors = [ { email = "team@flext.sh", name = "FLEXT Team" } ]
+requires-python = ">=3.13,<3.14"
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Database",
+  "Topic :: Office/Business",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: System :: Systems Administration",
+  "Typing :: Typed",
+]
+dependencies = [
+  "fastapi>=0.119",
+  "flext-core>=0.8",
+  "flext-db-oracle>=0.9",
+  "flext-meltano>=0.9",
+  "flext-observability>=0.9",
+  "prometheus-client>=0.23",
+  "pydantic>=2.12.3",
+  "pydantic-core>=2.41.4",
+  "setuptools>=80.9",
+  "singer-sdk>=0.52",
+  "uvicorn>=0.38",
+]
+urls.Documentation = "https://github.com/flext-sh/flext/blob/main/README.md"
+urls.Homepage = "https://github.com/flext-sh/flext"
+scripts.flext-tap-oracle = "flext_tap_oracle.tap:cli"
+scripts.tap-oracle = "flext_tap_oracle.tap:cli"
 
-    [[project.maintainers]]
-        email = "team@flext.sh"
-        name  = "FLEXT Team"
-
-    [project.license]
-        text = "MIT"
-
-    [project.urls]
-        Documentation = "https://github.com/flext-sh/flext/blob/main/README.md"
-        Homepage      = "https://github.com/flext-sh/flext"
-        Repository    = "https://github.com/flext-sh/flext"
-
-    [project.scripts]
-        flext-tap-oracle = "flext_tap_oracle.tap:cli"
-        tap-oracle       = "flext_tap_oracle.tap:cli"
-
-[tool.deptry]
-    known_first_party = [
-        "flext_tap_oracle",
-        "flext_core",
-        "flext_meltano",
-        "flext_observability",
-        "flext_db_oracle",
-    ]
-    pep621_dev_dependency_groups = [
-        "dev",
-        "test",
-        "typings",
-        "security",
-    ]
-
-[tool.deptry.per_rule_ignores]
-    DEP002 = [
-        # CLI tools (invoked from command line, not imported)
-        "bandit",
-        "black",
-        "commitizen",
-        "detect-secrets",
-        "mkdocs",
-        "mkdocs-material",
-        "mkdocs-mermaid2-plugin",
-        "pip-audit",
-        "pre-commit",
-        "pyrefly",
-        "radon",
-        "ruff",
-        "vulture",
-        # Type stubs
-        "scipy-stubs",
-        "types-jsonschema",
-        "types-openpyxl",
-        "types-xlrd",
-        # Runtime deps used indirectly (via singer-sdk, pydantic)
-        "fastapi",
-        "prometheus-client",
-        "pydantic-core",
-        "pytest",
-        "pytest-benchmark",
-        "pytest-clarity",
-        "pytest-cov",
-        "pytest-mock",
-        "pytest-randomly",
-        "pytest-sugar",
-        "pytest-timeout",
-        "pytest-xdist",
-        "setuptools",
-        "singer-sdk",
-        "uvicorn",
-    ]
+[tool.poetry]
+dependencies.pydantic = ">=2.12.3"
+dependencies.python = ">=3.13,<3.14"
+dependencies.flext-core.develop = true
+dependencies.flext-core.path = ".flext-deps/flext-core"
+dependencies.flext-db-oracle.develop = true
+dependencies.flext-db-oracle.path = ".flext-deps/flext-db-oracle"
+dependencies.flext-meltano.develop = true
+dependencies.flext-meltano.path = ".flext-deps/flext-meltano"
+dependencies.flext-observability.develop = true
+dependencies.flext-observability.path = ".flext-deps/flext-observability"
+group.dev.dependencies.bandit = ">=1.8.0"
+group.dev.dependencies.black = ">=25.1.0"
+group.dev.dependencies.commitizen = "^4.8.3"
+group.dev.dependencies.detect-secrets = ">=1.5.0"
+group.dev.dependencies.mkdocs = ">=1.6.0"
+group.dev.dependencies.mkdocs-material = ">=9.5.0"
+group.dev.dependencies.mkdocs-mermaid2-plugin = ">=1.1.0"
+group.dev.dependencies.pip-audit = ">=2.9.0"
+group.dev.dependencies.pre-commit = ">=4.0.0"
+group.dev.dependencies.pyrefly = "^0.46.3"
+group.dev.dependencies.pytest = "^9.0.2"
+group.dev.dependencies.pytest-benchmark = ">=4.0.0"
+group.dev.dependencies.pytest-clarity = ">=1.0.1"
+group.dev.dependencies.pytest-cov = "^7.0.0"
+group.dev.dependencies.pytest-mock = ">=3.12.0"
+group.dev.dependencies.pytest-sugar = ">=1.0.0"
+group.dev.dependencies.pytest-timeout = ">=2.3.1"
+group.dev.dependencies.pytest-xdist = ">=3.6.0"
+group.dev.dependencies.radon = ">=6.0.1"
+group.dev.dependencies.ruff = ">=0.12.3"
+group.dev.dependencies.vulture = ">=2.14"
+group.dev.dependencies.opentelemetry-api = ">=1.39.1"
+group.dev.dependencies.opentelemetry-sdk = ">=1.39.1"
+group.dev.dependencies.prompt-toolkit = ">=3.0.52"
+group.dev.dependencies.sqlparse = ">=0.5.5"
+group.dev.dependencies.pytest-randomly = "^4.0.1"
+group.dev.dependencies.opentelemetry-exporter-prometheus = ">=0.60b1"
+group.typings.dependencies.scipy-stubs = "^1.16.2.4"
+group.typings.dependencies.types-jsonschema = "^4.25.1.20251009"
+group.typings.dependencies.types-openpyxl = "^3.1.5.20250919"
+group.typings.dependencies.types-xlrd = "^2.0.0.20251020"
 
 [tool.ruff]
-    extend = "../ruff-shared.toml"
+extend = "../ruff-shared.toml"
 
-[tool.poetry.dependencies]
-    pydantic = ">=2.12.3"
-    python   = ">=3.13,<3.14"
+[tool.deptry]
+known_first_party = [
+  "flext_tap_oracle",
+  "flext_core",
+  "flext_meltano",
+  "flext_observability",
+  "flext_db_oracle",
+]
+pep621_dev_dependency_groups = [
+  "dev",
+  "test",
+  "typings",
+  "security",
+]
+per_rule_ignores.DEP002 = [
+  # CLI tools (invoked from command line, not imported)
+  "bandit",
+  "black",
+  "commitizen",
+  "detect-secrets",
+  "mkdocs",
+  "mkdocs-material",
+  "mkdocs-mermaid2-plugin",
+  "pip-audit",
+  "pre-commit",
+  "pyrefly",
+  "radon",
+  "ruff",
+  "vulture",
+  # Type stubs
+  "scipy-stubs",
+  "types-jsonschema",
+  "types-openpyxl",
+  "types-xlrd",
+  # Runtime deps used indirectly (via singer-sdk, pydantic)
+  "fastapi",
+  "prometheus-client",
+  "pydantic-core",
+  "pytest",
+  "pytest-benchmark",
+  "pytest-clarity",
+  "pytest-cov",
+  "pytest-mock",
+  "pytest-randomly",
+  "pytest-sugar",
+  "pytest-timeout",
+  "pytest-xdist",
+  "setuptools",
+  "singer-sdk",
+  "uvicorn",
+]
 
-[tool.pytest.ini_options]
-    addopts = [
-        "--maxfail=1",
-        "--strict-config",
-        "--strict-markers",
-        "--tb=short",
-        "-ra",
+[tool.pytest]
+ini_options.addopts = [
+  "--maxfail=1",
+  "--strict-config",
+  "--strict-markers",
+  "--tb=short",
+  "-ra",
+]
+ini_options.markers = [
+  "cli: CLI tests",
+  "discovery: marks tests as entity discovery tests",
+  "e2e: End-to-end tests",
+  "error_handling: Error handling tests",
+  "integration: Integration tests",
+  "memory: Memory efficiency tests",
+  "oracle: marks tests as Oracle database tests",
+  "performance: Performance tests",
+  "requires_oracle: tests that need Oracle database access",
+  "singer: marks tests as Singer protocol tests",
+  "slow: Slow tests",
+  "smoke: Smoke tests",
+  "stream: marks tests as stream tests",
+  "stress: Stress tests",
+  "tap: marks tests as tap tests",
+  "unit: Unit tests",
+]
+ini_options.minversion = "8.0"
+
+[tool.coverage]
+run.source = [ "src/flext_tap_oracle" ]
+report.fail_under = 100
+report.precision = 2
+
+[tool.pyrefly]
+search-path = [ "../typings", "../typings/generated", "src", "tests" ]
+
+[[tool.pyrefly.sub-config]]
+matches = "**/flext_tap_oracle/**/*.py"
+errors.bad-argument-type = false
+errors.bad-assignment = false
+errors.bad-index = false
+errors.bad-override = false
+errors.bad-param-name-override = false
+errors.bad-return = false
+errors.inconsistent-inheritance = false
+errors.invalid-yield = false
+errors.missing-attribute = false
+errors.missing-import = false
+errors.no-matching-overload = false
+errors.not-iterable = false
+errors.read-only = false
+errors.unexpected-keyword = false
+errors.unknown-name = false
+
+[tool.bandit]
+    skips = [
+        "B404",
+        "B603",
+        "B607",
+        "B105",
+        "B608",
     ]
-    markers = [
-        "cli: CLI tests",
-        "discovery: marks tests as entity discovery tests",
-        "e2e: End-to-end tests",
-        "error_handling: Error handling tests",
-        "integration: Integration tests",
-        "memory: Memory efficiency tests",
-        "oracle: marks tests as Oracle database tests",
-        "performance: Performance tests",
-        "requires_oracle: tests that need Oracle database access",
-        "singer: marks tests as Singer protocol tests",
-        "slow: Slow tests",
-        "smoke: Smoke tests",
-        "stream: marks tests as stream tests",
-        "stress: Stress tests",
-        "tap: marks tests as tap tests",
-        "unit: Unit tests",
-    ]
-    minversion = "8.0"
-
-    [tool.ruff.lint.isort]
-        known-first-party = [
-            "flext_tap_oracle",
-        ]
-
-    [tool.pyrefly]
-        search-path = [
-            "../typings",
-            "../typings/generated","src", "tests"]
-        [[tool.pyrefly.sub-config]]
-        matches = "**/flext_tap_oracle/**/*.py"
-        [tool.pyrefly.sub-config.errors]
-        bad-argument-type = false
-        bad-assignment = false
-        bad-index = false
-        bad-override = false
-        bad-param-name-override = false
-        bad-return = false
-        inconsistent-inheritance = false
-        invalid-yield = false
-        missing-attribute = false
-        missing-import = false
-        no-matching-overload = false
-        not-iterable = false
-        read-only = false
-        unexpected-keyword = false
-        unknown-name = false
-
-    [tool.poetry.dependencies.flext-core]
-        develop = true
-        path    = "../flext-core"
-
-                                                                [tool.poetry.dependencies.flext-meltano]
-        develop = true
-        path    = "../flext-meltano"
-
-                                                                                                                            [tool.poetry.dependencies.flext-observability]
-        develop = true
-        path    = "../flext-observability"
-
-                                                                                                                                                                                        [tool.poetry.dependencies.flext-db-oracle]
-        develop = true
-        path    = "../flext-db-oracle"
-
-[tool.poetry.group.dev.dependencies]
-    bandit                 = ">=1.8.0"
-    black                  = ">=25.1.0"
-    commitizen             = "^4.8.3"
-    detect-secrets         = ">=1.5.0"
-    mkdocs                 = ">=1.6.0"
-    mkdocs-material        = ">=9.5.0"
-    mkdocs-mermaid2-plugin = ">=1.1.0"
-    pip-audit              = ">=2.9.0"
-    pre-commit             = ">=4.0.0"
-    pyrefly                = "^0.46.3"
-    pytest                 = "^9.0.2"
-    pytest-benchmark       = ">=4.0.0"
-    pytest-clarity         = ">=1.0.1"
-    pytest-cov = "^7.0.0"
-    pytest-mock            = ">=3.12.0"
-    pytest-sugar           = ">=1.0.0"
-    pytest-timeout         = ">=2.3.1"
-    pytest-xdist           = ">=3.6.0"
-    radon                  = ">=6.0.1"
-    ruff                   = ">=0.12.3"
-    vulture                = ">=2.14"
-opentelemetry-api = ">=1.39.1"
-opentelemetry-sdk = ">=1.39.1"
-prompt-toolkit = ">=3.0.52"
-sqlparse = ">=0.5.5"
-pytest-randomly = "^4.0.1"
-opentelemetry-exporter-prometheus = ">=0.60b1"
-    [tool.poetry.group.typings.dependencies]
-    scipy-stubs = "^1.16.2.4"
-    types-jsonschema = "^4.25.1.20251009"
-    types-openpyxl = "^3.1.5.20250919"
-    types-xlrd = "^2.0.0.20251020"
 

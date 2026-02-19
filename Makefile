@@ -1,9 +1,10 @@
 # flext-tap-oracle - Oracle Singer Tap
 PROJECT_NAME := flext-tap-oracle
-COV_DIR := flext_tap_oracle
-MIN_COVERAGE := 90
-
+ifneq ("$(wildcard ../base.mk)", "")
 include ../base.mk
+else
+include base.mk
+endif
 
 # === PROJECT-SPECIFIC TARGETS ===
 .PHONY: tap-run tap-discover test-unit test-integration build shell
