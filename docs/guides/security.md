@@ -1,14 +1,15 @@
 <!-- Generated from docs/guides/security.md for flext-tap-oracle. -->
+
 <!-- Source of truth: workspace docs/guides/. -->
 
 # flext-tap-oracle - Security Guide
 
 > Project profile: `flext-tap-oracle`
 
-
-
 <!-- TOC START -->
+
 - No sections found
+
 <!-- TOC END -->
 
 Security practices are governed by project-specific policies and central architecture ADRs.
