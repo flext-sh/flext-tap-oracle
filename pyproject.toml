@@ -1,14 +1,13 @@
 [build-system]
     build-backend = "poetry.core.masonry.api"
     requires = [
-        "poetry-core>=1.9.0",
+        "poetry-core>=2.0",
     ]
 
 [project]
     classifiers = [
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.13",
@@ -46,6 +45,7 @@
     readme = "README.md"
     requires-python = ">=3.13,<3.14"
     version = "0.10.0-dev"
+    license = "MIT"
     [[project.authors]]
         email = "team@flext.sh"
         name  = "FLEXT Team"
@@ -53,10 +53,6 @@
     [[project.maintainers]]
         email = "team@flext.sh"
         name  = "FLEXT Team"
-
-    [project.license]
-        text = "MIT"
-
     [project.urls]
         Documentation = "https://github.com/flext-sh/flext/blob/main/README.md"
         Homepage      = "https://github.com/flext-sh/flext"
@@ -230,4 +226,21 @@ opentelemetry-exporter-prometheus = ">=0.60b1"
     types-jsonschema = "^4.25.1.20251009"
     types-openpyxl = "^3.1.5.20250919"
     types-xlrd = "^2.0.0.20251020"
+
+[tool.coverage]
+    [tool.coverage.run]
+        source = ["src/flext_tap_oracle"]
+
+    [tool.coverage.report]
+        fail_under = 90
+        precision = 2
+
+[tool.bandit]
+    skips = [
+        "B404",
+        "B603",
+        "B607",
+        "B105",
+        "B608",
+    ]
 

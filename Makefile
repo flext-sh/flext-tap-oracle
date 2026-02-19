@@ -1,8 +1,5 @@
 # flext-tap-oracle - Oracle Singer Tap
 PROJECT_NAME := flext-tap-oracle
-COV_DIR := flext_tap_oracle
-MIN_COVERAGE := 90
-
 include ../base.mk
 
 # === PROJECT-SPECIFIC TARGETS ===
