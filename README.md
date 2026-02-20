@@ -1,91 +1,27 @@
-# FLEXT-Tap-Oracle
+# FLEXT Tap Oracle
 
-<!-- TOC START -->
+Singer Tap para extracao de dados de bancos Oracle para pipelines ELT.
 
-- [🚀 Key Features](#-key-features)
-- [📦 Installation](#-installation)
-- [🛠️ Usage](#-usage)
-  - [Connection Settings](#connection-settings)
-  - [Table Selection](#table-selection)
-- [🏗️ Architecture](#-architecture)
-- [🤝 Contributing](#-contributing)
-- [📄 License](#-license)
+Descricao oficial atual: "FLEXT Tap Oracle - Modern Singer Tap for Oracle Database".
 
-<!-- TOC END -->
+## O que este projeto entrega
 
-[![Singer SDK](https://img.shields.io/badge/singer--sdk-compliant-brightgreen.svg)](https://sdk.meltano.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+- Extrai dados tabulares Oracle para formato Singer.
+- Padroniza captura para carga incremental/recorrente.
+- Alimenta targets e transformacoes dbt com dados de origem.
 
-**FLEXT-Tap-Oracle** extracts data from Oracle Databases (19c+), enabling reliable ELT for critical business applications. It provides full table replication, incremental updates, and schema discovery.
+## Contexto operacional
 
-Part of the [FLEXT](https://github.com/flext-sh/flext) ecosystem.
+- Entrada: conexao Oracle e catalogo de extracao.
+- Saida: stream Singer de dados Oracle.
+- Dependencias: flext-db-oracle e orquestracao Singer/Meltano.
 
-## 🚀 Key Features
+## Estado atual e risco de adocao
 
-- **Database Support**: Oracle 19c, 21c, 23c via `python-oracledb`.
-- **Replication Styles**: Full Table (`FULL_TABLE`) and Incremental (`INCREMENTAL`) sync modes.
-- **Schema Discovery**: Automatically maps Oracle types (`NUMBER`, `DATE`, `CLOB`) to Singer schema.
-- **Performance**: Adjustable fetch size (`batch_size`) and connection pooling for optimized throughput.
-- **Security**: Supports Wallet (mTLS) and Username/Password authentication.
+- Qualidade: **Alpha**
+- Uso recomendado: **Nao produtivo**
+- Nivel de estabilidade: em maturacao funcional e tecnica, sujeito a mudancas de contrato sem garantia de retrocompatibilidade.
 
-## 📦 Installation
+## Diretriz para uso nesta fase
 
-To usage in your Meltano project, add the extractor to your `meltano.yml`:
-
-```yaml
-plugins:
-  extractors:
-    - name: tap-oracle
-      pip_url: flext-tap-oracle
-      config:
-        host: ${ORACLE_HOST}
-        service_name: ${ORACLE_SERVICE}
-        username: ${ORACLE_USER}
-        password: ${ORACLE_PASSWORD}
-```
-
-## 🛠️ Usage
-
-### Connection Settings
-
-Standard configuration for TNS connectivity:
-
-```json
-{
-  "host": "oracle.example.com",
-  "port": 1521,
-  "service_name": "ORCL",
-  "user": "etl_user",
-  "password": "secure_password",
-  "batch_size": 10000
-}
-```
-
-### Table Selection
-
-Filter streams to specific tables or schemas:
-
-```json
-{
-  "schema_include": ["HR", "SALES"],
-  "table_include": ["EMPLOYEES", "ORDERS"],
-  "table_exclude": ["TEMP_LOGS"]
-}
-```
-
-## 🏗️ Architecture
-
-Adheres to Singer Spec for maximum compatibility:
-
-- **State Management**: Tracks replication keys (e.g., `updated_at`, `id`) for resumes.
-- **Type Conversion**: Explicit handling of Oracle-specific types like `XMLType` or `JSON`.
-- **Error Handling**: Retry logic for transient network issues.
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guide](docs/development.md) for details on adding support for new data types or improving performance.
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Aplicar este projeto somente em desenvolvimento, prova de conceito e homologacao controlada, com expectativa de ajustes frequentes ate maturidade de release.

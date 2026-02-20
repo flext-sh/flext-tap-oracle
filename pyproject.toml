@@ -1,12 +1,10 @@
 [build-system]
 build-backend = "poetry.core.masonry.api"
-requires = [
-  "poetry-core>=2",
-]
+requires = [ "poetry-core>=2.0", "poetry-core>=2" ]
 
 [project]
 name = "flext-tap-oracle"
-version = "0.10.0-dev"
+version = "0.10.0"
 description = "FLEXT Tap Oracle - Modern Singer Tap for Oracle Database"
 readme = "README.md"
 keywords = [
@@ -20,20 +18,21 @@ keywords = [
   "tap",
 ]
 license = "MIT"
-maintainers = [ { email = "team@flext.sh", name = "FLEXT Team" } ]
-authors = [ { email = "team@flext.sh", name = "FLEXT Team" } ]
+maintainers = [ {email = "team@flext.sh", name = "FLEXT Team"} ]
+authors = [ {email = "team@flext.sh", name = "FLEXT Team"} ]
 requires-python = ">=3.13,<3.14"
 classifiers = [
-  "Development Status :: 5 - Production/Stable",
+  "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.13",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Typing :: Typed",
+  "Development Status :: 5 - Production/Stable",
   "Topic :: Database",
   "Topic :: Office/Business",
-  "Topic :: Software Development :: Libraries :: Python Modules",
   "Topic :: System :: Systems Administration",
-  "Typing :: Typed",
 ]
 dependencies = [
   "fastapi>=0.119",
@@ -152,7 +151,17 @@ per_rule_ignores.DEP002 = [
 ]
 
 [tool.pytest]
-ini_options.addopts = [ "--strict-config", "--strict-markers", "--tb=short", "-p no:sugar", "-q", "-ra", "--timeout=30", "--timeout-method=signal", "--durations=0" ]
+ini_options.addopts = [
+  "--strict-config",
+  "--strict-markers",
+  "--tb=short",
+  "-p no:sugar",
+  "-q",
+  "-ra",
+  "--timeout=30",
+  "--timeout-method=signal",
+  "--durations=0",
+]
 ini_options.markers = [
   "cli: CLI tests",
   "discovery: marks tests as entity discovery tests",
@@ -174,15 +183,15 @@ ini_options.markers = [
 ini_options.minversion = "8.0"
 
 [tool.coverage]
-run.source = [ "src/flext_tap_oracle" ]
 report.fail_under = 100
 report.precision = 2
+run.source = [ "src/flext_tap_oracle" ]
 
 [tool.pyrefly]
-search-path = [ "../typings", "../typings/generated", "src", "tests" ]
+project-excludes = [ "**/*_pb2*.py", "**/*_pb2_grpc*.py" ]
+search-path = [ "../typings", "../typings/generated", "src", "tests", "examples", "scripts" ]
 
 [[tool.pyrefly.sub-config]]
-matches = "**/flext_tap_oracle/**/*.py"
 errors.bad-argument-type = false
 errors.bad-assignment = false
 errors.bad-index = false
@@ -198,13 +207,13 @@ errors.not-iterable = false
 errors.read-only = false
 errors.unexpected-keyword = false
 errors.unknown-name = false
+matches = "**/flext_tap_oracle/**/*.py"
 
 [tool.bandit]
-    skips = [
-        "B404",
-        "B603",
-        "B607",
-        "B105",
-        "B608",
-    ]
-
+skips = [
+  "B404",
+  "B603",
+  "B607",
+  "B105",
+  "B608",
+]
