@@ -7,7 +7,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_core import FlextModels, FlextTestsModels
+from flext_core import FlextModels
+from flext_tests import FlextTestsModels
 
 
 class TestsFlextMeltanoTapOracleModels(FlextTestsModels):
@@ -32,7 +33,7 @@ class TestsFlextMeltanoTapOracleModels(FlextTestsModels):
 
     # Composition: expose FlextModels domain model classes
     Entity = FlextModels.Entity
-    Value = m.Value
+    Value = FlextModels.Value
     AggregateRoot = FlextModels.AggregateRoot
     DomainEvent = FlextModels.DomainEvent
     Collections = FlextModels.Collections
