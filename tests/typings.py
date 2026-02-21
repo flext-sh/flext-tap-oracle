@@ -9,7 +9,8 @@ from __future__ import annotations
 
 from typing import Literal
 
-from flext_core import FlextTestsTypes, FlextTypes as t
+from flext_tap_oracle import t
+from flext_core import FlextTestsTypes
 
 
 class TestsFlextMeltanoTapOracleTypes(FlextTestsTypes):

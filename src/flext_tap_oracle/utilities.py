@@ -11,16 +11,19 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
+
 from flext_core import (
     FlextContainer,
     FlextExceptions,
     FlextLogger,
     FlextResult,
-    FlextTypes as t,
+    t,
 )
-from flext_core.utilities import u_core
+from flext_core.utilities import u as u_core
 from flext_db_oracle import FlextDbOracleModels
 
+from flext_tap_oracle.constants import c
 from flext_tap_oracle.models import m
 
 
@@ -45,7 +48,7 @@ class FlextMeltanoTapOracleUtilities(u_core):
             """Initialize FlextMeltanoTapOracleUtilities service."""
             super().__init__()
             self._container = FlextContainer.get_global()
-            self.logger = FlextLogger(__name__)
+            self._logger = FlextLogger(__name__)
 
         def execute(self) -> FlextResult[dict[str, t.GeneralValueType]]:
             """Execute the main domain service operation.
@@ -70,7 +73,7 @@ class FlextMeltanoTapOracleUtilities(u_core):
         @property
         def logger(self) -> FlextLogger:
             """Get logger instance."""
-            return self.logger
+            return self._logger
 
         @property
         def container(self) -> FlextContainer:
@@ -86,10 +89,9 @@ class FlextMeltanoTapOracleUtilities(u_core):
                 host: str | None = None,
                 port: int | None = None,
                 service_name: str | None = None,
-                **kwargs: object,
             ) -> FlextExceptions.ConnectionError:
                 """Create Oracle connection errors with context."""
-                context = kwargs.copy()
+                context: dict[str, str | int] = {}
                 if host is not None:
                     context["host"] = host
                 if port is not None:
@@ -104,10 +106,9 @@ class FlextMeltanoTapOracleUtilities(u_core):
                 message: str = "Oracle query execution failed",
                 sql_query: str | None = None,
                 table_name: str | None = None,
-                **kwargs: object,
             ) -> FlextExceptions.OperationError:
                 """Create Oracle query errors with SQL context."""
-                context = kwargs.copy()
+                context: dict[str, str] = {}
                 if sql_query is not None:
                     context["sql_query"] = sql_query
                 if table_name is not None:
@@ -120,10 +121,9 @@ class FlextMeltanoTapOracleUtilities(u_core):
                 message: str = "Stream processing failed",
                 stream_name: str | None = None,
                 stream_type: str | None = None,
-                **kwargs: object,
             ) -> FlextExceptions.OperationError:
                 """Create stream processing errors with stream context."""
-                context = kwargs.copy()
+                context: dict[str, str] = {}
                 if stream_name is not None:
                     context["stream_name"] = stream_name
                 if stream_type is not None:
@@ -135,10 +135,9 @@ class FlextMeltanoTapOracleUtilities(u_core):
             def create_discovery_error(
                 message: str = "Table discovery failed",
                 schema_name: str | None = None,
-                **kwargs: object,
             ) -> FlextExceptions.OperationError:
                 """Create discovery errors with schema context."""
-                context = kwargs.copy()
+                context: dict[str, str] = {}
                 if schema_name is not None:
                     context["schema_name"] = schema_name
 
@@ -148,10 +147,9 @@ class FlextMeltanoTapOracleUtilities(u_core):
             def create_configuration_error(
                 message: str = "Configuration validation failed",
                 config_section: str | None = None,
-                **kwargs: object,
             ) -> FlextExceptions.ConfigurationError:
                 """Create configuration errors with section context."""
-                context = kwargs.copy()
+                context: dict[str, str] = {}
                 if config_section is not None:
                     context["config_section"] = config_section
 
@@ -162,10 +160,9 @@ class FlextMeltanoTapOracleUtilities(u_core):
                 message: str = "Data extraction failed",
                 table_name: str | None = None,
                 extraction_method: str | None = None,
-                **kwargs: object,
             ) -> FlextExceptions.OperationError:
                 """Create extraction errors with method context."""
-                context = kwargs.copy()
+                context: dict[str, str] = {}
                 if table_name is not None:
                     context["table_name"] = table_name
                 if extraction_method is not None:
@@ -177,39 +174,39 @@ class FlextMeltanoTapOracleUtilities(u_core):
             def handle_oracle_exception(
                 exception: Exception,
                 operation: str = "unknown",
-                **context: object,
             ) -> FlextResult[bool]:
                 """Handle Oracle exceptions with proper error mapping."""
                 try:
                     error_message = f"Oracle {operation} failed: {exception}"
+                    exc_str = str(exception).lower()
 
                     # Map common Oracle exceptions to specific error types
-                    if "connection" in str(exception).lower():
-                        error = u.ErrorHandling.create_connection_error(
+                    err_handling = (
+                        FlextMeltanoTapOracleUtilities.TapOracle.ErrorHandling
+                    )
+                    err: (
+                        FlextExceptions.ConnectionError
+                        | FlextExceptions.OperationError
+                        | FlextExceptions.ConfigurationError
+                    )
+                    if "connection" in exc_str:
+                        err = err_handling.create_connection_error(
                             error_message,
-                            **context,
                         )
-                    elif (
-                        "sql" in str(exception).lower()
-                        or "query" in str(exception).lower()
-                    ):
-                        error = u.ErrorHandling.create_query_error(
+                    elif "sql" in exc_str or "query" in exc_str:
+                        err = err_handling.create_query_error(
                             error_message,
-                            **context,
                         )
-                    elif "discovery" in str(exception).lower():
-                        error = u.ErrorHandling.create_discovery_error(
+                    elif "discovery" in exc_str:
+                        err = err_handling.create_discovery_error(
                             error_message,
-                            **context,
                         )
                     else:
-                        # Generic extraction error for other cases
-                        error = u.ErrorHandling.create_extraction_error(
+                        err = err_handling.create_extraction_error(
                             error_message,
-                            **context,
                         )
 
-                    return FlextResult[bool].fail(str(error))
+                    return FlextResult[bool].fail(str(err))
 
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                     return FlextResult[bool].fail(f"Exception handling failed: {e}")
@@ -219,28 +216,38 @@ class FlextMeltanoTapOracleUtilities(u_core):
 
             @staticmethod
             def create_stream_info_from_oracle_table(
-                oracle_table: FlextDbOracleModels.Table,
+                oracle_table: FlextDbOracleModels.DbOracle.Table,
                 stream_prefix: str = "oracle",
                 replication_method: str = "FULL_TABLE",
-            ) -> FlextResult[object]:
+            ) -> FlextResult[m.TapOracle.OracleTapStreamInfo]:
                 """Create stream info from Oracle table metadata."""
                 try:
                     stream_name = f"{stream_prefix}_{oracle_table.name.lower()}"
 
-                    stream_info = m.OracleTapStreamInfo(
+                    # Validate replication_method is a valid Literal
+                    valid_method: str = (
+                        replication_method
+                        if replication_method in {"FULL_TABLE", "INCREMENTAL"}
+                        else "FULL_TABLE"
+                    )
+
+                    stream_info = m.TapOracle.OracleTapStreamInfo(
                         stream_name=stream_name,
                         table_name=oracle_table.name,
                         schema_name=getattr(oracle_table, "schema_name", None),
-                        replication_method=replication_method,
+                        replication_method=valid_method,  # type: ignore[arg-type]
+                        replication_key=None,
+                        estimated_rows=None,
+                        last_extracted=None,
                         column_count=len(oracle_table.columns)
                         if hasattr(oracle_table, "columns")
                         else None,
                     )
 
-                    return FlextResult[object].ok(stream_info)
+                    return FlextResult[m.TapOracle.OracleTapStreamInfo].ok(stream_info)
 
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-                    return FlextResult[object].fail(
+                    return FlextResult[m.TapOracle.OracleTapStreamInfo].fail(
                         f"Failed to create stream info from Oracle table: {e}",
                     )
 
@@ -248,30 +255,33 @@ class FlextMeltanoTapOracleUtilities(u_core):
             def create_discovery_result(
                 tables: list[t.GeneralValueType],
                 schema_name: str,
-            ) -> FlextResult[object]:
+            ) -> FlextResult[m.TapOracle.OracleTapDiscoveryResult]:
                 """Create discovery result from Oracle tables."""
                 try:
                     # Convert tables to stream info
-                    stream_infos = []
+                    stream_infos: list[m.TapOracle.OracleTapStreamInfo] = []
                     for table in tables:
-                        stream_result = (
-                            u.StreamManagement.create_stream_info_from_oracle_table(
-                                table,
-                            )
+                        if not isinstance(table, FlextDbOracleModels.DbOracle.Table):
+                            continue
+                        stream_result = FlextMeltanoTapOracleUtilities.TapOracle.StreamManagement.create_stream_info_from_oracle_table(
+                            table,
                         )
-                        if stream_result.is_success:
+                        if stream_result.is_success and stream_result.value is not None:
                             stream_infos.append(stream_result.value)
 
-                    discovery_result = m.OracleTapDiscoveryResult(
+                    discovery_result = m.TapOracle.OracleTapDiscoveryResult(
                         schema_name=schema_name,
-                        discovered_tables=len(tables),
-                        stream_infos=stream_infos,
+                        total_tables=len(tables),
+                        discovery_timestamp=datetime.now(tz=UTC).isoformat(),
+                        stream_info=stream_infos,
                     )
 
-                    return FlextResult[object].ok(discovery_result)
+                    return FlextResult[m.TapOracle.OracleTapDiscoveryResult].ok(
+                        discovery_result
+                    )
 
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-                    return FlextResult[object].fail(
+                    return FlextResult[m.TapOracle.OracleTapDiscoveryResult].fail(
                         f"Failed to create discovery result: {e}",
                     )
 
@@ -280,7 +290,7 @@ class FlextMeltanoTapOracleUtilities(u_core):
 
             @staticmethod
             def validate_oracle_config(
-                config: dict,
+                config: dict[str, t.GeneralValueType],
             ) -> FlextResult[dict[str, t.GeneralValueType]]:
                 """Validate Oracle configuration parameters."""
                 try:
@@ -302,11 +312,12 @@ class FlextMeltanoTapOracleUtilities(u_core):
                             )
 
                     # Validate port is numeric
+                    max_port = c.TapOracle.MAX_PORT_NUMBER
                     try:
-                        port = int(config["port"])
-                        if port <= 0 or port > u.MAX_PORT_NUMBER:
+                        port = int(str(config["port"]))
+                        if port <= 0 or port > max_port:
                             return FlextResult[dict[str, t.GeneralValueType]].fail(
-                                f"Oracle port must be between 1 and {u.MAX_PORT_NUMBER}",
+                                f"Oracle port must be between 1 and {max_port}",
                             )
                         config["port"] = port
                     except ValueError:
@@ -327,11 +338,10 @@ class FlextMeltanoTapOracleUtilities(u_core):
             ) -> FlextResult[str]:
                 """Build Oracle connection string from configuration."""
                 try:
-                    validation_result = (
-                        u.ConfigurationValidation.validate_oracle_config(
-                            config,
-                        )
+                    cfg_validator = (
+                        FlextMeltanoTapOracleUtilities.TapOracle.ConfigurationValidation
                     )
+                    validation_result = cfg_validator.validate_oracle_config(config)
                     if validation_result.is_failure:
                         return FlextResult[str].fail(validation_result.error)
 
@@ -357,11 +367,10 @@ class FlextMeltanoTapOracleUtilities(u_core):
                 """Test Oracle connectivity with configuration."""
                 try:
                     # Validate configuration first
-                    validation_result = (
-                        u.ConfigurationValidation.validate_oracle_config(
-                            config,
-                        )
+                    cfg_validator = (
+                        FlextMeltanoTapOracleUtilities.TapOracle.ConfigurationValidation
                     )
+                    validation_result = cfg_validator.validate_oracle_config(config)
                     if validation_result.is_failure:
                         return FlextResult[dict[str, t.GeneralValueType]].fail(
                             validation_result.error
@@ -406,7 +415,10 @@ class FlextMeltanoTapOracleUtilities(u_core):
 
                     # Add optimizations based on table size
                     row_count = table_stats.get("row_count", 0)
-                    if row_count > u.LARGE_TABLE_THRESHOLD:
+                    if (
+                        isinstance(row_count, (int, float))
+                        and row_count > c.TapOracle.LARGE_TABLE_THRESHOLD
+                    ):
                         # Add parallel hints for large tables
                         optimized_query = f"/*+ PARALLEL(4) */ {optimized_query}"
 
@@ -433,19 +445,23 @@ class FlextMeltanoTapOracleUtilities(u_core):
                     duration = end_time - start_time
                     records_per_second = records_processed / max(duration, 0.001)
 
-                    metrics = {
+                    performance_rating: str = (
+                        "excellent"
+                        if records_per_second
+                        > c.TapOracle.EXCELLENT_PERFORMANCE_THRESHOLD
+                        else "good"
+                        if records_per_second > c.TapOracle.GOOD_PERFORMANCE_THRESHOLD
+                        else "moderate"
+                        if records_per_second
+                        > c.TapOracle.MODERATE_PERFORMANCE_THRESHOLD
+                        else "slow"
+                    )
+
+                    metrics: dict[str, t.GeneralValueType] = {
                         "duration_seconds": round(duration, 3),
                         "records_processed": records_processed,
                         "records_per_second": round(records_per_second, 2),
-                        "performance_rating": (
-                            "excellent"
-                            if records_per_second > u.EXCELLENT_PERFORMANCE_THRESHOLD
-                            else "good"
-                            if records_per_second > u.GOOD_PERFORMANCE_THRESHOLD
-                            else "moderate"
-                            if records_per_second > u.MODERATE_PERFORMANCE_THRESHOLD
-                            else "slow"
-                        ),
+                        "performance_rating": performance_rating,
                     }
 
                     return FlextResult[dict[str, t.GeneralValueType]].ok(metrics)
@@ -457,7 +473,7 @@ class FlextMeltanoTapOracleUtilities(u_core):
 
 
 # Runtime alias for simplified usage
-u = FlextMeltanoTapOracleUtilities
+u: type[FlextMeltanoTapOracleUtilities] = FlextMeltanoTapOracleUtilities
 
 __all__: list[str] = [
     "FlextMeltanoTapOracleUtilities",

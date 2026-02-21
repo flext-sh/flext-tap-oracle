@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Protocol, runtime_checkable
 
-from flext_core import FlextTypes as t
+from flext_tap_oracle import t
 from flext_tests import FlextTestsProtocols
 
 

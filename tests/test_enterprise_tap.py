@@ -10,7 +10,7 @@ SPDX-License-Identifier: MIT
 # type: ignore
 
 from __future__ import annotations
-from flext_core import FlextTypes as t
+from flext_tap_oracle import t
 
 from collections.abc import Generator
 from unittest.mock import AsyncMock, Mock, patch

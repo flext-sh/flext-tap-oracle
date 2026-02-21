@@ -28,6 +28,9 @@ class FlextMeltanoTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
     Uses Python 3.13+ type syntax and patterns.
     """
 
+    class Project(FlextMeltanoTypes.Project, FlextDbOracleTypes.Project):
+        """Unified project types resolving MRO between Meltano and DbOracle."""
+
     class TapOracle:
         """Tap Oracle namespace for type definitions.
 

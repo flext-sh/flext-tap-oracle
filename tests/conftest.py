@@ -16,7 +16,7 @@ import socket
 from collections.abc import Generator
 
 import pytest
-from flext_core import FlextResult, FlextTypes as t
+from flext_core import FlextResult, t
 from flext_tap_oracle import (
     FlextMeltanoTapOracleSettings,
     FlextOracleTapService,

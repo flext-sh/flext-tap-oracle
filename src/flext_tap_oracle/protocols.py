@@ -8,10 +8,11 @@ from __future__ import annotations
 
 from typing import Protocol, runtime_checkable
 
-from flext_core import FlextTypes as t
 from flext_db_oracle.protocols import FlextDbOracleProtocols
 from flext_meltano import FlextMeltanoModels as m
 from flext_meltano.protocols import FlextMeltanoProtocols
+
+from flext_tap_oracle.typings import t
 
 
 class FlextMeltanoTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):

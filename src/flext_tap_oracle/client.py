@@ -131,15 +131,13 @@ class FlextOracleTableFilterService:
             tap_configuration = self.tap_config.get_tap_config()
 
             # If specific tables are configured, use them directly
-            if (
-                hasattr(tap_configuration, "tables_filter")
-                and tap_configuration.tables_filter
-            ):
+            tables_filter = tap_configuration.get("tables_filter")
+            if tables_filter and isinstance(tables_filter, list):
                 logger.info(
                     "Using configured table filter: %s",
-                    tap_configuration.tables_filter,
+                    tables_filter,
                 )
-                return FlextResult[list[str]].ok(list(tap_configuration.tables_filter))
+                return FlextResult[list[str]].ok([str(t) for t in tables_filter])
 
             # Otherwise discover all tables from Oracle using Layer 2 API
             tables_result = self.discovery_service.execute()
@@ -155,7 +153,12 @@ class FlextOracleTableFilterService:
             table_names = [table.name for table in tables_result.data]
 
             # Apply exclusion filter if configured
-            exclude_tables = getattr(tap_configuration, "exclude_tables", None) or []
+            exclude_tables_raw = tap_configuration.get("exclude_tables")
+            exclude_tables: list[str] = (
+                [str(t) for t in exclude_tables_raw]
+                if isinstance(exclude_tables_raw, list)
+                else []
+            )
             if exclude_tables:
                 filtered_tables = [
                     table for table in table_names if table not in exclude_tables

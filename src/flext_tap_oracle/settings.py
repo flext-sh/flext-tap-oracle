@@ -13,11 +13,12 @@ from __future__ import annotations
 import re
 from typing import Self
 
-from flext_core import FlextConstants, FlextResult, FlextSettings, FlextTypes as t
+from flext_core import FlextResult, FlextSettings
 from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import SettingsConfigDict
 
 from flext_tap_oracle.constants import c
+from flext_tap_oracle.typings import t
 
 
 class FlextMeltanoTapOracleSettings(FlextSettings):
@@ -168,7 +169,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
             msg = f"Invalid stream prefix: {v}. Must start with letter and contain only letters, digits, and underscores"
             raise ValueError(msg)
 
-        max_length = c.TapValidation.MAX_STREAM_PREFIX_LENGTH
+        max_length = c.TapOracle.TapValidation.MAX_STREAM_PREFIX_LENGTH
         if len(v) > max_length:
             msg = f"Stream prefix too long: {len(v)} > {max_length}"
             raise ValueError(msg)
@@ -182,7 +183,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
         if v is None:
             return v
 
-        max_count = c.TapValidation.MAX_TABLES_FILTER_COUNT
+        max_count = c.TapOracle.TapValidation.MAX_TABLES_FILTER_COUNT
         if len(v) > max_count:
             msg = f"Too many tables specified: {len(v)} > {max_count}"
             raise ValueError(msg)
@@ -201,7 +202,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
         if v is None:
             return v
 
-        max_schemas = c.TapValidation.MAX_SCHEMAS_FILTER_COUNT
+        max_schemas = c.TapOracle.TapValidation.MAX_SCHEMAS_FILTER_COUNT
         if len(v) > max_schemas:
             msg = f"Too many schemas specified: {len(v)} > {max_schemas}"
             raise ValueError(msg)
@@ -227,7 +228,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
             raise ValueError(msg)
 
         # Validate parallel streams vs batch size
-        max_safe_parallel = c.TapValidation.MAX_SAFE_PARALLEL_STREAMS
+        max_safe_parallel = c.TapOracle.TapValidation.MAX_SAFE_PARALLEL_STREAMS
         max_safe_batch = c.TapOracle.Singer.MAX_BATCH_SIZE // 2
         if (
             self.max_parallel_streams > max_safe_parallel
@@ -260,7 +261,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
                 )
 
             # Validate performance settings
-            max_safe_parallel = c.TapValidation.MAX_SAFE_PARALLEL_STREAMS
+            max_safe_parallel = c.TapOracle.TapValidation.MAX_SAFE_PARALLEL_STREAMS
             max_safe_batch = c.TapOracle.Singer.MAX_BATCH_SIZE // 2
             if (
                 self.max_parallel_streams > max_safe_parallel
@@ -273,7 +274,8 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
             # Validate filters
             if (
                 self.tables_filter
-                and len(self.tables_filter) > FlextConstants.Limits.MAX_LIST_SIZE
+                and len(self.tables_filter)
+                > c.TapOracle.TapValidation.MAX_TABLES_FILTER_COUNT
             ):
                 return FlextResult[bool].fail(
                     f"Too many tables specified: {len(self.tables_filter)}",
@@ -334,7 +336,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
     def create_for_environment(
         cls,
         environment: str,
-        **overrides: object,
+        **overrides: t.GeneralValueType,
     ) -> FlextMeltanoTapOracleSettings:
         """Create configuration for specific environment using enhanced singleton pattern."""
         env_overrides: dict[str, t.GeneralValueType] = {}
@@ -353,7 +355,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
             })
         elif environment == "staging":
             env_overrides.update({
-                "batch_size": c.Singer.DEFAULT_BATCH_SIZE * 2,
+                "batch_size": c.TapOracle.Singer.DEFAULT_BATCH_SIZE * 2,
                 "max_parallel_streams": 2,
                 "query_timeout": 180,
             })
@@ -367,14 +369,14 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
         return cls()
 
     @classmethod
-    def create_for_development(cls, **overrides: object) -> Self:
+    def create_for_development(cls, **overrides: t.GeneralValueType) -> Self:
         """Create configuration for development environment."""
         dev_overrides: dict[str, t.GeneralValueType] = {
             "oracle_host": "localhost",
             "oracle_port": c.TapOracle.Oracle.DEFAULT_PORT,
             "oracle_service_name": "ORCL",
             "oracle_username": "tap_dev",
-            "batch_size": c.Singer.DEFAULT_BATCH_SIZE,
+            "batch_size": c.TapOracle.Singer.DEFAULT_BATCH_SIZE,
             "max_parallel_streams": 1,
             "query_timeout": 60,
             **overrides,
@@ -382,10 +384,10 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
         return cls(**dev_overrides)
 
     @classmethod
-    def create_for_production(cls, **overrides: object) -> Self:
+    def create_for_production(cls, **overrides: t.GeneralValueType) -> Self:
         """Create configuration for production environment."""
         prod_overrides: dict[str, t.GeneralValueType] = {
-            "batch_size": c.Singer.MAX_BATCH_SIZE,
+            "batch_size": c.TapOracle.Singer.MAX_BATCH_SIZE,
             "max_parallel_streams": 4,
             "query_timeout": 300,
             "fetch_size": c.TapOracle.Oracle.DEFAULT_FETCH_SIZE * 5,
@@ -395,7 +397,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
         return cls(**prod_overrides)
 
     @classmethod
-    def create_for_testing(cls, **overrides: object) -> Self:
+    def create_for_testing(cls, **overrides: t.GeneralValueType) -> Self:
         """Create configuration for testing environment."""
         test_overrides: dict[str, t.GeneralValueType] = {
             "oracle_host": "test-oracle",

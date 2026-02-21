@@ -7,22 +7,22 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import datetime
 from typing import Literal, Self
 
-from flext_core import FlextConstants, FlextModels, FlextResult, FlextTypes as t
+from flext_core import FlextConstants, FlextModels, FlextResult
 from flext_core.utilities import u
 from flext_db_oracle import FlextDbOracleModels
 from flext_meltano import FlextMeltanoModels
 from pydantic import (
     ConfigDict,
     Field,
-    FieldSerializationInfo,
     computed_field,
-    field_serializer,
     field_validator,
     model_validator,
 )
+
+from flext_tap_oracle.typings import t
 
 
 class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
@@ -41,9 +41,9 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
     class TapOracle:
         """Tap Oracle  namespace for cross-project access."""
 
-        def __init_subclass__(cls, **kwargs: object) -> None:
+        def __init_subclass__(cls) -> None:
             """Warn when FlextMeltanoTapOracleModels is subclassed directly."""
-            super().__init_subclass__(**kwargs)
+            super().__init_subclass__()
             u.Deprecation.warn_once(
                 f"subclass:{cls.__name__}",
                 "Subclassing FlextMeltanoTapOracleModels is deprecated. Use FlextModels.TapOracle instead.",
@@ -75,12 +75,12 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             },
         )
 
-        # Advanced Pydantic 2.11 Features - Singer Oracle Tap Domain
+        # Oracle Tap Domain - namespace metadata as static methods on plain class
 
-        @computed_field
-        def active_oracle_tap_models_count(self) -> int:
-            """Count of active Oracle tap models with database extraction capabilities."""
-            model_names = [
+        @staticmethod
+        def get_active_model_names() -> list[str]:
+            """List of active Oracle tap model names."""
+            return [
                 "OracleTapStreamMetadata",
                 "OracleTapDiscoveryConfig",
                 "OracleTapExtractionConfig",
@@ -92,13 +92,14 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 "OracleQuery",
                 "OracleRecord",
             ]
-            return sum(1 for name in model_names if hasattr(self, name))
 
-        @computed_field
-        def oracle_tap_system_summary(self) -> dict[str, t.GeneralValueType]:
+        @staticmethod
+        def get_system_summary() -> dict[str, t.GeneralValueType]:
             """Complete Singer Oracle tap system summary with database extraction capabilities."""
             return {
-                "total_models": self.active_oracle_tap_models_count,
+                "total_models": len(
+                    FlextMeltanoTapOracleModels.TapOracle.get_active_model_names()
+                ),
                 "tap_type": "singer_oracle_database_extractor",
                 "extraction_features": [
                     "oracle_table_discovery",
@@ -123,69 +124,6 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     "schema_discovery": True,
                 },
             }
-
-        @model_validator(mode="after")
-        def validate_oracle_tap_system_consistency(self) -> Self:
-            """Validate Singer Oracle tap system consistency and configuration."""
-            # Singer Oracle tap database validation
-            if (
-                hasattr(self, "_oracle_connection")
-                and self._oracle_connection
-                and not hasattr(self, "OracleTapStreamMetadata")
-            ):
-                msg = (
-                    "OracleTapStreamMetadata required when Oracle connection configured"
-                )
-                raise ValueError(msg)
-
-            # Discovery operation validation
-            if (
-                hasattr(self, "_discovery_mode")
-                and self._discovery_mode
-                and not hasattr(self, "OracleTapDiscoveryConfig")
-            ):
-                msg = "OracleTapDiscoveryConfig required for discovery operations"
-                raise ValueError(msg)
-
-            # Singer protocol compliance validation
-            if hasattr(self, "_singer_mode") and self._singer_mode:
-                required_models = ["OracleTapStreamInfo", "OracleTapExecutionStats"]
-                for model in required_models:
-                    if not hasattr(self, model):
-                        msg = f"{model} required for Singer protocol compliance"
-                        raise ValueError(msg)
-
-            return self
-
-        @field_serializer("*", when_used="json")
-        def serialize_with_oracle_metadata(
-            self,
-            value: object,
-            _info: FieldSerializationInfo,
-        ) -> object:
-            """Add Singer Oracle tap metadata to all serialized fields."""
-            if isinstance(value, dict):
-                return {
-                    **value,
-                    "_oracle_tap_metadata": {
-                        "extraction_timestamp": datetime.now(UTC).isoformat(),
-                        "tap_type": "oracle_database_extractor",
-                        "singer_protocol": "v1.0",
-                        "data_source": "oracle_database",
-                    },
-                }
-            if isinstance(value, (str, int, float, bool)) and hasattr(
-                self,
-                "_include_oracle_metadata",
-            ):
-                return {
-                    "value": value,
-                    "_oracle_context": {
-                        "extracted_at": datetime.now(UTC).isoformat(),
-                        "tap_name": "flext-tap-oracle",
-                    },
-                }
-            return value
 
         # Legacy type aliases for backward compatibility
         OracleRecord = dict[str, t.GeneralValueType]
@@ -284,7 +222,7 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     raise ValueError(msg)
 
                 # Enhanced validation with proper limits
-                max_length = FlextConstants.Limits.MAX_STRING_LENGTH
+                max_length = 255  # Oracle identifier max length
                 if len(v) > max_length:
                     msg = f"Stream name too long: {len(v)} > {max_length} characters"
                     raise ValueError(msg)
@@ -306,7 +244,7 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                         raise ValueError(msg)
 
                     # Validation for replication key length
-                    max_key_length = FlextConstants.Limits.MAX_STRING_LENGTH
+                    max_key_length = 255  # Oracle identifier max length
                     if len(self.replication_key) > max_key_length:
                         msg = f"Replication key too long: {len(self.replication_key)} > {max_key_length}"
                         raise ValueError(msg)
@@ -736,13 +674,13 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             # Raw Oracle metadata
-            oracle_tables: list[FlextDbOracleModels.Table] = Field(
+            oracle_tables: list[FlextDbOracleModels.DbOracle.Table] = Field(
                 default_factory=list,
                 description="Raw Oracle table metadata from flext-db-oracle",
             )
 
             # Processed stream information
-            stream_info: list[m.OracleTapStreamInfo] = Field(
+            stream_info: list[m.TapOracle.OracleTapStreamInfo] = Field(
                 default_factory=list,
                 description="Processed stream information for tap use",
             )
@@ -804,14 +742,14 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             def get_selected_streams(
                 self,
-            ) -> list[m.OracleTapStreamInfo]:
+            ) -> list[m.TapOracle.OracleTapStreamInfo]:
                 """Get only selected streams."""
                 return [stream for stream in self.stream_info if stream.is_selected]
 
             def get_table_by_name(
                 self,
                 table_name: str,
-            ) -> FlextDbOracleModels.Table | None:
+            ) -> FlextDbOracleModels.DbOracle.Table | None:
                 """Get Oracle table metadata by name."""
                 for table in self.oracle_tables:
                     if table.name == table_name:
@@ -972,7 +910,7 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             def update_performance_metrics(
                 self,
-            ) -> m.OracleTapExecutionStats:
+            ) -> m.TapOracle.OracleTapExecutionStats:
                 """Return new instance with updated calculated performance metrics."""
                 if self.duration_seconds > 0:
                     return self.model_copy(
@@ -990,7 +928,7 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 records: int,
                 bytes_processed: int,
                 processing_time: float,
-            ) -> m.OracleTapExecutionStats:
+            ) -> m.TapOracle.OracleTapExecutionStats:
                 """Return new instance with added statistics for a processed stream."""
                 updated = self.model_copy(
                     update={
@@ -1006,7 +944,7 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             def mark_stream_error(
                 self,
                 stream_name: str,
-            ) -> m.OracleTapExecutionStats:
+            ) -> m.TapOracle.OracleTapExecutionStats:
                 """Return new instance with marked stream error."""
                 new_failed_streams = (
                     self.failed_streams.copy() if self.failed_streams else []
