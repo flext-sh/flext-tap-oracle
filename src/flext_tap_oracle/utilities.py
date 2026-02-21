@@ -12,6 +12,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from datetime import UTC, datetime
+from typing import Literal
 
 from flext_core import (
     FlextContainer,
@@ -218,24 +219,17 @@ class FlextMeltanoTapOracleUtilities(u_core):
             def create_stream_info_from_oracle_table(
                 oracle_table: FlextDbOracleModels.DbOracle.Table,
                 stream_prefix: str = "oracle",
-                replication_method: str = "FULL_TABLE",
+                replication_method: Literal["FULL_TABLE", "INCREMENTAL"] = "FULL_TABLE",
             ) -> FlextResult[m.TapOracle.OracleTapStreamInfo]:
                 """Create stream info from Oracle table metadata."""
                 try:
                     stream_name = f"{stream_prefix}_{oracle_table.name.lower()}"
 
-                    # Validate replication_method is a valid Literal
-                    valid_method: str = (
-                        replication_method
-                        if replication_method in {"FULL_TABLE", "INCREMENTAL"}
-                        else "FULL_TABLE"
-                    )
-
                     stream_info = m.TapOracle.OracleTapStreamInfo(
                         stream_name=stream_name,
                         table_name=oracle_table.name,
                         schema_name=getattr(oracle_table, "schema_name", None),
-                        replication_method=valid_method,  # type: ignore[arg-type]
+                        replication_method=replication_method,
                         replication_key=None,
                         estimated_rows=None,
                         last_extracted=None,

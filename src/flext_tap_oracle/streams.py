@@ -172,7 +172,10 @@ class FlextMeltanoTapOracleStreams:
                 yield from self._process_results_fallback(query_data)
                 return
             # Convert data to dictionaries using flext-db-oracle metadata
-            data_rows: Iterable[t.GeneralValueType] = query_data  # type: ignore[assignment]
+            # query_data is verified iterable (non-str/bytes) above
+            data_rows: Iterable[t.GeneralValueType] = (
+                query_data if isinstance(query_data, Iterable) else []
+            )
             for row_data in data_rows:
                 try:
                     record: dict[str, t.GeneralValueType]
@@ -220,7 +223,10 @@ class FlextMeltanoTapOracleStreams:
                     "Cannot process query data in fallback mode",
                 )
                 return
-            data_rows: Iterable[t.GeneralValueType] = query_data  # type: ignore[assignment]
+            # query_data is verified iterable (non-str/bytes) above
+            data_rows: Iterable[t.GeneralValueType] = (
+                query_data if isinstance(query_data, Iterable) else []
+            )
             for row_data in data_rows:
                 try:
                     record: dict[str, t.GeneralValueType]
