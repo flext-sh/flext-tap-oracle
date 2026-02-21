@@ -10,6 +10,7 @@ from typing import Protocol, runtime_checkable
 
 from flext_core import FlextTypes as t
 from flext_db_oracle.protocols import FlextDbOracleProtocols
+from flext_meltano import FlextMeltanoModels as m
 from flext_meltano.protocols import FlextMeltanoProtocols
 
 
@@ -142,7 +143,7 @@ class FlextMeltanoTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtoco
             def generate_catalog(
                 self,
                 config: dict[str, t.GeneralValueType],
-            ) -> FlextMeltanoProtocols.Result[dict[str, t.GeneralValueType]]:
+            ) -> FlextMeltanoProtocols.Result[m.Meltano.SingerCatalog]:
                 """Generate Singer catalog from Oracle schema."""
                 ...
 
@@ -150,7 +151,7 @@ class FlextMeltanoTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtoco
                 self,
                 stream: str,
                 state: dict[str, t.GeneralValueType],
-            ) -> FlextMeltanoProtocols.Result[dict[str, t.GeneralValueType]]:
+            ) -> FlextMeltanoProtocols.Result[m.Meltano.SingerStateMessage]:
                 """Sync Singer stream from Oracle table."""
                 ...
 
