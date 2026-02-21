@@ -228,7 +228,7 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table
 
         self._discovery_service = FlextOracleDiscoveryService(
             oracle_api=self._oracle_api,
-            schema_name=cast("str | None", schema_name),
+            schema_name=str(schema_name) if schema_name else None,
         )
         self._connection_test_service = FlextOracleConnectionTestService(
             oracle_api=self._oracle_api,

@@ -125,10 +125,6 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 },
             }
 
-        # Legacy type aliases for backward compatibility
-        OracleRecord = dict[str, t.GeneralValueType]
-        OracleRecords = list[OracleRecord]
-
         class OracleTapStreamMetadata(FlextModels.Entity):
             """Oracle tap stream metadata with Singer protocol compliance.
 
