@@ -17,12 +17,13 @@ from collections.abc import Generator
 
 import pytest
 from flext_core import FlextResult, t
+from flext_tests import FlextTestsDocker
+
 from flext_tap_oracle import (
     FlextMeltanoTapOracleSettings,
     FlextOracleTapService,
     create_oracle_tap_config,
 )
-from flext_tests import FlextTestsDocker
 
 
 # Docker container management with FlextTestsDocker
