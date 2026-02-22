@@ -42,10 +42,10 @@ classifiers = [
 ]
 dependencies = [
   "fastapi>=0.119",
-  "flext-core>=0.8",
-  "flext-db-oracle>=0.9",
-  "flext-meltano>=0.9",
-  "flext-observability>=0.9",
+  "flext-core @ ../flext-core",
+  "flext-db-oracle @ ../flext-db-oracle",
+  "flext-meltano @ ../flext-meltano",
+  "flext-observability @ ../flext-observability",
   "prometheus-client>=0.23",
   "pydantic>=2.12.3",
   "pydantic-core>=2.41.4",
