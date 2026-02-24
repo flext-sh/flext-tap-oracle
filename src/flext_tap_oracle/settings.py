@@ -11,6 +11,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import re
+from collections.abc import Mapping
 from typing import Self
 
 from flext_core import FlextResult, FlextSettings
@@ -287,7 +288,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
             return FlextResult[bool].fail(f"Business rules validation failed: {e}")
 
     # Configuration helper methods
-    def get_oracle_config(self) -> dict[str, t.JsonValue]:
+    def get_oracle_config(self) -> Mapping[str, t.JsonValue]:
         """Get Oracle configuration for flext-db-oracle integration."""
         return {
             "host": self.oracle_host,
@@ -301,7 +302,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
             "timeout": self.query_timeout,
         }
 
-    def get_tap_config(self) -> dict[str, t.JsonValue]:
+    def get_tap_config(self) -> Mapping[str, t.JsonValue]:
         """Get tap-specific configuration dictionary."""
         return {
             "stream_prefix": self.stream_prefix,
@@ -314,7 +315,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
             "fetch_size": self.fetch_size,
         }
 
-    def get_performance_config(self) -> dict[str, t.JsonValue]:
+    def get_performance_config(self) -> Mapping[str, t.JsonValue]:
         """Get performance configuration dictionary."""
         return {
             "batch_size": self.batch_size,
