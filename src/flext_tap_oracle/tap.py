@@ -97,14 +97,14 @@ class OracleTapDiscoverCommand:
             )
         return FlextResult[bool].ok(value=True)
 
-    def execute(self) -> FlextResult[dict[str, t.GeneralValueType]]:
+    def execute(self) -> FlextResult[Mapping[str, t.GeneralValueType]]:
         """Execute Oracle tap discovery using modern patterns."""
         self._logger.info("Starting Oracle database discovery")
 
         try:
             # Load configuration (required)
             if not self.params.config_file:
-                return FlextResult[dict[str, t.GeneralValueType]].fail(
+                return FlextResult[Mapping[str, t.GeneralValueType]].fail(
                     "Configuration file is required for discovery",
                 )
 
@@ -143,11 +143,11 @@ class OracleTapDiscoverCommand:
                 self._logger.info("Catalog written to %s", output_path)
 
             self._logger.info("Oracle schema discovery completed")
-            return FlextResult[dict[str, t.GeneralValueType]].ok(catalog_dict)
+            return FlextResult[Mapping[str, t.GeneralValueType]].ok(catalog_dict)
 
         except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
             logger.exception("Oracle discovery failed")
-            return FlextResult[dict[str, t.GeneralValueType]].fail(
+            return FlextResult[Mapping[str, t.GeneralValueType]].fail(
                 f"Discovery error: {e}",
             )
 
@@ -176,14 +176,14 @@ class OracleTapSyncCommand:
             )
         return FlextResult[bool].ok(value=True)
 
-    def execute(self) -> FlextResult[dict[str, t.GeneralValueType]]:
+    def execute(self) -> FlextResult[Mapping[str, t.GeneralValueType]]:
         """Execute Oracle tap sync using modern patterns."""
         self._logger.info("Starting Oracle data extraction")
 
         try:
             # Load configuration (required)
             if not self.params.config_file:
-                return FlextResult[dict[str, t.GeneralValueType]].fail(
+                return FlextResult[Mapping[str, t.GeneralValueType]].fail(
                     "Configuration file is required for sync",
                 )
 
@@ -224,11 +224,11 @@ class OracleTapSyncCommand:
                 schema_name,
                 record_count,
             )
-            return FlextResult[dict[str, t.GeneralValueType]].ok(result_data)
+            return FlextResult[Mapping[str, t.GeneralValueType]].ok(result_data)
 
         except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
             logger.exception("Oracle sync failed")
-            return FlextResult[dict[str, t.GeneralValueType]].fail(
+            return FlextResult[Mapping[str, t.GeneralValueType]].fail(
                 f"Sync error: {e}",
             )
 
