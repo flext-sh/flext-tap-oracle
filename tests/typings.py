@@ -9,8 +9,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from flext_core import FlextTestsTypes
-
+from flext_tests import FlextTestsTypes
 from flext_tap_oracle import t
 
 
@@ -31,9 +30,6 @@ class TestsFlextMeltanoTapOracleTypes(FlextTestsTypes):
     - Generic types accessed via Tests namespace
     """
 
-    # Composition: expose FlextTestsTypes
-    Tests = FlextTestsTypes
-
     # TapOracle-specific test types namespace
     class TapOracle:
         """Tap Oracle test types - domain-specific for Oracle tap testing.
@@ -53,7 +49,7 @@ class TestsFlextMeltanoTapOracleTypes(FlextTestsTypes):
         # Test data types
         type MockOracleRecord = dict[str, str | int | float | bool]
         type MockOracleTable = list[MockOracleRecord]
-        type TestScenario = dict[str, t.GeneralValueType]
+        type TestScenario = dict[str, t.ContainerValue]
 
         # Test result types
         type TestValidationResult = dict[str, bool | str | list[str]]

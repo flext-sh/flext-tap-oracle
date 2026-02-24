@@ -9,9 +9,8 @@ from __future__ import annotations
 
 from typing import Protocol, runtime_checkable
 
-from flext_tests import FlextTestsProtocols
-
 from flext_tap_oracle import t
+from flext_tests import FlextTestsProtocols
 
 
 class TestsFlextMeltanoTapOracleProtocols(FlextTestsProtocols):
@@ -30,9 +29,6 @@ class TestsFlextMeltanoTapOracleProtocols(FlextTestsProtocols):
     - flext-tap-oracle-specific protocols go in TapOracle namespace
     - Generic protocols accessed via Tests namespace
     """
-
-    # Composition: expose FlextTestsProtocols
-    Tests = FlextTestsProtocols
 
     # TapOracle-specific test protocols namespace
     class TapOracle:

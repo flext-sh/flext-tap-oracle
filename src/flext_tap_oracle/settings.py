@@ -287,7 +287,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
             return FlextResult[bool].fail(f"Business rules validation failed: {e}")
 
     # Configuration helper methods
-    def get_oracle_config(self) -> dict[str, t.GeneralValueType]:
+    def get_oracle_config(self) -> dict[str, t.JsonValue]:
         """Get Oracle configuration for flext-db-oracle integration."""
         return {
             "host": self.oracle_host,
@@ -301,7 +301,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
             "timeout": self.query_timeout,
         }
 
-    def get_tap_config(self) -> dict[str, t.GeneralValueType]:
+    def get_tap_config(self) -> dict[str, t.JsonValue]:
         """Get tap-specific configuration dictionary."""
         return {
             "stream_prefix": self.stream_prefix,
@@ -314,7 +314,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
             "fetch_size": self.fetch_size,
         }
 
-    def get_performance_config(self) -> dict[str, t.GeneralValueType]:
+    def get_performance_config(self) -> dict[str, t.JsonValue]:
         """Get performance configuration dictionary."""
         return {
             "batch_size": self.batch_size,
@@ -336,10 +336,10 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
     def create_for_environment(
         cls,
         environment: str,
-        **overrides: t.GeneralValueType,
+        **overrides: t.JsonValue,
     ) -> FlextMeltanoTapOracleSettings:
         """Create configuration for specific environment using enhanced singleton pattern."""
-        env_overrides: dict[str, t.GeneralValueType] = {}
+        env_overrides: dict[str, t.JsonValue] = {}
 
         if environment == "production":
             env_overrides.update({
@@ -369,9 +369,9 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
         return cls()
 
     @classmethod
-    def create_for_development(cls, **overrides: t.GeneralValueType) -> Self:
+    def create_for_development(cls, **overrides: t.JsonValue) -> Self:
         """Create configuration for development environment."""
-        dev_overrides: dict[str, t.GeneralValueType] = {
+        dev_overrides: dict[str, t.JsonValue] = {
             "oracle_host": "localhost",
             "oracle_port": c.TapOracle.Oracle.DEFAULT_PORT,
             "oracle_service_name": "ORCL",
@@ -384,9 +384,9 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
         return cls(**dev_overrides)
 
     @classmethod
-    def create_for_production(cls, **overrides: t.GeneralValueType) -> Self:
+    def create_for_production(cls, **overrides: t.JsonValue) -> Self:
         """Create configuration for production environment."""
-        prod_overrides: dict[str, t.GeneralValueType] = {
+        prod_overrides: dict[str, t.JsonValue] = {
             "batch_size": c.TapOracle.Singer.MAX_BATCH_SIZE,
             "max_parallel_streams": 4,
             "query_timeout": 300,
@@ -397,9 +397,9 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
         return cls(**prod_overrides)
 
     @classmethod
-    def create_for_testing(cls, **overrides: t.GeneralValueType) -> Self:
+    def create_for_testing(cls, **overrides: t.JsonValue) -> Self:
         """Create configuration for testing environment."""
-        test_overrides: dict[str, t.GeneralValueType] = {
+        test_overrides: dict[str, t.JsonValue] = {
             "oracle_host": "test-oracle",
             "oracle_port": c.TapOracle.Oracle.DEFAULT_PORT,
             "oracle_service_name": "XE",
@@ -418,9 +418,9 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
 
 
 def create_oracle_tap_config(
-    oracle_params: dict[str, t.GeneralValueType],
-    tap_params: dict[str, t.GeneralValueType] | None = None,
-    meltano_params: dict[str, t.GeneralValueType] | None = None,
+    oracle_params: dict[str, t.JsonValue],
+    tap_params: dict[str, t.JsonValue] | None = None,
+    meltano_params: dict[str, t.JsonValue] | None = None,
 ) -> FlextResult[FlextMeltanoTapOracleSettings]:
     """Create Oracle tap configuration using grouped parameters.
 
