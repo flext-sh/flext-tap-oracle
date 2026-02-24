@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import override
 
-from flext_core import FlextLogger, FlextResult, FlextService
+from flext_core import FlextLogger, FlextResult, FlextService, u
 from flext_db_oracle import (
     FlextDbOracleApi,
     FlextDbOracleModels,
@@ -132,7 +132,7 @@ class FlextOracleTableFilterService:
 
             # If specific tables are configured, use them directly
             tables_filter = tap_configuration.get("tables_filter")
-            if tables_filter and isinstance(tables_filter, list):
+            if tables_filter and u.is_list_like(tables_filter):
                 logger.info(
                     "Using configured table filter: %s",
                     tables_filter,
@@ -156,7 +156,7 @@ class FlextOracleTableFilterService:
             exclude_tables_raw = tap_configuration.get("exclude_tables")
             exclude_tables: list[str] = (
                 [str(t) for t in exclude_tables_raw]
-                if isinstance(exclude_tables_raw, list)
+                if u.is_list_like(exclude_tables_raw)
                 else []
             )
             if exclude_tables:

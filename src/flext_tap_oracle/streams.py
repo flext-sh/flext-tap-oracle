@@ -10,7 +10,7 @@ from collections.abc import Iterable, Mapping
 from datetime import datetime
 from typing import override
 
-from flext_core import FlextLogger, FlextResult, t
+from flext_core import FlextLogger, FlextResult, t, u
 from flext_db_oracle import FlextDbOracleApi
 from flext_meltano import FlextMeltanoStream as Stream, FlextMeltanoTap as Tap
 
@@ -72,7 +72,10 @@ class FlextMeltanoTapOracleStreams:
                         "typed_config",
                         None,
                     )
-                    if tap_config and u.Guards.has(tap_config, "get_oracle_config"):
+                    if (
+                        tap_config
+                        and getattr(tap_config, "get_oracle_config", None) is not None
+                    ):
                         # Note: FlextDbOracleConnection does not exist in flext_db_oracle
                         # oracle_config = tap_config.get_oracle_config()
                         # connection = FlextDbOracleConnection(oracle_config)
@@ -107,10 +110,12 @@ class FlextMeltanoTapOracleStreams:
                     # Get schema name safely from tap config
                     schema_name: str | None = None
                     tap_cfg = getattr(self._tap, "config", {})
-                    if u.Guards._is_dict(tap_cfg):
-                        raw_schema = tap_cfg.get("schema_name")
-                        if u.Guards._is_str(raw_schema) and raw_schema:
-                            schema_name = raw_schema
+                    match tap_cfg:
+                        case dict() as tap_cfg_dict:
+                            raw_schema = tap_cfg_dict.get("schema_name")
+                            match raw_schema:
+                                case str() as schema_str if schema_str:
+                                    schema_name = schema_str
 
                     # Build safe query with validated table name (pre-validated identifier)
                     safe_table = self.table_name.replace('"', '""')
@@ -154,7 +159,7 @@ class FlextMeltanoTapOracleStreams:
             """Process results using flext-db-oracle table metadata."""
             # Extract column metadata from FlextDbOracleTable
             columns = getattr(table_metadata, "columns", None)
-            if columns is None or not u.Guards.is_list(columns):
+            if columns is None or not u.is_list_like(columns):
                 FlextMeltanoTapOracleStreams.logger.warning(
                     "Table metadata missing columns, using fallback",
                 )
@@ -162,11 +167,12 @@ class FlextMeltanoTapOracleStreams:
                 return
             column_names: list[str] = [getattr(col, "name", "") for col in columns]
             # Handle TDbOracleQueryResult data structure
-            if (
-                not u.Guards.has(query_data, "__iter__")
-                or u.Guards._is_str(query_data)
-                or u.Guards._is_bytes(query_data)
-            ):
+            query_iter = getattr(query_data, "__iter__", None)
+            is_text_or_bytes = False
+            match query_data:
+                case str() | bytes():
+                    is_text_or_bytes = True
+            if query_iter is None or is_text_or_bytes:
                 FlextMeltanoTapOracleStreams.logger.warning(
                     "Unexpected query data structure, using fallback",
                 )
@@ -174,25 +180,24 @@ class FlextMeltanoTapOracleStreams:
                 return
             # Convert data to dictionaries using flext-db-oracle metadata
             # query_data is verified iterable (non-str/bytes) above
-            data_rows: Iterable[t.GeneralValueType] = (
-                query_data if u.Guards.has(query_data, "__iter__") else []
-            )
+            data_rows: Iterable[t.GeneralValueType] = query_data if query_iter else []
             for row_data in data_rows:
                 try:
                     record: dict[str, t.GeneralValueType]
-                    if u.Guards._is_list_or_tuple(row_data):
-                        record = dict(
-                            zip(column_names, row_data, strict=False),
-                        )
-                    elif u.Guards._is_dict(row_data):
-                        record = row_data
-                    else:
-                        row_type_name = type(row_data).__name__
-                        FlextMeltanoTapOracleStreams.logger.warning(
-                            "Unexpected row data type: %s",
-                            row_type_name,
-                        )
-                        continue
+                    match row_data:
+                        case list() | tuple():
+                            record = dict(
+                                zip(column_names, row_data, strict=False),
+                            )
+                        case dict() as row_dict:
+                            record = row_dict
+                        case _:
+                            row_type_name = type(row_data).__name__
+                            FlextMeltanoTapOracleStreams.logger.warning(
+                                "Unexpected row data type: %s",
+                                row_type_name,
+                            )
+                            continue
                     # Apply Oracle-specific transformations using flext-db-oracle knowledge
                     record = self._transform_oracle_types_with_table_metadata(
                         record,
@@ -212,42 +217,44 @@ class FlextMeltanoTapOracleStreams:
             """Fallback processing without metadata (minimal implementation)."""
             # Use schema properties as column names
             schema_props = self.schema.get("properties", {})
-            column_names: list[str] = (
-                list(schema_props.keys()) if u.Guards._is_dict(schema_props) else []
-            )
+            column_names: list[str] = []
+            match schema_props:
+                case dict() as schema_props_dict:
+                    column_names = list(schema_props_dict.keys())
             # Handle different query_data structures
-            if (
-                not u.Guards.has(query_data, "__iter__")
-                or u.Guards._is_str(query_data)
-                or u.Guards._is_bytes(query_data)
-            ):
+            query_iter = getattr(query_data, "__iter__", None)
+            is_text_or_bytes = False
+            match query_data:
+                case str() | bytes():
+                    is_text_or_bytes = True
+            if query_iter is None or is_text_or_bytes:
                 FlextMeltanoTapOracleStreams.logger.warning(
                     "Cannot process query data in fallback mode",
                 )
                 return
             # query_data is verified iterable (non-str/bytes) above
-            data_rows: Iterable[t.GeneralValueType] = (
-                query_data if u.Guards.has(query_data, "__iter__") else []
-            )
+            data_rows: Iterable[t.GeneralValueType] = query_data if query_iter else []
             for row_data in data_rows:
                 try:
                     record: dict[str, t.GeneralValueType]
-                    if u.Guards._is_list_or_tuple(row_data):
-                        if column_names:
-                            record = dict[str, t.GeneralValueType](
-                                zip(column_names, row_data, strict=False),
-                            )
-                        else:
-                            # Generic column naming
-                            record = {
-                                f"col_{i}": value for i, value in enumerate(row_data)
-                            }
-                    elif u.Guards._is_dict(row_data):
-                        record = row_data
-                    else:
-                        # Convert other types to string representation
-                        str_val: t.GeneralValueType = str(row_data)
-                        record = {"data": str_val}
+                    match row_data:
+                        case list() | tuple():
+                            if column_names:
+                                record = dict[str, t.GeneralValueType](
+                                    zip(column_names, row_data, strict=False),
+                                )
+                            else:
+                                # Generic column naming
+                                record = {
+                                    f"col_{i}": value
+                                    for i, value in enumerate(row_data)
+                                }
+                        case dict() as row_dict:
+                            record = row_dict
+                        case _:
+                            # Convert other types to string representation
+                            str_val: t.GeneralValueType = str(row_data)
+                            record = {"data": str_val}
                     yield record
                 except (ValueError, TypeError, KeyError, AttributeError, OSError):
                     FlextMeltanoTapOracleStreams.logger.exception(
@@ -304,7 +311,7 @@ class FlextMeltanoTapOracleStreams:
                     transformed_record[column_name] = (
                         str(value) if value is not None else None
                     )
-                elif u.Guards.has(value, "__str__"):
+                elif getattr(value, "__str__", None) is not None:
                     # Convert other Oracle-specific types to string representation
                     transformed_record[column_name] = str(value)
                 else:
@@ -324,20 +331,15 @@ class FlextMeltanoTapOracleStreams:
                         "error": "Metadata manager not available",
                     }
                 table_metadata_result = get_meta(self.table_name)
-                if (
-                    u.Guards.has(table_metadata_result, "is_success")
-                    and table_metadata_result.is_success
-                    and u.Guards.has(table_metadata_result, "data")
-                    and table_metadata_result.data
+                if getattr(table_metadata_result, "is_success", None) and getattr(
+                    table_metadata_result, "data", None
                 ):
                     table = table_metadata_result.data
                     columns = getattr(table, "columns", [])
                     return {
                         "table_name": self.table_name,
                         "stream_name": self.name,
-                        "column_count": len(columns)
-                        if u.Guards.is_list(columns)
-                        else 0,
+                        "column_count": len(columns) if u.is_list_like(columns) else 0,
                         "oracle_schema": getattr(table, "schema_name", "unknown"),
                         "table_type": getattr(table, "table_type", "TABLE"),
                     }
@@ -374,8 +376,9 @@ class FlextMeltanoTapOracleStreams:
                     first_val = next(iter(first_row.root.values()), None)
                     if u.Guards.is_type(first_val, (int, float)):
                         return int(first_val)
-                    if u.Guards._is_str(first_val):
-                        return int(first_val)
+                    match first_val:
+                        case str() as first_str:
+                            return int(first_str)
                 return None
             except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                 err_msg = str(e)
@@ -454,7 +457,7 @@ class FlextMeltanoTapOracleStreams:
             # Build basic schema from table metadata
             properties: dict[str, t.GeneralValueType] = {}
             columns_raw = getattr(table_metadata, "columns", None)
-            if u.Guards.is_list(columns_raw):
+            if u.is_list_like(columns_raw):
                 for column in columns_raw:
                     col_name = str(getattr(column, "name", "unknown"))
                     col_type = str(getattr(column, "data_type", "string"))

@@ -104,9 +104,9 @@ class TestsFlextMeltanoTapOracleProtocols(FlextTestsProtocols):
 
 
 # Alias for simplified usage
-tp = TestsFlextMeltanoTapOracleProtocols
+p = TestsFlextMeltanoTapOracleProtocols
 
 __all__ = [
     "TestsFlextMeltanoTapOracleProtocols",
-    "tp",
+    "p",
 ]

@@ -235,7 +235,7 @@ class FlextMeltanoTapOracleUtilities(u_core):
                         estimated_rows=None,
                         last_extracted=None,
                         column_count=len(oracle_table.columns)
-                        if u.Guards.has(oracle_table, "columns")
+                        if getattr(oracle_table, "columns", None) is not None
                         else None,
                     )
 
