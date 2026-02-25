@@ -102,7 +102,7 @@ class FlextMeltanoTapOracleStreams:
 
         def get_records(
             self,
-            context: Mapping[str, t.GeneralValueType] | None = None,  # noqa: ARG002
+            context: Mapping[str, t.GeneralValueType] | None = None,
         ) -> Iterable[Mapping[str, t.GeneralValueType]]:
             """Get records from Oracle table using flext-db-oracle exclusively - NO direct SQLAlchemy."""
             try:

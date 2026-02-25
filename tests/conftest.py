@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import os
 import socket
+from abc import ABC, abstractmethod
 from collections.abc import Generator
 
 import pytest
@@ -20,8 +21,8 @@ from flext_core import FlextResult, t
 from flext_tap_oracle import (
     FlextMeltanoTapOracleSettings,
     FlextOracleTapService,
-    create_oracle_tap_config,
-)
+    )
+from flext_tap_oracle.settings import create_oracle_tap_config
 from flext_tests import FlextTestsDocker
 
 
@@ -712,12 +713,12 @@ def mock_oracle_connection() -> type[
     return MockOracleConnection
 
 
-class _MockQueryStrategy:
+class _MockQueryStrategy(ABC):
     """Base class for mock query strategies - Strategy Pattern."""
 
+    @abstractmethod
     def execute(self) -> list[dict[str, t.GeneralValueType]]:
         """Execute mock query and return results."""
-        raise NotImplementedError
 
 
 class _TablesQueryStrategy(_MockQueryStrategy):
