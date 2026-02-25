@@ -21,7 +21,7 @@ from flext_core import FlextResult, t
 from flext_tap_oracle import (
     FlextMeltanoTapOracleSettings,
     FlextOracleTapService,
-    )
+)
 from flext_tap_oracle.settings import create_oracle_tap_config
 from flext_tests import FlextTestsDocker
 
