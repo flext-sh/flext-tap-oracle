@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import override
 
-from flext_core import FlextLogger, FlextResult, FlextService, u
+from flext_core import FlextLogger, FlextResult, FlextService
 from flext_db_oracle import (
     FlextDbOracleApi,
     FlextDbOracleModels,
@@ -132,15 +132,14 @@ class FlextOracleTableFilterService:
 
             # If specific tables are configured, use them directly
             tables_filter = tap_configuration.get("tables_filter")
-            if isinstance(tables_filter, list):
-                if tables_filter:
-                    logger.info(
-                        "Using configured table filter: %s",
-                        tables_filter,
-                    )
-                    return FlextResult[list[str]].ok(
-                        [str(table_name) for table_name in tables_filter],
-                    )
+            if isinstance(tables_filter, list) and tables_filter:
+                logger.info(
+                    "Using configured table filter: %s",
+                    tables_filter,
+                )
+                return FlextResult[list[str]].ok(
+                    [str(table_name) for table_name in tables_filter],
+                )
 
             # Otherwise discover all tables from Oracle using Layer 2 API
             tables_result = self.discovery_service.execute()

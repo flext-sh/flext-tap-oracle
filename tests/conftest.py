@@ -38,7 +38,7 @@ def shared_oracle_container(docker_control: FlextTestsDocker) -> Generator[str]:
     """Managed Oracle container using FlextTestsDocker with auto-start."""
     _ = docker_control
 
-    yield "flext-oracle-db-test"
+    return "flext-oracle-db-test"
 
 
 # Test environment setup
