@@ -269,7 +269,7 @@ def create_tap_oracle_cli() -> FlextResult[FlextCliCommands]:
 def handle_discover_command(
     *_args: t.GeneralValueType,
     **kwargs: t.GeneralValueType,
-) -> t.GeneralValueType:
+) -> FlextResult[t.JsonValue]:
     """Handle discover command using flext-cli patterns - NO click decorators."""
     try:
         # Convert GeneralValueType kwargs to object for from_click_args
@@ -280,19 +280,21 @@ def handle_discover_command(
 
         result = command.execute()
         if result.is_failure:
-            cli_api.print(f"Discovery failed: {result.error}", style="red")
-            return False
+            error_message = result.error or "Discovery failed"
+            cli_api.print(f"Discovery failed: {error_message}", style="red")
+            return FlextResult[t.JsonValue].fail(error_message)
 
-        return True
+        return FlextResult[t.JsonValue].ok(True)
     except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-        cli_api.print(f"Discovery error: {e}", style="red")
-        return False
+        error_message = f"Discovery error: {e}"
+        cli_api.print(error_message, style="red")
+        return FlextResult[t.JsonValue].fail(error_message)
 
 
 def handle_sync_command(
     *_args: t.GeneralValueType,
     **kwargs: t.GeneralValueType,
-) -> t.GeneralValueType:
+) -> FlextResult[t.JsonValue]:
     """Handle sync command using flext-cli patterns - NO click decorators."""
     try:
         # Convert GeneralValueType kwargs to object for from_click_args
@@ -303,13 +305,15 @@ def handle_sync_command(
 
         result = command.execute()
         if result.is_failure:
-            cli_api.print(f"Sync failed: {result.error}", style="red")
-            return False
+            error_message = result.error or "Sync failed"
+            cli_api.print(f"Sync failed: {error_message}", style="red")
+            return FlextResult[t.JsonValue].fail(error_message)
 
-        return True
+        return FlextResult[t.JsonValue].ok(True)
     except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-        cli_api.print(f"Sync error: {e}", style="red")
-        return False
+        error_message = f"Sync error: {e}"
+        cli_api.print(error_message, style="red")
+        return FlextResult[t.JsonValue].fail(error_message)
 
 
 def cli() -> None:

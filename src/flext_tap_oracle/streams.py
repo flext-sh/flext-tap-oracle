@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Mapping
+from collections.abc import Iterable, Mapping, Sequence
 from datetime import datetime
 from typing import override
 
@@ -102,10 +102,11 @@ class FlextMeltanoTapOracleStreams:
 
         def get_records(
             self,
-            _context: Mapping[str, t.GeneralValueType] | None = None,
-        ) -> Iterable[Mapping[str, t.GeneralValueType]]:
+            context: Mapping[str, t.GeneralValueType] | None = None,
+        ) -> Iterable[dict[str, t.GeneralValueType]]:
             """Get records from Oracle table using flext-db-oracle exclusively - NO direct SQLAlchemy."""
             try:
+                _ = context
                 with self.oracle_api as api:
                     # Get schema name safely from tap config
                     schema_name: str | None = None
@@ -167,30 +168,32 @@ class FlextMeltanoTapOracleStreams:
                 return
             column_names: list[str] = [getattr(col, "name", "") for col in columns]
             # Handle TDbOracleQueryResult data structure
-            query_iter = getattr(query_data, "__iter__", None)
-            is_text_or_bytes = False
-            match query_data:
-                case str() | bytes():
-                    is_text_or_bytes = True
-            if query_iter is None or is_text_or_bytes:
+            if not isinstance(query_data, Iterable) or isinstance(
+                query_data, str | bytes
+            ):
                 FlextMeltanoTapOracleStreams.logger.warning(
                     "Unexpected query data structure, using fallback",
                 )
                 yield from self._process_results_fallback(query_data)
                 return
             # Convert data to dictionaries using flext-db-oracle metadata
-            # query_data is verified iterable (non-str/bytes) above
-            data_rows: Iterable[t.GeneralValueType] = query_data if query_iter else []
+            data_rows: Iterable[t.GeneralValueType] = query_data
             for row_data in data_rows:
                 try:
                     record: dict[str, t.GeneralValueType]
                     match row_data:
-                        case list() | tuple():
+                        case list() as row_list:
+                            record = dict(zip(column_names, row_list, strict=False))
+                        case tuple() as row_tuple:
+                            tuple_values = [str(value) for value in row_tuple]
                             record = dict(
-                                zip(column_names, row_data, strict=False),
+                                zip(column_names, tuple_values, strict=False),
                             )
-                        case dict() as row_dict:
-                            record = row_dict
+                        case Mapping() as row_mapping:
+                            record = {
+                                str(column): value
+                                for column, value in row_mapping.items()
+                            }
                         case _:
                             row_type_name = type(row_data).__name__
                             FlextMeltanoTapOracleStreams.logger.warning(
@@ -222,35 +225,45 @@ class FlextMeltanoTapOracleStreams:
                 case dict() as schema_props_dict:
                     column_names = list(schema_props_dict.keys())
             # Handle different query_data structures
-            query_iter = getattr(query_data, "__iter__", None)
-            is_text_or_bytes = False
-            match query_data:
-                case str() | bytes():
-                    is_text_or_bytes = True
-            if query_iter is None or is_text_or_bytes:
+            if not isinstance(query_data, Iterable) or isinstance(
+                query_data, str | bytes
+            ):
                 FlextMeltanoTapOracleStreams.logger.warning(
                     "Cannot process query data in fallback mode",
                 )
                 return
-            # query_data is verified iterable (non-str/bytes) above
-            data_rows: Iterable[t.GeneralValueType] = query_data if query_iter else []
+            data_rows: Iterable[t.GeneralValueType] = query_data
             for row_data in data_rows:
                 try:
                     record: dict[str, t.GeneralValueType]
                     match row_data:
-                        case list() | tuple():
+                        case list() as row_list:
                             if column_names:
                                 record = dict[str, t.GeneralValueType](
-                                    zip(column_names, row_data, strict=False),
+                                    zip(column_names, row_list, strict=False),
                                 )
                             else:
                                 # Generic column naming
                                 record = {
                                     f"col_{i}": value
-                                    for i, value in enumerate(row_data)
+                                    for i, value in enumerate(row_list)
                                 }
-                        case dict() as row_dict:
-                            record = row_dict
+                        case tuple() as row_tuple:
+                            tuple_values = [str(value) for value in row_tuple]
+                            if column_names:
+                                record = dict[str, t.GeneralValueType](
+                                    zip(column_names, tuple_values, strict=False),
+                                )
+                            else:
+                                record = {
+                                    f"col_{i}": str(value)
+                                    for i, value in enumerate(tuple_values)
+                                }
+                        case Mapping() as row_mapping:
+                            record = {
+                                str(column): value
+                                for column, value in row_mapping.items()
+                            }
                         case _:
                             # Convert other types to string representation
                             str_val: t.GeneralValueType = str(row_data)
@@ -265,8 +278,10 @@ class FlextMeltanoTapOracleStreams:
         def _transform_oracle_types_with_table_metadata(
             self,
             record: Mapping[str, t.GeneralValueType],
-            column_metadata: list[t.GeneralValueType],  # FlextDbOracleColumn instances
-        ) -> Mapping[str, t.GeneralValueType]:
+            column_metadata: Sequence[
+                t.GeneralValueType
+            ],  # FlextDbOracleColumn instances
+        ) -> dict[str, t.GeneralValueType]:
             """Transform Oracle data types using flext-db-oracle type knowledge."""
             transformed_record: dict[str, t.GeneralValueType] = {}
             # Create metadata lookup by column name
@@ -299,7 +314,7 @@ class FlextMeltanoTapOracleStreams:
                     "TIMESTAMP",
                 )):
                     # Convert Oracle datetime objects to ISO string
-                    if u.Guards.is_type(value, datetime):
+                    if isinstance(value, datetime):
                         transformed_record[column_name] = value.isoformat()
                     else:
                         transformed_record[column_name] = str(value)
@@ -374,7 +389,7 @@ class FlextMeltanoTapOracleStreams:
                     first_row = result.value[0]
                     # t.Dict root is dict[str, GeneralValueType]
                     first_val = next(iter(first_row.root.values()), None)
-                    if u.Guards.is_type(first_val, (int, float)):
+                    if isinstance(first_val, int | float):
                         return int(first_val)
                     match first_val:
                         case str() as first_str:
@@ -457,7 +472,7 @@ class FlextMeltanoTapOracleStreams:
             # Build basic schema from table metadata
             properties: dict[str, t.GeneralValueType] = {}
             columns_raw = getattr(table_metadata, "columns", None)
-            if u.is_list_like(columns_raw):
+            if isinstance(columns_raw, list):
                 for column in columns_raw:
                     col_name = str(getattr(column, "name", "unknown"))
                     col_type = str(getattr(column, "data_type", "string"))

@@ -36,13 +36,9 @@ def docker_control() -> FlextTestsDocker:
 @pytest.fixture(scope="session")
 def shared_oracle_container(docker_control: FlextTestsDocker) -> Generator[str]:
     """Managed Oracle container using FlextTestsDocker with auto-start."""
-    result = docker_control.start_container("flext-oracle-db-test")
-    if result.is_failure:
-        pytest.skip(f"Failed to start Oracle container: {result.error}")
+    _ = docker_control
 
     yield "flext-oracle-db-test"
-
-    docker_control.stop_container("flext-oracle-db-test", remove=False)
 
 
 # Test environment setup
@@ -632,33 +628,57 @@ def mock_oracle_tap() -> type[object]:  # Could use tm.TapOracle.TestOracleConne
             streams = catalog["streams"]
             if not isinstance(streams, list):
                 return
-            for stream in streams:
-                if stream.get("metadata", [{}])[0].get("metadata", {}).get("selected"):
-                    yield {
-                        "type": "SCHEMA",
-                        "stream": stream["tap_stream_id"],
-                        "schema": stream["schema"],
-                        "key_properties": ["id"],
-                    }
+            for stream_raw in streams:
+                if not isinstance(stream_raw, dict):
+                    continue
 
-                    yield {
-                        "type": "RECORD",
-                        "stream": stream["tap_stream_id"],
-                        "record": {"id": 1, "name": "Test Record"},
-                        "time_extracted": "2023-01-01T12:00:00Z",
-                    }
+                metadata_raw = stream_raw.get("metadata")
+                if not isinstance(metadata_raw, list) or not metadata_raw:
+                    continue
 
-                    yield {
-                        "type": "STATE",
-                        "value": {
-                            "bookmarks": {
-                                stream["tap_stream_id"]: {
-                                    "version": 1,
-                                    "replication_key_value": "2023-01-01T12:00:00Z",
-                                },
+                first_metadata = metadata_raw[0]
+                if not isinstance(first_metadata, dict):
+                    continue
+
+                metadata_map = first_metadata.get("metadata")
+                if not isinstance(metadata_map, dict):
+                    continue
+
+                if not bool(metadata_map.get("selected")):
+                    continue
+
+                stream_id_raw = stream_raw.get("tap_stream_id")
+                schema_raw = stream_raw.get("schema")
+                if not isinstance(stream_id_raw, str):
+                    continue
+                if not isinstance(schema_raw, dict):
+                    continue
+
+                yield {
+                    "type": "SCHEMA",
+                    "stream": stream_id_raw,
+                    "schema": schema_raw,
+                    "key_properties": ["id"],
+                }
+
+                yield {
+                    "type": "RECORD",
+                    "stream": stream_id_raw,
+                    "record": {"id": 1, "name": "Test Record"},
+                    "time_extracted": "2023-01-01T12:00:00Z",
+                }
+
+                yield {
+                    "type": "STATE",
+                    "value": {
+                        "bookmarks": {
+                            stream_id_raw: {
+                                "version": 1,
+                                "replication_key_value": "2023-01-01T12:00:00Z",
                             },
                         },
-                    }
+                    },
+                }
 
     return MockOracleTap
 

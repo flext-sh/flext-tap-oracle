@@ -132,12 +132,15 @@ class FlextOracleTableFilterService:
 
             # If specific tables are configured, use them directly
             tables_filter = tap_configuration.get("tables_filter")
-            if tables_filter and u.is_list_like(tables_filter):
-                logger.info(
-                    "Using configured table filter: %s",
-                    tables_filter,
-                )
-                return FlextResult[list[str]].ok([str(t) for t in tables_filter])
+            if isinstance(tables_filter, list):
+                if tables_filter:
+                    logger.info(
+                        "Using configured table filter: %s",
+                        tables_filter,
+                    )
+                    return FlextResult[list[str]].ok(
+                        [str(table_name) for table_name in tables_filter],
+                    )
 
             # Otherwise discover all tables from Oracle using Layer 2 API
             tables_result = self.discovery_service.execute()
@@ -154,11 +157,9 @@ class FlextOracleTableFilterService:
 
             # Apply exclusion filter if configured
             exclude_tables_raw = tap_configuration.get("exclude_tables")
-            exclude_tables: list[str] = (
-                [str(t) for t in exclude_tables_raw]
-                if u.is_list_like(exclude_tables_raw)
-                else []
-            )
+            exclude_tables: list[str] = []
+            if isinstance(exclude_tables_raw, list):
+                exclude_tables = [str(table_name) for table_name in exclude_tables_raw]
             if exclude_tables:
                 filtered_tables = [
                     table for table in table_names if table not in exclude_tables
@@ -217,7 +218,7 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table
         oracle_config = config.get_oracle_config()
         # Convert config to FlextDbOracleSettings
 
-        oracle_settings = FlextDbOracleSettings(**oracle_config)
+        oracle_settings = FlextDbOracleSettings.model_validate(oracle_config)
         self._oracle_api = FlextDbOracleApi(oracle_settings)
 
         # Create domain services for Oracle operations

@@ -49,7 +49,7 @@ class TestsFlextMeltanoTapOracleTypes(FlextTestsTypes):
         # Test data types
         type MockOracleRecord = dict[str, str | int | float | bool]
         type MockOracleTable = list[MockOracleRecord]
-        type TestScenario = dict[str, t.ContainerValue]
+        type TestScenario = dict[str, t.GeneralValueType]
 
         # Test result types
         type TestValidationResult = dict[str, bool | str | list[str]]

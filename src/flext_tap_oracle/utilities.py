@@ -256,13 +256,13 @@ class FlextMeltanoTapOracleUtilities(u_core):
                     # Convert tables to stream info
                     stream_infos: list[m.TapOracle.OracleTapStreamInfo] = []
                     for table in tables:
-                        if not u.Guards.is_type(
-                            table,
-                            FlextDbOracleModels.DbOracle.Table,
-                        ):
-                            continue
+                        match table:
+                            case FlextDbOracleModels.DbOracle.Table() as oracle_table:
+                                pass
+                            case _:
+                                continue
                         stream_result = FlextMeltanoTapOracleUtilities.TapOracle.StreamManagement.create_stream_info_from_oracle_table(
-                            table,
+                            oracle_table,
                         )
                         if stream_result.is_success and stream_result.value is not None:
                             stream_infos.append(stream_result.value)
@@ -416,12 +416,11 @@ class FlextMeltanoTapOracleUtilities(u_core):
 
                     # Add optimizations based on table size
                     row_count = table_stats.get("row_count", 0)
-                    if (
-                        u.Guards.is_type(row_count, (int, float))
-                        and row_count > c.TapOracle.LARGE_TABLE_THRESHOLD
-                    ):
-                        # Add parallel hints for large tables
-                        optimized_query = f"/*+ PARALLEL(4) */ {optimized_query}"
+                    if isinstance(row_count, int | float):
+                        numeric_row_count = float(row_count)
+                        if numeric_row_count > c.TapOracle.LARGE_TABLE_THRESHOLD:
+                            # Add parallel hints for large tables
+                            optimized_query = f"/*+ PARALLEL(4) */ {optimized_query}"
 
                     # Add index hints if available
                     if "primary_key" in table_stats:

@@ -362,7 +362,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
             })
 
         all_overrides = {**env_overrides, **overrides}
-        return cls(**all_overrides)
+        return cls.model_validate(all_overrides)
 
     @classmethod
     def get_global_instance(cls) -> Self:
@@ -382,7 +382,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
             "query_timeout": 60,
             **overrides,
         }
-        return cls(**dev_overrides)
+        return cls.model_validate(dev_overrides)
 
     @classmethod
     def create_for_production(cls, **overrides: t.JsonValue) -> Self:
@@ -395,7 +395,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
             "enable_incremental": True,
             **overrides,
         }
-        return cls(**prod_overrides)
+        return cls.model_validate(prod_overrides)
 
     @classmethod
     def create_for_testing(cls, **overrides: t.JsonValue) -> Self:
@@ -410,7 +410,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
             "query_timeout": 30,
             **overrides,
         }
-        return cls(**test_overrides)
+        return cls.model_validate(test_overrides)
 
     @classmethod
     def reset_global_instance(cls) -> None:

@@ -52,7 +52,7 @@ class TestsFlextMeltanoTapOracleUtilities(FlextTestsUtilities):
             **kwargs: t.GeneralValueType,
         ) -> dict[str, t.GeneralValueType]:
             """Create test Oracle configuration."""
-            config = {
+            config: dict[str, t.GeneralValueType] = {
                 "host": host,
                 "port": port,
                 "service_name": service_name,
@@ -70,7 +70,7 @@ class TestsFlextMeltanoTapOracleUtilities(FlextTestsUtilities):
             **kwargs: t.GeneralValueType,
         ) -> dict[str, t.GeneralValueType]:
             """Create test Singer stream configuration."""
-            stream = {
+            stream: dict[str, t.GeneralValueType] = {
                 "stream_name": stream_name,
                 "table_name": table_name,
                 "replication_method": replication_method,
@@ -96,7 +96,10 @@ class TestsFlextMeltanoTapOracleUtilities(FlextTestsUtilities):
             """Generate mock Oracle data for testing."""
             data = []
             for i in range(row_count):
-                row = {"id": i + 1, "name": f"Test Record {i + 1}"}
+                row: dict[str, t.GeneralValueType] = {
+                    "id": i + 1,
+                    "name": f"Test Record {i + 1}",
+                }
                 row.update(kwargs)
                 data.append(row)
             return data
