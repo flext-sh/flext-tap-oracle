@@ -267,7 +267,7 @@ def create_tap_oracle_cli() -> FlextResult[FlextCliCommands]:
 
 
 def handle_discover_command(
-    *args: t.GeneralValueType,
+    *_args: t.GeneralValueType,
     **kwargs: t.GeneralValueType,
 ) -> t.GeneralValueType:
     """Handle discover command using flext-cli patterns - NO click decorators."""
@@ -290,7 +290,7 @@ def handle_discover_command(
 
 
 def handle_sync_command(
-    *args: t.GeneralValueType,
+    *_args: t.GeneralValueType,
     **kwargs: t.GeneralValueType,
 ) -> t.GeneralValueType:
     """Handle sync command using flext-cli patterns - NO click decorators."""

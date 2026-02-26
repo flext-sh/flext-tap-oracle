@@ -7,22 +7,18 @@ Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
 """
 
-# type: ignore
-
 from __future__ import annotations
-from flext_tap_oracle import t
 
 from collections.abc import Generator
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
-from pydantic import ValidationError
-
-from flext_tap_oracle import (  # type: ignore
-    FlextOracleDiscoveryService,
-    FlextOracleConnectionTestService,
-    FlextOracleTableFilterService,
+from flext_tap_oracle import (
+    FlextMeltanoTapOracleSettings,
+    FlextOracleTapService,
+    t,
 )
+from pydantic import ValidationError
 
 # Constants
 EXPECTED_BULK_SIZE = 2
@@ -82,7 +78,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         mock_oracle_connection: Mock,
     ) -> None:
         """Test tap configuration validation for database connection."""
-        config = FlextOracleTapConfig(**database_config)
+        config = FlextMeltanoTapOracleSettings(**database_config)
 
         if config.connection_type != "database":
             raise AssertionError(f"Expected {'database'}, got {config.connection_type}")
@@ -103,7 +99,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         mock_oracle_connection: Mock,
     ) -> None:
         """Test tap configuration validation for database connection only."""
-        config = FlextOracleTapConfig(**database_config)
+        config = FlextMeltanoTapOracleSettings(**database_config)
 
         if config.connection_type != "database":
             raise AssertionError(f"Expected {'database'}, got {config.connection_type}")
@@ -122,7 +118,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         """Test configuration validation errors."""
         # Missing required fields for database connection
         with pytest.raises(ValidationError, match="Field required"):
-            FlextOracleTapConfig(
+            FlextMeltanoTapOracleSettings(
                 connection_type="database",
                 host="required",
                 username="required",
@@ -131,13 +127,13 @@ class TestFlextOracleTapBaseServiceEnterprise:
 
         # Invalid connection type
         with pytest.raises(ValidationError, match="Connection type must be 'database'"):
-            FlextOracleTapConfig(
+            FlextMeltanoTapOracleSettings(
                 connection_type="invalid", host="test", username="test", password="test"
             )
 
     def test_self(self, database_config: dict[str, t.GeneralValueType]) -> None:
         """Test tap initialization with configuration."""
-        tap = FlextOracleTapBaseService(config=database_config)
+        tap = FlextOracleTapService(config=database_config)
 
         if tap.name != "tap-oracle":
             raise AssertionError(f"Expected {'tap-oracle'}, got {tap.name}")
@@ -154,7 +150,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         mock_oracle_connection: Mock,
     ) -> None:
         """Test database stream discovery."""
-        tap = FlextOracleTapBaseService(config=database_config)
+        tap = FlextOracleTapService(config=database_config)
 
         # So the tap should discover exactly those tables without needing Oracle DB connection
         if tap.typed_config.tables != ["USERS", "ORDERS", "PRODUCTS"]:
@@ -187,7 +183,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         mock_oracle_connection: Mock,
     ) -> None:
         """Test Oracle database stream discovery."""
-        tap = FlextOracleTapBaseService(config=database_config)
+        tap = FlextOracleTapService(config=database_config)
 
         # So the tap should discover exactly those tables without needing Oracle DB connection
         if tap.typed_config.tables != ["USERS", "ORDERS", "PRODUCTS"]:
@@ -213,7 +209,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         mock_oracle_connection: Mock,
     ) -> None:
         """Test database connection testing."""
-        tap = FlextOracleTapBaseService(config=database_config)
+        tap = FlextOracleTapService(config=database_config)
 
         # Mock the async bridge to return successful connection test
         with patch(
@@ -240,7 +236,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         with patch("flext_db_oracle.FlextDbOracleApi") as mock_connection_class:
             mock_connection_class.side_effect = Exception("Connection failed")
 
-            tap = FlextOracleTapBaseService(config=database_config)
+            tap = FlextOracleTapService(config=database_config)
             result = tap.test_connection()
 
             if result:
@@ -252,7 +248,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         mock_oracle_connection: Mock,
     ) -> None:
         """Test Oracle database connection testing."""
-        tap = FlextOracleTapBaseService(config=database_config)
+        tap = FlextOracleTapService(config=database_config)
 
         # Mock the async bridge to return successful connection test
         with patch(
@@ -276,7 +272,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         mock_oracle_connection: Mock,
     ) -> None:
         """Test comprehensive metrics collection."""
-        tap = FlextOracleTapBaseService(config=database_config)
+        tap = FlextOracleTapService(config=database_config)
         metrics = tap.get_metrics()
 
         if "connection_type" not in metrics:
@@ -295,10 +291,12 @@ class TestFlextOracleTapBaseServiceEnterprise:
             assert config_metrics.get("async_enabled") is True  # default
             assert config_metrics.get("circuit_breaker_enabled") is True  # default
 
-    def test_enterprise_self(self, database_config: dict[str, t.GeneralValueType]) -> None:
+    def test_enterprise_self(
+        self, database_config: dict[str, t.GeneralValueType]
+    ) -> None:
         """Test metrics collection when disabled."""
         database_config["enable_metrics"] = False
-        tap = FlextOracleTapBaseService(config=database_config)
+        tap = FlextOracleTapService(config=database_config)
         metrics = tap.get_metrics()
 
         if metrics != {}:
@@ -310,7 +308,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         mock_oracle_connection: Mock,
     ) -> None:
         """Test async operation support."""
-        tap = FlextOracleTapBaseService(config=database_config)
+        tap = FlextOracleTapService(config=database_config)
 
         # Mock streams with async support
         mock_stream = AsyncMock()
@@ -331,7 +329,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
     ) -> None:
         """Test table filtering during discovery."""
         # Test with specific tables configured
-        tap = FlextOracleTapBaseService(config=database_config)
+        tap = FlextOracleTapService(config=database_config)
         mock_connection = Mock()
 
         tables = tap._get_discoverable_tables()
@@ -352,7 +350,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         # Remove tables config to trigger auto-discovery
         del database_config["tables"]
 
-        tap = FlextOracleTapBaseService(config=database_config)
+        tap = FlextOracleTapService(config=database_config)
 
         # Mock the schema service to return mock tables
         mock_table_metadata = []
@@ -388,7 +386,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         del database_config["tables"]
         database_config["exclude_tables"] = ["TEMP_TABLE", "LOG_TABLE"]
 
-        tap = FlextOracleTapBaseService(config=database_config)
+        tap = FlextOracleTapService(config=database_config)
 
         # Mock the schema service to return mock tables
         mock_table_metadata = []
@@ -421,7 +419,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         del database_config["tables"]
         database_config["table_pattern"] = "^USER.*|^ORDER.*"
 
-        tap = FlextOracleTapBaseService(config=database_config)
+        tap = FlextOracleTapService(config=database_config)
 
         # Mock the schema service to return mock tables
         mock_table_metadata = []
@@ -469,7 +467,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         # Increase parallelism for stress test
         database_config["max_parallel_streams"] = 8
 
-        FlextOracleTapBaseService(config=database_config)
+        FlextOracleTapService(config=database_config)
 
         # Mock multiple streams
         mock_streams = []
@@ -499,7 +497,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         with patch("flext_db_oracle.FlextDbOracleApi") as mock_connection_class:
             mock_connection_class.side_effect = Exception("Connection failed")
 
-            tap = FlextOracleTapBaseService(config=database_config)
+            tap = FlextOracleTapService(config=database_config)
 
             # Discovery should handle errors gracefully
             streams = tap.discover_streams()
@@ -514,16 +512,14 @@ class TestFlextOracleTapBaseServiceEnterprise:
     ) -> None:
         """Test performance configuration validation."""
         # Test with extreme values
-        database_config.update(
-            {
-                "batch_size": 50,  # Very small - should warn
-                "max_parallel_streams": 8,  # Maximum allowed value, larger than pool size
-                "connection_pool_size": 6,
-            }
-        )
+        database_config.update({
+            "batch_size": 50,  # Very small - should warn
+            "max_parallel_streams": 8,  # Maximum allowed value, larger than pool size
+            "connection_pool_size": 6,
+        })
 
         # Should not raise errors but may log warnings
-        config = FlextOracleTapConfig(**database_config)
+        config = FlextMeltanoTapOracleSettings(**database_config)
         if config.batch_size != 50:
             raise AssertionError(f"Expected {50}, got {config.batch_size}")
         assert config.max_parallel_streams == EXPECTED_TOTAL_PAGES
@@ -535,7 +531,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         mock_oracle_connection: Mock,
     ) -> None:
         """Test complete real-world workflow simulation."""
-        tap = FlextOracleTapBaseService(config=database_config)
+        tap = FlextOracleTapService(config=database_config)
 
         # Mock the async bridge for connection testing
         with patch(
@@ -586,7 +582,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         database_config: dict[str, t.GeneralValueType],
     ) -> None:
         """Test connection string generation for logging."""
-        config = FlextOracleTapConfig(**database_config)
+        config = FlextMeltanoTapOracleSettings(**database_config)
         conn_str = config.get_connection_string()
 
         if conn_str != "oracle://testuser:***@test-oracle:1521/TESTDB":
@@ -599,7 +595,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         database_config: dict[str, t.GeneralValueType],
     ) -> None:
         """Test performance settings extraction."""
-        config = FlextOracleTapConfig(**database_config)
+        config = FlextMeltanoTapOracleSettings(**database_config)
         perf_settings = config.get_performance_settings()
 
         if perf_settings["batch_size"] != 1000:
@@ -613,7 +609,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         database_config: dict[str, t.GeneralValueType],
     ) -> None:
         """Test circuit breaker settings extraction."""
-        config = FlextOracleTapConfig(**database_config)
+        config = FlextMeltanoTapOracleSettings(**database_config)
         cb_settings = config.get_circuit_breaker_settings()
 
         assert cb_settings["enabled"] is True  # default
@@ -630,7 +626,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         database_config: dict[str, t.GeneralValueType],
     ) -> None:
         """Test comprehensive configuration validation."""
-        config = FlextOracleTapConfig(**database_config)
+        config = FlextMeltanoTapOracleSettings(**database_config)
 
         # Should pass validation without errors
         if not (config.validate_configuration()):
@@ -647,7 +643,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
 
         # Pydantic validation should fail immediately when creating the config
         with pytest.raises(ValidationError, match="Field required"):
-            FlextOracleTapConfig.model_validate(incomplete_config)
+            FlextMeltanoTapOracleSettings.model_validate(incomplete_config)
 
     # CLI functionality was removed with facade - test no longer needed
 
@@ -657,7 +653,7 @@ class TestFlextOracleTapBaseServiceEnterprise:
         mock_oracle_connection: Mock,
     ) -> None:
         """Test stream name generation patterns."""
-        tap = FlextOracleTapBaseService(config=database_config)
+        tap = FlextOracleTapService(config=database_config)
 
         # Mock the discovery methods to return predictable streams
         with patch.object(tap, "_discover_database_streams") as mock_db:
@@ -704,13 +700,13 @@ class TestFlextOracleTapBaseServiceEnterprise:
         }
 
         # Configuration should be created efficiently
-        config = FlextOracleTapConfig.model_validate(large_config)
+        config = FlextMeltanoTapOracleSettings.model_validate(large_config)
         assert config.tables is not None
         if len(config.tables) != 1000:
             raise AssertionError(f"Expected {1000}, got {len(config.tables)}")
 
         # Tap should handle large Oracle database configuration
-        tap = FlextOracleTapBaseService(config=large_config)
+        tap = FlextOracleTapService(config=large_config)
         if tap.typed_config.connection_type != "database":
             raise AssertionError(
                 f"Expected {'database'}, got {tap.typed_config.connection_type}"
