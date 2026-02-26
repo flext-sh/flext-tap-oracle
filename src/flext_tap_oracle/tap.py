@@ -12,11 +12,11 @@ from __future__ import annotations
 import json
 import sys
 from collections.abc import Mapping
-from dataclasses import dataclass
 from pathlib import Path
 
 from flext_cli import FlextCli, FlextCliCommands
 from flext_core import FlextLogger, FlextResult, t
+from pydantic import BaseModel, ConfigDict, Field
 
 from flext_tap_oracle.settings import FlextMeltanoTapOracleSettings
 
@@ -24,12 +24,17 @@ logger = FlextLogger(__name__)
 cli_api = FlextCli()
 
 
-@dataclass
-class OracleTapDiscoverParams:
+class OracleTapDiscoverParams(BaseModel):
     """Parameter object for Oracle tap discovery operations - flext-cli pattern."""
 
-    config_file: str | None = None
-    output_file: str | None = None
+    model_config = ConfigDict(extra="forbid")
+
+    config_file: str | None = Field(
+        default=None, description="Path to configuration file"
+    )
+    output_file: str | None = Field(
+        default="catalog.json", description="Path to output catalog file"
+    )
 
     @classmethod
     def from_click_args(cls, **kwargs: object) -> OracleTapDiscoverParams:
@@ -47,14 +52,19 @@ class OracleTapDiscoverParams:
         )
 
 
-@dataclass
-class OracleTapSyncParams:
+class OracleTapSyncParams(BaseModel):
     """Parameter object for Oracle tap sync operations - flext-cli pattern."""
 
-    config_file: str | None = None
-    catalog_file: str | None = None
-    state_file: str | None = None
-    output_file: str | None = None
+    model_config = ConfigDict(extra="forbid")
+
+    config_file: str | None = Field(
+        default=None, description="Path to configuration file"
+    )
+    catalog_file: str | None = Field(
+        default="catalog.json", description="Path to catalog file"
+    )
+    state_file: str | None = Field(default=None, description="Path to state file")
+    output_file: str | None = Field(default=None, description="Path to output file")
 
     @classmethod
     def from_click_args(cls, **kwargs: object) -> OracleTapSyncParams:
