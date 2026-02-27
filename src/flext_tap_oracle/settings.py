@@ -10,11 +10,9 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import override
-
 import re
 from collections.abc import Mapping
-from typing import Self
+from typing import Self, override
 
 from flext_core import FlextResult, FlextSettings
 from pydantic import Field, SecretStr, field_validator, model_validator
@@ -368,7 +366,6 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
 
     @classmethod
     @override
-
     def get_global_instance(cls) -> Self:
         """Get the global singleton instance using enhanced FlextSettings pattern."""
         return cls()
@@ -418,7 +415,6 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
 
     @classmethod
     @override
-
     def reset_global_instance(cls) -> None:
         """Reset the global FlextMeltanoTapOracleSettings instance (mainly for testing)."""
         # No shared instance to reset
