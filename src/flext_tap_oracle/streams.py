@@ -85,7 +85,7 @@ class FlextMeltanoTapOracleStreams:
                         raise RuntimeError(msg)
                 # Note: FlextDbOracleMetadataManager does not exist in flext_db_oracle
                 # self._metadata_manager = FlextDbOracleMetadataManager(connection)
-                self._metadata_manager = {}
+                self._metadata_manager = dict[str, t.GeneralValueType]()
             return self._metadata_manager
 
         @property
@@ -97,9 +97,10 @@ class FlextMeltanoTapOracleStreams:
                 # container = FlextContainer.get_global()
                 # context_name = f"oracle_stream_{self.table_name}"
                 # self._observability_manager = FlextDbOracleObservabilityManager(...)
-                self._observability_manager = {}
+                self._observability_manager = dict[str, t.GeneralValueType]()
             return self._observability_manager
 
+        @override
         def get_records(
             self,
             context: Mapping[str, t.GeneralValueType] | None = None,

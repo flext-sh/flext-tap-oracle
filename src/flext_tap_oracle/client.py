@@ -259,7 +259,6 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table
         return self._table_filter_service
 
     # Service methods - using direct domain services
-    @override
     def execute(self) -> FlextResult[list[FlextDbOracleModels.DbOracle.Table]]:
         """Execute Oracle tap service - discover tables."""
         return self._discovery_service.execute()

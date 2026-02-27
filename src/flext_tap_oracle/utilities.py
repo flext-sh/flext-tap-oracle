@@ -11,6 +11,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from typing import override
+
 from collections.abc import Mapping
 from datetime import UTC, datetime
 from typing import Literal
