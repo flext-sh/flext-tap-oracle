@@ -22,7 +22,7 @@ from flext_tap_oracle.constants import c
 from flext_tap_oracle.typings import t
 
 
-class FlextMeltanoTapOracleSettings(FlextSettings):
+class FlextTapOracleSettings(FlextSettings):
     """Oracle Tap Configuration using enhanced FlextSettings patterns.
 
     This class extends FlextSettings and includes all the configuration fields
@@ -341,7 +341,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
         cls,
         environment: str,
         **overrides: t.JsonValue,
-    ) -> FlextMeltanoTapOracleSettings:
+    ) -> FlextTapOracleSettings:
         """Create configuration for specific environment using enhanced singleton pattern."""
         env_overrides: dict[str, t.JsonValue] = {}
 
@@ -419,7 +419,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
     @classmethod
     @override
     def reset_global_instance(cls) -> None:
-        """Reset the global FlextMeltanoTapOracleSettings instance (mainly for testing)."""
+        """Reset the global FlextTapOracleSettings instance (mainly for testing)."""
         # No shared instance to reset
 
 
@@ -427,7 +427,7 @@ def create_oracle_tap_config(
     oracle_params: dict[str, t.JsonValue],
     tap_params: dict[str, t.JsonValue] | None = None,
     meltano_params: dict[str, t.JsonValue] | None = None,
-) -> FlextResult[FlextMeltanoTapOracleSettings]:
+) -> FlextResult[FlextTapOracleSettings]:
     """Create Oracle tap configuration using grouped parameters.
 
     Args:
@@ -454,24 +454,24 @@ def create_oracle_tap_config(
             **meltano_config,
         }
 
-        config_instance = FlextMeltanoTapOracleSettings.model_validate(config_data)
-        return FlextResult[FlextMeltanoTapOracleSettings].ok(config_instance)
+        config_instance = FlextTapOracleSettings.model_validate(config_data)
+        return FlextResult[FlextTapOracleSettings].ok(config_instance)
 
     except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-        return FlextResult[FlextMeltanoTapOracleSettings].fail(
+        return FlextResult[FlextTapOracleSettings].fail(
             f"Oracle tap configuration creation failed: {e}",
         )
 
 
 def validate_oracle_tap_configuration(
-    config: FlextMeltanoTapOracleSettings,
+    config: FlextTapOracleSettings,
 ) -> FlextResult[bool]:
     """Validate Oracle tap configuration using FlextSettings patterns."""
     return config.validate_business_rules()
 
 
 __all__: list[str] = [
-    "FlextMeltanoTapOracleSettings",
+    "FlextTapOracleSettings",
     "create_oracle_tap_config",
     "validate_oracle_tap_configuration",
 ]

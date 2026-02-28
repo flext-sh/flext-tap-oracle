@@ -15,7 +15,7 @@ from flext_db_oracle import (
     FlextDbOracleSettings,
 )
 
-from flext_tap_oracle.settings import FlextMeltanoTapOracleSettings
+from flext_tap_oracle.settings import FlextTapOracleSettings
 
 logger = FlextLogger(__name__)
 # =====================================================
@@ -112,7 +112,7 @@ class FlextOracleTableFilterService:
 
     def __init__(
         self,
-        tap_config: FlextMeltanoTapOracleSettings,
+        tap_config: FlextTapOracleSettings,
         discovery_service: FlextOracleDiscoveryService,
     ) -> None:
         """Initialize Oracle table filtering service.
@@ -197,13 +197,13 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table
     SOLID Principles:
     - Single Responsibility: Each domain service has one responsibility
     - Open/Closed: Extensible via new domain services
-    - Liskov Substitution: Substitutable for FlextService[FlextMeltanoTapOracleSettings]
+    - Liskov Substitution: Substitutable for FlextService[FlextTapOracleSettings]
     - Interface Segregation: Specific interfaces per domain service
     - Dependency Inversion: Depends on abstractions (FlextService[T])
     """
 
     @override
-    def __init__(self, config: FlextMeltanoTapOracleSettings) -> None:
+    def __init__(self, config: FlextTapOracleSettings) -> None:
         """Initialize Oracle tap service with FLEXT Service Pattern."""
         # Validate configuration - check required fields
         if not config:
@@ -357,7 +357,7 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table
 
 
 def create_oracle_tap_service(
-    config: FlextMeltanoTapOracleSettings,
+    config: FlextTapOracleSettings,
 ) -> FlextResult[FlextOracleTapService]:
     """Create Oracle tap service using COMPOSITION.
 

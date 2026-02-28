@@ -20,7 +20,7 @@ from flext_db_oracle import FlextDbOracleTypes
 from flext_meltano import FlextMeltanoTypes
 
 
-class FlextMeltanoTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
+class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
     """Oracle tap-specific type definitions extending t.
 
     Domain-specific type system for Oracle database extraction operations.
@@ -28,7 +28,7 @@ class FlextMeltanoTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
     Uses Python 3.13+ type syntax and patterns.
     """
 
-    class Project(FlextMeltanoTypes.Project, FlextDbOracleTypes.Project):
+    class Project(FlextMeltanoTypes.Meltano.Project, FlextDbOracleTypes.Project):
         """Unified project types resolving MRO between Meltano and DbOracle."""
 
     class TapOracle:
@@ -195,9 +195,9 @@ class FlextMeltanoTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
 
 
 # Runtime alias for simplified usage
-t = FlextMeltanoTapOracleTypes
+t = FlextTapOracleTypes
 
 __all__ = [
-    "FlextMeltanoTapOracleTypes",
+    "FlextTapOracleTypes",
     "t",
 ]

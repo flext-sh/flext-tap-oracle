@@ -13,16 +13,16 @@ from flext_tap_oracle import t
 from flext_tests import FlextTestsProtocols
 
 
-class TestsFlextMeltanoTapOracleProtocols(FlextTestsProtocols):
+class TestsFlextTapOracleProtocols(FlextTestsProtocols):
     """Protocols for flext-tap-oracle tests - uses composition with FlextTestsProtocols.
 
-    Architecture: Uses composition (not inheritance) with FlextTestsProtocols and FlextMeltanoTapOracleProtocols
+    Architecture: Uses composition (not inheritance) with FlextTestsProtocols and FlextTapOracleProtocols
     for flext-tap-oracle-specific protocol definitions.
 
     Access patterns:
-    - TestsFlextMeltanoTapOracleProtocols.Tests.* = flext_tests test protocols (via composition)
-    - TestsFlextMeltanoTapOracleProtocols.TapOracle.* = flext-tap-oracle-specific test protocols
-    - TestsFlextMeltanoTapOracleProtocols.* = FlextTestsProtocols protocols (via composition)
+    - TestsFlextTapOracleProtocols.Tests.* = flext_tests test protocols (via composition)
+    - TestsFlextTapOracleProtocols.TapOracle.* = flext-tap-oracle-specific test protocols
+    - TestsFlextTapOracleProtocols.* = FlextTestsProtocols protocols (via composition)
 
     Rules:
     - Use composition, not inheritance (FlextTestsProtocols deprecates subclassing)
@@ -107,9 +107,9 @@ class TestsFlextMeltanoTapOracleProtocols(FlextTestsProtocols):
 
 
 # Alias for simplified usage
-p = TestsFlextMeltanoTapOracleProtocols
+p = TestsFlextTapOracleProtocols
 
 __all__ = [
-    "TestsFlextMeltanoTapOracleProtocols",
+    "TestsFlextTapOracleProtocols",
     "p",
 ]

@@ -14,7 +14,7 @@ from flext_db_oracle import FlextDbOracleConstants
 from flext_meltano import FlextMeltanoConstants
 
 
-class FlextMeltanoTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
+class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
     """Oracle tap extraction-specific constants following FLEXT unified pattern.
 
     Inherits from FlextMeltanoConstants for universal constants, defines only
@@ -213,6 +213,6 @@ class FlextMeltanoTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstan
         TapExecutionMode = Literal["discovery", "extraction", "test", "validate"]
 
 
-c = FlextMeltanoTapOracleConstants
+c = FlextTapOracleConstants
 
-__all__ = ["FlextMeltanoTapOracleConstants", "c"]
+__all__ = ["FlextTapOracleConstants", "c"]

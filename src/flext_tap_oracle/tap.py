@@ -19,7 +19,7 @@ from flext_core import FlextLogger, FlextResult, t
 from pydantic import BaseModel, ConfigDict, Field
 
 from flext_tap_oracle.constants import c
-from flext_tap_oracle.settings import FlextMeltanoTapOracleSettings
+from flext_tap_oracle.settings import FlextTapOracleSettings
 
 logger = FlextLogger(__name__)
 cli_api = FlextCli()
@@ -127,8 +127,8 @@ class OracleTapDiscoverCommand:
                 encoding="utf-8",
             )
             # Use singleton instance for validation
-            config_instance = FlextMeltanoTapOracleSettings.get_global_instance()
-            config: FlextMeltanoTapOracleSettings = config_instance.model_validate_json(
+            config_instance = FlextTapOracleSettings.get_global_instance()
+            config: FlextTapOracleSettings = config_instance.model_validate_json(
                 config_data,
             )
 
@@ -206,8 +206,8 @@ class OracleTapSyncCommand:
                 encoding="utf-8",
             )
             # Use singleton instance for validation
-            config_instance = FlextMeltanoTapOracleSettings.get_global_instance()
-            config: FlextMeltanoTapOracleSettings = config_instance.model_validate_json(
+            config_instance = FlextTapOracleSettings.get_global_instance()
+            config: FlextTapOracleSettings = config_instance.model_validate_json(
                 config_data,
             )
 

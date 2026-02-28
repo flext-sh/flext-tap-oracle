@@ -13,16 +13,16 @@ from flext_tap_oracle import t
 from flext_tests import FlextTestsTypes
 
 
-class TestsFlextMeltanoTapOracleTypes(FlextTestsTypes):
+class TestsFlextTapOracleTypes(FlextTestsTypes):
     """Types for flext-tap-oracle tests - uses composition with FlextTestsTypes.
 
-    Architecture: Uses composition (not inheritance) with FlextTestsTypes and FlextMeltanoTapOracleTypes
+    Architecture: Uses composition (not inheritance) with FlextTestsTypes and FlextTapOracleTypes
     for flext-tap-oracle-specific type definitions.
 
     Access patterns:
-    - TestsFlextMeltanoTapOracleTypes.Tests.* = flext_tests test types (via composition)
-    - TestsFlextMeltanoTapOracleTypes.TapOracle.* = flext-tap-oracle-specific test types
-    - TestsFlextMeltanoTapOracleTypes.* = FlextTestsTypes types (via composition)
+    - TestsFlextTapOracleTypes.Tests.* = flext_tests test types (via composition)
+    - TestsFlextTapOracleTypes.TapOracle.* = flext-tap-oracle-specific test types
+    - TestsFlextTapOracleTypes.* = FlextTestsTypes types (via composition)
 
     Rules:
     - Use composition, not inheritance (FlextTestsTypes deprecates subclassing)
@@ -57,9 +57,9 @@ class TestsFlextMeltanoTapOracleTypes(FlextTestsTypes):
 
 
 # Alias for simplified usage
-tt = TestsFlextMeltanoTapOracleTypes
+tt = TestsFlextTapOracleTypes
 
 __all__ = [
-    "TestsFlextMeltanoTapOracleTypes",
+    "TestsFlextTapOracleTypes",
     "tt",
 ]

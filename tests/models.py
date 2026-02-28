@@ -11,16 +11,16 @@ from flext_core import FlextModels
 from flext_tests import FlextTestsModels
 
 
-class TestsFlextMeltanoTapOracleModels(FlextTestsModels):
+class TestsFlextTapOracleModels(FlextTestsModels):
     """Models for flext-tap-oracle tests - uses composition with FlextTestsModels.
 
     Architecture: Uses composition (not inheritance) with FlextTestsModels and FlextModels
     for flext-tap-oracle-specific model definitions.
 
     Access patterns:
-    - TestsFlextMeltanoTapOracleModels.Tests.* = flext_tests test models (via composition)
-    - TestsFlextMeltanoTapOracleModels.TapOracle.* = flext-tap-oracle-specific test models
-    - TestsFlextMeltanoTapOracleModels.Entity, .Value, etc. = FlextModels domain models (via composition)
+    - TestsFlextTapOracleModels.Tests.* = flext_tests test models (via composition)
+    - TestsFlextTapOracleModels.TapOracle.* = flext-tap-oracle-specific test models
+    - TestsFlextTapOracleModels.Entity, .Value, etc. = FlextModels domain models (via composition)
 
     Rules:
     - Use composition, not inheritance (FlextTestsModels deprecates subclassing)
@@ -89,11 +89,11 @@ class TestsFlextMeltanoTapOracleModels(FlextTestsModels):
 
 
 # Alias for simplified usage
-tm = TestsFlextMeltanoTapOracleModels
-m = TestsFlextMeltanoTapOracleModels
+tm = TestsFlextTapOracleModels
+m = TestsFlextTapOracleModels
 
 __all__ = [
-    "TestsFlextMeltanoTapOracleModels",
+    "TestsFlextTapOracleModels",
     "m",
     "tm",
 ]

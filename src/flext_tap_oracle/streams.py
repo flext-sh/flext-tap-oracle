@@ -17,7 +17,7 @@ from flext_meltano import FlextMeltanoStream as Stream, FlextMeltanoTap as Tap
 from flext_tap_oracle.constants import c
 
 
-class FlextMeltanoTapOracleStreams:
+class FlextTapOracleStreams:
     """Unified streams class for Oracle tap operations with complete stream management.
 
     Consolidates ALL Oracle tap stream-related functionality:

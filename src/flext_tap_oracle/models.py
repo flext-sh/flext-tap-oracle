@@ -26,7 +26,7 @@ from flext_tap_oracle.constants import c
 from flext_tap_oracle.typings import t
 
 
-class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
+class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
     """Complete models for Oracle tap operations extending FlextModels.
 
     Provides standardized models for all Oracle tap domain entities including:
@@ -91,7 +91,7 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             """Complete Singer Oracle tap system summary with database extraction capabilities."""
             return {
                 "total_models": len(
-                    FlextMeltanoTapOracleModels.TapOracle.get_active_model_names(),
+                    FlextTapOracleModels.TapOracle.get_active_model_names(),
                 ),
                 "tap_type": "singer_oracle_database_extractor",
                 "extraction_features": [
@@ -674,7 +674,7 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Processed stream information
             stream_info: Sequence[
-                FlextMeltanoTapOracleModels.TapOracle.OracleTapStreamInfo
+                FlextTapOracleModels.TapOracle.OracleTapStreamInfo
             ] = Field(
                 default=[],
                 description="Processed stream information for tap use",
@@ -983,9 +983,9 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 # =====================================================
 
 # Short aliases
-m = FlextMeltanoTapOracleModels
+m = FlextTapOracleModels
 
 __all__: list[str] = [
-    "FlextMeltanoTapOracleModels",
+    "FlextTapOracleModels",
     "m",
 ]

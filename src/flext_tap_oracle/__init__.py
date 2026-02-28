@@ -19,64 +19,58 @@ if TYPE_CHECKING:
         FlextOracleTapService,
     )
     from flext_tap_oracle.constants import (
-        FlextMeltanoTapOracleConstants,
-        FlextMeltanoTapOracleConstants as c,
+        FlextTapOracleConstants,
+        FlextTapOracleConstants as c,
     )
-    from flext_tap_oracle.models import (
-        FlextMeltanoTapOracleModels,
-        FlextMeltanoTapOracleModels as m,
-    )
+    from flext_tap_oracle.models import FlextTapOracleModels, FlextTapOracleModels as m
     from flext_tap_oracle.protocols import (
-        FlextMeltanoTapOracleProtocols,
-        FlextMeltanoTapOracleProtocols as p,
+        FlextTapOracleProtocols,
+        FlextTapOracleProtocols as p,
     )
-    from flext_tap_oracle.settings import FlextMeltanoTapOracleSettings
-    from flext_tap_oracle.streams import FlextMeltanoTapOracleStreams
-    from flext_tap_oracle.typings import (
-        FlextMeltanoTapOracleTypes,
-        FlextMeltanoTapOracleTypes as t,
-    )
+    from flext_tap_oracle.settings import FlextTapOracleSettings
+    from flext_tap_oracle.streams import FlextTapOracleStreams
+    from flext_tap_oracle.typings import FlextTapOracleTypes, FlextTapOracleTypes as t
     from flext_tap_oracle.utilities import (
         FlextTapOracleUtilities,
-        FlextTapOracleUtilities as FlextMeltanoTapOracleUtilities,
+        FlextTapOracleUtilities as u,
         FlextTapOracleUtilities as u,
     )
 
 # Lazy import mapping: export_name -> (module_path, attr_name)
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
-    "FlextMeltanoTapOracleConstants": ("flext_tap_oracle.constants", "FlextMeltanoTapOracleConstants"),
-    "FlextMeltanoTapOracleModels": ("flext_tap_oracle.models", "FlextMeltanoTapOracleModels"),
-    "FlextMeltanoTapOracleProtocols": ("flext_tap_oracle.protocols", "FlextMeltanoTapOracleProtocols"),
-    "FlextMeltanoTapOracleSettings": ("flext_tap_oracle.settings", "FlextMeltanoTapOracleSettings"),
-    "FlextMeltanoTapOracleStreams": ("flext_tap_oracle.streams", "FlextMeltanoTapOracleStreams"),
-    "FlextMeltanoTapOracleTypes": ("flext_tap_oracle.typings", "FlextMeltanoTapOracleTypes"),
-    "FlextMeltanoTapOracleUtilities": ("flext_tap_oracle.utilities", "FlextTapOracleUtilities"),
+    "FlextTapOracleSettings": ("flext_tap_oracle.settings", "FlextTapOracleSettings"),
+    "FlextTapOracleStreams": ("flext_tap_oracle.streams", "FlextTapOracleStreams"),
+    "FlextTapOracleUtilities": ("flext_tap_oracle.utilities", "FlextTapOracleUtilities"),
     "FlextOracleConnectionTestService": ("flext_tap_oracle.client", "FlextOracleConnectionTestService"),
     "FlextOracleDiscoveryService": ("flext_tap_oracle.client", "FlextOracleDiscoveryService"),
     "FlextOracleTableFilterService": ("flext_tap_oracle.client", "FlextOracleTableFilterService"),
     "FlextOracleTapService": ("flext_tap_oracle.client", "FlextOracleTapService"),
+    "FlextTapOracleConstants": ("flext_tap_oracle.constants", "FlextTapOracleConstants"),
+    "FlextTapOracleModels": ("flext_tap_oracle.models", "FlextTapOracleModels"),
+    "FlextTapOracleProtocols": ("flext_tap_oracle.protocols", "FlextTapOracleProtocols"),
+    "FlextTapOracleTypes": ("flext_tap_oracle.typings", "FlextTapOracleTypes"),
     "FlextTapOracleUtilities": ("flext_tap_oracle.utilities", "FlextTapOracleUtilities"),
     "__version__": ("flext_tap_oracle.__version__", "__version__"),
     "__version_info__": ("flext_tap_oracle.__version__", "__version_info__"),
-    "c": ("flext_tap_oracle.constants", "FlextMeltanoTapOracleConstants"),
-    "m": ("flext_tap_oracle.models", "FlextMeltanoTapOracleModels"),
-    "p": ("flext_tap_oracle.protocols", "FlextMeltanoTapOracleProtocols"),
-    "t": ("flext_tap_oracle.typings", "FlextMeltanoTapOracleTypes"),
+    "c": ("flext_tap_oracle.constants", "FlextTapOracleConstants"),
+    "m": ("flext_tap_oracle.models", "FlextTapOracleModels"),
+    "p": ("flext_tap_oracle.protocols", "FlextTapOracleProtocols"),
+    "t": ("flext_tap_oracle.typings", "FlextTapOracleTypes"),
     "u": ("flext_tap_oracle.utilities", "FlextTapOracleUtilities"),
 }
 
 __all__ = [
-    "FlextMeltanoTapOracleConstants",
-    "FlextMeltanoTapOracleModels",
-    "FlextMeltanoTapOracleProtocols",
-    "FlextMeltanoTapOracleSettings",
-    "FlextMeltanoTapOracleStreams",
-    "FlextMeltanoTapOracleTypes",
-    "FlextMeltanoTapOracleUtilities",
+    "FlextTapOracleSettings",
+    "FlextTapOracleStreams",
+    "FlextTapOracleUtilities",
     "FlextOracleConnectionTestService",
     "FlextOracleDiscoveryService",
     "FlextOracleTableFilterService",
     "FlextOracleTapService",
+    "FlextTapOracleConstants",
+    "FlextTapOracleModels",
+    "FlextTapOracleProtocols",
+    "FlextTapOracleTypes",
     "FlextTapOracleUtilities",
     "__version__",
     "__version_info__",

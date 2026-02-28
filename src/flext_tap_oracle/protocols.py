@@ -15,7 +15,7 @@ from flext_meltano import FlextMeltanoModels as m, FlextMeltanoProtocols
 from flext_tap_oracle.typings import t
 
 
-class FlextMeltanoTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
+class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
     """Singer Tap Oracle protocols extending Oracle and Meltano protocols.
 
     Extends both FlextDbOracleProtocols and FlextMeltanoProtocols via multiple inheritance
@@ -38,7 +38,7 @@ class FlextMeltanoTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtoco
     connection: p.Database.ConnectionProtocol
 
     # Meltano protocols (inherited)
-    tap: p.Meltano.TapProtocol
+    tap: p.Meltano.Tap
 
     # Tap Oracle-specific protocols
     oracle_connection: p.Tap.Oracle.OracleConnectionProtocol
@@ -212,9 +212,9 @@ class FlextMeltanoTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtoco
 
 
 # Runtime alias for simplified usage
-p = FlextMeltanoTapOracleProtocols
+p = FlextTapOracleProtocols
 
 __all__ = [
-    "FlextMeltanoTapOracleProtocols",
+    "FlextTapOracleProtocols",
     "p",
 ]
