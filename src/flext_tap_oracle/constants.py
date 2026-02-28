@@ -73,6 +73,7 @@ class FlextMeltanoTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstan
         # Initialization defaults
         INITIAL_RECORD_COUNT: Final[int] = 0
         INITIAL_DURATION_SECONDS: Final[float] = 0.0
+
         class Oracle:
             """Oracle database connection constants."""
 

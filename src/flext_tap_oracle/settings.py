@@ -242,6 +242,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
             raise ValueError(msg)
 
         return self
+
     def validate_business_rules(self) -> FlextResult[bool]:
         """Validate Oracle tap configuration business rules."""
         try:

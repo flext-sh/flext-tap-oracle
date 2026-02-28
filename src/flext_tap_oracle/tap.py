@@ -222,7 +222,9 @@ class OracleTapSyncCommand:
             # Execute extraction workflow
             self._logger.info("Preparing extraction from Oracle database...")
             schema_name = str(oracle_config.get("schema_name", "USER"))
-            record_count = c.TapOracle.INITIAL_RECORD_COUNT  # Real extraction requires Singer target integration
+            record_count = (
+                c.TapOracle.INITIAL_RECORD_COUNT
+            )  # Real extraction requires Singer target integration
 
             result_data: dict[str, t.GeneralValueType] = {
                 "records_extracted": record_count,

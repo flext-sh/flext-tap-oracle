@@ -358,7 +358,9 @@ class FlextMeltanoTapOracleStreams:
                         "table_name": self.table_name,
                         "stream_name": self.name,
                         "column_count": len(columns) if u.is_list_like(columns) else 0,
-                        "oracle_schema": getattr(table, "schema_name", c.TapOracle.DEFAULT_OPERATION_NAME),
+                        "oracle_schema": getattr(
+                            table, "schema_name", c.TapOracle.DEFAULT_OPERATION_NAME
+                        ),
                         "table_type": getattr(table, "table_type", "TABLE"),
                     }
                 return {
@@ -469,7 +471,11 @@ class FlextMeltanoTapOracleStreams:
 
             """
             table_name_raw = getattr(table_metadata, "name", None)
-            table_name = str(table_name_raw) if table_name_raw else c.TapOracle.DEFAULT_OPERATION_NAME
+            table_name = (
+                str(table_name_raw)
+                if table_name_raw
+                else c.TapOracle.DEFAULT_OPERATION_NAME
+            )
             stream_name = f"{stream_prefix}_{table_name.lower()}"
 
             # Build basic schema from table metadata
@@ -477,15 +483,23 @@ class FlextMeltanoTapOracleStreams:
             columns_raw = getattr(table_metadata, "columns", None)
             if isinstance(columns_raw, list):
                 for column in columns_raw:
-                    col_name = str(getattr(column, "name", c.TapOracle.DEFAULT_OPERATION_NAME))
-                    col_type = str(getattr(column, "data_type", c.TapOracle.SingerTypes.DEFAULT_TYPE))
+                    col_name = str(
+                        getattr(column, "name", c.TapOracle.DEFAULT_OPERATION_NAME)
+                    )
+                    col_type = str(
+                        getattr(
+                            column, "data_type", c.TapOracle.SingerTypes.DEFAULT_TYPE
+                        )
+                    )
 
                     # Map Oracle types to Singer schema types
                     singer_type = c.TapOracle.SingerTypes.DEFAULT_TYPE
                     if col_type.upper().startswith(("NUMBER", "INTEGER")):
                         singer_type = c.TapOracle.SingerTypes.NUMERIC_TYPE
                     elif col_type.upper().startswith(("DATE", "TIMESTAMP")):
-                        singer_type = c.TapOracle.SingerTypes.DATETIME_TYPE  # ISO format
+                        singer_type = (
+                            c.TapOracle.SingerTypes.DATETIME_TYPE
+                        )  # ISO format
                     elif col_type.upper().startswith("FLOAT"):
                         singer_type = c.TapOracle.SingerTypes.NUMERIC_TYPE
 

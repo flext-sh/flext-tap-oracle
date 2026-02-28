@@ -669,7 +669,9 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             # Processed stream information
-            stream_info: Sequence[FlextMeltanoTapOracleModels.TapOracle.OracleTapStreamInfo] = Field(
+            stream_info: Sequence[
+                FlextMeltanoTapOracleModels.TapOracle.OracleTapStreamInfo
+            ] = Field(
                 default=[],
                 description="Processed stream information for tap use",
             )
