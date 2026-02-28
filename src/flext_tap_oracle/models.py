@@ -663,13 +663,13 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             # Raw Oracle metadata
-            oracle_tables: Sequence[object] = Field(
+            oracle_tables: Sequence[FlextDbOracleModels.DbOracle.Table] = Field(
                 default=[],
                 description="Raw Oracle table metadata from flext-db-oracle",
             )
 
             # Processed stream information
-            stream_info: Sequence[object] = Field(
+            stream_info: Sequence[FlextMeltanoTapOracleModels.TapOracle.OracleTapStreamInfo] = Field(
                 default=[],
                 description="Processed stream information for tap use",
             )
