@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from flext_core import cleanup_submodule_namespace, lazy_getattr
+from flext_core._utilities.lazy import cleanup_submodule_namespace, lazy_getattr
 
 if TYPE_CHECKING:
     from flext_tap_oracle.__version__ import __version__, __version_info__
@@ -33,14 +33,10 @@ if TYPE_CHECKING:
     from flext_tap_oracle.utilities import (
         FlextTapOracleUtilities,
         FlextTapOracleUtilities as u,
-        FlextTapOracleUtilities as u,
     )
 
 # Lazy import mapping: export_name -> (module_path, attr_name)
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
-    "FlextTapOracleSettings": ("flext_tap_oracle.settings", "FlextTapOracleSettings"),
-    "FlextTapOracleStreams": ("flext_tap_oracle.streams", "FlextTapOracleStreams"),
-    "FlextTapOracleUtilities": ("flext_tap_oracle.utilities", "FlextTapOracleUtilities"),
     "FlextOracleConnectionTestService": ("flext_tap_oracle.client", "FlextOracleConnectionTestService"),
     "FlextOracleDiscoveryService": ("flext_tap_oracle.client", "FlextOracleDiscoveryService"),
     "FlextOracleTableFilterService": ("flext_tap_oracle.client", "FlextOracleTableFilterService"),
@@ -48,6 +44,8 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "FlextTapOracleConstants": ("flext_tap_oracle.constants", "FlextTapOracleConstants"),
     "FlextTapOracleModels": ("flext_tap_oracle.models", "FlextTapOracleModels"),
     "FlextTapOracleProtocols": ("flext_tap_oracle.protocols", "FlextTapOracleProtocols"),
+    "FlextTapOracleSettings": ("flext_tap_oracle.settings", "FlextTapOracleSettings"),
+    "FlextTapOracleStreams": ("flext_tap_oracle.streams", "FlextTapOracleStreams"),
     "FlextTapOracleTypes": ("flext_tap_oracle.typings", "FlextTapOracleTypes"),
     "FlextTapOracleUtilities": ("flext_tap_oracle.utilities", "FlextTapOracleUtilities"),
     "__version__": ("flext_tap_oracle.__version__", "__version__"),
@@ -60,9 +58,6 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
 }
 
 __all__ = [
-    "FlextTapOracleSettings",
-    "FlextTapOracleStreams",
-    "FlextTapOracleUtilities",
     "FlextOracleConnectionTestService",
     "FlextOracleDiscoveryService",
     "FlextOracleTableFilterService",
@@ -70,6 +65,8 @@ __all__ = [
     "FlextTapOracleConstants",
     "FlextTapOracleModels",
     "FlextTapOracleProtocols",
+    "FlextTapOracleSettings",
+    "FlextTapOracleStreams",
     "FlextTapOracleTypes",
     "FlextTapOracleUtilities",
     "__version__",

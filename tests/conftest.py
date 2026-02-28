@@ -19,8 +19,8 @@ from collections.abc import Generator
 import pytest
 from flext_core import FlextResult, t
 from flext_tap_oracle import (
-    FlextMeltanoTapOracleSettings,
     FlextOracleTapService,
+    FlextTapOracleSettings,
 )
 from flext_tap_oracle.settings import create_oracle_tap_config
 from flext_tests import FlextTestsDocker
@@ -151,8 +151,8 @@ def oracle_tap(
 ) -> FlextOracleTapService:
     """Oracle tap service instance for testing."""
     # Convert dict[str, t.GeneralValueType] to proper config and create service
-    config_result = FlextResult[FlextMeltanoTapOracleSettings].ok(
-        FlextMeltanoTapOracleSettings.get_global_instance().model_validate(
+    config_result = FlextResult[FlextTapOracleSettings].ok(
+        FlextTapOracleSettings.get_global_instance().model_validate(
             oracle_tap_config,
         ),
     )

@@ -4,7 +4,7 @@ import pytest
 from flext_core import FlextResult, t
 from flext_db_oracle import FlextDbOracleModels
 from flext_tap_oracle import (
-    FlextMeltanoTapOracleSettings,
+    FlextTapOracleSettings,
     FlextOracleDiscoveryService,
     FlextOracleTableFilterService,
 )
@@ -37,7 +37,7 @@ class TestFlextOracleTapSettingsAndHelpers:
     def test_settings_model_validate(
         self, valid_config: dict[str, t.GeneralValueType]
     ) -> None:
-        config = FlextMeltanoTapOracleSettings.model_validate(valid_config)
+        config = FlextTapOracleSettings.model_validate(valid_config)
 
         assert config.oracle_host == "test-oracle"
         assert config.oracle_port == 1521
@@ -50,7 +50,7 @@ class TestFlextOracleTapSettingsAndHelpers:
     def test_settings_connection_string(
         self, valid_config: dict[str, t.GeneralValueType]
     ) -> None:
-        config = FlextMeltanoTapOracleSettings.model_validate(valid_config)
+        config = FlextTapOracleSettings.model_validate(valid_config)
         connection_string = config.get_connection_string()
 
         assert connection_string == "test-oracle:1521/TESTDB"
@@ -96,7 +96,7 @@ class TestFlextOracleTapSettingsAndHelpers:
         self,
         valid_config: dict[str, t.GeneralValueType],
     ) -> None:
-        config = FlextMeltanoTapOracleSettings.model_validate(valid_config)
+        config = FlextTapOracleSettings.model_validate(valid_config)
         service = FlextOracleTableFilterService(
             tap_config=config,
             discovery_service=_DiscoveryStub(),

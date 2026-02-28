@@ -11,16 +11,16 @@ from flext_tap_oracle import t
 from flext_tests import FlextTestsUtilities
 
 
-class TestsFlextMeltanoTapOracleUtilities(FlextTestsUtilities):
+class TestsFlextTapOracleUtilities(FlextTestsUtilities):
     """Utilities for flext-tap-oracle tests - uses composition with FlextTestsUtilities.
 
-    Architecture: Uses composition (not inheritance) with FlextTestsUtilities and FlextMeltanoTapOracleUtilities
+    Architecture: Uses composition (not inheritance) with FlextTestsUtilities and FlextTapOracleUtilities
     for flext-tap-oracle-specific utility definitions.
 
     Access patterns:
-    - TestsFlextMeltanoTapOracleUtilities.Tests.* = flext_tests test utilities (via composition)
-    - TestsFlextMeltanoTapOracleUtilities.TapOracle.* = flext-tap-oracle-specific test utilities
-    - TestsFlextMeltanoTapOracleUtilities.* = FlextTestsUtilities methods (via composition)
+    - TestsFlextTapOracleUtilities.Tests.* = flext_tests test utilities (via composition)
+    - TestsFlextTapOracleUtilities.TapOracle.* = flext-tap-oracle-specific test utilities
+    - TestsFlextTapOracleUtilities.* = FlextTestsUtilities methods (via composition)
 
     Rules:
     - Use composition, not inheritance (FlextTestsUtilities deprecates subclassing)
@@ -106,9 +106,9 @@ class TestsFlextMeltanoTapOracleUtilities(FlextTestsUtilities):
 
 
 # Alias for simplified usage
-u = TestsFlextMeltanoTapOracleUtilities
+u = TestsFlextTapOracleUtilities
 
 __all__ = [
-    "TestsFlextMeltanoTapOracleUtilities",
+    "TestsFlextTapOracleUtilities",
     "u",
 ]

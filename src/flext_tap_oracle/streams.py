@@ -133,7 +133,7 @@ class FlextTapOracleStreams:
                     query_result: FlextResult[list[t.Dict]] = api.query(sql)
 
                     if query_result.is_failure:
-                        FlextMeltanoTapOracleStreams.logger.error(
+                        FlextTapOracleStreams.logger.error(
                             "Failed to execute query: %s",
                             query_result.error,
                         )
@@ -148,7 +148,7 @@ class FlextTapOracleStreams:
                         yield record
 
             except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-                FlextMeltanoTapOracleStreams.logger.exception(
+                FlextTapOracleStreams.logger.exception(
                     "Error getting records from %s",
                     self.table_name,
                 )
@@ -164,7 +164,7 @@ class FlextTapOracleStreams:
             # Extract column metadata from FlextDbOracleTable
             columns = getattr(table_metadata, "columns", None)
             if columns is None or not u.is_list_like(columns):
-                FlextMeltanoTapOracleStreams.logger.warning(
+                FlextTapOracleStreams.logger.warning(
                     "Table metadata missing columns, using fallback",
                 )
                 yield from self._process_results_fallback(query_data)
@@ -175,7 +175,7 @@ class FlextTapOracleStreams:
                 query_data,
                 str | bytes,
             ):
-                FlextMeltanoTapOracleStreams.logger.warning(
+                FlextTapOracleStreams.logger.warning(
                     "Unexpected query data structure, using fallback",
                 )
                 yield from self._process_results_fallback(query_data)
@@ -200,7 +200,7 @@ class FlextTapOracleStreams:
                             }
                         case _:
                             row_type_name = type(row_data).__name__
-                            FlextMeltanoTapOracleStreams.logger.warning(
+                            FlextTapOracleStreams.logger.warning(
                                 "Unexpected row data type: %s",
                                 row_type_name,
                             )
@@ -212,7 +212,7 @@ class FlextTapOracleStreams:
                     )
                     yield record
                 except (ValueError, TypeError, KeyError, AttributeError, OSError):
-                    FlextMeltanoTapOracleStreams.logger.exception(
+                    FlextTapOracleStreams.logger.exception(
                         "Failed to process record using flext-db-oracle metadata",
                     )
                     continue
@@ -233,7 +233,7 @@ class FlextTapOracleStreams:
                 query_data,
                 str | bytes,
             ):
-                FlextMeltanoTapOracleStreams.logger.warning(
+                FlextTapOracleStreams.logger.warning(
                     "Cannot process query data in fallback mode",
                 )
                 return
@@ -275,7 +275,7 @@ class FlextTapOracleStreams:
                             record = {"data": str_val}
                     yield record
                 except (ValueError, TypeError, KeyError, AttributeError, OSError):
-                    FlextMeltanoTapOracleStreams.logger.exception(
+                    FlextTapOracleStreams.logger.exception(
                         "Failed to process record in fallback mode",
                     )
                     continue
@@ -374,7 +374,7 @@ class FlextTapOracleStreams:
                     "error": "Metadata not available",
                 }
             except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-                FlextMeltanoTapOracleStreams.logger.exception(
+                FlextTapOracleStreams.logger.exception(
                     "Failed to get table info",
                 )
                 return {"table_name": self.table_name, "error": str(e)}
@@ -387,7 +387,7 @@ class FlextTapOracleStreams:
                     self.table_name.replace("_", "").replace("$", "").replace("#", "")
                 )
                 if not self.table_name or not cleaned_name.isalnum():
-                    FlextMeltanoTapOracleStreams.logger.warning(
+                    FlextTapOracleStreams.logger.warning(
                         "Invalid table name for count estimation: %s",
                         self.table_name,
                     )
@@ -408,7 +408,7 @@ class FlextTapOracleStreams:
                 return None
             except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                 err_msg = str(e)
-                FlextMeltanoTapOracleStreams.logger.warning(
+                FlextTapOracleStreams.logger.warning(
                     "Failed to estimate row count for %s: %s",
                     self.table_name,
                     err_msg,
@@ -435,7 +435,7 @@ class FlextTapOracleStreams:
             table_name: str,
             schema: Mapping[str, t.GeneralValueType],
             oracle_api: FlextDbOracleApi,
-        ) -> FlextMeltanoTapOracleStreams.OracleStream:
+        ) -> FlextTapOracleStreams.OracleStream:
             """Create Oracle stream.
 
             Args:
@@ -449,7 +449,7 @@ class FlextTapOracleStreams:
             Configured Oracle stream instance
 
             """
-            return FlextMeltanoTapOracleStreams.OracleStream(
+            return FlextTapOracleStreams.OracleStream(
                 tap=tap,
                 name=name,
                 table_name=table_name,
@@ -463,7 +463,7 @@ class FlextTapOracleStreams:
             table_metadata: t.GeneralValueType,  # FlextDbOracleTable
             oracle_api: FlextDbOracleApi,
             stream_prefix: str = c.TapOracle.DEFAULT_STREAM_PREFIX,
-        ) -> FlextMeltanoTapOracleStreams.OracleStream:
+        ) -> FlextTapOracleStreams.OracleStream:
             """Create Oracle stream from table metadata.
 
             Args:
@@ -518,7 +518,7 @@ class FlextTapOracleStreams:
                 "properties": properties,
             }
 
-            return FlextMeltanoTapOracleStreams.StreamFactory.create_oracle_stream(
+            return FlextTapOracleStreams.StreamFactory.create_oracle_stream(
                 tap=tap,
                 name=stream_name,
                 table_name=table_name,
@@ -528,5 +528,5 @@ class FlextTapOracleStreams:
 
 
 __all__ = [
-    "FlextMeltanoTapOracleStreams",
+    "FlextTapOracleStreams",
 ]

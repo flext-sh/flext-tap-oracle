@@ -971,9 +971,9 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
         # =====================================================
         #
-        # The following functions have been moved to FlextMeltanoTapOracleUtilities:
-        # - create_stream_info_from_oracle_table -> FlextMeltanoTapOracleUtilities.StreamManagement.create_stream_info_from_oracle_table
-        # - create_discovery_result -> FlextMeltanoTapOracleUtilities.StreamManagement.create_discovery_result
+        # The following functions have been moved to FlextTapOracleUtilities:
+        # - create_stream_info_from_oracle_table -> FlextTapOracleUtilities.StreamManagement.create_stream_info_from_oracle_table
+        # - create_discovery_result -> FlextTapOracleUtilities.StreamManagement.create_discovery_result
         #
         # Use the utilities pattern instead of standalone functions.
 
