@@ -175,7 +175,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
             @staticmethod
             def handle_oracle_exception(
                 exception: Exception,
-                operation: str = "unknown",
+                operation: str = c.TapOracle.DEFAULT_OPERATION_NAME,
             ) -> FlextResult[bool]:
                 """Handle Oracle exceptions with proper error mapping."""
                 try:
@@ -217,7 +217,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
             @staticmethod
             def create_stream_info_from_oracle_table(
                 oracle_table: FlextDbOracleModels.DbOracle.Table,
-                stream_prefix: str = "oracle",
+                stream_prefix: str = c.TapOracle.DEFAULT_STREAM_PREFIX,
                 replication_method: Literal["FULL_TABLE", "INCREMENTAL"] = "FULL_TABLE",
             ) -> FlextResult[m.TapOracle.OracleTapStreamInfo]:
                 """Create stream info from Oracle table metadata."""

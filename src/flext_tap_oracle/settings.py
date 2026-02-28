@@ -92,7 +92,7 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
 
     # Tap-specific Configuration using FlextConstants where applicable
     stream_prefix: str = Field(
-        default="oracle",
+        default=c.TapOracle.DEFAULT_STREAM_PREFIX,
         min_length=1,
         description="Prefix for Singer stream names",
     )
@@ -345,20 +345,20 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
         if environment == "production":
             env_overrides.update({
                 "batch_size": c.TapOracle.Singer.MAX_BATCH_SIZE,
-                "max_parallel_streams": 4,
-                "query_timeout": 30 * 10,  # 5 minutes for production
+                "max_parallel_streams": c.TapOracle.EnvironmentDefaults.Production.MAX_PARALLEL_STREAMS,
+                "query_timeout": c.TapOracle.EnvironmentDefaults.Production.QUERY_TIMEOUT_SECONDS,
             })
         elif environment == "development":
             env_overrides.update({
                 "batch_size": c.TapOracle.Singer.DEFAULT_BATCH_SIZE,
-                "max_parallel_streams": 1,
-                "query_timeout": 60,
+                "max_parallel_streams": c.TapOracle.EnvironmentDefaults.Development.MAX_PARALLEL_STREAMS,
+                "query_timeout": c.TapOracle.EnvironmentDefaults.Development.QUERY_TIMEOUT_SECONDS,
             })
         elif environment == "staging":
             env_overrides.update({
                 "batch_size": c.TapOracle.Singer.DEFAULT_BATCH_SIZE * 2,
-                "max_parallel_streams": 2,
-                "query_timeout": 180,
+                "max_parallel_streams": c.TapOracle.EnvironmentDefaults.Staging.MAX_PARALLEL_STREAMS,
+                "query_timeout": c.TapOracle.EnvironmentDefaults.Staging.QUERY_TIMEOUT_SECONDS,
             })
 
         all_overrides = {**env_overrides, **overrides}
@@ -441,7 +441,7 @@ def create_oracle_tap_config(
         meltano_config = meltano_params or {}
 
         tap_config.setdefault("batch_size", 1000)
-        tap_config.setdefault("stream_prefix", "oracle")
+        tap_config.setdefault("stream_prefix", c.TapOracle.DEFAULT_STREAM_PREFIX)
         meltano_config.setdefault("project_root", ".")
         meltano_config.setdefault("environment", "production")
 

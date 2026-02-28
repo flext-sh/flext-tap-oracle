@@ -14,6 +14,8 @@ from flext_core import FlextLogger, FlextResult, t, u
 from flext_db_oracle import FlextDbOracleApi
 from flext_meltano import FlextMeltanoStream as Stream, FlextMeltanoTap as Tap
 
+from flext_tap_oracle.constants import c
+
 
 class FlextMeltanoTapOracleStreams:
     """Unified streams class for Oracle tap operations with complete stream management.
@@ -356,7 +358,7 @@ class FlextMeltanoTapOracleStreams:
                         "table_name": self.table_name,
                         "stream_name": self.name,
                         "column_count": len(columns) if u.is_list_like(columns) else 0,
-                        "oracle_schema": getattr(table, "schema_name", "unknown"),
+                        "oracle_schema": getattr(table, "schema_name", c.TapOracle.DEFAULT_OPERATION_NAME),
                         "table_type": getattr(table, "table_type", "TABLE"),
                     }
                 return {
@@ -452,7 +454,7 @@ class FlextMeltanoTapOracleStreams:
             tap: Tap,
             table_metadata: t.GeneralValueType,  # FlextDbOracleTable
             oracle_api: FlextDbOracleApi,
-            stream_prefix: str = "oracle",
+            stream_prefix: str = c.TapOracle.DEFAULT_STREAM_PREFIX,
         ) -> FlextMeltanoTapOracleStreams.OracleStream:
             """Create Oracle stream from table metadata.
 
@@ -467,7 +469,7 @@ class FlextMeltanoTapOracleStreams:
 
             """
             table_name_raw = getattr(table_metadata, "name", None)
-            table_name = str(table_name_raw) if table_name_raw else "unknown"
+            table_name = str(table_name_raw) if table_name_raw else c.TapOracle.DEFAULT_OPERATION_NAME
             stream_name = f"{stream_prefix}_{table_name.lower()}"
 
             # Build basic schema from table metadata
@@ -475,17 +477,17 @@ class FlextMeltanoTapOracleStreams:
             columns_raw = getattr(table_metadata, "columns", None)
             if isinstance(columns_raw, list):
                 for column in columns_raw:
-                    col_name = str(getattr(column, "name", "unknown"))
-                    col_type = str(getattr(column, "data_type", "string"))
+                    col_name = str(getattr(column, "name", c.TapOracle.DEFAULT_OPERATION_NAME))
+                    col_type = str(getattr(column, "data_type", c.TapOracle.SingerTypes.DEFAULT_TYPE))
 
                     # Map Oracle types to Singer schema types
-                    singer_type = "string"
+                    singer_type = c.TapOracle.SingerTypes.DEFAULT_TYPE
                     if col_type.upper().startswith(("NUMBER", "INTEGER")):
-                        singer_type = "number"
+                        singer_type = c.TapOracle.SingerTypes.NUMERIC_TYPE
                     elif col_type.upper().startswith(("DATE", "TIMESTAMP")):
-                        singer_type = "string"  # ISO format
+                        singer_type = c.TapOracle.SingerTypes.DATETIME_TYPE  # ISO format
                     elif col_type.upper().startswith("FLOAT"):
-                        singer_type = "number"
+                        singer_type = c.TapOracle.SingerTypes.NUMERIC_TYPE
 
                     properties[col_name] = {"type": singer_type}
 

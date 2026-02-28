@@ -22,6 +22,7 @@ from pydantic import (
     model_validator,
 )
 
+from flext_tap_oracle.constants import c
 from flext_tap_oracle.typings import t
 
 
@@ -210,7 +211,7 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     raise ValueError(msg)
 
                 # Enhanced validation with proper limits
-                max_length = 255  # Oracle identifier max length
+                max_length = c.TapOracle.MAX_IDENTIFIER_LENGTH
                 if len(v) > max_length:
                     msg = f"Stream name too long: {len(v)} > {max_length} characters"
                     raise ValueError(msg)
@@ -232,7 +233,7 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                         raise ValueError(msg)
 
                     # Validation for replication key length
-                    max_key_length = 255  # Oracle identifier max length
+                    max_key_length = c.TapOracle.MAX_IDENTIFIER_LENGTH
                     if len(self.replication_key) > max_key_length:
                         msg = f"Replication key too long: {len(self.replication_key)} > {max_key_length}"
                         raise ValueError(msg)

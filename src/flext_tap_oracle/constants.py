@@ -33,6 +33,46 @@ class FlextMeltanoTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstan
         GOOD_PERFORMANCE_THRESHOLD = 500
         MODERATE_PERFORMANCE_THRESHOLD = 100
 
+        # Oracle identifier constraints
+        MAX_IDENTIFIER_LENGTH: Final[int] = 255
+
+        # Stream configuration defaults
+        DEFAULT_STREAM_PREFIX: Final[str] = "oracle"
+        DEFAULT_OPERATION_NAME: Final[str] = "unknown"
+
+        # Performance defaults by environment
+        class EnvironmentDefaults:
+            """Environment-specific performance defaults."""
+
+            class Production:
+                """Production environment defaults."""
+
+                MAX_PARALLEL_STREAMS: Final[int] = 4
+                QUERY_TIMEOUT_SECONDS: Final[int] = 300  # 5 minutes
+
+            class Development:
+                """Development environment defaults."""
+
+                MAX_PARALLEL_STREAMS: Final[int] = 1
+                QUERY_TIMEOUT_SECONDS: Final[int] = 60
+
+            class Staging:
+                """Staging environment defaults."""
+
+                MAX_PARALLEL_STREAMS: Final[int] = 2
+                QUERY_TIMEOUT_SECONDS: Final[int] = 180
+
+        # Singer type mappings
+        class SingerTypes:
+            """Singer protocol type mappings for Oracle data types."""
+
+            DEFAULT_TYPE: Final[str] = "string"
+            NUMERIC_TYPE: Final[str] = "number"
+            DATETIME_TYPE: Final[str] = "string"  # ISO format
+
+        # Initialization defaults
+        INITIAL_RECORD_COUNT: Final[int] = 0
+        INITIAL_DURATION_SECONDS: Final[float] = 0.0
         class Oracle:
             """Oracle database connection constants."""
 
