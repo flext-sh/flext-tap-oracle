@@ -40,7 +40,7 @@ class OracleTapDiscoverParams(BaseModel):
     @classmethod
     def from_click_args(cls, **kwargs: t.GeneralValueType) -> OracleTapDiscoverParams:
         """Create from Click arguments using flext-cli patterns."""
-        args: Mapping[str, t.GeneralValueType] = kwargs  # kwargs keys are always str
+        args: Mapping[str, object] = kwargs  # kwargs keys are always str
         return cls(
             config_file=str(args.get("config_file"))
             if args.get("config_file") is not None
@@ -70,7 +70,7 @@ class OracleTapSyncParams(BaseModel):
     @classmethod
     def from_click_args(cls, **kwargs: t.GeneralValueType) -> OracleTapSyncParams:
         """Create from Click arguments using flext-cli patterns."""
-        args: Mapping[str, t.GeneralValueType] = kwargs
+        args: Mapping[str, object] = kwargs
         return cls(
             config_file=str(args.get("config_file"))
             if args.get("config_file") is not None
@@ -283,9 +283,7 @@ def handle_discover_command(
 ) -> FlextResult[t.JsonValue]:
     """Handle discover command using flext-cli patterns - NO click decorators."""
     try:
-        # Convert GeneralValueType kwargs to object for from_click_args
-        str_kwargs: dict[str, object] = dict(kwargs)
-        params = OracleTapDiscoverParams.from_click_args(**str_kwargs)
+        params = OracleTapDiscoverParams.from_click_args(**kwargs)
 
         command = OracleTapDiscoverCommand(params=params)
 
@@ -308,9 +306,7 @@ def handle_sync_command(
 ) -> FlextResult[t.JsonValue]:
     """Handle sync command using flext-cli patterns - NO click decorators."""
     try:
-        # Convert GeneralValueType kwargs to object for from_click_args
-        str_kwargs: dict[str, object] = dict(kwargs)
-        params = OracleTapSyncParams.from_click_args(**str_kwargs)
+        params = OracleTapSyncParams.from_click_args(**kwargs)
 
         command = OracleTapSyncCommand(params=params)
 

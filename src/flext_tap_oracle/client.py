@@ -211,7 +211,7 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table
             raise ValueError(error_msg)
 
         # Initialize parent class
-        super().__init__(config=config)
+        super().__init__()
 
         # Initialize Oracle-specific components
         oracle_config = config.get_oracle_config()
@@ -259,6 +259,7 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table
         return self._table_filter_service
 
     # Service methods - using direct domain services
+    @override
     def execute(self) -> FlextResult[list[FlextDbOracleModels.DbOracle.Table]]:
         """Execute Oracle tap service - discover tables."""
         return self._discovery_service.execute()

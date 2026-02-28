@@ -2,7 +2,6 @@
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
-
 """
 
 from __future__ import annotations
@@ -32,13 +31,14 @@ if TYPE_CHECKING:
         FlextMeltanoTapOracleProtocols as p,
     )
     from flext_tap_oracle.settings import FlextMeltanoTapOracleSettings
-    from flext_tap_oracle.streams import FlextOracleStream
+    from flext_tap_oracle.streams import FlextMeltanoTapOracleStreams
     from flext_tap_oracle.typings import (
         FlextMeltanoTapOracleTypes,
         FlextMeltanoTapOracleTypes as t,
     )
     from flext_tap_oracle.utilities import (
         FlextTapOracleUtilities,
+        FlextTapOracleUtilities as FlextMeltanoTapOracleUtilities,
         FlextTapOracleUtilities as u,
     )
 
@@ -60,9 +60,17 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
         "flext_tap_oracle.settings",
         "FlextMeltanoTapOracleSettings",
     ),
+    "FlextMeltanoTapOracleStreams": (
+        "flext_tap_oracle.streams",
+        "FlextMeltanoTapOracleStreams",
+    ),
     "FlextMeltanoTapOracleTypes": (
         "flext_tap_oracle.typings",
         "FlextMeltanoTapOracleTypes",
+    ),
+    "FlextMeltanoTapOracleUtilities": (
+        "flext_tap_oracle.utilities",
+        "FlextTapOracleUtilities",
     ),
     "FlextTapOracleUtilities": (
         "flext_tap_oracle.utilities",
@@ -95,11 +103,11 @@ __all__ = [
     "FlextMeltanoTapOracleModels",
     "FlextMeltanoTapOracleProtocols",
     "FlextMeltanoTapOracleSettings",
+    "FlextMeltanoTapOracleStreams",
     "FlextMeltanoTapOracleTypes",
     "FlextMeltanoTapOracleUtilities",
     "FlextOracleConnectionTestService",
     "FlextOracleDiscoveryService",
-    "FlextOracleStream",
     "FlextOracleTableFilterService",
     "FlextOracleTapService",
     "FlextTapOracleUtilities",
