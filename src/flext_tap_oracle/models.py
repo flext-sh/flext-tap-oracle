@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from datetime import datetime
 from typing import Literal, Self
 
@@ -663,14 +663,14 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             # Raw Oracle metadata
-            oracle_tables: list[FlextDbOracleModels.DbOracle.Table] = Field(
-                default_factory=list,
+            oracle_tables: Sequence[object] = Field(
+                default=[],
                 description="Raw Oracle table metadata from flext-db-oracle",
             )
 
             # Processed stream information
-            stream_info: list[m.TapOracle.OracleTapStreamInfo] = Field(
-                default_factory=list,
+            stream_info: Sequence[object] = Field(
+                default=[],
                 description="Processed stream information for tap use",
             )
 

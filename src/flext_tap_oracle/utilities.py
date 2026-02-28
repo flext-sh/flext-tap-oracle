@@ -262,7 +262,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                         stream_result = FlextTapOracleUtilities.TapOracle.StreamManagement.create_stream_info_from_oracle_table(
                             oracle_table,
                         )
-                        if stream_result.is_success and stream_result.value is not None:
+                        if stream_result.is_success:
                             stream_infos.append(stream_result.value)
 
                     discovery_result = m.TapOracle.OracleTapDiscoveryResult(
