@@ -90,8 +90,10 @@ class TestsFlextMeltanoTapOracleModels(FlextTestsModels):
 
 # Alias for simplified usage
 tm = TestsFlextMeltanoTapOracleModels
+m = TestsFlextMeltanoTapOracleModels
 
 __all__ = [
     "TestsFlextMeltanoTapOracleModels",
+    "m",
     "tm",
 ]
