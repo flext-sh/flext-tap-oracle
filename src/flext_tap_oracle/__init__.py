@@ -76,10 +76,6 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
         "flext_tap_oracle.client",
         "FlextOracleDiscoveryService",
     ),
-    "FlextMeltanoTapOracleSettings": (
-        "flext_tap_oracle.settings",
-        "FlextMeltanoTapOracleSettings",
-    ),
     "FlextOracleTableFilterService": (
         "flext_tap_oracle.client",
         "FlextOracleTableFilterService",
