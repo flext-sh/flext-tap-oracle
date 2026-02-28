@@ -44,51 +44,18 @@ if TYPE_CHECKING:
 
 # Lazy import mapping: export_name -> (module_path, attr_name)
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
-    "FlextMeltanoTapOracleConstants": (
-        "flext_tap_oracle.constants",
-        "FlextMeltanoTapOracleConstants",
-    ),
-    "FlextMeltanoTapOracleModels": (
-        "flext_tap_oracle.models",
-        "FlextMeltanoTapOracleModels",
-    ),
-    "FlextMeltanoTapOracleProtocols": (
-        "flext_tap_oracle.protocols",
-        "FlextMeltanoTapOracleProtocols",
-    ),
-    "FlextMeltanoTapOracleSettings": (
-        "flext_tap_oracle.settings",
-        "FlextMeltanoTapOracleSettings",
-    ),
-    "FlextMeltanoTapOracleStreams": (
-        "flext_tap_oracle.streams",
-        "FlextMeltanoTapOracleStreams",
-    ),
-    "FlextMeltanoTapOracleTypes": (
-        "flext_tap_oracle.typings",
-        "FlextMeltanoTapOracleTypes",
-    ),
-    "FlextMeltanoTapOracleUtilities": (
-        "flext_tap_oracle.utilities",
-        "FlextTapOracleUtilities",
-    ),
-    "FlextTapOracleUtilities": (
-        "flext_tap_oracle.utilities",
-        "FlextTapOracleUtilities",
-    ),
-    "FlextOracleConnectionTestService": (
-        "flext_tap_oracle.client",
-        "FlextOracleConnectionTestService",
-    ),
-    "FlextOracleDiscoveryService": (
-        "flext_tap_oracle.client",
-        "FlextOracleDiscoveryService",
-    ),
-    "FlextOracleTableFilterService": (
-        "flext_tap_oracle.client",
-        "FlextOracleTableFilterService",
-    ),
+    "FlextMeltanoTapOracleConstants": ("flext_tap_oracle.constants", "FlextMeltanoTapOracleConstants"),
+    "FlextMeltanoTapOracleModels": ("flext_tap_oracle.models", "FlextMeltanoTapOracleModels"),
+    "FlextMeltanoTapOracleProtocols": ("flext_tap_oracle.protocols", "FlextMeltanoTapOracleProtocols"),
+    "FlextMeltanoTapOracleSettings": ("flext_tap_oracle.settings", "FlextMeltanoTapOracleSettings"),
+    "FlextMeltanoTapOracleStreams": ("flext_tap_oracle.streams", "FlextMeltanoTapOracleStreams"),
+    "FlextMeltanoTapOracleTypes": ("flext_tap_oracle.typings", "FlextMeltanoTapOracleTypes"),
+    "FlextMeltanoTapOracleUtilities": ("flext_tap_oracle.utilities", "FlextTapOracleUtilities"),
+    "FlextOracleConnectionTestService": ("flext_tap_oracle.client", "FlextOracleConnectionTestService"),
+    "FlextOracleDiscoveryService": ("flext_tap_oracle.client", "FlextOracleDiscoveryService"),
+    "FlextOracleTableFilterService": ("flext_tap_oracle.client", "FlextOracleTableFilterService"),
     "FlextOracleTapService": ("flext_tap_oracle.client", "FlextOracleTapService"),
+    "FlextTapOracleUtilities": ("flext_tap_oracle.utilities", "FlextTapOracleUtilities"),
     "__version__": ("flext_tap_oracle.__version__", "__version__"),
     "__version_info__": ("flext_tap_oracle.__version__", "__version_info__"),
     "c": ("flext_tap_oracle.constants", "FlextMeltanoTapOracleConstants"),
