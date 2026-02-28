@@ -31,10 +31,12 @@ class OracleTapDiscoverParams(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     config_file: str | None = Field(
-        default=None, description="Path to configuration file"
+        default=None,
+        description="Path to configuration file",
     )
     output_file: str | None = Field(
-        default="catalog.json", description="Path to output catalog file"
+        default="catalog.json",
+        description="Path to output catalog file",
     )
 
     @classmethod
@@ -59,10 +61,12 @@ class OracleTapSyncParams(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     config_file: str | None = Field(
-        default=None, description="Path to configuration file"
+        default=None,
+        description="Path to configuration file",
     )
     catalog_file: str | None = Field(
-        default="catalog.json", description="Path to catalog file"
+        default="catalog.json",
+        description="Path to catalog file",
     )
     state_file: str | None = Field(default=None, description="Path to state file")
     output_file: str | None = Field(default=None, description="Path to output file")
@@ -125,7 +129,7 @@ class OracleTapDiscoverCommand:
             # Use singleton instance for validation
             config_instance = FlextMeltanoTapOracleSettings.get_global_instance()
             config: FlextMeltanoTapOracleSettings = config_instance.model_validate_json(
-                config_data
+                config_data,
             )
 
             # Get Oracle configuration
@@ -204,7 +208,7 @@ class OracleTapSyncCommand:
             # Use singleton instance for validation
             config_instance = FlextMeltanoTapOracleSettings.get_global_instance()
             config: FlextMeltanoTapOracleSettings = config_instance.model_validate_json(
-                config_data
+                config_data,
             )
 
             # Get Oracle configuration

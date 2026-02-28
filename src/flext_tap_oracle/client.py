@@ -53,7 +53,7 @@ class FlextOracleDiscoveryService:
                 error_msg = tables_result.error or "Table discovery failed"
                 logger.warning("Oracle table discovery failed: %s", error_msg)
                 return FlextResult[list[FlextDbOracleModels.DbOracle.Table]].fail(
-                    error_msg
+                    error_msg,
                 )
 
             # Convert string table names to FlextDbOracleModels.DbOracle.Table objects

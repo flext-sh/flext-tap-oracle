@@ -172,7 +172,8 @@ class FlextMeltanoTapOracleStreams:
             column_names: list[str] = [getattr(col, "name", "") for col in columns]
             # Handle TDbOracleQueryResult data structure
             if not isinstance(query_data, Iterable) or isinstance(
-                query_data, str | bytes
+                query_data,
+                str | bytes,
             ):
                 FlextMeltanoTapOracleStreams.logger.warning(
                     "Unexpected query data structure, using fallback",
@@ -229,7 +230,8 @@ class FlextMeltanoTapOracleStreams:
                     column_names = list(schema_props_dict.keys())
             # Handle different query_data structures
             if not isinstance(query_data, Iterable) or isinstance(
-                query_data, str | bytes
+                query_data,
+                str | bytes,
             ):
                 FlextMeltanoTapOracleStreams.logger.warning(
                     "Cannot process query data in fallback mode",
@@ -350,7 +352,9 @@ class FlextMeltanoTapOracleStreams:
                     }
                 table_metadata_result = get_meta(self.table_name)
                 if getattr(table_metadata_result, "is_success", None) and getattr(
-                    table_metadata_result, "data", None
+                    table_metadata_result,
+                    "data",
+                    None,
                 ):
                     table = table_metadata_result.data
                     columns = getattr(table, "columns", [])
@@ -359,7 +363,9 @@ class FlextMeltanoTapOracleStreams:
                         "stream_name": self.name,
                         "column_count": len(columns) if u.is_list_like(columns) else 0,
                         "oracle_schema": getattr(
-                            table, "schema_name", c.TapOracle.DEFAULT_OPERATION_NAME
+                            table,
+                            "schema_name",
+                            c.TapOracle.DEFAULT_OPERATION_NAME,
                         ),
                         "table_type": getattr(table, "table_type", "TABLE"),
                     }
@@ -484,12 +490,14 @@ class FlextMeltanoTapOracleStreams:
             if isinstance(columns_raw, list):
                 for column in columns_raw:
                     col_name = str(
-                        getattr(column, "name", c.TapOracle.DEFAULT_OPERATION_NAME)
+                        getattr(column, "name", c.TapOracle.DEFAULT_OPERATION_NAME),
                     )
                     col_type = str(
                         getattr(
-                            column, "data_type", c.TapOracle.SingerTypes.DEFAULT_TYPE
-                        )
+                            column,
+                            "data_type",
+                            c.TapOracle.SingerTypes.DEFAULT_TYPE,
+                        ),
                     )
 
                     # Map Oracle types to Singer schema types

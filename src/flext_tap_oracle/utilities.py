@@ -273,7 +273,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                     )
 
                     return FlextResult[m.TapOracle.OracleTapDiscoveryResult].ok(
-                        discovery_result
+                        discovery_result,
                     )
 
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
@@ -323,7 +323,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                         )
 
                     return FlextResult[Mapping[str, t.GeneralValueType]].ok(
-                        validated_config
+                        validated_config,
                     )
 
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
@@ -356,7 +356,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
 
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                     return FlextResult[str].fail(
-                        f"Connection string building failed: {e}"
+                        f"Connection string building failed: {e}",
                     )
 
             @staticmethod
@@ -372,7 +372,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                     validation_result = cfg_validator.validate_oracle_config(config)
                     if validation_result.is_failure:
                         return FlextResult[Mapping[str, t.GeneralValueType]].fail(
-                            validation_result.error
+                            validation_result.error,
                         )
 
                     # Note: In a real implementation, this would test actual connectivity
@@ -386,7 +386,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                     }
 
                     return FlextResult[Mapping[str, t.GeneralValueType]].ok(
-                        connectivity_result
+                        connectivity_result,
                     )
 
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:

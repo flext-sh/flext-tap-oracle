@@ -77,21 +77,25 @@ class FlextMeltanoTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
             """Oracle extraction complex types."""
 
             type ExtractionConfiguration = dict[
-                str, t.GeneralValueType | dict[str, t.GeneralValueType]
+                str,
+                t.GeneralValueType | dict[str, t.GeneralValueType],
             ]
             type ExtractionState = dict[str, t.JsonValue | t.GeneralValueType]
             type ExtractionMetrics = dict[
-                str, int | float | bool | dict[str, t.GeneralValueType]
+                str,
+                int | float | bool | dict[str, t.GeneralValueType],
             ]
             type BatchConfiguration = dict[
-                str, int | bool | dict[str, t.GeneralValueType]
+                str,
+                int | bool | dict[str, t.GeneralValueType],
             ]
             type StreamDefinition = dict[
                 str,
                 str | list[str] | dict[str, t.JsonValue],
             ]
             type TableMetadata = dict[
-                str, t.JsonValue | list[dict[str, t.GeneralValueType]]
+                str,
+                t.JsonValue | list[dict[str, t.GeneralValueType]],
             ]
 
         # =========================================================================
@@ -104,7 +108,8 @@ class FlextMeltanoTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
             type CatalogEntry = dict[str, str | dict[str, t.JsonValue]]
             type StreamSchema = dict[str, dict[str, t.JsonValue]]
             type TapConfiguration = dict[
-                str, t.GeneralValueType | dict[str, t.GeneralValueType]
+                str,
+                t.GeneralValueType | dict[str, t.GeneralValueType],
             ]
             type StateBookmark = dict[str, t.JsonValue | t.GeneralValueType]
             type RecordMessage = dict[str, str | dict[str, t.JsonValue]]
@@ -118,22 +123,28 @@ class FlextMeltanoTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
             """Oracle tap configuration complex types."""
 
             type TapOracleConfig = dict[
-                str, t.GeneralValueType | dict[str, t.GeneralValueType]
+                str,
+                t.GeneralValueType | dict[str, t.GeneralValueType],
             ]
             type ConnectionSettings = dict[
-                str, str | int | bool | dict[str, t.GeneralValueType]
+                str,
+                str | int | bool | dict[str, t.GeneralValueType],
             ]
             type ExtractionSettings = dict[
-                str, int | bool | dict[str, t.GeneralValueType]
+                str,
+                int | bool | dict[str, t.GeneralValueType],
             ]
             type PerformanceSettings = dict[
-                str, int | float | bool | dict[str, t.GeneralValueType]
+                str,
+                int | float | bool | dict[str, t.GeneralValueType],
             ]
             type SecuritySettings = dict[
-                str, str | bool | dict[str, t.GeneralValueType]
+                str,
+                str | bool | dict[str, t.GeneralValueType],
             ]
             type StreamSettings = dict[
-                str, bool | str | list[str] | dict[str, t.GeneralValueType]
+                str,
+                bool | str | list[str] | dict[str, t.GeneralValueType],
             ]
 
         # =========================================================================
@@ -177,7 +188,8 @@ class FlextMeltanoTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
             type SingerTapOracleProjectConfig = dict[str, t.GeneralValueType]
             type OracleExtractorConfig = dict[str, str | int | bool | list[str]]
             type SingerProtocolConfig = dict[
-                str, bool | str | dict[str, t.GeneralValueType]
+                str,
+                bool | str | dict[str, t.GeneralValueType],
             ]
             type TapOraclePipelineConfig = dict[str, t.GeneralValueType]
 

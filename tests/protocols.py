@@ -69,7 +69,8 @@ class TestsFlextMeltanoTapOracleProtocols(FlextTestsProtocols):
                 ...
 
             def get_test_data(
-                self, table_name: str
+                self,
+                table_name: str,
             ) -> list[dict[str, t.GeneralValueType]]:
                 """Get test data for a table."""
                 ...
@@ -83,13 +84,15 @@ class TestsFlextMeltanoTapOracleProtocols(FlextTestsProtocols):
             """Protocol for test assertions."""
 
             def assert_oracle_connection_successful(
-                self, config: dict[str, t.GeneralValueType]
+                self,
+                config: dict[str, t.GeneralValueType],
             ) -> None:
                 """Assert Oracle connection was successful."""
                 ...
 
             def assert_singer_stream_valid(
-                self, stream: dict[str, t.GeneralValueType]
+                self,
+                stream: dict[str, t.GeneralValueType],
             ) -> None:
                 """Assert Singer stream is valid."""
                 ...

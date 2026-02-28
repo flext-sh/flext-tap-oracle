@@ -91,7 +91,7 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             """Complete Singer Oracle tap system summary with database extraction capabilities."""
             return {
                 "total_models": len(
-                    FlextMeltanoTapOracleModels.TapOracle.get_active_model_names()
+                    FlextMeltanoTapOracleModels.TapOracle.get_active_model_names(),
                 ),
                 "tap_type": "singer_oracle_database_extractor",
                 "extraction_features": [
@@ -160,14 +160,16 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             # Oracle-specific metadata
             table_name: str = Field(..., description="Oracle table name")
             schema_name: str | None = Field(
-                default=None, description="Oracle schema name"
+                default=None,
+                description="Oracle schema name",
             )
             estimated_rows: int | None = Field(
                 default=None,
                 description="Estimated row count",
             )
             column_count: int | None = Field(
-                default=None, description="Number of columns"
+                default=None,
+                description="Number of columns",
             )
 
             @computed_field
@@ -652,14 +654,16 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Discovery metadata
             schema_name: str = Field(
-                ..., description="Oracle schema that was discovered"
+                ...,
+                description="Oracle schema that was discovered",
             )
             discovery_timestamp: str = Field(
                 ...,
                 description="When discovery was performed",
             )
             total_tables: int = Field(
-                ..., description="Total number of tables discovered"
+                ...,
+                description="Total number of tables discovered",
             )
 
             # Raw Oracle metadata
@@ -841,7 +845,7 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 success_rate = 0.0
                 if self.streams_processed > 0:
                     successful_streams = self.streams_processed - len(
-                        self.failed_streams
+                        self.failed_streams,
                     )
                     success_rate = successful_streams / self.streams_processed
 

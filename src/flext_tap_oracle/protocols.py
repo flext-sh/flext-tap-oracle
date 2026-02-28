@@ -49,7 +49,8 @@ class FlextMeltanoTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtoco
 
         @runtime_checkable
         class OracleConnectionProtocol(
-            FlextDbOracleProtocols.Service[object], Protocol
+            FlextDbOracleProtocols.Service[object],
+            Protocol,
         ):
             """Protocol for Oracle database connection management."""
 
@@ -122,7 +123,8 @@ class FlextMeltanoTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtoco
             """Protocol for Oracle to Singer type mapping."""
 
             def map_oracle_type(
-                self, oracle_type: str
+                self,
+                oracle_type: str,
             ) -> FlextMeltanoProtocols.Result[str]:
                 """Map Oracle data type to Singer type."""
                 ...
@@ -137,7 +139,8 @@ class FlextMeltanoTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtoco
 
         @runtime_checkable
         class StreamGenerationProtocol(
-            FlextDbOracleProtocols.Service[object], Protocol
+            FlextDbOracleProtocols.Service[object],
+            Protocol,
         ):
             """Protocol for Singer stream generation."""
 
@@ -165,7 +168,8 @@ class FlextMeltanoTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtoco
                 ...
 
             def configure_batch_size(
-                self, size: int
+                self,
+                size: int,
             ) -> FlextMeltanoProtocols.Result[bool]:
                 """Configure extraction batch size."""
                 ...
