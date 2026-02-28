@@ -38,22 +38,49 @@ if TYPE_CHECKING:
         FlextMeltanoTapOracleTypes as t,
     )
     from flext_tap_oracle.utilities import (
-        FlextMeltanoTapOracleUtilities,
-        FlextMeltanoTapOracleUtilities as u,
+        FlextTapOracleUtilities,
+        FlextTapOracleUtilities as u,
     )
 
 # Lazy import mapping: export_name -> (module_path, attr_name)
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
-    "FlextMeltanoTapOracleConstants": ("flext_tap_oracle.constants", "FlextMeltanoTapOracleConstants"),
-    "FlextMeltanoTapOracleModels": ("flext_tap_oracle.models", "FlextMeltanoTapOracleModels"),
-    "FlextMeltanoTapOracleProtocols": ("flext_tap_oracle.protocols", "FlextMeltanoTapOracleProtocols"),
-    "FlextMeltanoTapOracleSettings": ("flext_tap_oracle.settings", "FlextMeltanoTapOracleSettings"),
-    "FlextMeltanoTapOracleTypes": ("flext_tap_oracle.typings", "FlextMeltanoTapOracleTypes"),
-    "FlextMeltanoTapOracleUtilities": ("flext_tap_oracle.utilities", "FlextMeltanoTapOracleUtilities"),
-    "FlextOracleConnectionTestService": ("flext_tap_oracle.client", "FlextOracleConnectionTestService"),
-    "FlextOracleDiscoveryService": ("flext_tap_oracle.client", "FlextOracleDiscoveryService"),
+    "FlextMeltanoTapOracleConstants": (
+        "flext_tap_oracle.constants",
+        "FlextMeltanoTapOracleConstants",
+    ),
+    "FlextMeltanoTapOracleModels": (
+        "flext_tap_oracle.models",
+        "FlextMeltanoTapOracleModels",
+    ),
+    "FlextMeltanoTapOracleProtocols": (
+        "flext_tap_oracle.protocols",
+        "FlextMeltanoTapOracleProtocols",
+    ),
+    "FlextMeltanoTapOracleSettings": (
+        "flext_tap_oracle.settings",
+        "FlextMeltanoTapOracleSettings",
+    ),
+    "FlextMeltanoTapOracleTypes": (
+        "flext_tap_oracle.typings",
+        "FlextMeltanoTapOracleTypes",
+    ),
+    "FlextTapOracleUtilities": (
+        "flext_tap_oracle.utilities",
+        "FlextTapOracleUtilities",
+    ),
+    "FlextOracleConnectionTestService": (
+        "flext_tap_oracle.client",
+        "FlextOracleConnectionTestService",
+    ),
+    "FlextOracleDiscoveryService": (
+        "flext_tap_oracle.client",
+        "FlextOracleDiscoveryService",
+    ),
     "FlextOracleStream": ("flext_tap_oracle.streams", "FlextOracleStream"),
-    "FlextOracleTableFilterService": ("flext_tap_oracle.client", "FlextOracleTableFilterService"),
+    "FlextOracleTableFilterService": (
+        "flext_tap_oracle.client",
+        "FlextOracleTableFilterService",
+    ),
     "FlextOracleTapService": ("flext_tap_oracle.client", "FlextOracleTapService"),
     "__version__": ("flext_tap_oracle.__version__", "__version__"),
     "__version_info__": ("flext_tap_oracle.__version__", "__version_info__"),
@@ -61,7 +88,7 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "m": ("flext_tap_oracle.models", "FlextMeltanoTapOracleModels"),
     "p": ("flext_tap_oracle.protocols", "FlextMeltanoTapOracleProtocols"),
     "t": ("flext_tap_oracle.typings", "FlextMeltanoTapOracleTypes"),
-    "u": ("flext_tap_oracle.utilities", "FlextMeltanoTapOracleUtilities"),
+    "u": ("flext_tap_oracle.utilities", "FlextTapOracleUtilities"),
 }
 
 __all__ = [
@@ -76,6 +103,7 @@ __all__ = [
     "FlextOracleStream",
     "FlextOracleTableFilterService",
     "FlextOracleTapService",
+    "FlextTapOracleUtilities",
     "__version__",
     "__version_info__",
     "c",

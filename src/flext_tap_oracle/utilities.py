@@ -21,15 +21,15 @@ from flext_core import (
     FlextLogger,
     FlextResult,
     t,
-    u as u_core,
 )
-from flext_db_oracle import FlextDbOracleModels
+from flext_db_oracle import FlextDbOracleModels, FlextDbOracleUtilities
+from flext_meltano import FlextMeltanoUtilities
 
 from flext_tap_oracle.constants import c
 from flext_tap_oracle.models import m
 
 
-class FlextMeltanoTapOracleUtilities(u_core):
+class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
     """Unified Oracle tap utilities class extending u classes.
 
     Provides complete Oracle tap utilities with nested classes for:
@@ -47,7 +47,7 @@ class FlextMeltanoTapOracleUtilities(u_core):
         """Tap Oracle  namespace for cross-project access."""
 
         def __init__(self) -> None:
-            """Initialize FlextMeltanoTapOracleUtilities service."""
+            """Initialize FlextTapOracleUtilities service."""
             super().__init__()
             self._container = FlextContainer.get_global()
             self._logger = FlextLogger(__name__)
@@ -183,9 +183,7 @@ class FlextMeltanoTapOracleUtilities(u_core):
                     exc_str = str(exception).lower()
 
                     # Map common Oracle exceptions to specific error types
-                    err_handling = (
-                        FlextMeltanoTapOracleUtilities.TapOracle.ErrorHandling
-                    )
+                    err_handling = FlextTapOracleUtilities.TapOracle.ErrorHandling
                     err: (
                         FlextExceptions.ConnectionError
                         | FlextExceptions.OperationError
@@ -261,7 +259,7 @@ class FlextMeltanoTapOracleUtilities(u_core):
                                 pass
                             case _:
                                 continue
-                        stream_result = FlextMeltanoTapOracleUtilities.TapOracle.StreamManagement.create_stream_info_from_oracle_table(
+                        stream_result = FlextTapOracleUtilities.TapOracle.StreamManagement.create_stream_info_from_oracle_table(
                             oracle_table,
                         )
                         if stream_result.is_success and stream_result.value is not None:
@@ -340,7 +338,7 @@ class FlextMeltanoTapOracleUtilities(u_core):
                 """Build Oracle connection string from configuration."""
                 try:
                     cfg_validator = (
-                        FlextMeltanoTapOracleUtilities.TapOracle.ConfigurationValidation
+                        FlextTapOracleUtilities.TapOracle.ConfigurationValidation
                     )
                     validation_result = cfg_validator.validate_oracle_config(config)
                     if validation_result.is_failure:
@@ -369,7 +367,7 @@ class FlextMeltanoTapOracleUtilities(u_core):
                 try:
                     # Validate configuration first
                     cfg_validator = (
-                        FlextMeltanoTapOracleUtilities.TapOracle.ConfigurationValidation
+                        FlextTapOracleUtilities.TapOracle.ConfigurationValidation
                     )
                     validation_result = cfg_validator.validate_oracle_config(config)
                     if validation_result.is_failure:
@@ -473,9 +471,9 @@ class FlextMeltanoTapOracleUtilities(u_core):
 
 
 # Runtime alias for simplified usage
-u: type[FlextMeltanoTapOracleUtilities] = FlextMeltanoTapOracleUtilities
+u = FlextTapOracleUtilities
 
 __all__: list[str] = [
-    "FlextMeltanoTapOracleUtilities",
+    "FlextTapOracleUtilities",
     "u",
 ]
