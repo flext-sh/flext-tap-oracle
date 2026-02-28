@@ -130,7 +130,7 @@ class FlextMeltanoTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtoco
 
             def convert_value(
                 self,
-                value: object,
+                value: t.GeneralValueType,
                 oracle_type: str,
             ) -> FlextMeltanoProtocols.Result[object]:
                 """Convert Oracle value to Singer-compatible format."""

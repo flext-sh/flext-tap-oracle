@@ -505,22 +505,10 @@ class FlextMeltanoTapOracleStreams:
             )
 
 
-# Backward compatibility classes with real inheritance
-class OracleStream(FlextMeltanoTapOracleStreams.OracleStream):
-    """OracleStream - real inheritance from FlextMeltanoTapOracleStreams.OracleStream."""
-
-
-class FlextOracleStream(FlextMeltanoTapOracleStreams.OracleStream):
-    """FlextOracleStream - real inheritance from FlextMeltanoTapOracleStreams.OracleStream."""
-
-
-# Factory function exports for backward compatibility
-create_oracle_stream = FlextMeltanoTapOracleStreams.StreamFactory.create_oracle_stream
-create_oracle_stream_from_table = (
-    FlextMeltanoTapOracleStreams.StreamFactory.create_oracle_stream_from_table
-)
 
 __all__ = [
+    "FlextMeltanoTapOracleStreams",
+]
     "FlextMeltanoTapOracleStreams",
     "FlextOracleStream",
     "OracleStream",
