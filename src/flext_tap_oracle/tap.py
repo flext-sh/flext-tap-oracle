@@ -38,9 +38,9 @@ class OracleTapDiscoverParams(BaseModel):
     )
 
     @classmethod
-    def from_click_args(cls, **kwargs: object) -> OracleTapDiscoverParams:
+    def from_click_args(cls, **kwargs: t.GeneralValueType) -> OracleTapDiscoverParams:
         """Create from Click arguments using flext-cli patterns."""
-        args: Mapping[str, object] = kwargs  # kwargs keys are always str
+        args: Mapping[str, t.GeneralValueType] = kwargs  # kwargs keys are always str
         return cls(
             config_file=str(args.get("config_file"))
             if args.get("config_file") is not None
@@ -68,9 +68,9 @@ class OracleTapSyncParams(BaseModel):
     output_file: str | None = Field(default=None, description="Path to output file")
 
     @classmethod
-    def from_click_args(cls, **kwargs: object) -> OracleTapSyncParams:
+    def from_click_args(cls, **kwargs: t.GeneralValueType) -> OracleTapSyncParams:
         """Create from Click arguments using flext-cli patterns."""
-        args: Mapping[str, object] = kwargs
+        args: Mapping[str, t.GeneralValueType] = kwargs
         return cls(
             config_file=str(args.get("config_file"))
             if args.get("config_file") is not None
