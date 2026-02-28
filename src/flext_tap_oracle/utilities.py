@@ -21,8 +21,8 @@ from flext_core import (
     FlextLogger,
     FlextResult,
     t,
+    u as u_core,
 )
-from flext_core.utilities import u as u_core
 from flext_db_oracle import FlextDbOracleModels
 
 from flext_tap_oracle.constants import c
