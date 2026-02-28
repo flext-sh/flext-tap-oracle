@@ -219,8 +219,8 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
     def validate_oracle_connection_config(self) -> Self:
         """Validate Oracle connection configuration."""
         # Either service_name or sid must be provided
-        service_name = self.oracle_service_name.strip() if self.oracle_service_name else ""
-        sid = self.oracle_sid.strip() if self.oracle_sid else ""
+        service_name = str(self.oracle_service_name or "").strip()
+        sid = str(self.oracle_sid or "").strip()
 
         if not service_name and not sid:
             msg = "Either oracle_service_name or oracle_sid must be provided"
@@ -242,7 +242,6 @@ class FlextMeltanoTapOracleSettings(FlextSettings):
             raise ValueError(msg)
 
         return self
-
     def validate_business_rules(self) -> FlextResult[bool]:
         """Validate Oracle tap configuration business rules."""
         try:
