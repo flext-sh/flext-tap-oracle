@@ -37,17 +37,35 @@ if TYPE_CHECKING:
 
 # Lazy import mapping: export_name -> (module_path, attr_name)
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
-    "FlextOracleConnectionTestService": ("flext_tap_oracle.client", "FlextOracleConnectionTestService"),
-    "FlextOracleDiscoveryService": ("flext_tap_oracle.client", "FlextOracleDiscoveryService"),
-    "FlextOracleTableFilterService": ("flext_tap_oracle.client", "FlextOracleTableFilterService"),
+    "FlextOracleConnectionTestService": (
+        "flext_tap_oracle.client",
+        "FlextOracleConnectionTestService",
+    ),
+    "FlextOracleDiscoveryService": (
+        "flext_tap_oracle.client",
+        "FlextOracleDiscoveryService",
+    ),
+    "FlextOracleTableFilterService": (
+        "flext_tap_oracle.client",
+        "FlextOracleTableFilterService",
+    ),
     "FlextOracleTapService": ("flext_tap_oracle.client", "FlextOracleTapService"),
-    "FlextTapOracleConstants": ("flext_tap_oracle.constants", "FlextTapOracleConstants"),
+    "FlextTapOracleConstants": (
+        "flext_tap_oracle.constants",
+        "FlextTapOracleConstants",
+    ),
     "FlextTapOracleModels": ("flext_tap_oracle.models", "FlextTapOracleModels"),
-    "FlextTapOracleProtocols": ("flext_tap_oracle.protocols", "FlextTapOracleProtocols"),
+    "FlextTapOracleProtocols": (
+        "flext_tap_oracle.protocols",
+        "FlextTapOracleProtocols",
+    ),
     "FlextTapOracleSettings": ("flext_tap_oracle.settings", "FlextTapOracleSettings"),
     "FlextTapOracleStreams": ("flext_tap_oracle.streams", "FlextTapOracleStreams"),
     "FlextTapOracleTypes": ("flext_tap_oracle.typings", "FlextTapOracleTypes"),
-    "FlextTapOracleUtilities": ("flext_tap_oracle.utilities", "FlextTapOracleUtilities"),
+    "FlextTapOracleUtilities": (
+        "flext_tap_oracle.utilities",
+        "FlextTapOracleUtilities",
+    ),
     "__version__": ("flext_tap_oracle.__version__", "__version__"),
     "__version_info__": ("flext_tap_oracle.__version__", "__version_info__"),
     "c": ("flext_tap_oracle.constants", "FlextTapOracleConstants"),
