@@ -8,13 +8,13 @@ from __future__ import annotations
 
 from collections.abc import Iterable, Mapping, Sequence
 from datetime import datetime
-from typing import override
+from typing import cast, override
 
-from flext_core import FlextLogger, FlextResult, t, u
+from flext_core import FlextLogger, r
 from flext_db_oracle import FlextDbOracleApi
 from flext_meltano import FlextMeltanoStream as Stream, FlextMeltanoTap as Tap
 
-from flext_tap_oracle.constants import c
+from flext_tap_oracle import c, m, t, u
 
 
 class FlextTapOracleStreams:
@@ -27,7 +27,7 @@ class FlextTapOracleStreams:
     - Performance optimization for large tables
     - Complete integration with flext-db-oracle infrastructure
 
-    All nested classes and methods follow SOLID principles and FlextResult patterns.
+    All nested classes and methods follow SOLID principles and r patterns.
     """
 
     # Shared logger for all stream operations
@@ -87,7 +87,8 @@ class FlextTapOracleStreams:
                         raise RuntimeError(msg)
                 # Note: FlextDbOracleMetadataManager does not exist in flext_db_oracle
                 # self._metadata_manager = FlextDbOracleMetadataManager(connection)
-                self._metadata_manager = t.ConfigurationMapping()
+                metadata_placeholder: dict[str, t.Container] = {}
+                self._metadata_manager = metadata_placeholder
             return self._metadata_manager
 
         @property
@@ -99,7 +100,8 @@ class FlextTapOracleStreams:
                 # container = FlextContainer.get_global()
                 # context_name = f"oracle_stream_{self.table_name}"
                 # self._observability_manager = FlextDbOracleObservabilityManager(...)
-                self._observability_manager = t.ConfigurationMapping()
+                obs_placeholder: dict[str, t.Container] = {}
+                self._observability_manager = obs_placeholder
             return self._observability_manager
 
         @override
@@ -130,17 +132,22 @@ class FlextTapOracleStreams:
                     )
 
                     # Use flext-db-oracle query API
-                    query_result: FlextResult[list[m.Dict]] = api.query(sql)
+                    query_result: r[list[m.Dict]] = api.query(sql)
 
                     if query_result.is_failure:
+                        error_msg: str = query_result.error or "unknown query error"
                         FlextTapOracleStreams.logger.error(
                             "Failed to execute query: %s",
-                            query_result.error,
+                            error_msg,
                         )
                         return
 
                     # Process results using flext-db-oracle result handling
-                    rows = query_result.value or []
+                    rows: list[m.Dict] = (
+                        cast("list[m.Dict]", query_result.value)
+                        if query_result.is_success
+                        else []
+                    )
 
                     for row in rows:
                         # t.Dict is a RootModel[dict] — extract root dict
@@ -244,7 +251,7 @@ class FlextTapOracleStreams:
                     match row_data:
                         case list() as row_list:
                             if column_names:
-                                record = t.ConfigurationMapping(
+                                record = dict(
                                     zip(column_names, row_list, strict=False),
                                 )
                             else:
@@ -256,7 +263,7 @@ class FlextTapOracleStreams:
                         case tuple() as row_tuple:
                             tuple_values = [str(value) for value in row_tuple]
                             if column_names:
-                                record = t.ConfigurationMapping(
+                                record = dict(
                                     zip(column_names, tuple_values, strict=False),
                                 )
                             else:
@@ -395,9 +402,10 @@ class FlextTapOracleStreams:
                 # Safe query construction using template - table name pre-validated
                 safe_table_name = self.table_name.replace('"', '""')
                 sql: str = f'SELECT COUNT(*) FROM "{safe_table_name}"'  # nosec B608
-                result: FlextResult[list[m.Dict]] = self.oracle_api.query(sql)
+                result: r[list[m.Dict]] = self.oracle_api.query(sql)
                 if result.is_success and result.value:
-                    first_row = result.value[0]
+                    result_rows: list[m.Dict] = cast("list[m.Dict]", result.value)
+                    first_row: m.Dict = result_rows[0]
                     # t.Dict root is dict[str, ContainerValue]
                     first_val = next(iter(first_row.root.values()), None)
                     if isinstance(first_val, int | float):
