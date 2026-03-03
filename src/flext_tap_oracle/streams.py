@@ -87,7 +87,7 @@ class FlextTapOracleStreams:
                         raise RuntimeError(msg)
                 # Note: FlextDbOracleMetadataManager does not exist in flext_db_oracle
                 # self._metadata_manager = FlextDbOracleMetadataManager(connection)
-                self._metadata_manager = dict[str, t.ContainerValue]()
+                self._metadata_manager = t.ConfigurationMapping()
             return self._metadata_manager
 
         @property
@@ -99,7 +99,7 @@ class FlextTapOracleStreams:
                 # container = FlextContainer.get_global()
                 # context_name = f"oracle_stream_{self.table_name}"
                 # self._observability_manager = FlextDbOracleObservabilityManager(...)
-                self._observability_manager = dict[str, t.ContainerValue]()
+                self._observability_manager = t.ConfigurationMapping()
             return self._observability_manager
 
         @override
@@ -244,7 +244,7 @@ class FlextTapOracleStreams:
                     match row_data:
                         case list() as row_list:
                             if column_names:
-                                record = dict[str, t.ContainerValue](
+                                record = t.ConfigurationMapping(
                                     zip(column_names, row_list, strict=False),
                                 )
                             else:
@@ -256,7 +256,7 @@ class FlextTapOracleStreams:
                         case tuple() as row_tuple:
                             tuple_values = [str(value) for value in row_tuple]
                             if column_names:
-                                record = dict[str, t.ContainerValue](
+                                record = t.ConfigurationMapping(
                                     zip(column_names, tuple_values, strict=False),
                                 )
                             else:

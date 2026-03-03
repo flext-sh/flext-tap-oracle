@@ -78,16 +78,16 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
 
             type ExtractionConfiguration = dict[
                 str,
-                t.ContainerValue | dict[str, t.ContainerValue],
+                t.ContainerValue | t.ConfigurationMapping,
             ]
             type ExtractionState = dict[str, t.JsonValue | t.ContainerValue]
             type ExtractionMetrics = dict[
                 str,
-                int | float | bool | dict[str, t.ContainerValue],
+                int | float | bool | t.ConfigurationMapping,
             ]
             type BatchConfiguration = dict[
                 str,
-                int | bool | dict[str, t.ContainerValue],
+                int | bool | t.ConfigurationMapping,
             ]
             type StreamDefinition = dict[
                 str,
@@ -95,7 +95,7 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
             ]
             type TableMetadata = dict[
                 str,
-                t.JsonValue | list[dict[str, t.ContainerValue]],
+                t.JsonValue | list[t.ConfigurationMapping],
             ]
 
         # =========================================================================
@@ -109,7 +109,7 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
             type StreamSchema = dict[str, dict[str, t.JsonValue]]
             type TapConfiguration = dict[
                 str,
-                t.ContainerValue | dict[str, t.ContainerValue],
+                t.ContainerValue | t.ConfigurationMapping,
             ]
             type StateBookmark = dict[str, t.JsonValue | t.ContainerValue]
             type RecordMessage = dict[str, str | dict[str, t.JsonValue]]
@@ -124,27 +124,27 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
 
             type TapOracleConfig = dict[
                 str,
-                t.ContainerValue | dict[str, t.ContainerValue],
+                t.ContainerValue | t.ConfigurationMapping,
             ]
             type ConnectionSettings = dict[
                 str,
-                str | int | bool | dict[str, t.ContainerValue],
+                str | int | bool | t.ConfigurationMapping,
             ]
             type ExtractionSettings = dict[
                 str,
-                int | bool | dict[str, t.ContainerValue],
+                int | bool | t.ConfigurationMapping,
             ]
             type PerformanceSettings = dict[
                 str,
-                int | float | bool | dict[str, t.ContainerValue],
+                int | float | bool | t.ConfigurationMapping,
             ]
             type SecuritySettings = dict[
                 str,
-                str | bool | dict[str, t.ContainerValue],
+                str | bool | t.ConfigurationMapping,
             ]
             type StreamSettings = dict[
                 str,
-                bool | str | list[str] | dict[str, t.ContainerValue],
+                bool | str | list[str] | t.ConfigurationMapping,
             ]
 
         # =========================================================================
@@ -189,7 +189,7 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
             type OracleExtractorConfig = dict[str, str | int | bool | list[str]]
             type SingerProtocolConfig = dict[
                 str,
-                bool | str | dict[str, t.ContainerValue],
+                bool | str | t.ConfigurationMapping,
             ]
             type TapOraclePipelineConfig = dict[str, t.ContainerValue]
 
