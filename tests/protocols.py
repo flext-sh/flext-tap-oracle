@@ -56,8 +56,8 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols):
             def execute_query(
                 self,
                 query: str,
-                parameters: dict[str, t.GeneralValueType] | None = None,
-            ) -> list[dict[str, t.GeneralValueType]]:
+                parameters: dict[str, t.ContainerValue] | None = None,
+            ) -> list[dict[str, t.ContainerValue]]:
                 """Execute query on mock database."""
                 ...
 
@@ -65,18 +65,18 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols):
         class TestDataProviderProtocol(Protocol):
             """Protocol for test data providers."""
 
-            def get_test_tables(self) -> list[dict[str, t.GeneralValueType]]:
+            def get_test_tables(self) -> list[dict[str, t.ContainerValue]]:
                 """Get test table definitions."""
                 ...
 
             def get_test_data(
                 self,
                 table_name: str,
-            ) -> list[dict[str, t.GeneralValueType]]:
+            ) -> list[dict[str, t.ContainerValue]]:
                 """Get test data for a table."""
                 ...
 
-            def get_test_config(self) -> dict[str, t.GeneralValueType]:
+            def get_test_config(self) -> dict[str, t.ContainerValue]:
                 """Get test configuration."""
                 ...
 
@@ -86,22 +86,22 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols):
 
             def assert_oracle_connection_successful(
                 self,
-                config: dict[str, t.GeneralValueType],
+                config: dict[str, t.ContainerValue],
             ) -> None:
                 """Assert Oracle connection was successful."""
                 ...
 
             def assert_singer_stream_valid(
                 self,
-                stream: dict[str, t.GeneralValueType],
+                stream: dict[str, t.ContainerValue],
             ) -> None:
                 """Assert Singer stream is valid."""
                 ...
 
             def assert_extraction_results_match(
                 self,
-                expected: list[dict[str, t.GeneralValueType]],
-                actual: list[dict[str, t.GeneralValueType]],
+                expected: list[dict[str, t.ContainerValue]],
+                actual: list[dict[str, t.ContainerValue]],
             ) -> None:
                 """Assert extraction results match expected data."""
                 ...

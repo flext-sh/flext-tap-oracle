@@ -21,7 +21,7 @@ class _DiscoveryStub(FlextOracleDiscoveryService):
 
 class TestFlextOracleTapSettingsAndHelpers:
     @pytest.fixture
-    def valid_config(self) -> dict[str, t.GeneralValueType]:
+    def valid_config(self) -> dict[str, t.ContainerValue]:
         return {
             "oracle_host": "test-oracle",
             "oracle_port": 1521,
@@ -35,7 +35,7 @@ class TestFlextOracleTapSettingsAndHelpers:
         }
 
     def test_settings_model_validate(
-        self, valid_config: dict[str, t.GeneralValueType]
+        self, valid_config: dict[str, t.ContainerValue]
     ) -> None:
         config = FlextTapOracleSettings.model_validate(valid_config)
 
@@ -48,7 +48,7 @@ class TestFlextOracleTapSettingsAndHelpers:
         assert config.tables_filter == ["USERS", "ORDERS", "PRODUCTS"]
 
     def test_settings_connection_string(
-        self, valid_config: dict[str, t.GeneralValueType]
+        self, valid_config: dict[str, t.ContainerValue]
     ) -> None:
         config = FlextTapOracleSettings.model_validate(valid_config)
         connection_string = config.get_connection_string()
@@ -94,7 +94,7 @@ class TestFlextOracleTapSettingsAndHelpers:
 
     def test_table_filter_service_uses_configured_tables(
         self,
-        valid_config: dict[str, t.GeneralValueType],
+        valid_config: dict[str, t.ContainerValue],
     ) -> None:
         config = FlextTapOracleSettings.model_validate(valid_config)
         service = FlextOracleTableFilterService(

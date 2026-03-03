@@ -52,14 +52,14 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
             self._container = FlextContainer.get_global()
             self._logger = FlextLogger(__name__)
 
-        def execute(self) -> FlextResult[Mapping[str, t.GeneralValueType]]:
+        def execute(self) -> FlextResult[Mapping[str, t.ContainerValue]]:
             """Execute the main domain service operation.
 
             Returns:
-            FlextResult[Mapping[str, t.GeneralValueType]]: Service status and capabilities.
+            FlextResult[Mapping[str, t.ContainerValue]]: Service status and capabilities.
 
             """
-            return FlextResult[Mapping[str, t.GeneralValueType]].ok({
+            return FlextResult[t.ConfigurationMapping].ok({
                 "status": "operational",
                 "service": "flext-tap-oracle-utilities",
                 "capabilities": [
@@ -246,7 +246,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
 
             @staticmethod
             def create_discovery_result(
-                tables: list[t.GeneralValueType],
+                tables: list[t.ContainerValue],
                 schema_name: str,
             ) -> FlextResult[m.TapOracle.OracleTapDiscoveryResult]:
                 """Create discovery result from Oracle tables."""
@@ -286,11 +286,11 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
 
             @staticmethod
             def validate_oracle_config(
-                config: Mapping[str, t.GeneralValueType],
-            ) -> FlextResult[Mapping[str, t.GeneralValueType]]:
+                config: Mapping[str, t.ContainerValue],
+            ) -> FlextResult[Mapping[str, t.ContainerValue]]:
                 """Validate Oracle configuration parameters."""
                 try:
-                    validated_config: dict[str, t.GeneralValueType] = dict(config)
+                    validated_config: dict[str, t.ContainerValue] = dict(config)
                     required_fields = [
                         "host",
                         "port",
@@ -300,11 +300,11 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                     ]
                     for field in required_fields:
                         if field not in validated_config:
-                            return FlextResult[Mapping[str, t.GeneralValueType]].fail(
+                            return FlextResult[t.ConfigurationMapping].fail(
                                 f"Missing required Oracle field: {field}",
                             )
                         if not validated_config[field]:
-                            return FlextResult[Mapping[str, t.GeneralValueType]].fail(
+                            return FlextResult[t.ConfigurationMapping].fail(
                                 f"Empty Oracle field: {field}",
                             )
 
@@ -313,27 +313,27 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                     try:
                         port = int(str(validated_config["port"]))
                         if port <= 0 or port > max_port:
-                            return FlextResult[Mapping[str, t.GeneralValueType]].fail(
+                            return FlextResult[t.ConfigurationMapping].fail(
                                 f"Oracle port must be between 1 and {max_port}",
                             )
                         validated_config["port"] = port
                     except ValueError:
-                        return FlextResult[Mapping[str, t.GeneralValueType]].fail(
+                        return FlextResult[t.ConfigurationMapping].fail(
                             "Oracle port must be numeric",
                         )
 
-                    return FlextResult[Mapping[str, t.GeneralValueType]].ok(
+                    return FlextResult[t.ConfigurationMapping].ok(
                         validated_config,
                     )
 
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-                    return FlextResult[Mapping[str, t.GeneralValueType]].fail(
+                    return FlextResult[t.ConfigurationMapping].fail(
                         f"Oracle config validation failed: {e}",
                     )
 
             @staticmethod
             def build_connection_string(
-                config: Mapping[str, t.GeneralValueType],
+                config: Mapping[str, t.ContainerValue],
             ) -> FlextResult[str]:
                 """Build Oracle connection string from configuration."""
                 try:
@@ -361,8 +361,8 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
 
             @staticmethod
             def test_oracle_connectivity(
-                config: Mapping[str, t.GeneralValueType],
-            ) -> FlextResult[Mapping[str, t.GeneralValueType]]:
+                config: Mapping[str, t.ContainerValue],
+            ) -> FlextResult[Mapping[str, t.ContainerValue]]:
                 """Test Oracle connectivity with configuration."""
                 try:
                     # Validate configuration first
@@ -371,7 +371,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                     )
                     validation_result = cfg_validator.validate_oracle_config(config)
                     if validation_result.is_failure:
-                        return FlextResult[Mapping[str, t.GeneralValueType]].fail(
+                        return FlextResult[t.ConfigurationMapping].fail(
                             validation_result.error,
                         )
 
@@ -385,12 +385,12 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                         "connection_test": "structural_validation_passed",
                     }
 
-                    return FlextResult[Mapping[str, t.GeneralValueType]].ok(
+                    return FlextResult[t.ConfigurationMapping].ok(
                         connectivity_result,
                     )
 
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-                    return FlextResult[Mapping[str, t.GeneralValueType]].fail(
+                    return FlextResult[t.ConfigurationMapping].fail(
                         f"Oracle connectivity test failed: {e}",
                     )
 
@@ -406,7 +406,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
             @staticmethod
             def optimize_extraction_query(
                 base_query: str,
-                table_stats: Mapping[str, t.GeneralValueType],
+                table_stats: Mapping[str, t.ContainerValue],
             ) -> FlextResult[str]:
                 """Optimize extraction query based on table statistics."""
                 try:
@@ -437,7 +437,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                 start_time: float,
                 end_time: float,
                 records_processed: int,
-            ) -> FlextResult[Mapping[str, t.GeneralValueType]]:
+            ) -> FlextResult[Mapping[str, t.ContainerValue]]:
                 """Calculate extraction performance metrics."""
                 try:
                     duration = end_time - start_time
@@ -455,17 +455,17 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                         else "slow"
                     )
 
-                    metrics: dict[str, t.GeneralValueType] = {
+                    metrics: dict[str, t.ContainerValue] = {
                         "duration_seconds": round(duration, 3),
                         "records_processed": records_processed,
                         "records_per_second": round(records_per_second, 2),
                         "performance_rating": performance_rating,
                     }
 
-                    return FlextResult[Mapping[str, t.GeneralValueType]].ok(metrics)
+                    return FlextResult[t.ConfigurationMapping].ok(metrics)
 
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-                    return FlextResult[Mapping[str, t.GeneralValueType]].fail(
+                    return FlextResult[t.ConfigurationMapping].fail(
                         f"Metrics calculation failed: {e}",
                     )
 

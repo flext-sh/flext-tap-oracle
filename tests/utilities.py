@@ -50,10 +50,10 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities):
             service_name: str = "XE",
             username: str = "test",
             password: str = "test",
-            **kwargs: t.GeneralValueType,
-        ) -> dict[str, t.GeneralValueType]:
+            **kwargs: t.ContainerValue,
+        ) -> dict[str, t.ContainerValue]:
             """Create test Oracle configuration."""
-            config: dict[str, t.GeneralValueType] = {
+            config: dict[str, t.ContainerValue] = {
                 "host": host,
                 "port": port,
                 "service_name": service_name,
@@ -68,10 +68,10 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities):
             stream_name: str,
             table_name: str,
             replication_method: str = "FULL_TABLE",
-            **kwargs: t.GeneralValueType,
-        ) -> dict[str, t.GeneralValueType]:
+            **kwargs: t.ContainerValue,
+        ) -> dict[str, t.ContainerValue]:
             """Create test Singer stream configuration."""
-            stream: dict[str, t.GeneralValueType] = {
+            stream: dict[str, t.ContainerValue] = {
                 "stream_name": stream_name,
                 "table_name": table_name,
                 "replication_method": replication_method,
@@ -82,7 +82,7 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities):
 
         @staticmethod
         def validate_oracle_connection_config(
-            config: dict[str, t.GeneralValueType],
+            config: dict[str, t.ContainerValue],
         ) -> bool:
             """Validate Oracle connection configuration for testing."""
             required_fields = ["host", "port", "service_name", "username", "password"]
@@ -92,12 +92,12 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities):
         def generate_mock_oracle_data(
             table_name: str,
             row_count: int = 10,
-            **kwargs: t.GeneralValueType,
-        ) -> list[dict[str, t.GeneralValueType]]:
+            **kwargs: t.ContainerValue,
+        ) -> list[dict[str, t.ContainerValue]]:
             """Generate mock Oracle data for testing."""
             data = []
             for i in range(row_count):
-                row: dict[str, t.GeneralValueType] = {
+                row: dict[str, t.ContainerValue] = {
                     "id": i + 1,
                     "name": f"Test Record {i + 1}",
                 }

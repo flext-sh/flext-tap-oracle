@@ -48,9 +48,9 @@ class TestsFlextTapOracleTypes(FlextTestsTypes):
         type TestReplicationMethod = Literal["FULL_TABLE", "INCREMENTAL"]
 
         # Test data types
-        type MockOracleRecord = dict[str, str | int | float | bool]
+        type MockOracleRecord = dict[str, t.JsonPrimitive]
         type MockOracleTable = list[MockOracleRecord]
-        type TestScenario = dict[str, t.GeneralValueType]
+        type TestScenario = dict[str, t.ContainerValue]
 
         # Test result types
         type TestValidationResult = dict[str, bool | str | list[str]]

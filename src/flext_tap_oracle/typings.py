@@ -78,16 +78,16 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
 
             type ExtractionConfiguration = dict[
                 str,
-                t.GeneralValueType | dict[str, t.GeneralValueType],
+                t.ContainerValue | dict[str, t.ContainerValue],
             ]
-            type ExtractionState = dict[str, t.JsonValue | t.GeneralValueType]
+            type ExtractionState = dict[str, t.JsonValue | t.ContainerValue]
             type ExtractionMetrics = dict[
                 str,
-                int | float | bool | dict[str, t.GeneralValueType],
+                int | float | bool | dict[str, t.ContainerValue],
             ]
             type BatchConfiguration = dict[
                 str,
-                int | bool | dict[str, t.GeneralValueType],
+                int | bool | dict[str, t.ContainerValue],
             ]
             type StreamDefinition = dict[
                 str,
@@ -95,7 +95,7 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
             ]
             type TableMetadata = dict[
                 str,
-                t.JsonValue | list[dict[str, t.GeneralValueType]],
+                t.JsonValue | list[dict[str, t.ContainerValue]],
             ]
 
         # =========================================================================
@@ -109,9 +109,9 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
             type StreamSchema = dict[str, dict[str, t.JsonValue]]
             type TapConfiguration = dict[
                 str,
-                t.GeneralValueType | dict[str, t.GeneralValueType],
+                t.ContainerValue | dict[str, t.ContainerValue],
             ]
-            type StateBookmark = dict[str, t.JsonValue | t.GeneralValueType]
+            type StateBookmark = dict[str, t.JsonValue | t.ContainerValue]
             type RecordMessage = dict[str, str | dict[str, t.JsonValue]]
             type SchemaMessage = dict[str, str | dict[str, t.JsonValue]]
 
@@ -124,27 +124,27 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
 
             type TapOracleConfig = dict[
                 str,
-                t.GeneralValueType | dict[str, t.GeneralValueType],
+                t.ContainerValue | dict[str, t.ContainerValue],
             ]
             type ConnectionSettings = dict[
                 str,
-                str | int | bool | dict[str, t.GeneralValueType],
+                str | int | bool | dict[str, t.ContainerValue],
             ]
             type ExtractionSettings = dict[
                 str,
-                int | bool | dict[str, t.GeneralValueType],
+                int | bool | dict[str, t.ContainerValue],
             ]
             type PerformanceSettings = dict[
                 str,
-                int | float | bool | dict[str, t.GeneralValueType],
+                int | float | bool | dict[str, t.ContainerValue],
             ]
             type SecuritySettings = dict[
                 str,
-                str | bool | dict[str, t.GeneralValueType],
+                str | bool | dict[str, t.ContainerValue],
             ]
             type StreamSettings = dict[
                 str,
-                bool | str | list[str] | dict[str, t.GeneralValueType],
+                bool | str | list[str] | dict[str, t.ContainerValue],
             ]
 
         # =========================================================================
@@ -185,13 +185,13 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
             ]
 
             # Singer tap Oracle-specific project configurations
-            type SingerTapOracleProjectConfig = dict[str, t.GeneralValueType]
+            type SingerTapOracleProjectConfig = dict[str, t.ContainerValue]
             type OracleExtractorConfig = dict[str, str | int | bool | list[str]]
             type SingerProtocolConfig = dict[
                 str,
-                bool | str | dict[str, t.GeneralValueType],
+                bool | str | dict[str, t.ContainerValue],
             ]
-            type TapOraclePipelineConfig = dict[str, t.GeneralValueType]
+            type TapOraclePipelineConfig = dict[str, t.ContainerValue]
 
 
 # Runtime alias for simplified usage
