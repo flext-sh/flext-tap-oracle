@@ -190,20 +190,6 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     },
                 }
 
-            @model_validator(mode="after")
-            def validate_stream_metadata(self) -> Self:
-                """Validate Oracle stream metadata."""
-                if (
-                    self.replication_method == "INCREMENTAL"
-                    and not self.replication_key
-                ):
-                    msg = "Incremental replication requires a replication_key"
-                    raise ValueError(msg)
-                if self.replication_method == "FULL_TABLE" and self.replication_key:
-                    msg = "Full table replication should not have replication_key"
-                    raise ValueError(msg)
-                return self
-
             @field_validator("stream_name")
             @classmethod
             def validate_stream_name(cls, v: str) -> str:
@@ -226,6 +212,10 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 cleaned = "".join(c if c.isalnum() or c in "_-" else "_" for c in v)
                 return cleaned.lower()
 
+            def validate_business_rules(self) -> FlextResult[bool]:
+                """Validate tap-specific business rules."""
+                return FlextResult[bool].ok(value=True)
+
             @model_validator(mode="after")
             def validate_replication_consistency(self) -> Self:
                 """Validate replication configuration consistency."""
@@ -246,9 +236,19 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
                 return self
 
-            def validate_business_rules(self) -> FlextResult[bool]:
-                """Validate tap-specific business rules."""
-                return FlextResult[bool].ok(value=True)
+            @model_validator(mode="after")
+            def validate_stream_metadata(self) -> Self:
+                """Validate Oracle stream metadata."""
+                if (
+                    self.replication_method == "INCREMENTAL"
+                    and not self.replication_key
+                ):
+                    msg = "Incremental replication requires a replication_key"
+                    raise ValueError(msg)
+                if self.replication_method == "FULL_TABLE" and self.replication_key:
+                    msg = "Full table replication should not have replication_key"
+                    raise ValueError(msg)
+                return self
 
         class OracleTapDiscoveryConfig(FlextModels.Entity):
             """Configuration for Oracle tap discovery operations."""
@@ -595,21 +595,6 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     },
                 }
 
-            @model_validator(mode="after")
-            def validate_stream_info(self) -> Self:
-                """Validate Oracle stream information."""
-                if not self.stream_name:
-                    msg = "Stream name is required"
-                    raise ValueError(msg)
-                if not self.table_name:
-                    msg = "Table name is required"
-                    raise ValueError(msg)
-                return self
-
-            def validate_business_rules(self) -> FlextResult[bool]:
-                """Validate stream info business rules."""
-                return FlextResult[bool].ok(value=True)
-
             def to_singer_stream_info(self) -> Mapping[str, t.ContainerValue]:
                 """Convert to Singer stream information format."""
                 return {
@@ -627,6 +612,21 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                         "last_extracted": self.last_extracted,
                     },
                 }
+
+            def validate_business_rules(self) -> FlextResult[bool]:
+                """Validate stream info business rules."""
+                return FlextResult[bool].ok(value=True)
+
+            @model_validator(mode="after")
+            def validate_stream_info(self) -> Self:
+                """Validate Oracle stream information."""
+                if not self.stream_name:
+                    msg = "Stream name is required"
+                    raise ValueError(msg)
+                if not self.table_name:
+                    msg = "Table name is required"
+                    raise ValueError(msg)
+                return self
 
         class OracleTapDiscoveryResult(FlextModels.Entity):
             """Result of Oracle table discovery operation.
@@ -720,21 +720,6 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     },
                 }
 
-            @model_validator(mode="after")
-            def validate_discovery_result(self) -> Self:
-                """Validate Oracle discovery result."""
-                if not self.schema_name:
-                    msg = "Schema name is required"
-                    raise ValueError(msg)
-                if self.total_tables < 0:
-                    msg = "Total tables cannot be negative"
-                    raise ValueError(msg)
-                return self
-
-            def validate_business_rules(self) -> FlextResult[bool]:
-                """Validate discovery result business rules."""
-                return FlextResult[bool].ok(value=True)
-
             def get_selected_streams(
                 self,
             ) -> list[m.TapOracle.OracleTapStreamInfo]:
@@ -763,6 +748,21 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                         "total_tables": self.total_tables,
                     },
                 }
+
+            def validate_business_rules(self) -> FlextResult[bool]:
+                """Validate discovery result business rules."""
+                return FlextResult[bool].ok(value=True)
+
+            @model_validator(mode="after")
+            def validate_discovery_result(self) -> Self:
+                """Validate Oracle discovery result."""
+                if not self.schema_name:
+                    msg = "Schema name is required"
+                    raise ValueError(msg)
+                if self.total_tables < 0:
+                    msg = "Total tables cannot be negative"
+                    raise ValueError(msg)
+                return self
 
         class OracleTapExecutionStats(FlextModels.Entity):
             """Oracle tap execution statistics and metrics.
@@ -888,36 +888,6 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     },
                 }
 
-            @model_validator(mode="after")
-            def validate_execution_stats(self) -> Self:
-                """Validate Oracle execution statistics."""
-                if not self.execution_id:
-                    msg = "Execution ID is required"
-                    raise ValueError(msg)
-                if self.streams_processed < 0:
-                    msg = "Streams processed cannot be negative"
-                    raise ValueError(msg)
-                return self
-
-            def validate_business_rules(self) -> FlextResult[bool]:
-                """Validate execution stats business rules."""
-                return FlextResult[bool].ok(value=True)
-
-            def update_performance_metrics(
-                self,
-            ) -> m.TapOracle.OracleTapExecutionStats:
-                """Return new instance with updated calculated performance metrics."""
-                if self.duration_seconds > 0:
-                    return self.model_copy(
-                        update={
-                            "avg_records_per_second": self.total_records
-                            / self.duration_seconds,
-                            "avg_bytes_per_second": self.total_bytes
-                            / self.duration_seconds,
-                        },
-                    )
-                return self
-
             def add_stream_stats(
                 self,
                 records: int,
@@ -968,6 +938,36 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     )
                     * 100,
                 }
+
+            def update_performance_metrics(
+                self,
+            ) -> m.TapOracle.OracleTapExecutionStats:
+                """Return new instance with updated calculated performance metrics."""
+                if self.duration_seconds > 0:
+                    return self.model_copy(
+                        update={
+                            "avg_records_per_second": self.total_records
+                            / self.duration_seconds,
+                            "avg_bytes_per_second": self.total_bytes
+                            / self.duration_seconds,
+                        },
+                    )
+                return self
+
+            def validate_business_rules(self) -> FlextResult[bool]:
+                """Validate execution stats business rules."""
+                return FlextResult[bool].ok(value=True)
+
+            @model_validator(mode="after")
+            def validate_execution_stats(self) -> Self:
+                """Validate Oracle execution statistics."""
+                if not self.execution_id:
+                    msg = "Execution ID is required"
+                    raise ValueError(msg)
+                if self.streams_processed < 0:
+                    msg = "Streams processed cannot be negative"
+                    raise ValueError(msg)
+                return self
 
         # =====================================================
         #

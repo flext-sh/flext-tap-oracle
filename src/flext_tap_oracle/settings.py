@@ -158,6 +158,111 @@ class FlextTapOracleSettings(FlextSettings):
         description="Project version",
     )
 
+    @classmethod
+    def create_for_development(cls, **overrides: t.JsonValue) -> Self:
+        """Create configuration for development environment."""
+        dev_overrides: dict[str, t.JsonValue] = {
+            "oracle_host": "localhost",
+            "oracle_port": c.TapOracle.Oracle.DEFAULT_PORT,
+            "oracle_service_name": "ORCL",
+            "oracle_username": "tap_dev",
+            "batch_size": c.TapOracle.Singer.DEFAULT_BATCH_SIZE,
+            "max_parallel_streams": 1,
+            "query_timeout": 60,
+            **overrides,
+        }
+        return cls.model_validate(dev_overrides)
+
+    @classmethod
+    def create_for_environment(
+        cls,
+        environment: str,
+        **overrides: t.JsonValue,
+    ) -> FlextTapOracleSettings:
+        """Create configuration for specific environment using enhanced singleton pattern."""
+        env_overrides: dict[str, t.JsonValue] = {}
+
+        if environment == "production":
+            env_overrides.update({
+                "batch_size": c.TapOracle.Singer.MAX_BATCH_SIZE,
+                "max_parallel_streams": c.TapOracle.EnvironmentDefaults.Production.MAX_PARALLEL_STREAMS,
+                "query_timeout": c.TapOracle.EnvironmentDefaults.Production.QUERY_TIMEOUT_SECONDS,
+            })
+        elif environment == "development":
+            env_overrides.update({
+                "batch_size": c.TapOracle.Singer.DEFAULT_BATCH_SIZE,
+                "max_parallel_streams": c.TapOracle.EnvironmentDefaults.Development.MAX_PARALLEL_STREAMS,
+                "query_timeout": c.TapOracle.EnvironmentDefaults.Development.QUERY_TIMEOUT_SECONDS,
+            })
+        elif environment == "staging":
+            env_overrides.update({
+                "batch_size": c.TapOracle.Singer.DEFAULT_BATCH_SIZE * 2,
+                "max_parallel_streams": c.TapOracle.EnvironmentDefaults.Staging.MAX_PARALLEL_STREAMS,
+                "query_timeout": c.TapOracle.EnvironmentDefaults.Staging.QUERY_TIMEOUT_SECONDS,
+            })
+
+        all_overrides = {**env_overrides, **overrides}
+        return cls.model_validate(all_overrides)
+
+    @classmethod
+    def create_for_production(cls, **overrides: t.JsonValue) -> Self:
+        """Create configuration for production environment."""
+        prod_overrides: dict[str, t.JsonValue] = {
+            "batch_size": c.TapOracle.Singer.MAX_BATCH_SIZE,
+            "max_parallel_streams": 4,
+            "query_timeout": 300,
+            "fetch_size": c.TapOracle.Oracle.DEFAULT_FETCH_SIZE * 5,
+            "enable_incremental": True,
+            **overrides,
+        }
+        return cls.model_validate(prod_overrides)
+
+    @classmethod
+    def create_for_testing(cls, **overrides: t.JsonValue) -> Self:
+        """Create configuration for testing environment."""
+        test_overrides: dict[str, t.JsonValue] = {
+            "oracle_host": "test-oracle",
+            "oracle_port": c.TapOracle.Oracle.DEFAULT_PORT,
+            "oracle_service_name": "XE",
+            "oracle_username": "test_user",
+            "batch_size": 100,
+            "max_parallel_streams": 1,
+            "query_timeout": 30,
+            **overrides,
+        }
+        return cls.model_validate(test_overrides)
+
+    @classmethod
+    @override
+    def get_global_instance(cls) -> Self:
+        """Get the global singleton instance using enhanced FlextSettings pattern."""
+        return cls()
+
+    @classmethod
+    @override
+    def reset_global_instance(cls) -> None:
+        """Reset the global FlextTapOracleSettings instance (mainly for testing)."""
+        # No shared instance to reset
+
+    @field_validator("schemas_filter")
+    @classmethod
+    def validate_schemas_filter(cls, v: list[str] | None) -> list[str] | None:
+        """Validate schemas filter list."""
+        if v is None:
+            return v
+
+        max_schemas = c.TapOracle.TapValidation.MAX_SCHEMAS_FILTER_COUNT
+        if len(v) > max_schemas:
+            msg = f"Too many schemas specified: {len(v)} > {max_schemas}"
+            raise ValueError(msg)
+
+        for schema in v:
+            if not re.match(r"^[a-zA-Z][a-zA-Z0-9_]*$", schema):
+                msg = f"Invalid schema name: {schema}"
+                raise ValueError(msg)
+
+        return v
+
     # Pydantic 2.11+ field validators
     @field_validator("stream_prefix")
     @classmethod
@@ -197,52 +302,51 @@ class FlextTapOracleSettings(FlextSettings):
 
         return v
 
-    @field_validator("schemas_filter")
-    @classmethod
-    def validate_schemas_filter(cls, v: list[str] | None) -> list[str] | None:
-        """Validate schemas filter list."""
-        if v is None:
-            return v
+    def get_connection_string(self) -> str:
+        """Get Oracle connection string."""
+        if self.oracle_service_name:
+            return f"{self.oracle_host}:{self.oracle_port}/{self.oracle_service_name}"
+        if self.oracle_sid:
+            return f"{self.oracle_host}:{self.oracle_port}:{self.oracle_sid}"
+        msg = "Cannot generate connection string: neither service_name nor sid provided"
+        raise ValueError(msg)
 
-        max_schemas = c.TapOracle.TapValidation.MAX_SCHEMAS_FILTER_COUNT
-        if len(v) > max_schemas:
-            msg = f"Too many schemas specified: {len(v)} > {max_schemas}"
-            raise ValueError(msg)
+    # Configuration helper methods
+    def get_oracle_config(self) -> Mapping[str, t.JsonValue]:
+        """Get Oracle configuration for flext-db-oracle integration."""
+        return {
+            "host": self.oracle_host,
+            "port": self.oracle_port,
+            "service_name": self.oracle_service_name,
+            "sid": self.oracle_sid,
+            "username": self.oracle_username,
+            "password": self.oracle_password.get_secret_value(),
+            "pool_min": 1,
+            "pool_max": self.max_parallel_streams + 2,  # Extra connections for metadata
+            "timeout": self.query_timeout,
+        }
 
-        for schema in v:
-            if not re.match(r"^[a-zA-Z][a-zA-Z0-9_]*$", schema):
-                msg = f"Invalid schema name: {schema}"
-                raise ValueError(msg)
+    def get_performance_config(self) -> Mapping[str, t.JsonValue]:
+        """Get performance configuration dictionary."""
+        return {
+            "batch_size": self.batch_size,
+            "max_parallel_streams": self.max_parallel_streams,
+            "fetch_size": self.fetch_size,
+            "query_timeout": self.query_timeout,
+        }
 
-        return v
-
-    @model_validator(mode="after")
-    def validate_oracle_connection_config(self) -> Self:
-        """Validate Oracle connection configuration."""
-        # Either service_name or sid must be provided
-        service_name = str(self.oracle_service_name or "").strip()
-        sid = str(self.oracle_sid or "").strip()
-
-        if not service_name and not sid:
-            msg = "Either oracle_service_name or oracle_sid must be provided"
-            raise ValueError(msg)
-
-        # Cannot have both service_name and sid
-        if service_name and sid:
-            msg = "Cannot specify both oracle_service_name and oracle_sid"
-            raise ValueError(msg)
-
-        # Validate parallel streams vs batch size
-        max_safe_parallel = c.TapOracle.TapValidation.MAX_SAFE_PARALLEL_STREAMS
-        max_safe_batch = c.TapOracle.Singer.MAX_BATCH_SIZE // 2
-        if (
-            self.max_parallel_streams > max_safe_parallel
-            and self.batch_size > max_safe_batch
-        ):
-            msg = "High parallelism with large batch sizes may cause memory issues"
-            raise ValueError(msg)
-
-        return self
+    def get_tap_config(self) -> Mapping[str, t.JsonValue]:
+        """Get tap-specific configuration dictionary."""
+        return {
+            "stream_prefix": self.stream_prefix,
+            "batch_size": self.batch_size,
+            "max_parallel_streams": self.max_parallel_streams,
+            "tables_filter": self.tables_filter or [],
+            "schemas_filter": self.schemas_filter or [],
+            "enable_incremental": self.enable_incremental,
+            "incremental_column": self.incremental_column,
+            "fetch_size": self.fetch_size,
+        }
 
     def validate_business_rules(self) -> FlextResult[bool]:
         """Validate Oracle tap configuration business rules."""
@@ -291,137 +395,33 @@ class FlextTapOracleSettings(FlextSettings):
         except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
             return FlextResult[bool].fail(f"Business rules validation failed: {e}")
 
-    # Configuration helper methods
-    def get_oracle_config(self) -> Mapping[str, t.JsonValue]:
-        """Get Oracle configuration for flext-db-oracle integration."""
-        return {
-            "host": self.oracle_host,
-            "port": self.oracle_port,
-            "service_name": self.oracle_service_name,
-            "sid": self.oracle_sid,
-            "username": self.oracle_username,
-            "password": self.oracle_password.get_secret_value(),
-            "pool_min": 1,
-            "pool_max": self.max_parallel_streams + 2,  # Extra connections for metadata
-            "timeout": self.query_timeout,
-        }
+    @model_validator(mode="after")
+    def validate_oracle_connection_config(self) -> Self:
+        """Validate Oracle connection configuration."""
+        # Either service_name or sid must be provided
+        service_name = str(self.oracle_service_name or "").strip()
+        sid = str(self.oracle_sid or "").strip()
 
-    def get_tap_config(self) -> Mapping[str, t.JsonValue]:
-        """Get tap-specific configuration dictionary."""
-        return {
-            "stream_prefix": self.stream_prefix,
-            "batch_size": self.batch_size,
-            "max_parallel_streams": self.max_parallel_streams,
-            "tables_filter": self.tables_filter or [],
-            "schemas_filter": self.schemas_filter or [],
-            "enable_incremental": self.enable_incremental,
-            "incremental_column": self.incremental_column,
-            "fetch_size": self.fetch_size,
-        }
+        if not service_name and not sid:
+            msg = "Either oracle_service_name or oracle_sid must be provided"
+            raise ValueError(msg)
 
-    def get_performance_config(self) -> Mapping[str, t.JsonValue]:
-        """Get performance configuration dictionary."""
-        return {
-            "batch_size": self.batch_size,
-            "max_parallel_streams": self.max_parallel_streams,
-            "fetch_size": self.fetch_size,
-            "query_timeout": self.query_timeout,
-        }
+        # Cannot have both service_name and sid
+        if service_name and sid:
+            msg = "Cannot specify both oracle_service_name and oracle_sid"
+            raise ValueError(msg)
 
-    def get_connection_string(self) -> str:
-        """Get Oracle connection string."""
-        if self.oracle_service_name:
-            return f"{self.oracle_host}:{self.oracle_port}/{self.oracle_service_name}"
-        if self.oracle_sid:
-            return f"{self.oracle_host}:{self.oracle_port}:{self.oracle_sid}"
-        msg = "Cannot generate connection string: neither service_name nor sid provided"
-        raise ValueError(msg)
+        # Validate parallel streams vs batch size
+        max_safe_parallel = c.TapOracle.TapValidation.MAX_SAFE_PARALLEL_STREAMS
+        max_safe_batch = c.TapOracle.Singer.MAX_BATCH_SIZE // 2
+        if (
+            self.max_parallel_streams > max_safe_parallel
+            and self.batch_size > max_safe_batch
+        ):
+            msg = "High parallelism with large batch sizes may cause memory issues"
+            raise ValueError(msg)
 
-    @classmethod
-    def create_for_environment(
-        cls,
-        environment: str,
-        **overrides: t.JsonValue,
-    ) -> FlextTapOracleSettings:
-        """Create configuration for specific environment using enhanced singleton pattern."""
-        env_overrides: dict[str, t.JsonValue] = {}
-
-        if environment == "production":
-            env_overrides.update({
-                "batch_size": c.TapOracle.Singer.MAX_BATCH_SIZE,
-                "max_parallel_streams": c.TapOracle.EnvironmentDefaults.Production.MAX_PARALLEL_STREAMS,
-                "query_timeout": c.TapOracle.EnvironmentDefaults.Production.QUERY_TIMEOUT_SECONDS,
-            })
-        elif environment == "development":
-            env_overrides.update({
-                "batch_size": c.TapOracle.Singer.DEFAULT_BATCH_SIZE,
-                "max_parallel_streams": c.TapOracle.EnvironmentDefaults.Development.MAX_PARALLEL_STREAMS,
-                "query_timeout": c.TapOracle.EnvironmentDefaults.Development.QUERY_TIMEOUT_SECONDS,
-            })
-        elif environment == "staging":
-            env_overrides.update({
-                "batch_size": c.TapOracle.Singer.DEFAULT_BATCH_SIZE * 2,
-                "max_parallel_streams": c.TapOracle.EnvironmentDefaults.Staging.MAX_PARALLEL_STREAMS,
-                "query_timeout": c.TapOracle.EnvironmentDefaults.Staging.QUERY_TIMEOUT_SECONDS,
-            })
-
-        all_overrides = {**env_overrides, **overrides}
-        return cls.model_validate(all_overrides)
-
-    @classmethod
-    @override
-    def get_global_instance(cls) -> Self:
-        """Get the global singleton instance using enhanced FlextSettings pattern."""
-        return cls()
-
-    @classmethod
-    def create_for_development(cls, **overrides: t.JsonValue) -> Self:
-        """Create configuration for development environment."""
-        dev_overrides: dict[str, t.JsonValue] = {
-            "oracle_host": "localhost",
-            "oracle_port": c.TapOracle.Oracle.DEFAULT_PORT,
-            "oracle_service_name": "ORCL",
-            "oracle_username": "tap_dev",
-            "batch_size": c.TapOracle.Singer.DEFAULT_BATCH_SIZE,
-            "max_parallel_streams": 1,
-            "query_timeout": 60,
-            **overrides,
-        }
-        return cls.model_validate(dev_overrides)
-
-    @classmethod
-    def create_for_production(cls, **overrides: t.JsonValue) -> Self:
-        """Create configuration for production environment."""
-        prod_overrides: dict[str, t.JsonValue] = {
-            "batch_size": c.TapOracle.Singer.MAX_BATCH_SIZE,
-            "max_parallel_streams": 4,
-            "query_timeout": 300,
-            "fetch_size": c.TapOracle.Oracle.DEFAULT_FETCH_SIZE * 5,
-            "enable_incremental": True,
-            **overrides,
-        }
-        return cls.model_validate(prod_overrides)
-
-    @classmethod
-    def create_for_testing(cls, **overrides: t.JsonValue) -> Self:
-        """Create configuration for testing environment."""
-        test_overrides: dict[str, t.JsonValue] = {
-            "oracle_host": "test-oracle",
-            "oracle_port": c.TapOracle.Oracle.DEFAULT_PORT,
-            "oracle_service_name": "XE",
-            "oracle_username": "test_user",
-            "batch_size": 100,
-            "max_parallel_streams": 1,
-            "query_timeout": 30,
-            **overrides,
-        }
-        return cls.model_validate(test_overrides)
-
-    @classmethod
-    @override
-    def reset_global_instance(cls) -> None:
-        """Reset the global FlextTapOracleSettings instance (mainly for testing)."""
-        # No shared instance to reset
+        return self
 
 
 def create_oracle_tap_config(

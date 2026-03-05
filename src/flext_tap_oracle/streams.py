@@ -104,6 +104,45 @@ class FlextTapOracleStreams:
                 self._observability_manager = obs_placeholder
             return self._observability_manager
 
+        def estimate_row_count(self) -> int | None:
+            """Estimate table row count using Oracle system views."""
+            try:
+                # Validate table name is a valid Oracle identifier before using in SQL
+                cleaned_name = (
+                    self.table_name.replace("_", "").replace("$", "").replace("#", "")
+                )
+                if not self.table_name or not cleaned_name.isalnum():
+                    FlextTapOracleStreams.logger.warning(
+                        "Invalid table name for count estimation: %s",
+                        self.table_name,
+                    )
+                    return None
+                # Safe query construction using template - table name pre-validated
+                safe_table_name = self.table_name.replace('"', '""')
+                sql: str = f'SELECT COUNT(*) FROM "{safe_table_name}"'  # nosec B608
+                result: r[list[m.Dict]] = self.oracle_api.query(sql)
+                if result.is_success and result.value:
+                    result_rows: list[m.Dict] = result.value
+                    first_row: m.Dict = result_rows[0]
+                    # t.Dict root is dict[str, ContainerValue]
+                    first_val = next(iter(first_row.root.values()), None)
+                    if isinstance(first_val, int | float):
+                        return int(first_val)
+                    match first_val:
+                        case str() as first_str:
+                            return int(first_str)
+                        case _:
+                            return None
+                return None
+            except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+                err_msg = str(e)
+                FlextTapOracleStreams.logger.warning(
+                    "Failed to estimate row count for %s: %s",
+                    self.table_name,
+                    err_msg,
+                )
+                return None
+
         @override
         def get_records(
             self,
@@ -152,6 +191,115 @@ class FlextTapOracleStreams:
                 )
                 msg = f"Failed to get records: {e}"
                 raise RuntimeError(msg) from e
+
+        def get_stream_metadata(self) -> Mapping[str, t.ContainerValue]:
+            """Get complete stream metadata."""
+            return {
+                "name": self.name,
+                "table_name": self.table_name,
+                "schema": {},
+                "table_info": self.get_table_info(),
+                "estimated_rows": self.estimate_row_count(),
+            }
+
+        # ADDITIONAL ORACLE STREAM METHODS
+        def get_table_info(self) -> Mapping[str, t.ContainerValue]:
+            """Get Oracle table information using flext-db-oracle metadata."""
+            try:
+                mgr = self.metadata_manager
+                get_meta = getattr(mgr, "get_table_metadata", None)
+                if get_meta is None:
+                    return {
+                        "table_name": self.table_name,
+                        "error": "Metadata manager not available",
+                    }
+                table_metadata_result = get_meta(self.table_name)
+                if getattr(table_metadata_result, "is_success", None) and getattr(
+                    table_metadata_result,
+                    "data",
+                    None,
+                ):
+                    table = table_metadata_result.data
+                    columns = getattr(table, "columns", [])
+                    return {
+                        "table_name": self.table_name,
+                        "stream_name": self.name,
+                        "column_count": len(columns) if u.is_list_like(columns) else 0,
+                        "oracle_schema": getattr(
+                            table,
+                            "schema_name",
+                            c.TapOracle.DEFAULT_OPERATION_NAME,
+                        ),
+                        "table_type": getattr(table, "table_type", "TABLE"),
+                    }
+                return {
+                    "table_name": self.table_name,
+                    "error": "Metadata not available",
+                }
+            except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+                FlextTapOracleStreams.logger.exception(
+                    "Failed to get table info",
+                )
+                return {"table_name": self.table_name, "error": str(e)}
+
+        def _process_results_fallback(
+            self,
+            query_data: t.ContainerValue,
+        ) -> Iterable[Mapping[str, t.ContainerValue]]:
+            """Fallback processing without metadata (minimal implementation)."""
+            # Use schema properties as column names
+            column_names: list[str] = []
+            # Handle different query_data structures
+            if not isinstance(query_data, Iterable) or isinstance(
+                query_data,
+                str | bytes,
+            ):
+                FlextTapOracleStreams.logger.warning(
+                    "Cannot process query data in fallback mode",
+                )
+                return
+            data_rows: Iterable[t.ContainerValue] = query_data
+            for row_data in data_rows:
+                try:
+                    record: dict[str, t.ContainerValue]
+                    match row_data:
+                        case list() as row_list:
+                            if column_names:
+                                record = dict(
+                                    zip(column_names, row_list, strict=False),
+                                )
+                            else:
+                                # Generic column naming
+                                record = {
+                                    f"col_{i}": value
+                                    for i, value in enumerate(row_list)
+                                }
+                        case tuple() as row_tuple:
+                            tuple_values = [str(value) for value in row_tuple]
+                            if column_names:
+                                record = dict(
+                                    zip(column_names, tuple_values, strict=False),
+                                )
+                            else:
+                                record = {
+                                    f"col_{i}": str(value)
+                                    for i, value in enumerate(tuple_values)
+                                }
+                        case Mapping() as row_mapping:
+                            record = {
+                                str(column): value
+                                for column, value in row_mapping.items()
+                            }
+                        case _:
+                            # Convert other types to string representation
+                            str_val: t.ContainerValue = str(row_data)
+                            record = {"data": str_val}
+                    yield record
+                except (ValueError, TypeError, KeyError, AttributeError, OSError):
+                    FlextTapOracleStreams.logger.exception(
+                        "Failed to process record in fallback mode",
+                    )
+                    continue
 
         def _process_results_with_table_metadata(
             self,
@@ -215,65 +363,6 @@ class FlextTapOracleStreams:
                     )
                     continue
 
-        def _process_results_fallback(
-            self,
-            query_data: t.ContainerValue,
-        ) -> Iterable[Mapping[str, t.ContainerValue]]:
-            """Fallback processing without metadata (minimal implementation)."""
-            # Use schema properties as column names
-            column_names: list[str] = []
-            # Handle different query_data structures
-            if not isinstance(query_data, Iterable) or isinstance(
-                query_data,
-                str | bytes,
-            ):
-                FlextTapOracleStreams.logger.warning(
-                    "Cannot process query data in fallback mode",
-                )
-                return
-            data_rows: Iterable[t.ContainerValue] = query_data
-            for row_data in data_rows:
-                try:
-                    record: dict[str, t.ContainerValue]
-                    match row_data:
-                        case list() as row_list:
-                            if column_names:
-                                record = dict(
-                                    zip(column_names, row_list, strict=False),
-                                )
-                            else:
-                                # Generic column naming
-                                record = {
-                                    f"col_{i}": value
-                                    for i, value in enumerate(row_list)
-                                }
-                        case tuple() as row_tuple:
-                            tuple_values = [str(value) for value in row_tuple]
-                            if column_names:
-                                record = dict(
-                                    zip(column_names, tuple_values, strict=False),
-                                )
-                            else:
-                                record = {
-                                    f"col_{i}": str(value)
-                                    for i, value in enumerate(tuple_values)
-                                }
-                        case Mapping() as row_mapping:
-                            record = {
-                                str(column): value
-                                for column, value in row_mapping.items()
-                            }
-                        case _:
-                            # Convert other types to string representation
-                            str_val: t.ContainerValue = str(row_data)
-                            record = {"data": str_val}
-                    yield record
-                except (ValueError, TypeError, KeyError, AttributeError, OSError):
-                    FlextTapOracleStreams.logger.exception(
-                        "Failed to process record in fallback mode",
-                    )
-                    continue
-
         def _transform_oracle_types_with_table_metadata(
             self,
             record: Mapping[str, t.ContainerValue],
@@ -330,95 +419,6 @@ class FlextTapOracleStreams:
                     # Keep value as-is for basic types
                     transformed_record[column_name] = value
             return transformed_record
-
-        # ADDITIONAL ORACLE STREAM METHODS
-        def get_table_info(self) -> Mapping[str, t.ContainerValue]:
-            """Get Oracle table information using flext-db-oracle metadata."""
-            try:
-                mgr = self.metadata_manager
-                get_meta = getattr(mgr, "get_table_metadata", None)
-                if get_meta is None:
-                    return {
-                        "table_name": self.table_name,
-                        "error": "Metadata manager not available",
-                    }
-                table_metadata_result = get_meta(self.table_name)
-                if getattr(table_metadata_result, "is_success", None) and getattr(
-                    table_metadata_result,
-                    "data",
-                    None,
-                ):
-                    table = table_metadata_result.data
-                    columns = getattr(table, "columns", [])
-                    return {
-                        "table_name": self.table_name,
-                        "stream_name": self.name,
-                        "column_count": len(columns) if u.is_list_like(columns) else 0,
-                        "oracle_schema": getattr(
-                            table,
-                            "schema_name",
-                            c.TapOracle.DEFAULT_OPERATION_NAME,
-                        ),
-                        "table_type": getattr(table, "table_type", "TABLE"),
-                    }
-                return {
-                    "table_name": self.table_name,
-                    "error": "Metadata not available",
-                }
-            except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-                FlextTapOracleStreams.logger.exception(
-                    "Failed to get table info",
-                )
-                return {"table_name": self.table_name, "error": str(e)}
-
-        def estimate_row_count(self) -> int | None:
-            """Estimate table row count using Oracle system views."""
-            try:
-                # Validate table name is a valid Oracle identifier before using in SQL
-                cleaned_name = (
-                    self.table_name.replace("_", "").replace("$", "").replace("#", "")
-                )
-                if not self.table_name or not cleaned_name.isalnum():
-                    FlextTapOracleStreams.logger.warning(
-                        "Invalid table name for count estimation: %s",
-                        self.table_name,
-                    )
-                    return None
-                # Safe query construction using template - table name pre-validated
-                safe_table_name = self.table_name.replace('"', '""')
-                sql: str = f'SELECT COUNT(*) FROM "{safe_table_name}"'  # nosec B608
-                result: r[list[m.Dict]] = self.oracle_api.query(sql)
-                if result.is_success and result.value:
-                    result_rows: list[m.Dict] = result.value
-                    first_row: m.Dict = result_rows[0]
-                    # t.Dict root is dict[str, ContainerValue]
-                    first_val = next(iter(first_row.root.values()), None)
-                    if isinstance(first_val, int | float):
-                        return int(first_val)
-                    match first_val:
-                        case str() as first_str:
-                            return int(first_str)
-                        case _:
-                            return None
-                return None
-            except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-                err_msg = str(e)
-                FlextTapOracleStreams.logger.warning(
-                    "Failed to estimate row count for %s: %s",
-                    self.table_name,
-                    err_msg,
-                )
-                return None
-
-        def get_stream_metadata(self) -> Mapping[str, t.ContainerValue]:
-            """Get complete stream metadata."""
-            return {
-                "name": self.name,
-                "table_name": self.table_name,
-                "schema": {},
-                "table_info": self.get_table_info(),
-                "estimated_rows": self.estimate_row_count(),
-            }
 
     class StreamFactory:
         """Factory class for creating Oracle streams with complete configuration."""

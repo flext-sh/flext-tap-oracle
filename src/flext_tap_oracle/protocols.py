@@ -102,14 +102,6 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
         class DataExtractionProtocol(FlextDbOracleProtocols.Service[object], Protocol):
             """Protocol for Oracle data extraction."""
 
-            def extract_table_data(
-                self,
-                table: str,
-                config: Mapping[str, t.ContainerValue],
-            ) -> FlextMeltanoProtocols.Result[list[t.ConfigurationMapping]]:
-                """Extract all data from Oracle table."""
-                ...
-
             def extract_incremental(
                 self,
                 table: str,
@@ -118,16 +110,17 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
                 """Extract incremental data from Oracle table using state."""
                 ...
 
+            def extract_table_data(
+                self,
+                table: str,
+                config: Mapping[str, t.ContainerValue],
+            ) -> FlextMeltanoProtocols.Result[list[t.ConfigurationMapping]]:
+                """Extract all data from Oracle table."""
+                ...
+
         @runtime_checkable
         class TypeMappingProtocol(FlextDbOracleProtocols.Service[object], Protocol):
             """Protocol for Oracle to Singer type mapping."""
-
-            def map_oracle_type(
-                self,
-                oracle_type: str,
-            ) -> FlextMeltanoProtocols.Result[str]:
-                """Map Oracle data type to Singer type."""
-                ...
 
             def convert_value(
                 self,
@@ -135,6 +128,13 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
                 oracle_type: str,
             ) -> FlextMeltanoProtocols.Result[object]:
                 """Convert Oracle value to Singer-compatible format."""
+                ...
+
+            def map_oracle_type(
+                self,
+                oracle_type: str,
+            ) -> FlextMeltanoProtocols.Result[str]:
+                """Map Oracle data type to Singer type."""
                 ...
 
         @runtime_checkable
@@ -163,15 +163,15 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
         class PerformanceProtocol(FlextDbOracleProtocols.Service[object], Protocol):
             """Protocol for Oracle extraction performance."""
 
-            def optimize_query(self, query: str) -> FlextMeltanoProtocols.Result[str]:
-                """Optimize Oracle query for performance."""
-                ...
-
             def configure_batch_size(
                 self,
                 size: int,
             ) -> FlextMeltanoProtocols.Result[bool]:
                 """Configure extraction batch size."""
+                ...
+
+            def optimize_query(self, query: str) -> FlextMeltanoProtocols.Result[str]:
+                """Optimize Oracle query for performance."""
                 ...
 
         @runtime_checkable
@@ -196,18 +196,18 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
         class MonitoringProtocol(FlextDbOracleProtocols.Service[object], Protocol):
             """Protocol for Oracle extraction monitoring."""
 
+            def get_statistics(
+                self,
+            ) -> FlextMeltanoProtocols.Result[t.ConfigurationMapping]:
+                """Get extraction statistics."""
+                ...
+
             def track_progress(
                 self,
                 table: str,
                 records: int,
             ) -> FlextMeltanoProtocols.Result[bool]:
                 """Track Oracle table extraction progress."""
-                ...
-
-            def get_statistics(
-                self,
-            ) -> FlextMeltanoProtocols.Result[t.ConfigurationMapping]:
-                """Get extraction statistics."""
                 ...
 
 

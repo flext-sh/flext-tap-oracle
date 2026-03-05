@@ -239,9 +239,9 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table
         )
 
     @property
-    def oracle_api(self) -> FlextDbOracleApi:
-        """Get Oracle API."""
-        return self._oracle_api
+    def connection_test_service(self) -> FlextOracleConnectionTestService:
+        """Get Oracle connection test domain service."""
+        return self._connection_test_service
 
     @property
     def discovery_service(self) -> FlextOracleDiscoveryService:
@@ -249,28 +249,14 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table
         return self._discovery_service
 
     @property
-    def connection_test_service(self) -> FlextOracleConnectionTestService:
-        """Get Oracle connection test domain service."""
-        return self._connection_test_service
+    def oracle_api(self) -> FlextDbOracleApi:
+        """Get Oracle API."""
+        return self._oracle_api
 
     @property
     def table_filter_service(self) -> FlextOracleTableFilterService:
         """Get Oracle table filter domain service."""
         return self._table_filter_service
-
-    # Service methods - using direct domain services
-    @override
-    def execute(self) -> FlextResult[list[FlextDbOracleModels.DbOracle.Table]]:
-        """Execute Oracle tap service - discover tables."""
-        return self._discovery_service.execute()
-
-    def validate_service(self) -> FlextResult[bool]:
-        """Validate service using connection test."""
-        return self._connection_test_service.execute()
-
-    def get_health_status(self) -> FlextResult[bool]:
-        """Get service health status using connection test."""
-        return self._connection_test_service.execute()
 
     # ORACLE-SPECIFIC: Use domain services for Oracle functionality
     def discover_oracle_tables(
@@ -287,15 +273,42 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table
             return discovery_service.execute()
         return self._discovery_service.execute()
 
-    def test_oracle_connection(self) -> FlextResult[bool]:
-        """Test Oracle connection using domain service."""
-        return self._connection_test_service.execute()
+    # Service methods - using direct domain services
+    @override
+    def execute(self) -> FlextResult[list[FlextDbOracleModels.DbOracle.Table]]:
+        """Execute Oracle tap service - discover tables."""
+        return self._discovery_service.execute()
 
     def get_filtered_tables(
         self,
     ) -> FlextResult[list[str]]:
         """Get filtered table list using domain service."""
         return self._table_filter_service.execute()
+
+    def get_health_status(self) -> FlextResult[bool]:
+        """Get service health status using connection test."""
+        return self._connection_test_service.execute()
+
+    def get_tap_status(self) -> FlextResult[bool]:
+        """Get Oracle tap status by testing connection."""
+        try:
+            # Test Oracle connection using domain service
+            connection_test_result = self._connection_test_service.execute()
+
+            if connection_test_result.is_success:
+                logger.info("Oracle tap status: healthy")
+                return FlextResult[bool].ok(value=True)
+
+            logger.warning(
+                f"Oracle tap status check failed: {connection_test_result.error}",
+            )
+            return FlextResult[bool].fail(
+                f"Connection test failed: {connection_test_result.error}",
+            )
+
+        except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+            logger.exception("Failed to get tap status")
+            return FlextResult[bool].fail(f"Status check failed: {e}")
 
     # HIGH-LEVEL ORCHESTRATION METHODS
     def initialize_tap(self) -> FlextResult[bool]:
@@ -329,26 +342,13 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table
             error_msg = f"Initialization failed: {e}"
             return FlextResult[bool].fail(error_msg)
 
-    def get_tap_status(self) -> FlextResult[bool]:
-        """Get Oracle tap status by testing connection."""
-        try:
-            # Test Oracle connection using domain service
-            connection_test_result = self._connection_test_service.execute()
+    def test_oracle_connection(self) -> FlextResult[bool]:
+        """Test Oracle connection using domain service."""
+        return self._connection_test_service.execute()
 
-            if connection_test_result.is_success:
-                logger.info("Oracle tap status: healthy")
-                return FlextResult[bool].ok(value=True)
-
-            logger.warning(
-                f"Oracle tap status check failed: {connection_test_result.error}",
-            )
-            return FlextResult[bool].fail(
-                f"Connection test failed: {connection_test_result.error}",
-            )
-
-        except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-            logger.exception("Failed to get tap status")
-            return FlextResult[bool].fail(f"Status check failed: {e}")
+    def validate_service(self) -> FlextResult[bool]:
+        """Validate service using connection test."""
+        return self._connection_test_service.execute()
 
 
 # =====================================================

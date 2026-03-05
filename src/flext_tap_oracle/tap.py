@@ -104,14 +104,6 @@ class OracleTapDiscoverCommand:
         self.params = params
         self._logger = FlextLogger(__name__)
 
-    def validate_business_rules(self) -> FlextResult[bool]:
-        """Validate business rules for Oracle tap discovery."""
-        if self.params.config_file and not Path(self.params.config_file).exists():
-            return FlextResult[bool].fail(
-                f"Configuration file not found: {self.params.config_file}",
-            )
-        return FlextResult[bool].ok(value=True)
-
     def execute(self) -> FlextResult[Mapping[str, t.ContainerValue]]:
         """Execute Oracle tap discovery using modern patterns."""
         self._logger.info("Starting Oracle database discovery")
@@ -166,6 +158,14 @@ class OracleTapDiscoverCommand:
                 f"Discovery error: {e}",
             )
 
+    def validate_business_rules(self) -> FlextResult[bool]:
+        """Validate business rules for Oracle tap discovery."""
+        if self.params.config_file and not Path(self.params.config_file).exists():
+            return FlextResult[bool].fail(
+                f"Configuration file not found: {self.params.config_file}",
+            )
+        return FlextResult[bool].ok(value=True)
+
 
 class OracleTapSyncCommand:
     """Oracle tap sync command using modern flext-cli patterns."""
@@ -174,22 +174,6 @@ class OracleTapSyncCommand:
         """Initialize command with parameter object pattern."""
         self.params = params
         self._logger = FlextLogger(__name__)
-
-    def validate_business_rules(self) -> FlextResult[bool]:
-        """Validate business rules for Oracle tap sync."""
-        if self.params.config_file and not Path(self.params.config_file).exists():
-            return FlextResult[bool].fail(
-                f"Configuration file not found: {self.params.config_file}",
-            )
-        if self.params.catalog_file and not Path(self.params.catalog_file).exists():
-            return FlextResult[bool].fail(
-                f"Catalog file not found: {self.params.catalog_file}",
-            )
-        if self.params.state_file and not Path(self.params.state_file).exists():
-            return FlextResult[bool].fail(
-                f"State file not found: {self.params.state_file}",
-            )
-        return FlextResult[bool].ok(value=True)
 
     def execute(self) -> FlextResult[Mapping[str, t.ContainerValue]]:
         """Execute Oracle tap sync using modern patterns."""
@@ -248,6 +232,22 @@ class OracleTapSyncCommand:
             return FlextResult[Mapping[str, t.ContainerValue]].fail(
                 f"Sync error: {e}",
             )
+
+    def validate_business_rules(self) -> FlextResult[bool]:
+        """Validate business rules for Oracle tap sync."""
+        if self.params.config_file and not Path(self.params.config_file).exists():
+            return FlextResult[bool].fail(
+                f"Configuration file not found: {self.params.config_file}",
+            )
+        if self.params.catalog_file and not Path(self.params.catalog_file).exists():
+            return FlextResult[bool].fail(
+                f"Catalog file not found: {self.params.catalog_file}",
+            )
+        if self.params.state_file and not Path(self.params.state_file).exists():
+            return FlextResult[bool].fail(
+                f"State file not found: {self.params.state_file}",
+            )
+        return FlextResult[bool].ok(value=True)
 
 
 def create_tap_oracle_cli() -> FlextResult[FlextCliCommands]:
