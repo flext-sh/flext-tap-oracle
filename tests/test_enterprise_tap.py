@@ -1,12 +1,17 @@
+"""Integration-focused tests for Oracle tap settings helpers."""
+
 from __future__ import annotations
 
+import os
+
 import pytest
-from flext_core import FlextResult, t
+from flext_core import FlextResult
 from flext_db_oracle import FlextDbOracleModels
+
 from flext_tap_oracle import (
-    FlextTapOracleSettings,
     FlextOracleDiscoveryService,
     FlextOracleTableFilterService,
+    FlextTapOracleSettings,
 )
 from flext_tap_oracle.settings import create_oracle_tap_config
 
@@ -20,24 +25,27 @@ class _DiscoveryStub(FlextOracleDiscoveryService):
 
 
 class TestFlextOracleTapSettingsAndHelpers:
-    @pytest.fixture
-    def valid_config(self) -> dict[str, t.ContainerValue]:
-        return {
-            "oracle_host": "test-oracle",
-            "oracle_port": 1521,
-            "oracle_service_name": "TESTDB",
-            "oracle_sid": "",  # Explicitly empty to satisfy validator
-            "oracle_username": "testuser",
-            "oracle_password": "testpass",
-            "batch_size": 1000,
-            "max_parallel_streams": 2,
-            "tables_filter": ["USERS", "ORDERS", "PRODUCTS"],
-        }
+    """Validate settings model behavior and helper service wiring."""
 
-    def test_settings_model_validate(
-        self, valid_config: dict[str, t.ContainerValue]
-    ) -> None:
-        config = FlextTapOracleSettings.model_validate(valid_config)
+    @pytest.fixture(autouse=True)
+    def reset_settings_singleton(self) -> None:
+        """Ensure deterministic tests by resetting singleton settings state."""
+        FlextTapOracleSettings.reset_global_instance()
+        os.environ["FLEXT_TAP_ORACLE_SERVICE_NAME"] = "XE"
+        os.environ["FLEXT_TAP_ORACLE_ORACLE_SERVICE_NAME"] = "XE"
+
+    def test_settings_model_validate(self) -> None:
+        config = FlextTapOracleSettings(
+            oracle_host="test-oracle",
+            oracle_port=1521,
+            oracle_service_name="TESTDB",
+            oracle_sid="",
+            oracle_username="testuser",
+            oracle_password="testpass",
+            batch_size=1000,
+            max_parallel_streams=2,
+        )
+        config.tables_filter = ["USERS", "ORDERS", "PRODUCTS"]
 
         assert config.oracle_host == "test-oracle"
         assert config.oracle_port == 1521
@@ -47,10 +55,18 @@ class TestFlextOracleTapSettingsAndHelpers:
         assert config.max_parallel_streams == 2
         assert config.tables_filter == ["USERS", "ORDERS", "PRODUCTS"]
 
-    def test_settings_connection_string(
-        self, valid_config: dict[str, t.ContainerValue]
-    ) -> None:
-        config = FlextTapOracleSettings.model_validate(valid_config)
+    def test_settings_connection_string(self) -> None:
+        config = FlextTapOracleSettings(
+            oracle_host="test-oracle",
+            oracle_port=1521,
+            oracle_service_name="TESTDB",
+            oracle_sid="",
+            oracle_username="testuser",
+            oracle_password="testpass",
+            batch_size=1000,
+            max_parallel_streams=2,
+        )
+        config.tables_filter = ["USERS", "ORDERS", "PRODUCTS"]
         connection_string = config.get_connection_string()
 
         assert connection_string == "test-oracle:1521/TESTDB"
@@ -94,9 +110,18 @@ class TestFlextOracleTapSettingsAndHelpers:
 
     def test_table_filter_service_uses_configured_tables(
         self,
-        valid_config: dict[str, t.ContainerValue],
     ) -> None:
-        config = FlextTapOracleSettings.model_validate(valid_config)
+        config = FlextTapOracleSettings(
+            oracle_host="test-oracle",
+            oracle_port=1521,
+            oracle_service_name="TESTDB",
+            oracle_sid="",
+            oracle_username="testuser",
+            oracle_password="testpass",
+            batch_size=1000,
+            max_parallel_streams=2,
+        )
+        config.tables_filter = ["USERS", "ORDERS", "PRODUCTS"]
         service = FlextOracleTableFilterService(
             tap_config=config,
             discovery_service=_DiscoveryStub(),
