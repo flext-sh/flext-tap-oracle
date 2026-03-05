@@ -72,7 +72,7 @@ class FlextTapOracleSettings(FlextSettings):
     )
 
     oracle_service_name: str = Field(
-        default="",
+        default="XEPDB1",
         description="Oracle service name",
     )
 
@@ -312,8 +312,8 @@ class FlextTapOracleSettings(FlextSettings):
             "stream_prefix": self.stream_prefix,
             "batch_size": self.batch_size,
             "max_parallel_streams": self.max_parallel_streams,
-            "tables_filter": self.tables_filter,
-            "schemas_filter": self.schemas_filter,
+            "tables_filter": self.tables_filter or [],
+            "schemas_filter": self.schemas_filter or [],
             "enable_incremental": self.enable_incremental,
             "incremental_column": self.incremental_column,
             "fetch_size": self.fetch_size,

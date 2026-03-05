@@ -59,7 +59,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
             FlextResult[Mapping[str, t.ContainerValue]]: Service status and capabilities.
 
             """
-            return FlextResult[t.ConfigurationMapping].ok({
+            return FlextResult[Mapping[str, t.ContainerValue]].ok({
                 "status": "operational",
                 "service": "flext-tap-oracle-utilities",
                 "capabilities": [
@@ -300,11 +300,11 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                     ]
                     for field in required_fields:
                         if field not in validated_config:
-                            return FlextResult[t.ConfigurationMapping].fail(
+                            return FlextResult[Mapping[str, t.ContainerValue]].fail(
                                 f"Missing required Oracle field: {field}",
                             )
                         if not validated_config[field]:
-                            return FlextResult[t.ConfigurationMapping].fail(
+                            return FlextResult[Mapping[str, t.ContainerValue]].fail(
                                 f"Empty Oracle field: {field}",
                             )
 
@@ -313,21 +313,21 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                     try:
                         port = int(str(validated_config["port"]))
                         if port <= 0 or port > max_port:
-                            return FlextResult[t.ConfigurationMapping].fail(
+                            return FlextResult[Mapping[str, t.ContainerValue]].fail(
                                 f"Oracle port must be between 1 and {max_port}",
                             )
                         validated_config["port"] = port
                     except ValueError:
-                        return FlextResult[t.ConfigurationMapping].fail(
+                        return FlextResult[Mapping[str, t.ContainerValue]].fail(
                             "Oracle port must be numeric",
                         )
 
-                    return FlextResult[t.ConfigurationMapping].ok(
+                    return FlextResult[Mapping[str, t.ContainerValue]].ok(
                         validated_config,
                     )
 
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-                    return FlextResult[t.ConfigurationMapping].fail(
+                    return FlextResult[Mapping[str, t.ContainerValue]].fail(
                         f"Oracle config validation failed: {e}",
                     )
 
@@ -371,7 +371,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                     )
                     validation_result = cfg_validator.validate_oracle_config(config)
                     if validation_result.is_failure:
-                        return FlextResult[t.ConfigurationMapping].fail(
+                        return FlextResult[Mapping[str, t.ContainerValue]].fail(
                             validation_result.error,
                         )
 
@@ -385,12 +385,12 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                         "connection_test": "structural_validation_passed",
                     }
 
-                    return FlextResult[t.ConfigurationMapping].ok(
+                    return FlextResult[Mapping[str, t.ContainerValue]].ok(
                         connectivity_result,
                     )
 
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-                    return FlextResult[t.ConfigurationMapping].fail(
+                    return FlextResult[Mapping[str, t.ContainerValue]].fail(
                         f"Oracle connectivity test failed: {e}",
                     )
 
@@ -462,10 +462,10 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                         "performance_rating": performance_rating,
                     }
 
-                    return FlextResult[t.ConfigurationMapping].ok(metrics)
+                    return FlextResult[Mapping[str, t.ContainerValue]].ok(metrics)
 
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-                    return FlextResult[t.ConfigurationMapping].fail(
+                    return FlextResult[Mapping[str, t.ContainerValue]].fail(
                         f"Metrics calculation failed: {e}",
                     )
 

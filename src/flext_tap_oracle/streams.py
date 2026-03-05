@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable, Mapping, Sequence
 from datetime import datetime
-from typing import cast, override
+from typing import override
 
 from flext_core import FlextLogger, r
 from flext_db_oracle import FlextDbOracleApi
@@ -115,13 +115,6 @@ class FlextTapOracleStreams:
                 with self.oracle_api as api:
                     # Get schema name safely from tap config
                     schema_name: str | None = None
-                    tap_cfg = getattr(self._tap, "config", {})
-                    match tap_cfg:
-                        case dict() as tap_cfg_dict:
-                            raw_schema = tap_cfg_dict.get("schema_name")
-                            match raw_schema:
-                                case str() as schema_str if schema_str:
-                                    schema_name = schema_str
 
                     # Build safe query with validated table name (pre-validated identifier)
                     safe_table = self.table_name.replace('"', '""')
@@ -144,9 +137,7 @@ class FlextTapOracleStreams:
 
                     # Process results using flext-db-oracle result handling
                     rows: list[m.Dict] = (
-                        cast("list[m.Dict]", query_result.value)
-                        if query_result.is_success
-                        else []
+                        query_result.value if query_result.is_success else []
                     )
 
                     for row in rows:
@@ -230,11 +221,7 @@ class FlextTapOracleStreams:
         ) -> Iterable[Mapping[str, t.ContainerValue]]:
             """Fallback processing without metadata (minimal implementation)."""
             # Use schema properties as column names
-            schema_props = self.schema.get("properties", {})
             column_names: list[str] = []
-            match schema_props:
-                case dict() as schema_props_dict:
-                    column_names = list(schema_props_dict.keys())
             # Handle different query_data structures
             if not isinstance(query_data, Iterable) or isinstance(
                 query_data,
@@ -297,15 +284,15 @@ class FlextTapOracleStreams:
             """Transform Oracle data types using flext-db-oracle type knowledge."""
             transformed_record: dict[str, t.ContainerValue] = {}
             # Create metadata lookup by column name
-            meta_lookup = {}
-            for col_meta in column_metadata:
-                col_name = getattr(col_meta, "name", None) or getattr(
-                    col_meta,
+            meta_lookup: dict[str, t.ContainerValue] = {}
+            for col_meta_value in column_metadata:
+                col_name = getattr(col_meta_value, "name", None) or getattr(
+                    col_meta_value,
                     "column_name",
                     None,
                 )
-                if col_name:
-                    meta_lookup[col_name] = col_meta
+                if isinstance(col_name, str) and col_name:
+                    meta_lookup[col_name] = col_meta_value
             for column_name, value in record.items():
                 if value is None:
                     transformed_record[column_name] = None
@@ -313,7 +300,7 @@ class FlextTapOracleStreams:
                 # Get Oracle type information from flext-db-oracle metadata
                 col_meta = meta_lookup.get(column_name)
                 oracle_type = None
-                if col_meta:
+                if col_meta is not None:
                     oracle_type = getattr(col_meta, "data_type", None) or getattr(
                         col_meta,
                         "type",
@@ -335,9 +322,7 @@ class FlextTapOracleStreams:
                     "BLOB",
                 )):
                     # Handle Oracle LOB types
-                    transformed_record[column_name] = (
-                        str(value) if value is not None else None
-                    )
+                    transformed_record[column_name] = str(value)
                 elif getattr(value, "__str__", None) is not None:
                     # Convert other Oracle-specific types to string representation
                     transformed_record[column_name] = str(value)
@@ -404,7 +389,7 @@ class FlextTapOracleStreams:
                 sql: str = f'SELECT COUNT(*) FROM "{safe_table_name}"'  # nosec B608
                 result: r[list[m.Dict]] = self.oracle_api.query(sql)
                 if result.is_success and result.value:
-                    result_rows: list[m.Dict] = cast("list[m.Dict]", result.value)
+                    result_rows: list[m.Dict] = result.value
                     first_row: m.Dict = result_rows[0]
                     # t.Dict root is dict[str, ContainerValue]
                     first_val = next(iter(first_row.root.values()), None)
@@ -413,6 +398,8 @@ class FlextTapOracleStreams:
                     match first_val:
                         case str() as first_str:
                             return int(first_str)
+                        case _:
+                            return None
                 return None
             except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                 err_msg = str(e)
@@ -428,7 +415,7 @@ class FlextTapOracleStreams:
             return {
                 "name": self.name,
                 "table_name": self.table_name,
-                "schema": self.schema,
+                "schema": {},
                 "table_info": self.get_table_info(),
                 "estimated_rows": self.estimate_row_count(),
             }
@@ -494,32 +481,6 @@ class FlextTapOracleStreams:
 
             # Build basic schema from table metadata
             properties: dict[str, t.ContainerValue] = {}
-            columns_raw = getattr(table_metadata, "columns", None)
-            if isinstance(columns_raw, list):
-                for column in columns_raw:
-                    col_name = str(
-                        getattr(column, "name", c.TapOracle.DEFAULT_OPERATION_NAME),
-                    )
-                    col_type = str(
-                        getattr(
-                            column,
-                            "data_type",
-                            c.TapOracle.SingerTypes.DEFAULT_TYPE,
-                        ),
-                    )
-
-                    # Map Oracle types to Singer schema types
-                    singer_type = c.TapOracle.SingerTypes.DEFAULT_TYPE
-                    if col_type.upper().startswith(("NUMBER", "INTEGER")):
-                        singer_type = c.TapOracle.SingerTypes.NUMERIC_TYPE
-                    elif col_type.upper().startswith(("DATE", "TIMESTAMP")):
-                        singer_type = (
-                            c.TapOracle.SingerTypes.DATETIME_TYPE
-                        )  # ISO format
-                    elif col_type.upper().startswith("FLOAT"):
-                        singer_type = c.TapOracle.SingerTypes.NUMERIC_TYPE
-
-                    properties[col_name] = {"type": singer_type}
 
             schema: dict[str, t.ContainerValue] = {
                 "type": "object",

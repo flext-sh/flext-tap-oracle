@@ -59,7 +59,7 @@ class FlextOracleDiscoveryService:
             # Convert string table names to FlextDbOracleModels.DbOracle.Table objects
             table_names = tables_result.value or []
             tables: list[FlextDbOracleModels.DbOracle.Table] = [
-                FlextDbOracleModels.DbOracle.Table(name=table_name, schema=schema_name)
+                FlextDbOracleModels.DbOracle.Table(name=table_name, owner=schema_name)
                 for table_name in table_names
             ]
 
@@ -135,7 +135,7 @@ class FlextOracleTableFilterService:
             if isinstance(tables_filter, list) and tables_filter:
                 logger.info(
                     "Using configured table filter: %s",
-                    tables_filter,
+                    ", ".join(str(table_name) for table_name in tables_filter),
                 )
                 return FlextResult[list[str]].ok(
                     [str(table_name) for table_name in tables_filter],

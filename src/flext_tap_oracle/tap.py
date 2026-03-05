@@ -119,7 +119,7 @@ class OracleTapDiscoverCommand:
         try:
             # Load configuration (required)
             if not self.params.config_file:
-                return FlextResult[t.ConfigurationMapping].fail(
+                return FlextResult[Mapping[str, t.ContainerValue]].fail(
                     "Configuration file is required for discovery",
                 )
 
@@ -158,11 +158,11 @@ class OracleTapDiscoverCommand:
                 self._logger.info("Catalog written to %s", output_path)
 
             self._logger.info("Oracle schema discovery completed")
-            return FlextResult[t.ConfigurationMapping].ok(catalog_dict)
+            return FlextResult[Mapping[str, t.ContainerValue]].ok(catalog_dict)
 
         except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
             logger.exception("Oracle discovery failed")
-            return FlextResult[t.ConfigurationMapping].fail(
+            return FlextResult[Mapping[str, t.ContainerValue]].fail(
                 f"Discovery error: {e}",
             )
 
@@ -198,7 +198,7 @@ class OracleTapSyncCommand:
         try:
             # Load configuration (required)
             if not self.params.config_file:
-                return FlextResult[t.ConfigurationMapping].fail(
+                return FlextResult[Mapping[str, t.ContainerValue]].fail(
                     "Configuration file is required for sync",
                 )
 
@@ -241,11 +241,11 @@ class OracleTapSyncCommand:
                 schema_name,
                 record_count,
             )
-            return FlextResult[t.ConfigurationMapping].ok(result_data)
+            return FlextResult[Mapping[str, t.ContainerValue]].ok(result_data)
 
         except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
             logger.exception("Oracle sync failed")
-            return FlextResult[t.ConfigurationMapping].fail(
+            return FlextResult[Mapping[str, t.ContainerValue]].fail(
                 f"Sync error: {e}",
             )
 
@@ -333,12 +333,11 @@ def cli() -> None:
     """Main CLI entry point using flext-cli foundation."""
     cli_result = create_tap_oracle_cli()
     if cli_result.is_failure:
-        logger.error("CLI creation failed: %s", cli_result.error)
+        logger.error("CLI creation failed: %s", cli_result.error or "unknown")
         sys.exit(1)
 
     cli_main = cli_result.value
-    if cli_main is not None:
-        cli_main.execute()
+    cli_main.execute()
 
 
 def main() -> None:
