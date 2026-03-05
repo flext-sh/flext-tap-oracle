@@ -22,6 +22,7 @@ from flext_tap_oracle.constants import c
 from flext_tap_oracle.typings import t
 
 
+@FlextSettings.auto_register("tap_oracle")
 class FlextTapOracleSettings(FlextSettings):
     """Oracle Tap Configuration using enhanced FlextSettings patterns.
 
