@@ -28,7 +28,7 @@
 !poetry.lock
 !Makefile
 !README.md
-!CLAUDE.md
+!AGENTS.md
 !LICENSE
 !.python-version
 !.tool-versions
@@ -320,7 +320,7 @@ ipython_config.py
 .python-version
 celerybeat-schedule
 celerybeat.pid
-CLAUDE.md
+AGENTS.md
 internal.invalid.md
 .claude/
 .cursor/
