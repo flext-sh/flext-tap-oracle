@@ -16,81 +16,12 @@ from pathlib import Path
 
 from flext_cli import FlextCli, FlextCliCommands
 from flext_core import FlextLogger, FlextResult, t
-from pydantic import BaseModel, ConfigDict, Field
 
 from flext_tap_oracle.constants import c
 from flext_tap_oracle.settings import FlextTapOracleSettings
 
 logger = FlextLogger(__name__)
 cli_api = FlextCli()
-
-
-class OracleTapDiscoverParams(BaseModel):
-    """Parameter object for Oracle tap discovery operations - flext-cli pattern."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    config_file: str | None = Field(
-        default=None,
-        description="Path to configuration file",
-    )
-    output_file: str | None = Field(
-        default="catalog.json",
-        description="Path to output catalog file",
-    )
-
-    @classmethod
-    def from_click_args(cls, **kwargs: t.ContainerValue) -> OracleTapDiscoverParams:
-        """Create from Click arguments using flext-cli patterns."""
-        args: Mapping[str, object] = kwargs  # kwargs keys are always str
-        return cls(
-            config_file=str(args.get("config_file"))
-            if args.get("config_file") is not None
-            else None,
-            output_file=(
-                str(args.get("output_file"))
-                if args.get("output_file") is not None
-                else "catalog.json"
-            ),
-        )
-
-
-class OracleTapSyncParams(BaseModel):
-    """Parameter object for Oracle tap sync operations - flext-cli pattern."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    config_file: str | None = Field(
-        default=None,
-        description="Path to configuration file",
-    )
-    catalog_file: str | None = Field(
-        default="catalog.json",
-        description="Path to catalog file",
-    )
-    state_file: str | None = Field(default=None, description="Path to state file")
-    output_file: str | None = Field(default=None, description="Path to output file")
-
-    @classmethod
-    def from_click_args(cls, **kwargs: t.ContainerValue) -> OracleTapSyncParams:
-        """Create from Click arguments using flext-cli patterns."""
-        args: Mapping[str, object] = kwargs
-        return cls(
-            config_file=str(args.get("config_file"))
-            if args.get("config_file") is not None
-            else None,
-            catalog_file=(
-                str(args.get("catalog_file"))
-                if args.get("catalog_file") is not None
-                else "catalog.json"
-            ),
-            state_file=str(args.get("state_file"))
-            if args.get("state_file") is not None
-            else None,
-            output_file=str(args.get("output_file"))
-            if args.get("output_file") is not None
-            else None,
-        )
 
 
 class OracleTapDiscoverCommand:
