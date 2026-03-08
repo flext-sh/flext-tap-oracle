@@ -31,7 +31,6 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols):
     - Generic protocols accessed via Tests namespace
     """
 
-    # TapOracle-specific test protocols namespace
     class TapOracle:
         """Tap Oracle test protocols - domain-specific for Oracle tap testing.
 
@@ -54,9 +53,7 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols):
                 ...
 
             def execute_query(
-                self,
-                query: str,
-                parameters: dict[str, t.ContainerValue] | None = None,
+                self, query: str, parameters: dict[str, t.ContainerValue] | None = None
             ) -> list[dict[str, t.ContainerValue]]:
                 """Execute query on mock database."""
                 ...
@@ -70,8 +67,7 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols):
                 ...
 
             def get_test_data(
-                self,
-                table_name: str,
+                self, table_name: str
             ) -> list[dict[str, t.ContainerValue]]:
                 """Get test data for a table."""
                 ...
@@ -85,15 +81,13 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols):
             """Protocol for test assertions."""
 
             def assert_oracle_connection_successful(
-                self,
-                config: dict[str, t.ContainerValue],
+                self, config: dict[str, t.ContainerValue]
             ) -> None:
                 """Assert Oracle connection was successful."""
                 ...
 
             def assert_singer_stream_valid(
-                self,
-                stream: dict[str, t.ContainerValue],
+                self, stream: dict[str, t.ContainerValue]
             ) -> None:
                 """Assert Singer stream is valid."""
                 ...
@@ -107,10 +101,5 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols):
                 ...
 
 
-# Alias for simplified usage
 p = TestsFlextTapOracleProtocols
-
-__all__ = [
-    "TestsFlextTapOracleProtocols",
-    "p",
-]
+__all__ = ["TestsFlextTapOracleProtocols", "p"]

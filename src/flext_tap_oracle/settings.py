@@ -35,24 +35,16 @@ def create_oracle_tap_config(
     try:
         tap_config = tap_params or {}
         meltano_config = meltano_params or {}
-
         tap_config.setdefault("batch_size", 1000)
         tap_config.setdefault("stream_prefix", c.TapOracle.DEFAULT_STREAM_PREFIX)
         meltano_config.setdefault("project_root", ".")
         meltano_config.setdefault("environment", "production")
-
-        config_data = {
-            **oracle_params,
-            **tap_config,
-            **meltano_config,
-        }
-
+        config_data = {**oracle_params, **tap_config, **meltano_config}
         config_instance = FlextTapOracleSettings.model_validate(config_data)
         return FlextResult[FlextTapOracleSettings].ok(config_instance)
-
     except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
         return FlextResult[FlextTapOracleSettings].fail(
-            f"Oracle tap configuration creation failed: {e}",
+            f"Oracle tap configuration creation failed: {e}"
         )
 
 

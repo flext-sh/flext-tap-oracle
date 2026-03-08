@@ -31,7 +31,6 @@ class TestsFlextTapOracleTypes(FlextTestsTypes):
     - Generic types accessed via Tests namespace
     """
 
-    # TapOracle-specific test types namespace
     class TapOracle:
         """Tap Oracle test types - domain-specific for Oracle tap testing.
 
@@ -41,26 +40,16 @@ class TestsFlextTapOracleTypes(FlextTestsTypes):
         - Test scenario types
         """
 
-        # Test configuration literals
         type TestOracleHost = Literal["localhost", "test-host"]
         type TestOraclePort = Literal[1521, 10521, 1522]
         type TestServiceName = Literal["XE", "ORCL", "TESTDB"]
         type TestReplicationMethod = Literal["FULL_TABLE", "INCREMENTAL"]
-
-        # Test data types
         type MockOracleRecord = dict[str, t.Scalar]
         type MockOracleTable = list[MockOracleRecord]
         type TestScenario = dict[str, t.ContainerValue]
-
-        # Test result types
         type TestValidationResult = dict[str, bool | str | list[str]]
         type TestPerformanceResult = dict[str, float | int | str]
 
 
-# Alias for simplified usage
 tt = TestsFlextTapOracleTypes
-
-__all__ = [
-    "TestsFlextTapOracleTypes",
-    "tt",
-]
+__all__ = ["TestsFlextTapOracleTypes", "tt"]

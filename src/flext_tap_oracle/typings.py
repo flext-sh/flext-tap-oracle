@@ -38,13 +38,10 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
         organized by functional domains.
         """
 
-        # Combined project types from both domains
         type MeltanoTapOracleProjectType = Literal[
-            # Generic types inherited from t
             "library",
             "application",
             "service",
-            # Meltano-specific types
             "meltano-project",
             "elt-pipeline",
             "data-pipeline",
@@ -55,7 +52,6 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
             "data-integration",
             "meltano-plugin",
             "data-connector",
-            # Oracle-specific types
             "oracle-service",
             "database-service",
             "data-warehouse",
@@ -69,87 +65,45 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
             "oracle-target",
         ]
 
-        # =========================================================================
-        # ORACLE TAP EXTRACTION TYPES - Complex extraction operation types
-        # =========================================================================
-
         class Extraction:
             """Oracle extraction complex types."""
 
             type ExtractionConfiguration = dict[
-                str,
-                t.ContainerValue | t.ConfigurationMapping,
+                str, t.ContainerValue | t.ConfigurationMapping
             ]
             type ExtractionState = dict[str, t.JsonValue | t.ContainerValue]
             type ExtractionMetrics = dict[
-                str,
-                int | float | bool | t.ConfigurationMapping,
+                str, int | float | bool | t.ConfigurationMapping
             ]
-            type BatchConfiguration = dict[
-                str,
-                int | bool | t.ConfigurationMapping,
-            ]
-            type StreamDefinition = dict[
-                str,
-                str | list[str] | dict[str, t.JsonValue],
-            ]
-            type TableMetadata = dict[
-                str,
-                t.JsonValue | list[t.ConfigurationMapping],
-            ]
-
-        # =========================================================================
-        # SINGER PROTOCOL TYPES - Complex Singer protocol types
-        # =========================================================================
+            type BatchConfiguration = dict[str, int | bool | t.ConfigurationMapping]
+            type StreamDefinition = dict[str, str | list[str] | dict[str, t.JsonValue]]
+            type TableMetadata = dict[str, t.JsonValue | list[t.ConfigurationMapping]]
 
         class Singer:
             """Singer protocol complex types."""
 
             type CatalogEntry = dict[str, str | dict[str, t.JsonValue]]
             type StreamSchema = dict[str, dict[str, t.JsonValue]]
-            type TapConfiguration = dict[
-                str,
-                t.ContainerValue | t.ConfigurationMapping,
-            ]
+            type TapConfiguration = dict[str, t.ContainerValue | t.ConfigurationMapping]
             type StateBookmark = dict[str, t.JsonValue | t.ContainerValue]
             type RecordMessage = dict[str, str | dict[str, t.JsonValue]]
             type SchemaMessage = dict[str, str | dict[str, t.JsonValue]]
 
-        # =========================================================================
-        # ORACLE TAP CONFIGURATION TYPES - Complex configuration types
-        # =========================================================================
-
         class Configuration:
             """Oracle tap configuration complex types."""
 
-            type TapOracleConfig = dict[
-                str,
-                t.ContainerValue | t.ConfigurationMapping,
-            ]
+            type TapOracleConfig = dict[str, t.ContainerValue | t.ConfigurationMapping]
             type ConnectionSettings = dict[
-                str,
-                str | int | bool | t.ConfigurationMapping,
+                str, str | int | bool | t.ConfigurationMapping
             ]
-            type ExtractionSettings = dict[
-                str,
-                int | bool | t.ConfigurationMapping,
-            ]
+            type ExtractionSettings = dict[str, int | bool | t.ConfigurationMapping]
             type PerformanceSettings = dict[
-                str,
-                int | float | bool | t.ConfigurationMapping,
+                str, int | float | bool | t.ConfigurationMapping
             ]
-            type SecuritySettings = dict[
-                str,
-                str | bool | t.ConfigurationMapping,
-            ]
+            type SecuritySettings = dict[str, str | bool | t.ConfigurationMapping]
             type StreamSettings = dict[
-                str,
-                bool | str | list[str] | t.ConfigurationMapping,
+                str, bool | str | list[str] | t.ConfigurationMapping
             ]
-
-        # =========================================================================
-        # SINGER TAP ORACLE PROJECT TYPES - Domain-specific project types extending t
-        # =========================================================================
 
         class Project:
             """Singer Tap Oracle-specific project types.
@@ -159,13 +113,10 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
             Singer tap Oracle domain owns Oracle extraction and Singer protocol-specific types.
             """
 
-            # Singer tap Oracle-specific project types extending the generic ones
             type ProjectType = Literal[
-                # Generic types inherited from t
                 "library",
                 "application",
                 "service",
-                # Singer tap Oracle-specific types
                 "singer-tap",
                 "oracle-extractor",
                 "database-extractor",
@@ -183,21 +134,11 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
                 "oracle-tap",
                 "singer-integration",
             ]
-
-            # Singer tap Oracle-specific project configurations
             type SingerTapOracleProjectConfig = dict[str, t.ContainerValue]
             type OracleExtractorConfig = dict[str, str | int | bool | list[str]]
-            type SingerProtocolConfig = dict[
-                str,
-                bool | str | t.ConfigurationMapping,
-            ]
+            type SingerProtocolConfig = dict[str, bool | str | t.ConfigurationMapping]
             type TapOraclePipelineConfig = dict[str, t.ContainerValue]
 
 
-# Runtime alias for simplified usage
 t = FlextTapOracleTypes
-
-__all__ = [
-    "FlextTapOracleTypes",
-    "t",
-]
+__all__ = ["FlextTapOracleTypes", "t"]

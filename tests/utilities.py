@@ -29,10 +29,8 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities):
     - Generic utilities accessed via Tests namespace
     """
 
-    # Composition: expose FlextTestsUtilities namespaces
     Tests = FlextTestsUtilities.Tests
 
-    # TapOracle-specific test utilities namespace
     class TapOracle:
         """Tap Oracle test utilities - domain-specific for Oracle tap testing.
 
@@ -90,9 +88,7 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities):
 
         @staticmethod
         def generate_mock_oracle_data(
-            table_name: str,
-            row_count: int = 10,
-            **kwargs: t.ContainerValue,
+            table_name: str, row_count: int = 10, **kwargs: t.ContainerValue
         ) -> list[dict[str, t.ContainerValue]]:
             """Generate mock Oracle data for testing."""
             data = []
@@ -106,10 +102,5 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities):
             return data
 
 
-# Alias for simplified usage
 u = TestsFlextTapOracleUtilities
-
-__all__ = [
-    "TestsFlextTapOracleUtilities",
-    "u",
-]
+__all__ = ["TestsFlextTapOracleUtilities", "u"]
