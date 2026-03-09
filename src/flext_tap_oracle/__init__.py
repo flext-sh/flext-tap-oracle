@@ -34,6 +34,8 @@ if TYPE_CHECKING:
         FlextTapOracleUtilities,
         FlextTapOracleUtilities as u,
     )
+
+# Lazy import mapping: export_name -> (module_path, attr_name)
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "FlextOracleConnectionTestService": (
         "flext_tap_oracle.client",
@@ -72,6 +74,7 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "t": ("flext_tap_oracle.typings", "FlextTapOracleTypes"),
     "u": ("flext_tap_oracle.utilities", "FlextTapOracleUtilities"),
 }
+
 __all__ = [
     "FlextOracleConnectionTestService",
     "FlextOracleDiscoveryService",
@@ -94,7 +97,7 @@ __all__ = [
 ]
 
 
-def __getattr__(name: str) -> Any:
+def __getattr__(name: str) -> Any:  # noqa: ANN401  # JUSTIFIED: Ruff (any-type) with PEP 562 dynamic module exports — https://docs.astral.sh/ruff/rules/any-type/
     """Lazy-load module attributes on first access (PEP 562)."""
     return lazy_getattr(name, _LAZY_IMPORTS, globals(), __name__)
 
