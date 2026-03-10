@@ -14,6 +14,7 @@ from flext_core import FlextResult
 
 from flext_tap_oracle.constants import c
 from flext_tap_oracle.typings import t
+from flext_tap_oracle.tap import FlextTapOracleSettings
 
 
 def create_oracle_tap_config(
