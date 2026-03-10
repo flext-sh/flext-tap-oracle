@@ -44,6 +44,7 @@ class FlextTapOracleSettings(FlextSettings):
         return FlextResult[bool].ok(True)
 
     def get_oracle_config(self) -> dict[str, t.JsonValue]:
+        """Get Oracle database connection configuration."""
         return {
             "host": self.oracle_host,
             "port": self.oracle_port,
@@ -53,6 +54,7 @@ class FlextTapOracleSettings(FlextSettings):
         }
 
     def get_tap_config(self) -> dict[str, t.JsonValue]:
+        """Get tap-specific configuration settings."""
         return {
             "batch_size": self.batch_size,
             "stream_prefix": self.stream_prefix,

@@ -27,11 +27,14 @@ cli_api = FlextCli()
 
 
 class OracleTapDiscoverParams(BaseModel):
+    """Parameters for tap discover command."""
+
     config_file: str | None = Field(default=None)
     output_file: str | None = Field(default=None)
 
     @classmethod
     def from_click_args(cls, **kwargs: t.ContainerValue) -> Self:
+        """Create discover params from Click command arguments."""
         config_file_value: t.ContainerValue = kwargs.get("config_file")
         output_file_value: t.ContainerValue = kwargs.get("output_file")
         return cls(
@@ -41,12 +44,15 @@ class OracleTapDiscoverParams(BaseModel):
 
 
 class OracleTapSyncParams(BaseModel):
+    """Parameters for tap sync command."""
+
     config_file: str | None = Field(default=None)
     catalog_file: str | None = Field(default=None)
     state_file: str | None = Field(default=None)
 
     @classmethod
     def from_click_args(cls, **kwargs: t.ContainerValue) -> Self:
+        """Create sync params from Click command arguments."""
         config_file_value: t.ContainerValue = kwargs.get("config_file")
         catalog_file_value: t.ContainerValue = kwargs.get("catalog_file")
         state_file_value: t.ContainerValue = kwargs.get("state_file")
