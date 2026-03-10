@@ -30,7 +30,7 @@ class OracleTapDiscoverCommand:
     Provides discovery of Oracle database schema and Singer catalog generation.
     """
 
-    def __init__(self, params: OracleTapDiscoverParams) -> None:
+    def __init__(self, params: OracleTapDiscoverParams) -> None:  # noqa: F821
         """Initialize command with parameter object pattern."""
         self.params = params
         self._logger = FlextLogger(__name__)
@@ -81,7 +81,7 @@ class OracleTapDiscoverCommand:
 class OracleTapSyncCommand:
     """Oracle tap sync command using modern flext-cli patterns."""
 
-    def __init__(self, params: OracleTapSyncParams) -> None:
+    def __init__(self, params: OracleTapSyncParams) -> None:  # noqa: F821
         """Initialize command with parameter object pattern."""
         self.params = params
         self._logger = FlextLogger(__name__)
@@ -168,7 +168,7 @@ def handle_discover_command(
 ) -> FlextResult[t.JsonValue]:
     """Handle discover command using flext-cli patterns - NO click decorators."""
     try:
-        params = OracleTapDiscoverParams.from_click_args(**kwargs)
+        params = OracleTapDiscoverParams.from_click_args(**kwargs)  # noqa: F821
         command = OracleTapDiscoverCommand(params=params)
         result = command.execute()
         if result.is_failure:
@@ -187,7 +187,7 @@ def handle_sync_command(
 ) -> FlextResult[t.JsonValue]:
     """Handle sync command using flext-cli patterns - NO click decorators."""
     try:
-        params = OracleTapSyncParams.from_click_args(**kwargs)
+        params = OracleTapSyncParams.from_click_args(**kwargs)  # noqa: F821
         command = OracleTapSyncCommand(params=params)
         result = command.execute()
         if result.is_failure:
