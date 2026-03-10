@@ -21,7 +21,7 @@ class TestFlextOracleTapSettingsAndHelpers:
     @pytest.fixture(autouse=True)
     def reset_settings_singleton(self) -> None:
         """Ensure deterministic tests by resetting singleton settings state."""
-        FlextTapOracleSettings.reset_global_instance()
+        FlextTapOracleSettings.reset_for_testing()
         os.environ['FLEXT_TAP_ORACLE_SERVICE_NAME'] = 'XE'
         os.environ['FLEXT_TAP_ORACLE_ORACLE_SERVICE_NAME'] = 'XE'
 
