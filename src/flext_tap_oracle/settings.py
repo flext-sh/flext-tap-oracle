@@ -10,8 +10,10 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_core import FlextLogger, FlextResult, FlextSettings, c, t
+from flext_core import FlextLogger, FlextResult, FlextSettings, t
 from pydantic import Field, SecretStr
+
+from flext_tap_oracle.constants import FlextTapOracleConstants
 
 logger = FlextLogger(__name__)
 
@@ -41,6 +43,23 @@ class FlextTapOracleSettings(FlextSettings):
             return FlextResult[bool].fail("Oracle service name is required")
         return FlextResult[bool].ok(True)
 
+    def get_oracle_config(self) -> dict[str, t.JsonValue]:
+        return {
+            "host": self.oracle_host,
+            "port": self.oracle_port,
+            "service_name": self.oracle_service_name,
+            "user": self.oracle_user.get_secret_value(),
+            "password": self.oracle_password.get_secret_value(),
+        }
+
+    def get_tap_config(self) -> dict[str, t.JsonValue]:
+        return {
+            "batch_size": self.batch_size,
+            "stream_prefix": self.stream_prefix,
+            "project_root": self.project_root,
+            "environment": self.environment,
+        }
+
 
 def create_oracle_tap_config(
     oracle_params: dict[str, t.JsonValue],
@@ -62,7 +81,9 @@ def create_oracle_tap_config(
         tap_config = tap_params or {}
         meltano_config = meltano_params or {}
         tap_config.setdefault("batch_size", 1000)
-        tap_config.setdefault("stream_prefix", c.TapOracle.DEFAULT_STREAM_PREFIX)
+        tap_config.setdefault(
+            "stream_prefix", FlextTapOracleConstants.TapOracle.DEFAULT_STREAM_PREFIX
+        )
         meltano_config.setdefault("project_root", ".")
         meltano_config.setdefault("environment", "production")
         config_data = {**oracle_params, **tap_config, **meltano_config}

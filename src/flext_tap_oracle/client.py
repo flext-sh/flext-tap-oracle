@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import override
 
-from flext_core import FlextLogger, FlextResult, FlextService
+from flext_core import FlextLogger, FlextResult, FlextService, t
 from flext_db_oracle import FlextDbOracleApi, FlextDbOracleModels, FlextDbOracleSettings
 
 from flext_tap_oracle.settings import FlextTapOracleSettings
@@ -104,28 +104,35 @@ class FlextOracleTableFilterService:
     def execute(self) -> FlextResult[list[str]]:
         """Execute table filtering based on tap configuration using Layer 2 API."""
         try:
-            tap_configuration = self.tap_config.get_tap_config()
-            tables_filter = tap_configuration.get("tables_filter")
+            tap_configuration: dict[str, t.JsonValue] = self.tap_config.get_tap_config()
+            tables_filter: t.JsonValue | None = tap_configuration.get("tables_filter")
             if isinstance(tables_filter, list) and tables_filter:
+                tables_filter_list: list[t.JsonValue] = tables_filter
                 logger.info(
                     "Using configured table filter: %s",
-                    ", ".join(str(table_name) for table_name in tables_filter),
+                    ", ".join(str(table_name) for table_name in tables_filter_list),
                 )
                 return FlextResult[list[str]].ok([
-                    str(table_name) for table_name in tables_filter
+                    str(table_name) for table_name in tables_filter_list
                 ])
             tables_result = self.discovery_service.execute()
             if tables_result.is_failure:
                 error_msg = tables_result.error or "Table discovery failed"
                 logger.warning("Table discovery failed: %s", error_msg)
                 return FlextResult[list[str]].fail(error_msg)
-            if not tables_result.data:
+            if not tables_result.value:
                 return FlextResult[list[str]].fail("No Oracle tables discovered")
-            table_names = [table.name for table in tables_result.data]
-            exclude_tables_raw = tap_configuration.get("exclude_tables")
+            discovered_tables: list[FlextDbOracleModels.DbOracle.Table] = (
+                tables_result.value
+            )
+            table_names: list[str] = [table.name for table in discovered_tables]
+            exclude_tables_raw: t.JsonValue | None = tap_configuration.get(
+                "exclude_tables"
+            )
             exclude_tables: list[str] = []
             if isinstance(exclude_tables_raw, list):
-                exclude_tables = [str(table_name) for table_name in exclude_tables_raw]
+                exclude_table_list: list[t.JsonValue] = exclude_tables_raw
+                exclude_tables = [str(table_name) for table_name in exclude_table_list]
             if exclude_tables:
                 filtered_tables = [
                     table for table in table_names if table not in exclude_tables
@@ -168,7 +175,7 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table
             error_msg = "Configuration is required"
             raise ValueError(error_msg)
         super().__init__()
-        oracle_config = config.get_oracle_config()
+        oracle_config: dict[str, t.JsonValue] = config.get_oracle_config()
         oracle_settings = FlextDbOracleSettings.model_validate(oracle_config)
         self._oracle_api = FlextDbOracleApi(oracle_settings)
         schema_name = oracle_config.get("schema_name") or oracle_config.get(

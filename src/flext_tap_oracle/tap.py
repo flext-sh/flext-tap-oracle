@@ -13,9 +13,11 @@ import json
 import sys
 from collections.abc import Mapping
 from pathlib import Path
+from typing import Self
 
 from flext_cli import FlextCli, FlextCliCommands
 from flext_core import FlextLogger, FlextResult, t
+from pydantic import BaseModel, Field
 
 from flext_tap_oracle.constants import c
 from flext_tap_oracle.settings import FlextTapOracleSettings
@@ -24,13 +26,44 @@ logger = FlextLogger(__name__)
 cli_api = FlextCli()
 
 
+class OracleTapDiscoverParams(BaseModel):
+    config_file: str | None = Field(default=None)
+    output_file: str | None = Field(default=None)
+
+    @classmethod
+    def from_click_args(cls, **kwargs: t.ContainerValue) -> Self:
+        config_file_value: t.ContainerValue = kwargs.get("config_file")
+        output_file_value: t.ContainerValue = kwargs.get("output_file")
+        return cls(
+            config_file=str(config_file_value) if config_file_value else None,
+            output_file=str(output_file_value) if output_file_value else None,
+        )
+
+
+class OracleTapSyncParams(BaseModel):
+    config_file: str | None = Field(default=None)
+    catalog_file: str | None = Field(default=None)
+    state_file: str | None = Field(default=None)
+
+    @classmethod
+    def from_click_args(cls, **kwargs: t.ContainerValue) -> Self:
+        config_file_value: t.ContainerValue = kwargs.get("config_file")
+        catalog_file_value: t.ContainerValue = kwargs.get("catalog_file")
+        state_file_value: t.ContainerValue = kwargs.get("state_file")
+        return cls(
+            config_file=str(config_file_value) if config_file_value else None,
+            catalog_file=str(catalog_file_value) if catalog_file_value else None,
+            state_file=str(state_file_value) if state_file_value else None,
+        )
+
+
 class OracleTapDiscoverCommand:
     """Oracle tap discovery command using modern flext-cli patterns.
 
     Provides discovery of Oracle database schema and Singer catalog generation.
     """
 
-    def __init__(self, params: OracleTapDiscoverParams) -> None:  # noqa: F821
+    def __init__(self, params: OracleTapDiscoverParams) -> None:
         """Initialize command with parameter object pattern."""
         self.params = params
         self._logger = FlextLogger(__name__)
@@ -44,8 +77,7 @@ class OracleTapDiscoverCommand:
                     "Configuration file is required for discovery"
                 )
             config_data: str = Path(self.params.config_file).read_text(encoding="utf-8")
-            config_instance = FlextTapOracleSettings.get_global()
-            config: FlextTapOracleSettings = config_instance.model_validate_json(
+            config: FlextTapOracleSettings = FlextTapOracleSettings.model_validate_json(
                 config_data
             )
             oracle_config = config.get_oracle_config()
@@ -81,7 +113,7 @@ class OracleTapDiscoverCommand:
 class OracleTapSyncCommand:
     """Oracle tap sync command using modern flext-cli patterns."""
 
-    def __init__(self, params: OracleTapSyncParams) -> None:  # noqa: F821
+    def __init__(self, params: OracleTapSyncParams) -> None:
         """Initialize command with parameter object pattern."""
         self.params = params
         self._logger = FlextLogger(__name__)
@@ -95,8 +127,7 @@ class OracleTapSyncCommand:
                     "Configuration file is required for sync"
                 )
             config_data: str = Path(self.params.config_file).read_text(encoding="utf-8")
-            config_instance = FlextTapOracleSettings.get_global()
-            config: FlextTapOracleSettings = config_instance.model_validate_json(
+            config: FlextTapOracleSettings = FlextTapOracleSettings.model_validate_json(
                 config_data
             )
             oracle_config = config.get_oracle_config()
@@ -168,7 +199,7 @@ def handle_discover_command(
 ) -> FlextResult[t.JsonValue]:
     """Handle discover command using flext-cli patterns - NO click decorators."""
     try:
-        params = OracleTapDiscoverParams.from_click_args(**kwargs)  # noqa: F821
+        params = OracleTapDiscoverParams.from_click_args(**kwargs)
         command = OracleTapDiscoverCommand(params=params)
         result = command.execute()
         if result.is_failure:
@@ -187,7 +218,7 @@ def handle_sync_command(
 ) -> FlextResult[t.JsonValue]:
     """Handle sync command using flext-cli patterns - NO click decorators."""
     try:
-        params = OracleTapSyncParams.from_click_args(**kwargs)  # noqa: F821
+        params = OracleTapSyncParams.from_click_args(**kwargs)
         command = OracleTapSyncCommand(params=params)
         result = command.execute()
         if result.is_failure:

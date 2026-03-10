@@ -8,11 +8,11 @@ from __future__ import annotations
 
 from collections.abc import Iterable, Mapping, Sequence
 from datetime import datetime
-from typing import override
+from typing import Protocol
 
 from flext_core import FlextLogger, r
 from flext_db_oracle import FlextDbOracleApi
-from flext_meltano import FlextMeltanoStream as Stream, FlextMeltanoTap as Tap
+from flext_meltano import FlextMeltanoStream as Stream, p
 
 from flext_tap_oracle import c, m, t, u
 
@@ -32,6 +32,9 @@ class FlextTapOracleStreams:
 
     logger = FlextLogger(__name__)
 
+    class _TapProtocol(Protocol):
+        typed_config: t.ContainerValue
+
     class OracleStream(Stream):
         """Oracle stream using MAXIMUM flext-db-oracle infrastructure.
 
@@ -42,20 +45,20 @@ class FlextTapOracleStreams:
         - Native Oracle connection pooling and performance optimization.
         """
 
-        @override
         def __init__(
             self,
-            tap: Tap,
+            tap: p.Meltano.Tap,
             name: str,
             table_name: str,
             schema: Mapping[str, t.ContainerValue],
             oracle_api: FlextDbOracleApi,
         ) -> None:
             """Initialize Oracle stream with maximum flext-db-oracle integration."""
-            super().__init__(tap, name=name, schema=dict(schema))
+            self.name = name
+            self.schema = dict(schema)
             self.table_name: str = table_name
             self.oracle_api: FlextDbOracleApi = oracle_api
-            self._tap: Tap = tap
+            self._tap: p.Meltano.Tap = tap
             self._metadata_manager: t.ContainerValue | None = None
             self._observability_manager: t.ContainerValue | None = None
 
@@ -121,7 +124,6 @@ class FlextTapOracleStreams:
                 )
                 return None
 
-        @override
         def get_records(
             self, context: Mapping[str, t.ContainerValue] | None = None
         ) -> Iterable[dict[str, t.ContainerValue]]:
@@ -143,9 +145,7 @@ class FlextTapOracleStreams:
                             "Failed to execute query: %s", error_msg
                         )
                         return
-                    rows: list[m.Dict] = (
-                        query_result.value if query_result.is_success else []
-                    )
+                    rows: list[m.Dict] = query_result.value_or([])
                     for row in rows:
                         record: dict[str, t.ContainerValue] = dict(row.root)
                         yield record
@@ -348,7 +348,7 @@ class FlextTapOracleStreams:
 
         @staticmethod
         def create_oracle_stream(
-            tap: Tap,
+            tap: p.Meltano.Tap,
             name: str,
             table_name: str,
             schema: Mapping[str, t.ContainerValue],
@@ -377,7 +377,7 @@ class FlextTapOracleStreams:
 
         @staticmethod
         def create_oracle_stream_from_table(
-            tap: Tap,
+            tap: p.Meltano.Tap,
             table_metadata: t.ContainerValue,
             oracle_api: FlextDbOracleApi,
             stream_prefix: str = c.TapOracle.DEFAULT_STREAM_PREFIX,
