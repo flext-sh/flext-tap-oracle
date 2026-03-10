@@ -10,11 +10,36 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_core import FlextResult
+from flext_core import FlextLogger, FlextResult, FlextSettings, c, t
+from pydantic import Field, SecretStr
 
-from flext_tap_oracle.constants import c
-from flext_tap_oracle.tap import FlextTapOracleSettings
-from flext_tap_oracle.typings import t
+logger = FlextLogger(__name__)
+
+
+class FlextTapOracleSettings(FlextSettings):
+    """Runtime settings for Oracle Singer tap operations."""
+
+    oracle_host: str = Field(default="localhost", description="Oracle database host")
+    oracle_port: int = Field(default=1521, description="Oracle database port")
+    oracle_service_name: str = Field(
+        default="ORCL", description="Oracle service name or SID"
+    )
+    oracle_user: SecretStr = Field(description="Oracle database username")
+    oracle_password: SecretStr = Field(description="Oracle database password")
+    batch_size: int = Field(
+        default=1000, ge=1, description="Batch size for data extraction"
+    )
+    stream_prefix: str = Field(default="", description="Prefix for Singer stream names")
+    project_root: str = Field(default=".", description="Meltano project root")
+    environment: str = Field(default="production", description="Environment name")
+
+    def validate_business_rules(self) -> FlextResult[bool]:
+        """Validate Oracle tap configuration business rules."""
+        if not self.oracle_host:
+            return FlextResult[bool].fail("Oracle host is required")
+        if not self.oracle_service_name:
+            return FlextResult[bool].fail("Oracle service name is required")
+        return FlextResult[bool].ok(True)
 
 
 def create_oracle_tap_config(
