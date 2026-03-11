@@ -10,7 +10,6 @@ SPDX-License-Identifier: MIT.
 from __future__ import annotations
 
 import json
-import sys
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Self
@@ -238,20 +237,22 @@ def handle_sync_command(
         return FlextResult[t.JsonValue].fail(error_message)
 
 
-def cli() -> None:
+def cli() -> int:
     """Main CLI entry point using flext-cli foundation."""
     cli_result = create_tap_oracle_cli()
     if cli_result.is_failure:
         logger.error("CLI creation failed: %s", cli_result.error or "unknown")
-        sys.exit(1)
+        return 1
     cli_main = cli_result.value
     cli_main.execute()
+    return 0
 
 
 def main() -> None:
     """Provide CLI entry point using flext-cli patterns."""
     try:
-        cli()
+        exit_code = cli()
+        raise SystemExit(exit_code)
     except KeyboardInterrupt:
         cli_api.print("Operation cancelled by user", style="yellow")
         raise SystemExit(0) from None
