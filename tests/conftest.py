@@ -17,7 +17,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Generator
 
 import pytest
-from flext_core import FlextResult, t
+from flext_core import r, t
 from flext_tests import FlextTestsDocker
 
 from flext_tap_oracle import FlextOracleTapService, FlextTapOracleSettings
@@ -126,7 +126,7 @@ def oracle_tap_config() -> dict[str, t.ContainerValue]:
 @pytest.fixture
 def oracle_tap(oracle_tap_config: dict[str, t.ContainerValue]) -> FlextOracleTapService:
     """Oracle tap service instance for testing."""
-    config_result = FlextResult[FlextTapOracleSettings].ok(
+    config_result = r[FlextTapOracleSettings].ok(
         FlextTapOracleSettings.get_global().model_validate(oracle_tap_config)
     )
     if config_result.is_success:

@@ -10,7 +10,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_core import FlextLogger, FlextResult, FlextSettings, t
+from flext_core import FlextLogger, FlextSettings, r, t
 from pydantic import Field, SecretStr
 
 from flext_tap_oracle.constants import FlextTapOracleConstants
@@ -35,13 +35,13 @@ class FlextTapOracleSettings(FlextSettings):
     project_root: str = Field(default=".", description="Meltano project root")
     environment: str = Field(default="production", description="Environment name")
 
-    def validate_business_rules(self) -> FlextResult[bool]:
+    def validate_business_rules(self) -> r[bool]:
         """Validate Oracle tap configuration business rules."""
         if not self.oracle_host:
-            return FlextResult[bool].fail("Oracle host is required")
+            return r[bool].fail("Oracle host is required")
         if not self.oracle_service_name:
-            return FlextResult[bool].fail("Oracle service name is required")
-        return FlextResult[bool].ok(True)
+            return r[bool].fail("Oracle service name is required")
+        return r[bool].ok(True)
 
     def get_oracle_config(self) -> dict[str, t.JsonValue]:
         """Get Oracle database connection configuration."""
@@ -67,7 +67,7 @@ def create_oracle_tap_config(
     oracle_params: dict[str, t.JsonValue],
     tap_params: dict[str, t.JsonValue] | None = None,
     meltano_params: dict[str, t.JsonValue] | None = None,
-) -> FlextResult[FlextTapOracleSettings]:
+) -> r[FlextTapOracleSettings]:
     """Create Oracle tap configuration using grouped parameters.
 
     Args:
@@ -76,7 +76,7 @@ def create_oracle_tap_config(
         meltano_params: Optional Meltano parameters
 
     Returns:
-        FlextResult containing validated Oracle tap configuration
+        r containing validated Oracle tap configuration
 
     """
     try:
@@ -90,16 +90,16 @@ def create_oracle_tap_config(
         meltano_config.setdefault("environment", "production")
         config_data = {**oracle_params, **tap_config, **meltano_config}
         config_instance = FlextTapOracleSettings.model_validate(config_data)
-        return FlextResult[FlextTapOracleSettings].ok(config_instance)
+        return r[FlextTapOracleSettings].ok(config_instance)
     except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-        return FlextResult[FlextTapOracleSettings].fail(
+        return r[FlextTapOracleSettings].fail(
             f"Oracle tap configuration creation failed: {e}"
         )
 
 
 def validate_oracle_tap_configuration(
     config: FlextTapOracleSettings,
-) -> FlextResult[bool]:
+) -> r[bool]:
     """Validate Oracle tap configuration using FlextSettings patterns."""
     return config.validate_business_rules()
 

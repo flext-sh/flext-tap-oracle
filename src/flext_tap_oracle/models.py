@@ -11,7 +11,7 @@ from collections.abc import Mapping, Sequence
 from datetime import datetime
 from typing import Literal, Self
 
-from flext_core import FlextConstants, FlextModels, FlextResult
+from flext_core import FlextConstants, FlextModels, r
 from flext_db_oracle import FlextDbOracleModels
 from flext_meltano import FlextMeltanoModels
 from pydantic import (
@@ -212,9 +212,9 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 cleaned = "".join(c if c.isalnum() or c in "_-" else "_" for c in v)
                 return cleaned.lower()
 
-            def validate_business_rules(self) -> FlextResult[bool]:
+            def validate_business_rules(self) -> r[bool]:
                 """Validate tap-specific business rules."""
-                return FlextResult[bool].ok(value=True)
+                return r[bool].ok(value=True)
 
             @model_validator(mode="after")
             def validate_replication_consistency(self) -> Self:
@@ -613,9 +613,9 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     },
                 }
 
-            def validate_business_rules(self) -> FlextResult[bool]:
+            def validate_business_rules(self) -> r[bool]:
                 """Validate stream info business rules."""
-                return FlextResult[bool].ok(value=True)
+                return r[bool].ok(value=True)
 
             @model_validator(mode="after")
             def validate_stream_info(self) -> Self:
@@ -749,9 +749,9 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     },
                 }
 
-            def validate_business_rules(self) -> FlextResult[bool]:
+            def validate_business_rules(self) -> r[bool]:
                 """Validate discovery result business rules."""
-                return FlextResult[bool].ok(value=True)
+                return r[bool].ok(value=True)
 
             @model_validator(mode="after")
             def validate_discovery_result(self) -> Self:
@@ -954,9 +954,9 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     )
                 return self
 
-            def validate_business_rules(self) -> FlextResult[bool]:
+            def validate_business_rules(self) -> r[bool]:
                 """Validate execution stats business rules."""
-                return FlextResult[bool].ok(value=True)
+                return r[bool].ok(value=True)
 
             @model_validator(mode="after")
             def validate_execution_stats(self) -> Self:
