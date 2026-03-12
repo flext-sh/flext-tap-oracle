@@ -32,7 +32,7 @@ class OracleTapDiscoverParams(BaseModel):
     output_file: str | None = Field(default=None)
 
     @classmethod
-    def from_click_args(cls, **kwargs: object) -> Self:
+    def from_click_args(cls, **kwargs: t.Scalar) -> Self:
         """Create discover params from Click command arguments."""
         config_file_value: object = kwargs.get("config_file")
         output_file_value: object = kwargs.get("output_file")
@@ -50,7 +50,7 @@ class OracleTapSyncParams(BaseModel):
     state_file: str | None = Field(default=None)
 
     @classmethod
-    def from_click_args(cls, **kwargs: object) -> Self:
+    def from_click_args(cls, **kwargs: t.Scalar) -> Self:
         """Create sync params from Click command arguments."""
         config_file_value: object = kwargs.get("config_file")
         catalog_file_value: object = kwargs.get("catalog_file")
@@ -193,7 +193,7 @@ def create_tap_oracle_cli() -> r[FlextCliCommands]:
         return r[FlextCliCommands].fail(f"CLI creation failed: {e}")
 
 
-def handle_discover_command(*_args: object, **kwargs: object) -> r[object]:
+def handle_discover_command(*_args: object, **kwargs: t.Scalar) -> r[object]:
     """Handle discover command using flext-cli patterns - NO click decorators."""
     try:
         params = OracleTapDiscoverParams.from_click_args(**kwargs)
@@ -210,7 +210,7 @@ def handle_discover_command(*_args: object, **kwargs: object) -> r[object]:
         return r[object].fail(error_message)
 
 
-def handle_sync_command(*_args: object, **kwargs: object) -> r[object]:
+def handle_sync_command(*_args: object, **kwargs: t.Scalar) -> r[object]:
     """Handle sync command using flext-cli patterns - NO click decorators."""
     try:
         params = OracleTapSyncParams.from_click_args(**kwargs)

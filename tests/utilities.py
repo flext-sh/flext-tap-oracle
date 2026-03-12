@@ -46,7 +46,7 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities):
             service_name: str = "XE",
             username: str = "test",
             password: str = "test",
-            **kwargs: object,
+            **kwargs: t.Scalar,
         ) -> dict[str, object]:
             """Create test Oracle configuration."""
             config: dict[str, object] = {
@@ -64,7 +64,7 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities):
             stream_name: str,
             table_name: str,
             replication_method: str = "FULL_TABLE",
-            **kwargs: object,
+            **kwargs: t.Scalar,
         ) -> dict[str, object]:
             """Create test Singer stream configuration."""
             stream: dict[str, object] = {
@@ -86,7 +86,7 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities):
 
         @staticmethod
         def generate_mock_oracle_data(
-            table_name: str, row_count: int = 10, **kwargs: object
+            table_name: str, row_count: int = 10, **kwargs: t.Scalar
         ) -> list[dict[str, object]]:
             """Generate mock Oracle data for testing."""
             data = []
