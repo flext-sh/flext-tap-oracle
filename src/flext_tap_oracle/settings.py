@@ -43,7 +43,7 @@ class FlextTapOracleSettings(FlextSettings):
             return r[bool].fail("Oracle service name is required")
         return r[bool].ok(True)
 
-    def get_oracle_config(self) -> dict[str, object
+    def get_oracle_config(self) -> dict[str, t.Scalar]:
         """Get Oracle database connection configuration."""
         return {
             "host": self.oracle_host,
@@ -53,7 +53,7 @@ class FlextTapOracleSettings(FlextSettings):
             "password": self.oracle_password.get_secret_value(),
         }
 
-    def get_tap_config(self) -> dict[str, object
+    def get_tap_config(self) -> dict[str, t.Scalar]:
         """Get tap-specific configuration settings."""
         return {
             "batch_size": self.batch_size,
@@ -64,9 +64,9 @@ class FlextTapOracleSettings(FlextSettings):
 
 
 def create_oracle_tap_config(
-    oracle_params: dict[str, object
-    tap_params: dict[str, objectone = None,
-    meltano_params: dict[str, objectone = None,
+    oracle_params: dict[str, t.Scalar],
+    tap_params: dict[str, t.Scalar] | None = None,
+    meltano_params: dict[str, t.Scalar] | None = None,
 ) -> r[FlextTapOracleSettings]:
     """Create Oracle tap configuration using grouped parameters.
 

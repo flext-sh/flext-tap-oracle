@@ -68,40 +68,32 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
         class Extraction:
             """Oracle extraction complex types."""
 
-            type ExtractionConfiguration = dict[str, object | object]
-            type ExtractionState = dict[str, objectject]
-            type ExtractionMetrics = dict[
-                str, int | float | bool | object
-            ]
+            type ExtractionConfiguration = dict[str, object]
+            type ExtractionState = dict[str, t.Container]
+            type ExtractionMetrics = dict[str, int | float | bool | object]
             type BatchConfiguration = dict[str, int | bool | object]
-            type StreamDefinition = dict[str, str | list[str] | dict[str, object
-            type TableMetadata = dict[str, objectst[object]]
+            type StreamDefinition = dict[str, str | list[str] | dict[str, t.Scalar]]
+            type TableMetadata = dict[str, list[t.Scalar]]
 
         class Singer:
             """Singer protocol complex types."""
 
-            type CatalogEntry = dict[str, str | dict[str, object
-            type StreamSchema = dict[str, dict[str, object
-            type TapConfiguration = dict[str, object | object]
-            type StateBookmark = dict[str, objectject]
-            type RecordMessage = dict[str, str | dict[str, object
-            type SchemaMessage = dict[str, str | dict[str, object
+            type CatalogEntry = dict[str, str | dict[str, t.Container]]
+            type StreamSchema = dict[str, dict[str, t.Container]]
+            type TapConfiguration = dict[str, object]
+            type StateBookmark = dict[str, t.Container]
+            type RecordMessage = dict[str, str | dict[str, t.Scalar]]
+            type SchemaMessage = dict[str, str | dict[str, t.Container]]
 
         class Configuration:
             """Oracle tap configuration complex types."""
 
-            type TapOracleConfig = dict[str, object | object]
-            type ConnectionSettings = dict[
-                str, str | int | bool | object
-            ]
+            type TapOracleConfig = dict[str, object]
+            type ConnectionSettings = dict[str, str | int | bool | object]
             type ExtractionSettings = dict[str, int | bool | object]
-            type PerformanceSettings = dict[
-                str, int | float | bool | object
-            ]
+            type PerformanceSettings = dict[str, int | float | bool | object]
             type SecuritySettings = dict[str, str | bool | object]
-            type StreamSettings = dict[
-                str, bool | str | list[str] | object
-            ]
+            type StreamSettings = dict[str, bool | str | list[str] | object]
 
         class Project:
             """Singer Tap Oracle-specific project types.

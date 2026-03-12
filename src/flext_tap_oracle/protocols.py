@@ -12,8 +12,6 @@ from typing import Protocol, runtime_checkable
 from flext_db_oracle.protocols import FlextDbOracleProtocols
 from flext_meltano import FlextMeltanoModels as m, FlextMeltanoProtocols
 
-from flext_tap_oracle.typings import t
-
 
 class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
     """Singer Tap Oracle protocols extending Oracle and Meltano protocols.
