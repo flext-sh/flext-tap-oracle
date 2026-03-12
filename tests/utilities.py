@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from flext_core import t
 from flext_tests import FlextTestsUtilities
 
 
@@ -89,11 +90,12 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities):
             table_name: str, row_count: int = 10, **kwargs: t.Scalar
         ) -> list[dict[str, object]]:
             """Generate mock Oracle data for testing."""
-            data = []
+            data: list[dict[str, object]] = []
             for i in range(row_count):
                 row: dict[str, object] = {
                     "id": i + 1,
                     "name": f"Test Record {i + 1}",
+                    "table_name": table_name,
                 }
                 row.update(kwargs)
                 data.append(row)

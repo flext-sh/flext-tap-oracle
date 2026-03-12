@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Self
 
 from flext_cli import FlextCli, FlextCliCommands
-from flext_core import FlextLogger, r
+from flext_core import FlextLogger, r, t
 from pydantic import BaseModel, Field
 
 from flext_tap_oracle.constants import c
