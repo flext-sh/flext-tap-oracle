@@ -75,19 +75,19 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
 
             def discover_schemas(
                 self, config: Mapping[str, object]
-            ) -> FlextMeltanoProtocols.Result[list[t.ConfigurationMapping]]:
+            ) -> FlextMeltanoProtocols.Result[list[object]]:
                 """Discover accessible Oracle schemas."""
                 ...
 
             def discover_tables(
                 self, schema: str
-            ) -> FlextMeltanoProtocols.Result[list[t.ConfigurationMapping]]:
+            ) -> FlextMeltanoProtocols.Result[list[object]]:
                 """Discover Oracle tables in specified schema."""
                 ...
 
             def get_table_metadata(
                 self, schema: str, table: str
-            ) -> FlextMeltanoProtocols.Result[t.ConfigurationMapping]:
+            ) -> FlextMeltanoProtocols.Result[object]:
                 """Get Oracle table metadata and column definitions."""
                 ...
 
@@ -97,13 +97,13 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
 
             def extract_incremental(
                 self, table: str, state: Mapping[str, object]
-            ) -> FlextMeltanoProtocols.Result[list[t.ConfigurationMapping]]:
+            ) -> FlextMeltanoProtocols.Result[list[object]]:
                 """Extract incremental data from Oracle table using state."""
                 ...
 
             def extract_table_data(
                 self, table: str, config: Mapping[str, object]
-            ) -> FlextMeltanoProtocols.Result[list[t.ConfigurationMapping]]:
+            ) -> FlextMeltanoProtocols.Result[list[object]]:
                 """Extract all data from Oracle table."""
                 ...
 
@@ -177,7 +177,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
 
             def get_statistics(
                 self,
-            ) -> FlextMeltanoProtocols.Result[t.ConfigurationMapping]:
+            ) -> FlextMeltanoProtocols.Result[object]:
                 """Get extraction statistics."""
                 ...
 

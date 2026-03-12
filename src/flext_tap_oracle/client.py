@@ -102,10 +102,10 @@ class FlextOracleTableFilterService:
     def execute(self) -> r[list[str]]:
         """Execute table filtering based on tap configuration using Layer 2 API."""
         try:
-            tap_configuration: dict[str, t.JsonValue] = self.tap_config.get_tap_config()
-            tables_filter: t.JsonValue | None = tap_configuration.get("tables_filter")
+            tap_configuration: dict[str, objectelf.tap_config.get_tap_config()
+            tables_filter: objectne = tap_configuration.get("tables_filter")
             if isinstance(tables_filter, list) and tables_filter:
-                tables_filter_list: list[t.JsonValue] = tables_filter
+                tables_filter_list: list[objectables_filter
                 logger.info(
                     "Using configured table filter: %s",
                     ", ".join(str(table_name) for table_name in tables_filter_list),
@@ -124,12 +124,12 @@ class FlextOracleTableFilterService:
                 tables_result.value
             )
             table_names: list[str] = [table.name for table in discovered_tables]
-            exclude_tables_raw: t.JsonValue | None = tap_configuration.get(
+            exclude_tables_raw: objectne = tap_configuration.get(
                 "exclude_tables"
             )
             exclude_tables: list[str] = []
             if isinstance(exclude_tables_raw, list):
-                exclude_table_list: list[t.JsonValue] = exclude_tables_raw
+                exclude_table_list: list[objectxclude_tables_raw
                 exclude_tables = [str(table_name) for table_name in exclude_table_list]
             if exclude_tables:
                 filtered_tables = [
@@ -173,7 +173,7 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table
             error_msg = "Configuration is required"
             raise ValueError(error_msg)
         super().__init__()
-        oracle_config: dict[str, t.JsonValue] = config.get_oracle_config()
+        oracle_config: dict[str, objectonfig.get_oracle_config()
         oracle_settings = FlextDbOracleSettings.model_validate(oracle_config)
         self._oracle_api = FlextDbOracleApi(oracle_settings)
         schema_name = oracle_config.get("schema_name") or oracle_config.get(
