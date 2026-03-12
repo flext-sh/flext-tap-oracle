@@ -11,8 +11,6 @@ from typing import Protocol, runtime_checkable
 
 from flext_tests import FlextTestsProtocols
 
-from flext_tap_oracle import t
-
 
 class TestsFlextTapOracleProtocols(FlextTestsProtocols):
     """Protocols for flext-tap-oracle tests - uses composition with FlextTestsProtocols.
@@ -53,8 +51,8 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols):
                 ...
 
             def execute_query(
-                self, query: str, parameters: dict[str, t.ContainerValue] | None = None
-            ) -> list[dict[str, t.ContainerValue]]:
+                self, query: str, parameters: dict[str, object] | None = None
+            ) -> list[dict[str, object]]:
                 """Execute query on mock database."""
                 ...
 
@@ -62,17 +60,15 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols):
         class TestDataProviderProtocol(Protocol):
             """Protocol for test data providers."""
 
-            def get_test_tables(self) -> list[dict[str, t.ContainerValue]]:
+            def get_test_tables(self) -> list[dict[str, object]]:
                 """Get test table definitions."""
                 ...
 
-            def get_test_data(
-                self, table_name: str
-            ) -> list[dict[str, t.ContainerValue]]:
+            def get_test_data(self, table_name: str) -> list[dict[str, object]]:
                 """Get test data for a table."""
                 ...
 
-            def get_test_config(self) -> dict[str, t.ContainerValue]:
+            def get_test_config(self) -> dict[str, object]:
                 """Get test configuration."""
                 ...
 
@@ -81,21 +77,19 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols):
             """Protocol for test assertions."""
 
             def assert_oracle_connection_successful(
-                self, config: dict[str, t.ContainerValue]
+                self, config: dict[str, object]
             ) -> None:
                 """Assert Oracle connection was successful."""
                 ...
 
-            def assert_singer_stream_valid(
-                self, stream: dict[str, t.ContainerValue]
-            ) -> None:
+            def assert_singer_stream_valid(self, stream: dict[str, object]) -> None:
                 """Assert Singer stream is valid."""
                 ...
 
             def assert_extraction_results_match(
                 self,
-                expected: list[dict[str, t.ContainerValue]],
-                actual: list[dict[str, t.ContainerValue]],
+                expected: list[dict[str, object]],
+                actual: list[dict[str, object]],
             ) -> None:
                 """Assert extraction results match expected data."""
                 ...

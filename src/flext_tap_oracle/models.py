@@ -23,7 +23,6 @@ from pydantic import (
 )
 
 from flext_tap_oracle.constants import c
-from flext_tap_oracle.typings import t
 
 
 class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
@@ -87,7 +86,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             ]
 
         @staticmethod
-        def get_system_summary() -> Mapping[str, t.ContainerValue]:
+        def get_system_summary() -> Mapping[str, object]:
             """Complete Singer Oracle tap system summary with database extraction capabilities."""
             return {
                 "total_models": len(
@@ -173,7 +172,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             @computed_field
-            def stream_metadata_summary(self) -> Mapping[str, t.ContainerValue]:
+            def stream_metadata_summary(self) -> Mapping[str, object]:
                 """Oracle stream metadata summary."""
                 return {
                     "stream_name": self.stream_name,
@@ -309,7 +308,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             @computed_field
-            def discovery_scope_summary(self) -> Mapping[str, t.ContainerValue]:
+            def discovery_scope_summary(self) -> Mapping[str, object]:
                 """Oracle discovery scope summary."""
                 return {
                     "target_schemas": len(self.schema_names),
@@ -388,7 +387,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             @computed_field
-            def extraction_config_summary(self) -> Mapping[str, t.ContainerValue]:
+            def extraction_config_summary(self) -> Mapping[str, object]:
                 """Oracle extraction configuration summary."""
                 return {
                     "batch_processing": {
@@ -478,7 +477,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             @computed_field
-            def performance_analysis_summary(self) -> Mapping[str, t.ContainerValue]:
+            def performance_analysis_summary(self) -> Mapping[str, object]:
                 """Oracle tap performance analysis summary."""
                 duration = 0.0
                 if self.start_time and self.end_time:
@@ -571,7 +570,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             @computed_field
-            def stream_info_summary(self) -> Mapping[str, t.ContainerValue]:
+            def stream_info_summary(self) -> Mapping[str, object]:
                 """Oracle stream information summary."""
                 return {
                     "stream_identity": {
@@ -595,7 +594,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     },
                 }
 
-            def to_singer_stream_info(self) -> Mapping[str, t.ContainerValue]:
+            def to_singer_stream_info(self) -> Mapping[str, object]:
                 """Convert to Singer stream information format."""
                 return {
                     "tap_stream_id": self.stream_name,
@@ -691,7 +690,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             @computed_field
-            def discovery_result_summary(self) -> Mapping[str, t.ContainerValue]:
+            def discovery_result_summary(self) -> Mapping[str, object]:
                 """Oracle discovery result summary."""
                 selected_streams = len([s for s in self.stream_info if s.is_selected])
 
@@ -736,7 +735,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                         return table
                 return None
 
-            def to_singer_catalog(self) -> Mapping[str, t.ContainerValue]:
+            def to_singer_catalog(self) -> Mapping[str, object]:
                 """Convert to Singer catalog format."""
                 return {
                     "streams": [
@@ -840,7 +839,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             @computed_field
-            def execution_stats_summary(self) -> Mapping[str, t.ContainerValue]:
+            def execution_stats_summary(self) -> Mapping[str, object]:
                 """Oracle tap execution statistics summary."""
                 success_rate = 0.0
                 if self.streams_processed > 0:
@@ -923,7 +922,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     },
                 )
 
-            def to_summary(self) -> Mapping[str, t.ContainerValue]:
+            def to_summary(self) -> Mapping[str, object]:
                 """Create execution summary."""
                 return {
                     "execution_id": self.execution_id,

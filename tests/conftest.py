@@ -17,7 +17,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Generator
 
 import pytest
-from flext_core import r, t
+from flext_core import r
 from flext_tests import FlextTestsDocker
 
 from flext_tap_oracle import FlextOracleTapService, FlextTapOracleSettings
@@ -108,7 +108,7 @@ def skip_e2e_if_no_oracle(request: pytest.FixtureRequest) -> None:
 
 
 @pytest.fixture
-def oracle_tap_config() -> dict[str, t.ContainerValue]:
+def oracle_tap_config() -> dict[str, object]:
     """Oracle tap configuration for testing."""
     return {
         "host": "localhost",
@@ -124,7 +124,7 @@ def oracle_tap_config() -> dict[str, t.ContainerValue]:
 
 
 @pytest.fixture
-def oracle_tap(oracle_tap_config: dict[str, t.ContainerValue]) -> FlextOracleTapService:
+def oracle_tap(oracle_tap_config: dict[str, object]) -> FlextOracleTapService:
     """Oracle tap service instance for testing."""
     config_result = r[FlextTapOracleSettings].ok(
         FlextTapOracleSettings.get_global().model_validate(oracle_tap_config)
@@ -145,7 +145,7 @@ def oracle_tap(oracle_tap_config: dict[str, t.ContainerValue]) -> FlextOracleTap
 
 
 @pytest.fixture
-def singer_catalog() -> dict[str, t.ContainerValue]:
+def singer_catalog() -> dict[str, object]:
     """Singer catalog for testing."""
     return {
         "streams": [
@@ -209,7 +209,7 @@ def singer_catalog() -> dict[str, t.ContainerValue]:
 
 
 @pytest.fixture
-def singer_state() -> dict[str, t.ContainerValue]:
+def singer_state() -> dict[str, object]:
     """Singer state for testing."""
     return {
         "bookmarks": {
@@ -224,7 +224,7 @@ def singer_state() -> dict[str, t.ContainerValue]:
 
 
 @pytest.fixture
-def sample_oracle_tables() -> list[dict[str, t.ContainerValue]]:
+def sample_oracle_tables() -> list[dict[str, object]]:
     """Sample Oracle table definitions for testing."""
     return [
         {
@@ -304,7 +304,7 @@ def sample_oracle_tables() -> list[dict[str, t.ContainerValue]]:
 
 
 @pytest.fixture
-def sample_oracle_data() -> dict[str, list[dict[str, t.ContainerValue]]]:
+def sample_oracle_data() -> dict[str, list[dict[str, object]]]:
     """Sample Oracle data for testing."""
     return {
         "employees": [
@@ -351,7 +351,7 @@ def sample_oracle_data() -> dict[str, list[dict[str, t.ContainerValue]]]:
 
 
 @pytest.fixture
-def stream_config() -> dict[str, t.ContainerValue]:
+def stream_config() -> dict[str, object]:
     """Stream configuration for testing."""
     return {
         "selected": True,
@@ -364,7 +364,7 @@ def stream_config() -> dict[str, t.ContainerValue]:
 
 
 @pytest.fixture
-def discovery_config() -> dict[str, t.ContainerValue]:
+def discovery_config() -> dict[str, object]:
     """Discovery configuration for testing."""
     return {
         "include_views": False,
@@ -390,7 +390,7 @@ def oracle_queries() -> dict[str, str]:
 
 
 @pytest.fixture
-def singer_schema_message() -> dict[str, t.ContainerValue]:
+def singer_schema_message() -> dict[str, object]:
     """Singer schema message for testing."""
     return {
         "type": "SCHEMA",
@@ -409,7 +409,7 @@ def singer_schema_message() -> dict[str, t.ContainerValue]:
 
 
 @pytest.fixture
-def singer_record_messages() -> list[dict[str, t.ContainerValue]]:
+def singer_record_messages() -> list[dict[str, object]]:
     """Singer record messages for testing."""
     return [
         {
@@ -438,7 +438,7 @@ def singer_record_messages() -> list[dict[str, t.ContainerValue]]:
 
 
 @pytest.fixture
-def singer_state_message() -> dict[str, t.ContainerValue]:
+def singer_state_message() -> dict[str, object]:
     """Singer state message for testing."""
     return {
         "type": "STATE",
@@ -455,7 +455,7 @@ def singer_state_message() -> dict[str, t.ContainerValue]:
 
 
 @pytest.fixture
-def performance_test_config() -> dict[str, t.ContainerValue]:
+def performance_test_config() -> dict[str, object]:
     """Performance test configuration."""
     return {
         "large_table_rows": 100000,
@@ -467,7 +467,7 @@ def performance_test_config() -> dict[str, t.ContainerValue]:
 
 
 @pytest.fixture
-def error_scenarios() -> list[dict[str, t.ContainerValue]]:
+def error_scenarios() -> list[dict[str, object]]:
     """Error scenarios for testing."""
     return [
         {
@@ -519,13 +519,13 @@ def mock_oracle_tap() -> type[object]:
     """Mock Oracle tap for testing."""
 
     class MockOracleTap:
-        def __init__(self, config: dict[str, t.ContainerValue]) -> None:
+        def __init__(self, config: dict[str, object]) -> None:
             """Initialize the instance."""
             self.config = config
             self._catalog = None
-            self.__state: dict[str, t.ContainerValue] = {}
+            self.__state: dict[str, object] = {}
 
-        def discover(self) -> dict[str, t.ContainerValue]:
+        def discover(self) -> dict[str, object]:
             """Discover schema using mock data."""
             return {
                 "streams": [
@@ -545,9 +545,9 @@ def mock_oracle_tap() -> type[object]:
 
         def sync(
             self,
-            catalog: dict[str, t.ContainerValue],
-            _state: dict[str, t.ContainerValue],
-        ) -> Generator[dict[str, t.ContainerValue]]:
+            catalog: dict[str, object],
+            _state: dict[str, object],
+        ) -> Generator[dict[str, object]]:
             """Sync data using mock extraction."""
             if not isinstance(catalog, dict) or "streams" not in catalog:
                 return
@@ -606,7 +606,7 @@ def mock_oracle_connection() -> type[object]:
     """Mock Oracle connection for testing."""
 
     class MockOracleConnection:
-        def __init__(self, config: dict[str, t.ContainerValue]) -> None:
+        def __init__(self, config: dict[str, object]) -> None:
             """Initialize the instance."""
             self.config = config
             self.connected = False
@@ -620,8 +620,8 @@ def mock_oracle_connection() -> type[object]:
             return True
 
         def execute_query(
-            self, query: str, _parameters: dict[str, t.ContainerValue] | None = None
-        ) -> list[dict[str, t.ContainerValue]]:
+            self, query: str, _parameters: dict[str, object] | None = None
+        ) -> list[dict[str, object]]:
             """Execute query and return mock results using Strategy Pattern."""
             return self._get_query_strategy(query).execute()
 
@@ -633,7 +633,7 @@ def mock_oracle_connection() -> type[object]:
                 return _ColumnsQueryStrategy()
             return _DefaultQueryStrategy()
 
-        def get_table_schema(self, table_name: str) -> dict[str, t.ContainerValue]:
+        def get_table_schema(self, table_name: str) -> dict[str, object]:
             """Get table schema information."""
             return {
                 "table_name": table_name,
@@ -651,14 +651,14 @@ class _MockQueryStrategy(ABC):
     """Base class for mock query strategies - Strategy Pattern."""
 
     @abstractmethod
-    def execute(self) -> list[dict[str, t.ContainerValue]]:
+    def execute(self) -> list[dict[str, object]]:
         """Execute mock query and return results."""
 
 
 class _TablesQueryStrategy(_MockQueryStrategy):
     """Strategy for tables query - Single Responsibility."""
 
-    def execute(self) -> list[dict[str, t.ContainerValue]]:
+    def execute(self) -> list[dict[str, object]]:
         """Return mock table data."""
         return [
             {"table_name": "EMPLOYEES", "owner": "TAP_SCHEMA", "table_type": "TABLE"},
@@ -669,7 +669,7 @@ class _TablesQueryStrategy(_MockQueryStrategy):
 class _ColumnsQueryStrategy(_MockQueryStrategy):
     """Strategy for columns query - Single Responsibility."""
 
-    def execute(self) -> list[dict[str, t.ContainerValue]]:
+    def execute(self) -> list[dict[str, object]]:
         """Return mock column data."""
         return [
             {
@@ -692,6 +692,6 @@ class _ColumnsQueryStrategy(_MockQueryStrategy):
 class _DefaultQueryStrategy(_MockQueryStrategy):
     """Default strategy for generic queries - Single Responsibility."""
 
-    def execute(self) -> list[dict[str, t.ContainerValue]]:
+    def execute(self) -> list[dict[str, object]]:
         """Return mock default data."""
         return [{"id": 1, "name": "Test Record"}]

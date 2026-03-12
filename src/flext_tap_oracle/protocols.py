@@ -54,7 +54,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
             """Protocol for Oracle database connection management."""
 
             def connect(
-                self, config: Mapping[str, t.ContainerValue]
+                self, config: Mapping[str, object]
             ) -> FlextMeltanoProtocols.Result[object]:
                 """Connect to Oracle database with provided configuration."""
                 ...
@@ -64,7 +64,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
                 ...
 
             def test_connection(
-                self, config: Mapping[str, t.ContainerValue]
+                self, config: Mapping[str, object]
             ) -> FlextMeltanoProtocols.Result[bool]:
                 """Test Oracle database connection with validation."""
                 ...
@@ -74,7 +74,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
             """Protocol for Oracle schema discovery."""
 
             def discover_schemas(
-                self, config: Mapping[str, t.ContainerValue]
+                self, config: Mapping[str, object]
             ) -> FlextMeltanoProtocols.Result[list[t.ConfigurationMapping]]:
                 """Discover accessible Oracle schemas."""
                 ...
@@ -96,13 +96,13 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
             """Protocol for Oracle data extraction."""
 
             def extract_incremental(
-                self, table: str, state: Mapping[str, t.ContainerValue]
+                self, table: str, state: Mapping[str, object]
             ) -> FlextMeltanoProtocols.Result[list[t.ConfigurationMapping]]:
                 """Extract incremental data from Oracle table using state."""
                 ...
 
             def extract_table_data(
-                self, table: str, config: Mapping[str, t.ContainerValue]
+                self, table: str, config: Mapping[str, object]
             ) -> FlextMeltanoProtocols.Result[list[t.ConfigurationMapping]]:
                 """Extract all data from Oracle table."""
                 ...
@@ -112,7 +112,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
             """Protocol for Oracle to Singer type mapping."""
 
             def convert_value(
-                self, value: t.ContainerValue, oracle_type: str
+                self, value: object, oracle_type: str
             ) -> FlextMeltanoProtocols.Result[object]:
                 """Convert Oracle value to Singer-compatible format."""
                 ...
@@ -130,13 +130,13 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
             """Protocol for Singer stream generation."""
 
             def generate_catalog(
-                self, config: Mapping[str, t.ContainerValue]
+                self, config: Mapping[str, object]
             ) -> FlextMeltanoProtocols.Result[m.Meltano.SingerCatalog]:
                 """Generate Singer catalog from Oracle schema."""
                 ...
 
             def sync_stream(
-                self, stream: str, state: Mapping[str, t.ContainerValue]
+                self, stream: str, state: Mapping[str, object]
             ) -> FlextMeltanoProtocols.Result[m.Meltano.SingerStateMessage]:
                 """Sync Singer stream from Oracle table."""
                 ...
@@ -160,13 +160,13 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
             """Protocol for Oracle data validation."""
 
             def validate_config(
-                self, config: Mapping[str, t.ContainerValue]
+                self, config: Mapping[str, object]
             ) -> FlextMeltanoProtocols.Result[bool]:
                 """Validate tap configuration."""
                 ...
 
             def validate_schema(
-                self, schema: Mapping[str, t.ContainerValue]
+                self, schema: Mapping[str, object]
             ) -> FlextMeltanoProtocols.Result[bool]:
                 """Validate Oracle schema definition."""
                 ...

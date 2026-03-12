@@ -9,8 +9,6 @@ from __future__ import annotations
 
 from flext_tests import FlextTestsUtilities
 
-from flext_tap_oracle import t
-
 
 class TestsFlextTapOracleUtilities(FlextTestsUtilities):
     """Utilities for flext-tap-oracle tests - uses composition with FlextTestsUtilities.
@@ -48,10 +46,10 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities):
             service_name: str = "XE",
             username: str = "test",
             password: str = "test",
-            **kwargs: t.ContainerValue,
-        ) -> dict[str, t.ContainerValue]:
+            **kwargs: object,
+        ) -> dict[str, object]:
             """Create test Oracle configuration."""
-            config: dict[str, t.ContainerValue] = {
+            config: dict[str, object] = {
                 "host": host,
                 "port": port,
                 "service_name": service_name,
@@ -66,10 +64,10 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities):
             stream_name: str,
             table_name: str,
             replication_method: str = "FULL_TABLE",
-            **kwargs: t.ContainerValue,
-        ) -> dict[str, t.ContainerValue]:
+            **kwargs: object,
+        ) -> dict[str, object]:
             """Create test Singer stream configuration."""
-            stream: dict[str, t.ContainerValue] = {
+            stream: dict[str, object] = {
                 "stream_name": stream_name,
                 "table_name": table_name,
                 "replication_method": replication_method,
@@ -80,7 +78,7 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities):
 
         @staticmethod
         def validate_oracle_connection_config(
-            config: dict[str, t.ContainerValue],
+            config: dict[str, object],
         ) -> bool:
             """Validate Oracle connection configuration for testing."""
             required_fields = ["host", "port", "service_name", "username", "password"]
@@ -88,12 +86,12 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities):
 
         @staticmethod
         def generate_mock_oracle_data(
-            table_name: str, row_count: int = 10, **kwargs: t.ContainerValue
-        ) -> list[dict[str, t.ContainerValue]]:
+            table_name: str, row_count: int = 10, **kwargs: object
+        ) -> list[dict[str, object]]:
             """Generate mock Oracle data for testing."""
             data = []
             for i in range(row_count):
-                row: dict[str, t.ContainerValue] = {
+                row: dict[str, object] = {
                     "id": i + 1,
                     "name": f"Test Record {i + 1}",
                 }

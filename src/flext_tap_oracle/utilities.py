@@ -15,7 +15,7 @@ from collections.abc import Mapping
 from datetime import UTC, datetime
 from typing import Literal
 
-from flext_core import FlextContainer, FlextExceptions, FlextLogger, r, t
+from flext_core import FlextContainer, FlextExceptions, FlextLogger, r
 from flext_db_oracle import FlextDbOracleModels, FlextDbOracleUtilities
 from flext_meltano import FlextMeltanoUtilities
 
@@ -56,14 +56,14 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
             """Get logger instance."""
             return self._logger
 
-        def execute(self) -> r[Mapping[str, t.ContainerValue]]:
+        def execute(self) -> r[Mapping[str, object]]:
             """Execute the main domain service operation.
 
             Returns:
-            r[Mapping[str, t.ContainerValue]]: Service status and capabilities.
+            r[Mapping[str, object]]: Service status and capabilities.
 
             """
-            return r[Mapping[str, t.ContainerValue]].ok({
+            return r[Mapping[str, object]].ok({
                 "status": "operational",
                 "service": "flext-tap-oracle-utilities",
                 "capabilities": [
@@ -191,7 +191,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
 
             @staticmethod
             def create_discovery_result(
-                tables: list[t.ContainerValue], schema_name: str
+                tables: list[object], schema_name: str
             ) -> r[m.TapOracle.OracleTapDiscoveryResult]:
                 """Create discovery result from Oracle tables."""
                 try:
@@ -251,7 +251,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
 
             @staticmethod
             def build_connection_string(
-                config: Mapping[str, t.ContainerValue],
+                config: Mapping[str, object],
             ) -> r[str]:
                 """Build Oracle connection string from configuration."""
                 try:
@@ -269,8 +269,8 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
 
             @staticmethod
             def test_oracle_connectivity(
-                config: Mapping[str, t.ContainerValue],
-            ) -> r[Mapping[str, t.ContainerValue]]:
+                config: Mapping[str, object],
+            ) -> r[Mapping[str, object]]:
                 """Test Oracle connectivity with configuration."""
                 try:
                     cfg_validator = (
@@ -278,9 +278,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                     )
                     validation_result = cfg_validator.validate_oracle_config(config)
                     if validation_result.is_failure:
-                        return r[Mapping[str, t.ContainerValue]].fail(
-                            validation_result.error
-                        )
+                        return r[Mapping[str, object]].fail(validation_result.error)
                     connectivity_result = {
                         "status": "validated",
                         "host": config["host"],
@@ -288,19 +286,19 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                         "service_name": config["service_name"],
                         "connection_test": "structural_validation_passed",
                     }
-                    return r[Mapping[str, t.ContainerValue]].ok(connectivity_result)
+                    return r[Mapping[str, object]].ok(connectivity_result)
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-                    return r[Mapping[str, t.ContainerValue]].fail(
+                    return r[Mapping[str, object]].fail(
                         f"Oracle connectivity test failed: {e}"
                     )
 
             @staticmethod
             def validate_oracle_config(
-                config: Mapping[str, t.ContainerValue],
-            ) -> r[Mapping[str, t.ContainerValue]]:
+                config: Mapping[str, object],
+            ) -> r[Mapping[str, object]]:
                 """Validate Oracle configuration parameters."""
                 try:
-                    validated_config: dict[str, t.ContainerValue] = dict(config)
+                    validated_config: dict[str, object] = dict(config)
                     required_fields = [
                         "host",
                         "port",
@@ -310,28 +308,28 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                     ]
                     for field in required_fields:
                         if field not in validated_config:
-                            return r[Mapping[str, t.ContainerValue]].fail(
+                            return r[Mapping[str, object]].fail(
                                 f"Missing required Oracle field: {field}"
                             )
                         if not validated_config[field]:
-                            return r[Mapping[str, t.ContainerValue]].fail(
+                            return r[Mapping[str, object]].fail(
                                 f"Empty Oracle field: {field}"
                             )
                     max_port = c.TapOracle.MAX_PORT_NUMBER
                     try:
                         port = int(str(validated_config["port"]))
                         if port <= 0 or port > max_port:
-                            return r[Mapping[str, t.ContainerValue]].fail(
+                            return r[Mapping[str, object]].fail(
                                 f"Oracle port must be between 1 and {max_port}"
                             )
                         validated_config["port"] = port
                     except ValueError:
-                        return r[Mapping[str, t.ContainerValue]].fail(
+                        return r[Mapping[str, object]].fail(
                             "Oracle port must be numeric"
                         )
-                    return r[Mapping[str, t.ContainerValue]].ok(validated_config)
+                    return r[Mapping[str, object]].ok(validated_config)
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-                    return r[Mapping[str, t.ContainerValue]].fail(
+                    return r[Mapping[str, object]].fail(
                         f"Oracle config validation failed: {e}"
                     )
 
@@ -347,7 +345,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
             @staticmethod
             def calculate_extraction_metrics(
                 start_time: float, end_time: float, records_processed: int
-            ) -> r[Mapping[str, t.ContainerValue]]:
+            ) -> r[Mapping[str, object]]:
                 """Calculate extraction performance metrics."""
                 try:
                     duration = end_time - start_time
@@ -363,21 +361,21 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                         > c.TapOracle.MODERATE_PERFORMANCE_THRESHOLD
                         else "slow"
                     )
-                    metrics: dict[str, t.ContainerValue] = {
+                    metrics: dict[str, object] = {
                         "duration_seconds": round(duration, 3),
                         "records_processed": records_processed,
                         "records_per_second": round(records_per_second, 2),
                         "performance_rating": performance_rating,
                     }
-                    return r[Mapping[str, t.ContainerValue]].ok(metrics)
+                    return r[Mapping[str, object]].ok(metrics)
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-                    return r[Mapping[str, t.ContainerValue]].fail(
+                    return r[Mapping[str, object]].fail(
                         f"Metrics calculation failed: {e}"
                     )
 
             @staticmethod
             def optimize_extraction_query(
-                base_query: str, table_stats: Mapping[str, t.ContainerValue]
+                base_query: str, table_stats: Mapping[str, object]
             ) -> r[str]:
                 """Optimize extraction query based on table statistics."""
                 try:
