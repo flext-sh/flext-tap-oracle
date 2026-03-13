@@ -32,7 +32,7 @@ class FlextTapOracleStreams:
 
     logger = FlextLogger(__name__)
 
-    class _TapProtocol(Protocol):
+    class _Tap(Protocol):
         typed_config: object
 
     class OracleStream(Stream):

@@ -33,22 +33,20 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
     service: p.Service[str]
 
     # Oracle protocols (inherited)
-    connection: p.Database.ConnectionProtocol
+    connection: p.Database.Connection
 
     # Meltano protocols (inherited)
     tap: p.Meltano.Tap
 
     # Tap Oracle-specific protocols
-    oracle_connection: p.Tap.Oracle.OracleConnectionProtocol
+    oracle_connection: p.Tap.Oracle.OracleConnection
     """
 
     class TapOracle:
         """Tap Oracle  namespace for cross-project access."""
 
         @runtime_checkable
-        class OracleConnectionProtocol(
-            FlextDbOracleProtocols.Service[object], Protocol
-        ):
+        class OracleConnection(FlextDbOracleProtocols.Service[object], Protocol):
             """Protocol for Oracle database connection management."""
 
             def connect(
@@ -68,7 +66,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
                 ...
 
         @runtime_checkable
-        class SchemaDiscoveryProtocol(FlextDbOracleProtocols.Service[object], Protocol):
+        class SchemaDiscovery(FlextDbOracleProtocols.Service[object], Protocol):
             """Protocol for Oracle schema discovery."""
 
             def discover_schemas(
@@ -90,7 +88,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
                 ...
 
         @runtime_checkable
-        class DataExtractionProtocol(FlextDbOracleProtocols.Service[object], Protocol):
+        class DataExtraction(FlextDbOracleProtocols.Service[object], Protocol):
             """Protocol for Oracle data extraction."""
 
             def extract_incremental(
@@ -106,7 +104,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
                 ...
 
         @runtime_checkable
-        class TypeMappingProtocol(FlextDbOracleProtocols.Service[object], Protocol):
+        class TypeMapping(FlextDbOracleProtocols.Service[object], Protocol):
             """Protocol for Oracle to Singer type mapping."""
 
             def convert_value(
@@ -122,9 +120,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
                 ...
 
         @runtime_checkable
-        class StreamGenerationProtocol(
-            FlextDbOracleProtocols.Service[object], Protocol
-        ):
+        class StreamGeneration(FlextDbOracleProtocols.Service[object], Protocol):
             """Protocol for Singer stream generation."""
 
             def generate_catalog(
@@ -140,7 +136,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
                 ...
 
         @runtime_checkable
-        class PerformanceProtocol(FlextDbOracleProtocols.Service[object], Protocol):
+        class Performance(FlextDbOracleProtocols.Service[object], Protocol):
             """Protocol for Oracle extraction performance."""
 
             def configure_batch_size(
@@ -154,7 +150,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
                 ...
 
         @runtime_checkable
-        class ValidationProtocol(FlextDbOracleProtocols.Service[object], Protocol):
+        class Validation(FlextDbOracleProtocols.Service[object], Protocol):
             """Protocol for Oracle data validation."""
 
             def validate_config(
@@ -170,7 +166,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
                 ...
 
         @runtime_checkable
-        class MonitoringProtocol(FlextDbOracleProtocols.Service[object], Protocol):
+        class Monitoring(FlextDbOracleProtocols.Service[object], Protocol):
             """Protocol for Oracle extraction monitoring."""
 
             def get_statistics(

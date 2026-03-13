@@ -39,7 +39,7 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols):
         """
 
         @runtime_checkable
-        class MockOracleConnectionProtocol(Protocol):
+        class MockOracleConnection(Protocol):
             """Protocol for mock Oracle connections in tests."""
 
             def connect(self) -> bool:
@@ -57,7 +57,7 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols):
                 ...
 
         @runtime_checkable
-        class TestDataProviderProtocol(Protocol):
+        class TestDataProvider(Protocol):
             """Protocol for test data providers."""
 
             def get_test_tables(self) -> list[dict[str, object]]:
@@ -73,7 +73,7 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols):
                 ...
 
         @runtime_checkable
-        class TestAssertionProtocol(Protocol):
+        class TestAssertion(Protocol):
             """Protocol for test assertions."""
 
             def assert_oracle_connection_successful(
