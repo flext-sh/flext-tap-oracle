@@ -9,14 +9,13 @@ SPDX-License-Identifier: MIT.
 
 from __future__ import annotations
 
-import json
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Self
 
 from flext_cli import FlextCli, FlextCliCommands
 from flext_core import FlextLogger, r, t
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, TypeAdapter
 
 from flext_tap_oracle.constants import c
 from flext_tap_oracle.settings import FlextTapOracleSettings
@@ -95,7 +94,10 @@ class OracleTapDiscoverCommand:
             if self.params.output_file:
                 output_path = Path(self.params.output_file)
                 output_path.write_text(
-                    json.dumps(catalog_dict, indent=2, default=str), encoding="utf-8"
+                    TypeAdapter(dict[str, object])
+                    .dump_json(catalog_dict, indent=2)
+                    .decode("utf-8"),
+                    encoding="utf-8",
                 )
                 self._logger.info("Catalog written to %s", output_path)
             self._logger.info("Oracle schema discovery completed")
