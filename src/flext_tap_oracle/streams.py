@@ -143,7 +143,7 @@ class FlextTapOracleStreams:
                             "Failed to execute query: %s", error_msg
                         )
                         return
-                    rows: list[m.Dict] = query_result.value_or([])
+                    rows: list[m.Dict] = query_result.unwrap_or([])
                     for row in rows:
                         record: dict[str, object] = dict(row.root)
                         yield record
