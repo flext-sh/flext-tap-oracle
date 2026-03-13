@@ -174,7 +174,7 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table
             raise ValueError(error_msg)
         super().__init__()
         oracle_config: dict[str, t.Scalar] = config.get_oracle_config()
-        oracle_settings = FlextDbOracleSettings.model_validate(oracle_config)
+        oracle_settings = FlextDbOracleSettings(oracle_config)
         self._oracle_api = FlextDbOracleApi(oracle_settings)
         schema_name = oracle_config.get("schema_name") or oracle_config.get(
             "service_name"

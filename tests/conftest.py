@@ -127,7 +127,7 @@ def oracle_tap_config() -> dict[str, object]:
 def oracle_tap(oracle_tap_config: dict[str, object]) -> FlextOracleTapService:
     """Oracle tap service instance for testing."""
     config_result = r[FlextTapOracleSettings].ok(
-        FlextTapOracleSettings.get_global().model_validate(oracle_tap_config)
+        FlextTapOracleSettings.get_global()(oracle_tap_config)
     )
     if config_result.is_success:
         return FlextOracleTapService(config=config_result.value)

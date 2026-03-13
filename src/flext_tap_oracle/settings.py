@@ -97,7 +97,7 @@ def create_oracle_tap_config(
         meltano_config.setdefault("project_root", ".")
         meltano_config.setdefault("environment", "production")
         config_data = {**oracle_params, **tap_config, **meltano_config}
-        config_instance = FlextTapOracleSettings.model_validate(config_data)
+        config_instance = FlextTapOracleSettings(config_data)
         return r[FlextTapOracleSettings].ok(config_instance)
     except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
         return r[FlextTapOracleSettings].fail(
