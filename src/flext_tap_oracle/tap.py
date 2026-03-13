@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from pathlib import Path
-from typing import Self
+from typing import Annotated, Self
 
 from flext_cli import FlextCli, FlextCliCommands
 from flext_core import FlextLogger, r, t
@@ -27,8 +27,8 @@ cli_api = FlextCli()
 class OracleTapDiscoverParams(BaseModel):
     """Parameters for tap discover command."""
 
-    config_file: str | None = Field(default=None)
-    output_file: str | None = Field(default=None)
+    config_file: Annotated[str | None, Field(default=None)]
+    output_file: Annotated[str | None, Field(default=None)]
 
     @classmethod
     def from_click_args(cls, **kwargs: t.Scalar) -> Self:
@@ -44,9 +44,9 @@ class OracleTapDiscoverParams(BaseModel):
 class OracleTapSyncParams(BaseModel):
     """Parameters for tap sync command."""
 
-    config_file: str | None = Field(default=None)
-    catalog_file: str | None = Field(default=None)
-    state_file: str | None = Field(default=None)
+    config_file: Annotated[str | None, Field(default=None)]
+    catalog_file: Annotated[str | None, Field(default=None)]
+    state_file: Annotated[str | None, Field(default=None)]
 
     @classmethod
     def from_click_args(cls, **kwargs: t.Scalar) -> Self:

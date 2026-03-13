@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from datetime import datetime
-from typing import Literal, Self
+from typing import Annotated, Literal, Self
 
 from flext_core import FlextConstants, FlextModels, r
 from flext_db_oracle import FlextDbOracleModels
@@ -142,34 +142,52 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             # Singer stream configuration
-            stream_name: str = Field(..., description="Singer stream name")
-            replication_method: Literal["FULL_TABLE", "INCREMENTAL"] = Field(
-                default="FULL_TABLE",
-                description="Replication method for this stream",
-            )
-            replication_key: str | None = Field(
-                default=None,
-                description="Column used for incremental replication",
-            )
-            is_selected: bool = Field(
-                default=True,
-                description="Whether stream is selected for extraction",
-            )
+            stream_name: Annotated[str, Field(..., description="Singer stream name")]
+            replication_method: Annotated[
+                Literal["FULL_TABLE", "INCREMENTAL"],
+                Field(
+                    default="FULL_TABLE",
+                    description="Replication method for this stream",
+                ),
+            ]
+            replication_key: Annotated[
+                str | None,
+                Field(
+                    default=None,
+                    description="Column used for incremental replication",
+                ),
+            ]
+            is_selected: Annotated[
+                bool,
+                Field(
+                    default=True,
+                    description="Whether stream is selected for extraction",
+                ),
+            ]
 
             # Oracle-specific metadata
-            table_name: str = Field(..., description="Oracle table name")
-            schema_name: str | None = Field(
-                default=None,
-                description="Oracle schema name",
-            )
-            estimated_rows: int | None = Field(
-                default=None,
-                description="Estimated row count",
-            )
-            column_count: int | None = Field(
-                default=None,
-                description="Number of columns",
-            )
+            table_name: Annotated[str, Field(..., description="Oracle table name")]
+            schema_name: Annotated[
+                str | None,
+                Field(
+                    default=None,
+                    description="Oracle schema name",
+                ),
+            ]
+            estimated_rows: Annotated[
+                int | None,
+                Field(
+                    default=None,
+                    description="Estimated row count",
+                ),
+            ]
+            column_count: Annotated[
+                int | None,
+                Field(
+                    default=None,
+                    description="Number of columns",
+                ),
+            ]
 
             @computed_field
             def stream_metadata_summary(self) -> Mapping[str, object]:
@@ -270,42 +288,66 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             # Discovery scope
-            schema_names: list[str] = Field(
-                default_factory=list,
-                description="Oracle schemas to discover",
-            )
-            table_patterns: list[str] = Field(
-                default_factory=list,
-                description="Table name patterns to include",
-            )
-            exclude_patterns: list[str] = Field(
-                default_factory=list,
-                description="Table name patterns to exclude",
-            )
+            schema_names: Annotated[
+                list[str],
+                Field(
+                    default_factory=list,
+                    description="Oracle schemas to discover",
+                ),
+            ]
+            table_patterns: Annotated[
+                list[str],
+                Field(
+                    default_factory=list,
+                    description="Table name patterns to include",
+                ),
+            ]
+            exclude_patterns: Annotated[
+                list[str],
+                Field(
+                    default_factory=list,
+                    description="Table name patterns to exclude",
+                ),
+            ]
 
             # Discovery options
-            include_views: bool = Field(
-                default=False,
-                description="Include Oracle views in discovery",
-            )
-            include_system_tables: bool = Field(
-                default=False,
-                description="Include system tables in discovery",
-            )
-            max_tables: int = Field(
-                default=FlextConstants.Performance.BatchProcessing.DEFAULT_SIZE,
-                description="Maximum number of tables to discover",
-            )
+            include_views: Annotated[
+                bool,
+                Field(
+                    default=False,
+                    description="Include Oracle views in discovery",
+                ),
+            ]
+            include_system_tables: Annotated[
+                bool,
+                Field(
+                    default=False,
+                    description="Include system tables in discovery",
+                ),
+            ]
+            max_tables: Annotated[
+                int,
+                Field(
+                    default=FlextConstants.Performance.BatchProcessing.DEFAULT_SIZE,
+                    description="Maximum number of tables to discover",
+                ),
+            ]
 
             # Performance settings
-            discovery_timeout: int = Field(
-                default=FlextConstants.Network.DEFAULT_TIMEOUT * 10,
-                description="Discovery timeout in seconds",
-            )
-            parallel_discovery: bool = Field(
-                default=True,
-                description="Enable parallel discovery",
-            )
+            discovery_timeout: Annotated[
+                int,
+                Field(
+                    default=FlextConstants.Network.DEFAULT_TIMEOUT * 10,
+                    description="Discovery timeout in seconds",
+                ),
+            ]
+            parallel_discovery: Annotated[
+                bool,
+                Field(
+                    default=True,
+                    description="Enable parallel discovery",
+                ),
+            ]
 
             @computed_field
             def discovery_scope_summary(self) -> Mapping[str, object]:
@@ -357,34 +399,53 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             # Extraction parameters
-            batch_size: int = Field(
-                default=FlextConstants.Performance.BatchProcessing.DEFAULT_SIZE * 10,
-                description="Number of rows per batch",
-            )
-            max_rows: int | None = Field(
-                default=None,
-                description="Maximum rows to extract (None for unlimited)",
-            )
+            batch_size: Annotated[
+                int,
+                Field(
+                    default=FlextConstants.Performance.BatchProcessing.DEFAULT_SIZE
+                    * 10,
+                    description="Number of rows per batch",
+                ),
+            ]
+            max_rows: Annotated[
+                int | None,
+                Field(
+                    default=None,
+                    description="Maximum rows to extract (None for unlimited)",
+                ),
+            ]
 
             # Performance optimization
-            parallel_streams: int = Field(
-                default=1,
-                description="Number of parallel extraction streams",
-            )
-            enable_query_hints: bool = Field(
-                default=True,
-                description="Enable Oracle query optimization hints",
-            )
+            parallel_streams: Annotated[
+                int,
+                Field(
+                    default=1,
+                    description="Number of parallel extraction streams",
+                ),
+            ]
+            enable_query_hints: Annotated[
+                bool,
+                Field(
+                    default=True,
+                    description="Enable Oracle query optimization hints",
+                ),
+            ]
 
             # Incremental extraction
-            incremental_column: str | None = Field(
-                default=None,
-                description="Column for incremental extraction",
-            )
-            incremental_bookmark: str | None = Field(
-                default=None,
-                description="Bookmark value for incremental extraction",
-            )
+            incremental_column: Annotated[
+                str | None,
+                Field(
+                    default=None,
+                    description="Column for incremental extraction",
+                ),
+            ]
+            incremental_bookmark: Annotated[
+                str | None,
+                Field(
+                    default=None,
+                    description="Bookmark value for incremental extraction",
+                ),
+            ]
 
             @computed_field
             def extraction_config_summary(self) -> Mapping[str, object]:
@@ -441,40 +502,64 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             # Extraction metrics
-            extraction_id: str = Field(description="Unique extraction identifier")
-            start_time: str = Field(description="Extraction start timestamp")
-            end_time: str | None = Field(
-                default=None,
-                description="Extraction end timestamp",
-            )
+            extraction_id: Annotated[
+                str, Field(description="Unique extraction identifier")
+            ]
+            start_time: Annotated[str, Field(description="Extraction start timestamp")]
+            end_time: Annotated[
+                str | None,
+                Field(
+                    default=None,
+                    description="Extraction end timestamp",
+                ),
+            ]
 
             # Volume metrics
-            total_records: int = Field(default=0, description="Total records extracted")
-            total_bytes: int = Field(default=0, description="Total bytes processed")
-            streams_processed: int = Field(
-                default=0,
-                description="Number of streams processed",
-            )
+            total_records: Annotated[
+                int, Field(default=0, description="Total records extracted")
+            ]
+            total_bytes: Annotated[
+                int, Field(default=0, description="Total bytes processed")
+            ]
+            streams_processed: Annotated[
+                int,
+                Field(
+                    default=0,
+                    description="Number of streams processed",
+                ),
+            ]
 
             # Performance metrics
-            avg_records_per_second: float = Field(
-                default=0.0,
-                description="Average records per second",
-            )
-            avg_bytes_per_second: float = Field(
-                default=0.0,
-                description="Average bytes per second",
-            )
+            avg_records_per_second: Annotated[
+                float,
+                Field(
+                    default=0.0,
+                    description="Average records per second",
+                ),
+            ]
+            avg_bytes_per_second: Annotated[
+                float,
+                Field(
+                    default=0.0,
+                    description="Average bytes per second",
+                ),
+            ]
 
             # Oracle-specific metrics
-            oracle_connection_time: float = Field(
-                default=0.0,
-                description="Oracle connection establishment time",
-            )
-            oracle_query_time: float = Field(
-                default=0.0,
-                description="Total Oracle query execution time",
-            )
+            oracle_connection_time: Annotated[
+                float,
+                Field(
+                    default=0.0,
+                    description="Oracle connection establishment time",
+                ),
+            ]
+            oracle_query_time: Annotated[
+                float,
+                Field(
+                    default=0.0,
+                    description="Total Oracle query execution time",
+                ),
+            ]
 
             @computed_field
             def performance_analysis_summary(self) -> Mapping[str, object]:
@@ -543,31 +628,49 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             # Stream identity
-            stream_name: str = Field(..., description="Singer stream name")
-            table_name: str = Field(..., description="Oracle table name")
-            schema_name: str | None = Field(None, description="Oracle schema name")
+            stream_name: Annotated[str, Field(..., description="Singer stream name")]
+            table_name: Annotated[str, Field(..., description="Oracle table name")]
+            schema_name: Annotated[
+                str | None, Field(None, description="Oracle schema name")
+            ]
 
             # Stream configuration
-            is_selected: bool = Field(
-                default=True,
-                description="Whether stream is selected for extraction",
-            )
-            replication_method: Literal["FULL_TABLE", "INCREMENTAL"] = Field(
-                default="FULL_TABLE",
-                description="Replication method for this stream",
-            )
-            replication_key: str | None = Field(
-                None,
-                description="Column used for incremental replication",
-            )
+            is_selected: Annotated[
+                bool,
+                Field(
+                    default=True,
+                    description="Whether stream is selected for extraction",
+                ),
+            ]
+            replication_method: Annotated[
+                Literal["FULL_TABLE", "INCREMENTAL"],
+                Field(
+                    default="FULL_TABLE",
+                    description="Replication method for this stream",
+                ),
+            ]
+            replication_key: Annotated[
+                str | None,
+                Field(
+                    None,
+                    description="Column used for incremental replication",
+                ),
+            ]
 
             # Runtime information (populated at runtime)
-            estimated_rows: int | None = Field(None, description="Estimated row count")
-            column_count: int | None = Field(None, description="Number of columns")
-            last_extracted: str | None = Field(
-                None,
-                description="Last extraction timestamp",
-            )
+            estimated_rows: Annotated[
+                int | None, Field(None, description="Estimated row count")
+            ]
+            column_count: Annotated[
+                int | None, Field(None, description="Number of columns")
+            ]
+            last_extracted: Annotated[
+                str | None,
+                Field(
+                    None,
+                    description="Last extraction timestamp",
+                ),
+            ]
 
             @computed_field
             def stream_info_summary(self) -> Mapping[str, object]:
@@ -652,42 +755,61 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             # Discovery metadata
-            schema_name: str = Field(
-                ...,
-                description="Oracle schema that was discovered",
-            )
-            discovery_timestamp: str = Field(
-                ...,
-                description="When discovery was performed",
-            )
-            total_tables: int = Field(
-                ...,
-                description="Total number of tables discovered",
-            )
+            schema_name: Annotated[
+                str,
+                Field(
+                    ...,
+                    description="Oracle schema that was discovered",
+                ),
+            ]
+            discovery_timestamp: Annotated[
+                str,
+                Field(
+                    ...,
+                    description="When discovery was performed",
+                ),
+            ]
+            total_tables: Annotated[
+                int,
+                Field(
+                    ...,
+                    description="Total number of tables discovered",
+                ),
+            ]
 
             # Raw Oracle metadata
-            oracle_tables: Sequence[FlextDbOracleModels.DbOracle.Table] = Field(
-                default=[],
-                description="Raw Oracle table metadata from flext-db-oracle",
-            )
+            oracle_tables: Annotated[
+                Sequence[FlextDbOracleModels.DbOracle.Table],
+                Field(
+                    default_factory=list,
+                    description="Raw Oracle table metadata from flext-db-oracle",
+                ),
+            ]
 
             # Processed stream information
-            stream_info: Sequence[
-                FlextTapOracleModels.TapOracle.OracleTapStreamInfo
-            ] = Field(
-                default=[],
-                description="Processed stream information for tap use",
-            )
+            stream_info: Annotated[
+                Sequence[FlextTapOracleModels.TapOracle.OracleTapStreamInfo],
+                Field(
+                    default_factory=list,
+                    description="Processed stream information for tap use",
+                ),
+            ]
 
             # Filtering results
-            filtered_tables: list[str] = Field(
-                default_factory=list,
-                description="Table names after applying filters",
-            )
-            excluded_tables: list[str] = Field(
-                default_factory=list,
-                description="Table names that were excluded",
-            )
+            filtered_tables: Annotated[
+                list[str],
+                Field(
+                    default_factory=list,
+                    description="Table names after applying filters",
+                ),
+            ]
+            excluded_tables: Annotated[
+                list[str],
+                Field(
+                    default_factory=list,
+                    description="Table names that were excluded",
+                ),
+            ]
 
             @computed_field
             def discovery_result_summary(self) -> Mapping[str, object]:
@@ -788,55 +910,92 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             # Execution metadata
-            execution_id: str = Field(..., description="Unique execution identifier")
-            start_timestamp: str = Field(..., description="Execution start time")
-            end_timestamp: str | None = Field(None, description="Execution end time")
+            execution_id: Annotated[
+                str, Field(..., description="Unique execution identifier")
+            ]
+            start_timestamp: Annotated[
+                str, Field(..., description="Execution start time")
+            ]
+            end_timestamp: Annotated[
+                str | None, Field(None, description="Execution end time")
+            ]
 
             # Stream statistics
-            streams_processed: int = Field(
-                default=0,
-                description="Number of streams processed",
-            )
-            total_records: int = Field(default=0, description="Total records extracted")
-            total_bytes: int = Field(default=0, description="Total bytes processed")
+            streams_processed: Annotated[
+                int,
+                Field(
+                    default=0,
+                    description="Number of streams processed",
+                ),
+            ]
+            total_records: Annotated[
+                int, Field(default=0, description="Total records extracted")
+            ]
+            total_bytes: Annotated[
+                int, Field(default=0, description="Total bytes processed")
+            ]
 
             # Performance metrics
-            avg_records_per_second: float = Field(
-                default=0.0,
-                description="Average records per second",
-            )
-            avg_bytes_per_second: float = Field(
-                default=0.0,
-                description="Average bytes per second",
-            )
-            duration_seconds: float = Field(
-                default=0.0,
-                description="Total execution duration",
-            )
+            avg_records_per_second: Annotated[
+                float,
+                Field(
+                    default=0.0,
+                    description="Average records per second",
+                ),
+            ]
+            avg_bytes_per_second: Annotated[
+                float,
+                Field(
+                    default=0.0,
+                    description="Average bytes per second",
+                ),
+            ]
+            duration_seconds: Annotated[
+                float,
+                Field(
+                    default=0.0,
+                    description="Total execution duration",
+                ),
+            ]
 
             # Error tracking
-            errors_encountered: int = Field(
-                default=0,
-                description="Number of errors encountered",
-            )
-            failed_streams: list[str] = Field(
-                default_factory=list,
-                description="Names of failed streams",
-            )
+            errors_encountered: Annotated[
+                int,
+                Field(
+                    default=0,
+                    description="Number of errors encountered",
+                ),
+            ]
+            failed_streams: Annotated[
+                list[str],
+                Field(
+                    default_factory=list,
+                    description="Names of failed streams",
+                ),
+            ]
 
             # Oracle-specific metrics
-            oracle_connection_time: float = Field(
-                default=0.0,
-                description="Oracle connection time",
-            )
-            oracle_query_time: float = Field(
-                default=0.0,
-                description="Total Oracle query time",
-            )
-            oracle_result_processing_time: float = Field(
-                default=0.0,
-                description="Result processing time",
-            )
+            oracle_connection_time: Annotated[
+                float,
+                Field(
+                    default=0.0,
+                    description="Oracle connection time",
+                ),
+            ]
+            oracle_query_time: Annotated[
+                float,
+                Field(
+                    default=0.0,
+                    description="Total Oracle query time",
+                ),
+            ]
+            oracle_result_processing_time: Annotated[
+                float,
+                Field(
+                    default=0.0,
+                    description="Result processing time",
+                ),
+            ]
 
             @computed_field
             def execution_stats_summary(self) -> Mapping[str, object]:

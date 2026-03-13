@@ -10,6 +10,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from typing import Annotated
+
 from flext_core import FlextLogger, FlextSettings, r, t
 from pydantic import Field, SecretStr
 
@@ -21,19 +23,25 @@ logger = FlextLogger(__name__)
 class FlextTapOracleSettings(FlextSettings):
     """Runtime settings for Oracle Singer tap operations."""
 
-    oracle_host: str = Field(default="localhost", description="Oracle database host")
-    oracle_port: int = Field(default=1521, description="Oracle database port")
-    oracle_service_name: str = Field(
-        default="ORCL", description="Oracle service name or SID"
-    )
-    oracle_user: SecretStr = Field(description="Oracle database username")
-    oracle_password: SecretStr = Field(description="Oracle database password")
-    batch_size: int = Field(
-        default=1000, ge=1, description="Batch size for data extraction"
-    )
-    stream_prefix: str = Field(default="", description="Prefix for Singer stream names")
-    project_root: str = Field(default=".", description="Meltano project root")
-    environment: str = Field(default="production", description="Environment name")
+    oracle_host: Annotated[
+        str, Field(default="localhost", description="Oracle database host")
+    ]
+    oracle_port: Annotated[int, Field(default=1521, description="Oracle database port")]
+    oracle_service_name: Annotated[
+        str, Field(default="ORCL", description="Oracle service name or SID")
+    ]
+    oracle_user: Annotated[SecretStr, Field(description="Oracle database username")]
+    oracle_password: Annotated[SecretStr, Field(description="Oracle database password")]
+    batch_size: Annotated[
+        int, Field(default=1000, ge=1, description="Batch size for data extraction")
+    ]
+    stream_prefix: Annotated[
+        str, Field(default="", description="Prefix for Singer stream names")
+    ]
+    project_root: Annotated[str, Field(default=".", description="Meltano project root")]
+    environment: Annotated[
+        str, Field(default="production", description="Environment name")
+    ]
 
     def validate_business_rules(self) -> r[bool]:
         """Validate Oracle tap configuration business rules."""
