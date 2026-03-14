@@ -9,19 +9,21 @@ from __future__ import annotations
 
 from typing import Literal
 
-from flext_core import FlextTestsTypes, FlextTypes as t
+from flext_tests import FlextTestsTypes
+
+from flext_tap_oracle import t
 
 
-class TestsFlextMeltanoTapOracleTypes(FlextTestsTypes):
+class TestsFlextTapOracleTypes(FlextTestsTypes):
     """Types for flext-tap-oracle tests - uses composition with FlextTestsTypes.
 
-    Architecture: Uses composition (not inheritance) with FlextTestsTypes and FlextMeltanoTapOracleTypes
+    Architecture: Uses composition (not inheritance) with FlextTestsTypes and FlextTapOracleTypes
     for flext-tap-oracle-specific type definitions.
 
     Access patterns:
-    - TestsFlextMeltanoTapOracleTypes.Tests.* = flext_tests test types (via composition)
-    - TestsFlextMeltanoTapOracleTypes.TapOracle.* = flext-tap-oracle-specific test types
-    - TestsFlextMeltanoTapOracleTypes.* = FlextTestsTypes types (via composition)
+    - TestsFlextTapOracleTypes.Tests.* = flext_tests test types (via composition)
+    - TestsFlextTapOracleTypes.TapOracle.* = flext-tap-oracle-specific test types
+    - TestsFlextTapOracleTypes.* = FlextTestsTypes types (via composition)
 
     Rules:
     - Use composition, not inheritance (FlextTestsTypes deprecates subclassing)
@@ -29,10 +31,6 @@ class TestsFlextMeltanoTapOracleTypes(FlextTestsTypes):
     - Generic types accessed via Tests namespace
     """
 
-    # Composition: expose FlextTestsTypes
-    Tests = FlextTestsTypes
-
-    # TapOracle-specific test types namespace
     class TapOracle:
         """Tap Oracle test types - domain-specific for Oracle tap testing.
 
@@ -42,26 +40,16 @@ class TestsFlextMeltanoTapOracleTypes(FlextTestsTypes):
         - Test scenario types
         """
 
-        # Test configuration literals
         type TestOracleHost = Literal["localhost", "test-host"]
         type TestOraclePort = Literal[1521, 10521, 1522]
         type TestServiceName = Literal["XE", "ORCL", "TESTDB"]
         type TestReplicationMethod = Literal["FULL_TABLE", "INCREMENTAL"]
-
-        # Test data types
-        type MockOracleRecord = dict[str, str | int | float | bool]
+        type MockOracleRecord = dict[str, t.Scalar]
         type MockOracleTable = list[MockOracleRecord]
-        type TestScenario = dict[str, t.GeneralValueType]
-
-        # Test result types
+        type TestScenario = dict[str, object]
         type TestValidationResult = dict[str, bool | str | list[str]]
         type TestPerformanceResult = dict[str, float | int | str]
 
 
-# Alias for simplified usage
-tt = TestsFlextMeltanoTapOracleTypes
-
-__all__ = [
-    "TestsFlextMeltanoTapOracleTypes",
-    "tt",
-]
+tt = TestsFlextTapOracleTypes
+__all__ = ["TestsFlextTapOracleTypes", "tt"]

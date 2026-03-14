@@ -7,25 +7,26 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
-from typing import Literal, Self
+from collections.abc import Sequence
+from datetime import datetime
+from typing import Annotated, Literal, Self
 
-from flext_core import FlextConstants, FlextModels, FlextResult, FlextTypes as t
-from flext_core.utilities import u
+from flext_core import FlextConstants, FlextModels, r
 from flext_db_oracle import FlextDbOracleModels
 from flext_meltano import FlextMeltanoModels
 from pydantic import (
     ConfigDict,
     Field,
-    FieldSerializationInfo,
     computed_field,
-    field_serializer,
     field_validator,
     model_validator,
 )
 
+from flext_tap_oracle.constants import c
+from flext_tap_oracle.typings import t
 
-class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
+
+class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
     """Complete models for Oracle tap operations extending FlextModels.
 
     Provides standardized models for all Oracle tap domain entities including:
@@ -40,14 +41,6 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
     class TapOracle:
         """Tap Oracle  namespace for cross-project access."""
-
-        def __init_subclass__(cls, **kwargs: object) -> None:
-            """Warn when FlextMeltanoTapOracleModels is subclassed directly."""
-            super().__init_subclass__(**kwargs)
-            u.Deprecation.warn_once(
-                f"subclass:{cls.__name__}",
-                "Subclassing FlextMeltanoTapOracleModels is deprecated. Use FlextModels.TapOracle instead.",
-            )
 
         # Pydantic 2.11 Configuration - Enterprise Singer Oracle Tap Features
         model_config = ConfigDict(
@@ -75,12 +68,12 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             },
         )
 
-        # Advanced Pydantic 2.11 Features - Singer Oracle Tap Domain
+        # Oracle Tap Domain - namespace metadata as static methods on plain class
 
-        @computed_field
-        def active_oracle_tap_models_count(self) -> int:
-            """Count of active Oracle tap models with database extraction capabilities."""
-            model_names = [
+        @staticmethod
+        def get_active_model_names() -> list[str]:
+            """List of active Oracle tap model names."""
+            return [
                 "OracleTapStreamMetadata",
                 "OracleTapDiscoveryConfig",
                 "OracleTapExtractionConfig",
@@ -92,13 +85,14 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 "OracleQuery",
                 "OracleRecord",
             ]
-            return sum(1 for name in model_names if hasattr(self, name))
 
-        @computed_field
-        def oracle_tap_system_summary(self) -> dict[str, t.GeneralValueType]:
+        @staticmethod
+        def get_system_summary() -> dict[str, t.GeneralValueType | None]:
             """Complete Singer Oracle tap system summary with database extraction capabilities."""
             return {
-                "total_models": self.active_oracle_tap_models_count,
+                "total_models": len(
+                    FlextTapOracleModels.TapOracle.get_active_model_names(),
+                ),
                 "tap_type": "singer_oracle_database_extractor",
                 "extraction_features": [
                     "oracle_table_discovery",
@@ -123,73 +117,6 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     "schema_discovery": True,
                 },
             }
-
-        @model_validator(mode="after")
-        def validate_oracle_tap_system_consistency(self) -> Self:
-            """Validate Singer Oracle tap system consistency and configuration."""
-            # Singer Oracle tap database validation
-            if (
-                hasattr(self, "_oracle_connection")
-                and self._oracle_connection
-                and not hasattr(self, "OracleTapStreamMetadata")
-            ):
-                msg = (
-                    "OracleTapStreamMetadata required when Oracle connection configured"
-                )
-                raise ValueError(msg)
-
-            # Discovery operation validation
-            if (
-                hasattr(self, "_discovery_mode")
-                and self._discovery_mode
-                and not hasattr(self, "OracleTapDiscoveryConfig")
-            ):
-                msg = "OracleTapDiscoveryConfig required for discovery operations"
-                raise ValueError(msg)
-
-            # Singer protocol compliance validation
-            if hasattr(self, "_singer_mode") and self._singer_mode:
-                required_models = ["OracleTapStreamInfo", "OracleTapExecutionStats"]
-                for model in required_models:
-                    if not hasattr(self, model):
-                        msg = f"{model} required for Singer protocol compliance"
-                        raise ValueError(msg)
-
-            return self
-
-        @field_serializer("*", when_used="json")
-        def serialize_with_oracle_metadata(
-            self,
-            value: object,
-            _info: FieldSerializationInfo,
-        ) -> object:
-            """Add Singer Oracle tap metadata to all serialized fields."""
-            if isinstance(value, dict):
-                return {
-                    **value,
-                    "_oracle_tap_metadata": {
-                        "extraction_timestamp": datetime.now(UTC).isoformat(),
-                        "tap_type": "oracle_database_extractor",
-                        "singer_protocol": "v1.0",
-                        "data_source": "oracle_database",
-                    },
-                }
-            if isinstance(value, (str, int, float, bool)) and hasattr(
-                self,
-                "_include_oracle_metadata",
-            ):
-                return {
-                    "value": value,
-                    "_oracle_context": {
-                        "extracted_at": datetime.now(UTC).isoformat(),
-                        "tap_name": "flext-tap-oracle",
-                    },
-                }
-            return value
-
-        # Legacy type aliases for backward compatibility
-        OracleRecord = dict[str, t.GeneralValueType]
-        OracleRecords = list[OracleRecord]
 
         class OracleTapStreamMetadata(FlextModels.Entity):
             """Oracle tap stream metadata with Singer protocol compliance.
@@ -216,36 +143,61 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             # Singer stream configuration
-            stream_name: str = Field(..., description="Singer stream name")
-            replication_method: Literal["FULL_TABLE", "INCREMENTAL"] = Field(
-                default="FULL_TABLE",
-                description="Replication method for this stream",
-            )
-            replication_key: str | None = Field(
-                default=None,
-                description="Column used for incremental replication",
-            )
-            is_selected: bool = Field(
-                default=True,
-                description="Whether stream is selected for extraction",
-            )
+            stream_name: Annotated[str, Field(..., description="Singer stream name")]
+            replication_method: Annotated[
+                Literal["FULL_TABLE", "INCREMENTAL"],
+                Field(
+                    default="FULL_TABLE",
+                    description="Replication method for this stream",
+                ),
+            ]
+            replication_key: Annotated[
+                str | None,
+                Field(
+                    default=None,
+                    description="Column used for incremental replication",
+                ),
+            ]
+            is_selected: Annotated[
+                bool,
+                Field(
+                    default=True,
+                    description="Whether stream is selected for extraction",
+                ),
+            ]
 
             # Oracle-specific metadata
-            table_name: str = Field(..., description="Oracle table name")
-            schema_name: str | None = Field(
-                default=None, description="Oracle schema name"
-            )
-            estimated_rows: int | None = Field(
-                default=None,
-                description="Estimated row count",
-            )
-            column_count: int | None = Field(
-                default=None, description="Number of columns"
-            )
+            table_name: Annotated[str, Field(..., description="Oracle table name")]
+            schema_name: Annotated[
+                str | None,
+                Field(
+                    default=None,
+                    description="Oracle schema name",
+                ),
+            ]
+            estimated_rows: Annotated[
+                int | None,
+                Field(
+                    default=None,
+                    description="Estimated row count",
+                ),
+            ]
+            column_count: Annotated[
+                int | None,
+                Field(
+                    default=None,
+                    description="Number of columns",
+                ),
+            ]
 
             @computed_field
-            def stream_metadata_summary(self) -> dict[str, t.GeneralValueType]:
+            def stream_metadata_summary(self) -> dict[str, t.GeneralValueType | None]:
                 """Oracle stream metadata summary."""
+                estimated_volume: dict[str, int] = {}
+                if self.estimated_rows is not None:
+                    estimated_volume["rows"] = self.estimated_rows
+                if self.column_count is not None:
+                    estimated_volume["columns"] = self.column_count
                 return {
                     "stream_name": self.stream_name,
                     "table_reference": f"{self.schema_name}.{self.table_name}"
@@ -255,11 +207,54 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     "is_incremental": self.replication_method == "INCREMENTAL",
                     "replication_column": self.replication_key,
                     "selected_for_extraction": self.is_selected,
-                    "estimated_volume": {
-                        "rows": self.estimated_rows,
-                        "columns": self.column_count,
-                    },
+                    "estimated_volume": estimated_volume,
                 }
+
+            @field_validator("stream_name")
+            @classmethod
+            def validate_stream_name(cls, v: str) -> str:
+                """Validate stream name follows Singer conventions."""
+                if not v or not v.strip():
+                    msg = "Stream name cannot be empty"
+                    raise ValueError(msg)
+
+                # Enhanced validation with proper limits
+                max_length = c.TapOracle.MAX_IDENTIFIER_LENGTH
+                if len(v) > max_length:
+                    msg = f"Stream name too long: {len(v)} > {max_length} characters"
+                    raise ValueError(msg)
+
+                if v.startswith(("_", "-")) or v.endswith(("_", "-")):
+                    msg = "Stream name cannot start/end with underscore or dash"
+                    raise ValueError(msg)
+
+                # Clean invalid characters for Singer streams
+                cleaned = "".join(c if c.isalnum() or c in "_-" else "_" for c in v)
+                return cleaned.lower()
+
+            def validate_business_rules(self) -> r[bool]:
+                """Validate tap-specific business rules."""
+                return r[bool].ok(value=True)
+
+            @model_validator(mode="after")
+            def validate_replication_consistency(self) -> Self:
+                """Validate replication configuration consistency."""
+                if self.replication_method == "INCREMENTAL":
+                    if not self.replication_key:
+                        msg = "Incremental replication requires a replication_key"
+                        raise ValueError(msg)
+
+                    # Validation for replication key length
+                    max_key_length = c.TapOracle.MAX_IDENTIFIER_LENGTH
+                    if len(self.replication_key) > max_key_length:
+                        msg = f"Replication key too long: {len(self.replication_key)} > {max_key_length}"
+                        raise ValueError(msg)
+
+                elif self.replication_method == "FULL_TABLE" and self.replication_key:
+                    msg = "Full table replication should not have replication_key"
+                    raise ValueError(msg)
+
+                return self
 
             @model_validator(mode="after")
             def validate_stream_metadata(self) -> Self:
@@ -274,52 +269,6 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     msg = "Full table replication should not have replication_key"
                     raise ValueError(msg)
                 return self
-
-            @field_validator("stream_name")
-            @classmethod
-            def validate_stream_name(cls, v: str) -> str:
-                """Validate stream name follows Singer conventions."""
-                if not v or not v.strip():
-                    msg = "Stream name cannot be empty"
-                    raise ValueError(msg)
-
-                # Enhanced validation with proper limits
-                max_length = FlextConstants.Limits.MAX_STRING_LENGTH
-                if len(v) > max_length:
-                    msg = f"Stream name too long: {len(v)} > {max_length} characters"
-                    raise ValueError(msg)
-
-                if v.startswith(("_", "-")) or v.endswith(("_", "-")):
-                    msg = "Stream name cannot start/end with underscore or dash"
-                    raise ValueError(msg)
-
-                # Clean invalid characters for Singer streams
-                cleaned = "".join(c if c.isalnum() or c in "_-" else "_" for c in v)
-                return cleaned.lower()
-
-            @model_validator(mode="after")
-            def validate_replication_consistency(self) -> Self:
-                """Validate replication configuration consistency."""
-                if self.replication_method == "INCREMENTAL":
-                    if not self.replication_key:
-                        msg = "Incremental replication requires a replication_key"
-                        raise ValueError(msg)
-
-                    # Validation for replication key length
-                    max_key_length = FlextConstants.Limits.MAX_STRING_LENGTH
-                    if len(self.replication_key) > max_key_length:
-                        msg = f"Replication key too long: {len(self.replication_key)} > {max_key_length}"
-                        raise ValueError(msg)
-
-                elif self.replication_method == "FULL_TABLE" and self.replication_key:
-                    msg = "Full table replication should not have replication_key"
-                    raise ValueError(msg)
-
-                return self
-
-            def validate_business_rules(self) -> FlextResult[bool]:
-                """Validate tap-specific business rules."""
-                return FlextResult[bool].ok(value=True)
 
         class OracleTapDiscoveryConfig(FlextModels.Entity):
             """Configuration for Oracle tap discovery operations."""
@@ -342,45 +291,69 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             # Discovery scope
-            schema_names: list[str] = Field(
-                default_factory=list,
-                description="Oracle schemas to discover",
-            )
-            table_patterns: list[str] = Field(
-                default_factory=list,
-                description="Table name patterns to include",
-            )
-            exclude_patterns: list[str] = Field(
-                default_factory=list,
-                description="Table name patterns to exclude",
-            )
+            schema_names: Annotated[
+                list[str],
+                Field(
+                    default_factory=list,
+                    description="Oracle schemas to discover",
+                ),
+            ]
+            table_patterns: Annotated[
+                list[str],
+                Field(
+                    default_factory=list,
+                    description="Table name patterns to include",
+                ),
+            ]
+            exclude_patterns: Annotated[
+                list[str],
+                Field(
+                    default_factory=list,
+                    description="Table name patterns to exclude",
+                ),
+            ]
 
             # Discovery options
-            include_views: bool = Field(
-                default=False,
-                description="Include Oracle views in discovery",
-            )
-            include_system_tables: bool = Field(
-                default=False,
-                description="Include system tables in discovery",
-            )
-            max_tables: int = Field(
-                default=FlextConstants.Performance.BatchProcessing.DEFAULT_SIZE,
-                description="Maximum number of tables to discover",
-            )
+            include_views: Annotated[
+                bool,
+                Field(
+                    default=False,
+                    description="Include Oracle views in discovery",
+                ),
+            ]
+            include_system_tables: Annotated[
+                bool,
+                Field(
+                    default=False,
+                    description="Include system tables in discovery",
+                ),
+            ]
+            max_tables: Annotated[
+                int,
+                Field(
+                    default=FlextConstants.Performance.BatchProcessing.DEFAULT_SIZE,
+                    description="Maximum number of tables to discover",
+                ),
+            ]
 
             # Performance settings
-            discovery_timeout: int = Field(
-                default=FlextConstants.Network.DEFAULT_TIMEOUT * 10,
-                description="Discovery timeout in seconds",
-            )
-            parallel_discovery: bool = Field(
-                default=True,
-                description="Enable parallel discovery",
-            )
+            discovery_timeout: Annotated[
+                int,
+                Field(
+                    default=FlextConstants.Network.DEFAULT_TIMEOUT * 10,
+                    description="Discovery timeout in seconds",
+                ),
+            ]
+            parallel_discovery: Annotated[
+                bool,
+                Field(
+                    default=True,
+                    description="Enable parallel discovery",
+                ),
+            ]
 
             @computed_field
-            def discovery_scope_summary(self) -> dict[str, t.GeneralValueType]:
+            def discovery_scope_summary(self) -> dict[str, t.GeneralValueType | None]:
                 """Oracle discovery scope summary."""
                 return {
                     "target_schemas": len(self.schema_names),
@@ -429,37 +402,56 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             # Extraction parameters
-            batch_size: int = Field(
-                default=FlextConstants.Performance.BatchProcessing.DEFAULT_SIZE * 10,
-                description="Number of rows per batch",
-            )
-            max_rows: int | None = Field(
-                default=None,
-                description="Maximum rows to extract (None for unlimited)",
-            )
+            batch_size: Annotated[
+                int,
+                Field(
+                    default=FlextConstants.Performance.BatchProcessing.DEFAULT_SIZE
+                    * 10,
+                    description="Number of rows per batch",
+                ),
+            ]
+            max_rows: Annotated[
+                int | None,
+                Field(
+                    default=None,
+                    description="Maximum rows to extract (None for unlimited)",
+                ),
+            ]
 
             # Performance optimization
-            parallel_streams: int = Field(
-                default=1,
-                description="Number of parallel extraction streams",
-            )
-            enable_query_hints: bool = Field(
-                default=True,
-                description="Enable Oracle query optimization hints",
-            )
+            parallel_streams: Annotated[
+                int,
+                Field(
+                    default=1,
+                    description="Number of parallel extraction streams",
+                ),
+            ]
+            enable_query_hints: Annotated[
+                bool,
+                Field(
+                    default=True,
+                    description="Enable Oracle query optimization hints",
+                ),
+            ]
 
             # Incremental extraction
-            incremental_column: str | None = Field(
-                default=None,
-                description="Column for incremental extraction",
-            )
-            incremental_bookmark: str | None = Field(
-                default=None,
-                description="Bookmark value for incremental extraction",
-            )
+            incremental_column: Annotated[
+                str | None,
+                Field(
+                    default=None,
+                    description="Column for incremental extraction",
+                ),
+            ]
+            incremental_bookmark: Annotated[
+                str | None,
+                Field(
+                    default=None,
+                    description="Bookmark value for incremental extraction",
+                ),
+            ]
 
             @computed_field
-            def extraction_config_summary(self) -> dict[str, t.GeneralValueType]:
+            def extraction_config_summary(self) -> dict[str, t.GeneralValueType | None]:
                 """Oracle extraction configuration summary."""
                 return {
                     "batch_processing": {
@@ -513,43 +505,69 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             # Extraction metrics
-            extraction_id: str = Field(description="Unique extraction identifier")
-            start_time: str = Field(description="Extraction start timestamp")
-            end_time: str | None = Field(
-                default=None,
-                description="Extraction end timestamp",
-            )
+            extraction_id: Annotated[
+                str, Field(description="Unique extraction identifier")
+            ]
+            start_time: Annotated[str, Field(description="Extraction start timestamp")]
+            end_time: Annotated[
+                str | None,
+                Field(
+                    default=None,
+                    description="Extraction end timestamp",
+                ),
+            ]
 
             # Volume metrics
-            total_records: int = Field(default=0, description="Total records extracted")
-            total_bytes: int = Field(default=0, description="Total bytes processed")
-            streams_processed: int = Field(
-                default=0,
-                description="Number of streams processed",
-            )
+            total_records: Annotated[
+                int, Field(default=0, description="Total records extracted")
+            ]
+            total_bytes: Annotated[
+                int, Field(default=0, description="Total bytes processed")
+            ]
+            streams_processed: Annotated[
+                int,
+                Field(
+                    default=0,
+                    description="Number of streams processed",
+                ),
+            ]
 
             # Performance metrics
-            avg_records_per_second: float = Field(
-                default=0.0,
-                description="Average records per second",
-            )
-            avg_bytes_per_second: float = Field(
-                default=0.0,
-                description="Average bytes per second",
-            )
+            avg_records_per_second: Annotated[
+                float,
+                Field(
+                    default=0.0,
+                    description="Average records per second",
+                ),
+            ]
+            avg_bytes_per_second: Annotated[
+                float,
+                Field(
+                    default=0.0,
+                    description="Average bytes per second",
+                ),
+            ]
 
             # Oracle-specific metrics
-            oracle_connection_time: float = Field(
-                default=0.0,
-                description="Oracle connection establishment time",
-            )
-            oracle_query_time: float = Field(
-                default=0.0,
-                description="Total Oracle query execution time",
-            )
+            oracle_connection_time: Annotated[
+                float,
+                Field(
+                    default=0.0,
+                    description="Oracle connection establishment time",
+                ),
+            ]
+            oracle_query_time: Annotated[
+                float,
+                Field(
+                    default=0.0,
+                    description="Total Oracle query execution time",
+                ),
+            ]
 
             @computed_field
-            def performance_analysis_summary(self) -> dict[str, t.GeneralValueType]:
+            def performance_analysis_summary(
+                self,
+            ) -> dict[str, t.GeneralValueType | None]:
                 """Oracle tap performance analysis summary."""
                 duration = 0.0
                 if self.start_time and self.end_time:
@@ -615,34 +633,52 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             # Stream identity
-            stream_name: str = Field(..., description="Singer stream name")
-            table_name: str = Field(..., description="Oracle table name")
-            schema_name: str | None = Field(None, description="Oracle schema name")
+            stream_name: Annotated[str, Field(..., description="Singer stream name")]
+            table_name: Annotated[str, Field(..., description="Oracle table name")]
+            schema_name: Annotated[
+                str | None, Field(None, description="Oracle schema name")
+            ]
 
             # Stream configuration
-            is_selected: bool = Field(
-                default=True,
-                description="Whether stream is selected for extraction",
-            )
-            replication_method: Literal["FULL_TABLE", "INCREMENTAL"] = Field(
-                default="FULL_TABLE",
-                description="Replication method for this stream",
-            )
-            replication_key: str | None = Field(
-                None,
-                description="Column used for incremental replication",
-            )
+            is_selected: Annotated[
+                bool,
+                Field(
+                    default=True,
+                    description="Whether stream is selected for extraction",
+                ),
+            ]
+            replication_method: Annotated[
+                Literal["FULL_TABLE", "INCREMENTAL"],
+                Field(
+                    default="FULL_TABLE",
+                    description="Replication method for this stream",
+                ),
+            ]
+            replication_key: Annotated[
+                str | None,
+                Field(
+                    None,
+                    description="Column used for incremental replication",
+                ),
+            ]
 
             # Runtime information (populated at runtime)
-            estimated_rows: int | None = Field(None, description="Estimated row count")
-            column_count: int | None = Field(None, description="Number of columns")
-            last_extracted: str | None = Field(
-                None,
-                description="Last extraction timestamp",
-            )
+            estimated_rows: Annotated[
+                int | None, Field(None, description="Estimated row count")
+            ]
+            column_count: Annotated[
+                int | None, Field(None, description="Number of columns")
+            ]
+            last_extracted: Annotated[
+                str | None,
+                Field(
+                    None,
+                    description="Last extraction timestamp",
+                ),
+            ]
 
             @computed_field
-            def stream_info_summary(self) -> dict[str, t.GeneralValueType]:
+            def stream_info_summary(self) -> dict[str, t.GeneralValueType | None]:
                 """Oracle stream information summary."""
                 return {
                     "stream_identity": {
@@ -666,22 +702,7 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     },
                 }
 
-            @model_validator(mode="after")
-            def validate_stream_info(self) -> Self:
-                """Validate Oracle stream information."""
-                if not self.stream_name:
-                    msg = "Stream name is required"
-                    raise ValueError(msg)
-                if not self.table_name:
-                    msg = "Table name is required"
-                    raise ValueError(msg)
-                return self
-
-            def validate_business_rules(self) -> FlextResult[bool]:
-                """Validate stream info business rules."""
-                return FlextResult[bool].ok(value=True)
-
-            def to_singer_stream_info(self) -> dict[str, t.GeneralValueType]:
+            def to_singer_stream_info(self) -> dict[str, t.GeneralValueType | None]:
                 """Convert to Singer stream information format."""
                 return {
                     "tap_stream_id": self.stream_name,
@@ -698,6 +719,21 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                         "last_extracted": self.last_extracted,
                     },
                 }
+
+            def validate_business_rules(self) -> r[bool]:
+                """Validate stream info business rules."""
+                return r[bool].ok(value=True)
+
+            @model_validator(mode="after")
+            def validate_stream_info(self) -> Self:
+                """Validate Oracle stream information."""
+                if not self.stream_name:
+                    msg = "Stream name is required"
+                    raise ValueError(msg)
+                if not self.table_name:
+                    msg = "Table name is required"
+                    raise ValueError(msg)
+                return self
 
         class OracleTapDiscoveryResult(FlextModels.Entity):
             """Result of Oracle table discovery operation.
@@ -724,41 +760,64 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             # Discovery metadata
-            schema_name: str = Field(
-                ..., description="Oracle schema that was discovered"
-            )
-            discovery_timestamp: str = Field(
-                ...,
-                description="When discovery was performed",
-            )
-            total_tables: int = Field(
-                ..., description="Total number of tables discovered"
-            )
+            schema_name: Annotated[
+                str,
+                Field(
+                    ...,
+                    description="Oracle schema that was discovered",
+                ),
+            ]
+            discovery_timestamp: Annotated[
+                str,
+                Field(
+                    ...,
+                    description="When discovery was performed",
+                ),
+            ]
+            total_tables: Annotated[
+                int,
+                Field(
+                    ...,
+                    description="Total number of tables discovered",
+                ),
+            ]
 
             # Raw Oracle metadata
-            oracle_tables: list[FlextDbOracleModels.Table] = Field(
-                default_factory=list,
-                description="Raw Oracle table metadata from flext-db-oracle",
-            )
+            oracle_tables: Annotated[
+                Sequence[FlextDbOracleModels.DbOracle.Table],
+                Field(
+                    default_factory=list,
+                    description="Raw Oracle table metadata from flext-db-oracle",
+                ),
+            ]
 
             # Processed stream information
-            stream_info: list[m.OracleTapStreamInfo] = Field(
-                default_factory=list,
-                description="Processed stream information for tap use",
-            )
+            stream_info: Annotated[
+                Sequence[FlextTapOracleModels.TapOracle.OracleTapStreamInfo],
+                Field(
+                    default_factory=list,
+                    description="Processed stream information for tap use",
+                ),
+            ]
 
             # Filtering results
-            filtered_tables: list[str] = Field(
-                default_factory=list,
-                description="Table names after applying filters",
-            )
-            excluded_tables: list[str] = Field(
-                default_factory=list,
-                description="Table names that were excluded",
-            )
+            filtered_tables: Annotated[
+                list[str],
+                Field(
+                    default_factory=list,
+                    description="Table names after applying filters",
+                ),
+            ]
+            excluded_tables: Annotated[
+                list[str],
+                Field(
+                    default_factory=list,
+                    description="Table names that were excluded",
+                ),
+            ]
 
             @computed_field
-            def discovery_result_summary(self) -> dict[str, t.GeneralValueType]:
+            def discovery_result_summary(self) -> dict[str, t.GeneralValueType | None]:
                 """Oracle discovery result summary."""
                 selected_streams = len([s for s in self.stream_info if s.is_selected])
 
@@ -787,38 +846,23 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     },
                 }
 
-            @model_validator(mode="after")
-            def validate_discovery_result(self) -> Self:
-                """Validate Oracle discovery result."""
-                if not self.schema_name:
-                    msg = "Schema name is required"
-                    raise ValueError(msg)
-                if self.total_tables < 0:
-                    msg = "Total tables cannot be negative"
-                    raise ValueError(msg)
-                return self
-
-            def validate_business_rules(self) -> FlextResult[bool]:
-                """Validate discovery result business rules."""
-                return FlextResult[bool].ok(value=True)
-
             def get_selected_streams(
                 self,
-            ) -> list[m.OracleTapStreamInfo]:
+            ) -> list[m.TapOracle.OracleTapStreamInfo]:
                 """Get only selected streams."""
                 return [stream for stream in self.stream_info if stream.is_selected]
 
             def get_table_by_name(
                 self,
                 table_name: str,
-            ) -> FlextDbOracleModels.Table | None:
+            ) -> FlextDbOracleModels.DbOracle.Table | None:
                 """Get Oracle table metadata by name."""
                 for table in self.oracle_tables:
                     if table.name == table_name:
                         return table
                 return None
 
-            def to_singer_catalog(self) -> dict[str, t.GeneralValueType]:
+            def to_singer_catalog(self) -> dict[str, t.GeneralValueType | None]:
                 """Convert to Singer catalog format."""
                 return {
                     "streams": [
@@ -830,6 +874,21 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                         "total_tables": self.total_tables,
                     },
                 }
+
+            def validate_business_rules(self) -> r[bool]:
+                """Validate discovery result business rules."""
+                return r[bool].ok(value=True)
+
+            @model_validator(mode="after")
+            def validate_discovery_result(self) -> Self:
+                """Validate Oracle discovery result."""
+                if not self.schema_name:
+                    msg = "Schema name is required"
+                    raise ValueError(msg)
+                if self.total_tables < 0:
+                    msg = "Total tables cannot be negative"
+                    raise ValueError(msg)
+                return self
 
         class OracleTapExecutionStats(FlextModels.Entity):
             """Oracle tap execution statistics and metrics.
@@ -856,63 +915,100 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             )
 
             # Execution metadata
-            execution_id: str = Field(..., description="Unique execution identifier")
-            start_timestamp: str = Field(..., description="Execution start time")
-            end_timestamp: str | None = Field(None, description="Execution end time")
+            execution_id: Annotated[
+                str, Field(..., description="Unique execution identifier")
+            ]
+            start_timestamp: Annotated[
+                str, Field(..., description="Execution start time")
+            ]
+            end_timestamp: Annotated[
+                str | None, Field(None, description="Execution end time")
+            ]
 
             # Stream statistics
-            streams_processed: int = Field(
-                default=0,
-                description="Number of streams processed",
-            )
-            total_records: int = Field(default=0, description="Total records extracted")
-            total_bytes: int = Field(default=0, description="Total bytes processed")
+            streams_processed: Annotated[
+                int,
+                Field(
+                    default=0,
+                    description="Number of streams processed",
+                ),
+            ]
+            total_records: Annotated[
+                int, Field(default=0, description="Total records extracted")
+            ]
+            total_bytes: Annotated[
+                int, Field(default=0, description="Total bytes processed")
+            ]
 
             # Performance metrics
-            avg_records_per_second: float = Field(
-                default=0.0,
-                description="Average records per second",
-            )
-            avg_bytes_per_second: float = Field(
-                default=0.0,
-                description="Average bytes per second",
-            )
-            duration_seconds: float = Field(
-                default=0.0,
-                description="Total execution duration",
-            )
+            avg_records_per_second: Annotated[
+                float,
+                Field(
+                    default=0.0,
+                    description="Average records per second",
+                ),
+            ]
+            avg_bytes_per_second: Annotated[
+                float,
+                Field(
+                    default=0.0,
+                    description="Average bytes per second",
+                ),
+            ]
+            duration_seconds: Annotated[
+                float,
+                Field(
+                    default=0.0,
+                    description="Total execution duration",
+                ),
+            ]
 
             # Error tracking
-            errors_encountered: int = Field(
-                default=0,
-                description="Number of errors encountered",
-            )
-            failed_streams: list[str] = Field(
-                default_factory=list,
-                description="Names of failed streams",
-            )
+            errors_encountered: Annotated[
+                int,
+                Field(
+                    default=0,
+                    description="Number of errors encountered",
+                ),
+            ]
+            failed_streams: Annotated[
+                list[str],
+                Field(
+                    default_factory=list,
+                    description="Names of failed streams",
+                ),
+            ]
 
             # Oracle-specific metrics
-            oracle_connection_time: float = Field(
-                default=0.0,
-                description="Oracle connection time",
-            )
-            oracle_query_time: float = Field(
-                default=0.0,
-                description="Total Oracle query time",
-            )
-            oracle_result_processing_time: float = Field(
-                default=0.0,
-                description="Result processing time",
-            )
+            oracle_connection_time: Annotated[
+                float,
+                Field(
+                    default=0.0,
+                    description="Oracle connection time",
+                ),
+            ]
+            oracle_query_time: Annotated[
+                float,
+                Field(
+                    default=0.0,
+                    description="Total Oracle query time",
+                ),
+            ]
+            oracle_result_processing_time: Annotated[
+                float,
+                Field(
+                    default=0.0,
+                    description="Result processing time",
+                ),
+            ]
 
             @computed_field
-            def execution_stats_summary(self) -> dict[str, t.GeneralValueType]:
+            def execution_stats_summary(self) -> dict[str, t.GeneralValueType | None]:
                 """Oracle tap execution statistics summary."""
                 success_rate = 0.0
                 if self.streams_processed > 0:
                     successful_streams = self.streams_processed - len(
-                        self.failed_streams
+                        self.failed_streams,
                     )
                     success_rate = successful_streams / self.streams_processed
 
@@ -955,42 +1051,12 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     },
                 }
 
-            @model_validator(mode="after")
-            def validate_execution_stats(self) -> Self:
-                """Validate Oracle execution statistics."""
-                if not self.execution_id:
-                    msg = "Execution ID is required"
-                    raise ValueError(msg)
-                if self.streams_processed < 0:
-                    msg = "Streams processed cannot be negative"
-                    raise ValueError(msg)
-                return self
-
-            def validate_business_rules(self) -> FlextResult[bool]:
-                """Validate execution stats business rules."""
-                return FlextResult[bool].ok(value=True)
-
-            def update_performance_metrics(
-                self,
-            ) -> m.OracleTapExecutionStats:
-                """Return new instance with updated calculated performance metrics."""
-                if self.duration_seconds > 0:
-                    return self.model_copy(
-                        update={
-                            "avg_records_per_second": self.total_records
-                            / self.duration_seconds,
-                            "avg_bytes_per_second": self.total_bytes
-                            / self.duration_seconds,
-                        },
-                    )
-                return self
-
             def add_stream_stats(
                 self,
                 records: int,
                 bytes_processed: int,
                 processing_time: float,
-            ) -> m.OracleTapExecutionStats:
+            ) -> m.TapOracle.OracleTapExecutionStats:
                 """Return new instance with added statistics for a processed stream."""
                 updated = self.model_copy(
                     update={
@@ -1006,10 +1072,10 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             def mark_stream_error(
                 self,
                 stream_name: str,
-            ) -> m.OracleTapExecutionStats:
+            ) -> m.TapOracle.OracleTapExecutionStats:
                 """Return new instance with marked stream error."""
                 new_failed_streams = (
-                    self.failed_streams.copy() if self.failed_streams else []
+                    self.failed_streams.copy() if self.failed_streams else list[str]()
                 )
                 if stream_name not in new_failed_streams:
                     new_failed_streams.append(stream_name)
@@ -1020,7 +1086,7 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     },
                 )
 
-            def to_summary(self) -> dict[str, t.GeneralValueType]:
+            def to_summary(self) -> dict[str, t.GeneralValueType | None]:
                 """Create execution summary."""
                 return {
                     "execution_id": self.execution_id,
@@ -1036,11 +1102,41 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     * 100,
                 }
 
+            def update_performance_metrics(
+                self,
+            ) -> m.TapOracle.OracleTapExecutionStats:
+                """Return new instance with updated calculated performance metrics."""
+                if self.duration_seconds > 0:
+                    return self.model_copy(
+                        update={
+                            "avg_records_per_second": self.total_records
+                            / self.duration_seconds,
+                            "avg_bytes_per_second": self.total_bytes
+                            / self.duration_seconds,
+                        },
+                    )
+                return self
+
+            def validate_business_rules(self) -> r[bool]:
+                """Validate execution stats business rules."""
+                return r[bool].ok(value=True)
+
+            @model_validator(mode="after")
+            def validate_execution_stats(self) -> Self:
+                """Validate Oracle execution statistics."""
+                if not self.execution_id:
+                    msg = "Execution ID is required"
+                    raise ValueError(msg)
+                if self.streams_processed < 0:
+                    msg = "Streams processed cannot be negative"
+                    raise ValueError(msg)
+                return self
+
         # =====================================================
         #
-        # The following functions have been moved to FlextMeltanoTapOracleUtilities:
-        # - create_stream_info_from_oracle_table -> FlextMeltanoTapOracleUtilities.StreamManagement.create_stream_info_from_oracle_table
-        # - create_discovery_result -> FlextMeltanoTapOracleUtilities.StreamManagement.create_discovery_result
+        # The following functions have been moved to FlextTapOracleUtilities:
+        # - create_stream_info_from_oracle_table -> FlextTapOracleUtilities.StreamManagement.create_stream_info_from_oracle_table
+        # - create_discovery_result -> FlextTapOracleUtilities.StreamManagement.create_discovery_result
         #
         # Use the utilities pattern instead of standalone functions.
 
@@ -1050,9 +1146,9 @@ class FlextMeltanoTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 # =====================================================
 
 # Short aliases
-m = FlextMeltanoTapOracleModels
+m = FlextTapOracleModels
 
 __all__: list[str] = [
-    "FlextMeltanoTapOracleModels",
+    "FlextTapOracleModels",
     "m",
 ]

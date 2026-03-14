@@ -40,12 +40,7 @@
     },
     "constants": {
       "use_flext_core_constants": "flext_core.domain.constants",
-      "core_constants": [
-        "ConfigDefaults",
-        "FlextFramework",
-        "Environments",
-        "LogLevels"
-      ],
+      "core_constants": ["ConfigDefaults", "FlextFramework", "Environments", "LogLevels"],
       "local_constants": "flext_tap_oracle.domain.constants",
       "oracle_constants": "OracleTapConstants"
     },

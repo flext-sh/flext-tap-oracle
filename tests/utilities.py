@@ -7,20 +7,20 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_core import FlextTypes as t
+from flext_core import t
 from flext_tests import FlextTestsUtilities
 
 
-class TestsFlextMeltanoTapOracleUtilities(FlextTestsUtilities):
+class TestsFlextTapOracleUtilities(FlextTestsUtilities):
     """Utilities for flext-tap-oracle tests - uses composition with FlextTestsUtilities.
 
-    Architecture: Uses composition (not inheritance) with FlextTestsUtilities and FlextMeltanoTapOracleUtilities
+    Architecture: Uses composition (not inheritance) with FlextTestsUtilities and FlextTapOracleUtilities
     for flext-tap-oracle-specific utility definitions.
 
     Access patterns:
-    - TestsFlextMeltanoTapOracleUtilities.Tests.* = flext_tests test utilities (via composition)
-    - TestsFlextMeltanoTapOracleUtilities.TapOracle.* = flext-tap-oracle-specific test utilities
-    - TestsFlextMeltanoTapOracleUtilities.* = FlextTestsUtilities methods (via composition)
+    - TestsFlextTapOracleUtilities.Tests.* = flext_tests test utilities (via composition)
+    - TestsFlextTapOracleUtilities.TapOracle.* = flext-tap-oracle-specific test utilities
+    - TestsFlextTapOracleUtilities.* = FlextTestsUtilities methods (via composition)
 
     Rules:
     - Use composition, not inheritance (FlextTestsUtilities deprecates subclassing)
@@ -28,10 +28,8 @@ class TestsFlextMeltanoTapOracleUtilities(FlextTestsUtilities):
     - Generic utilities accessed via Tests namespace
     """
 
-    # Composition: expose FlextTestsUtilities namespaces
     Tests = FlextTestsUtilities.Tests
 
-    # TapOracle-specific test utilities namespace
     class TapOracle:
         """Tap Oracle test utilities - domain-specific for Oracle tap testing.
 
@@ -49,10 +47,10 @@ class TestsFlextMeltanoTapOracleUtilities(FlextTestsUtilities):
             service_name: str = "XE",
             username: str = "test",
             password: str = "test",
-            **kwargs: t.GeneralValueType,
-        ) -> dict[str, t.GeneralValueType]:
+            **kwargs: t.Scalar,
+        ) -> dict[str, object]:
             """Create test Oracle configuration."""
-            config = {
+            config: dict[str, object] = {
                 "host": host,
                 "port": port,
                 "service_name": service_name,
@@ -67,10 +65,10 @@ class TestsFlextMeltanoTapOracleUtilities(FlextTestsUtilities):
             stream_name: str,
             table_name: str,
             replication_method: str = "FULL_TABLE",
-            **kwargs: t.GeneralValueType,
-        ) -> dict[str, t.GeneralValueType]:
+            **kwargs: t.Scalar,
+        ) -> dict[str, object]:
             """Create test Singer stream configuration."""
-            stream = {
+            stream: dict[str, object] = {
                 "stream_name": stream_name,
                 "table_name": table_name,
                 "replication_method": replication_method,
@@ -81,7 +79,7 @@ class TestsFlextMeltanoTapOracleUtilities(FlextTestsUtilities):
 
         @staticmethod
         def validate_oracle_connection_config(
-            config: dict[str, t.GeneralValueType],
+            config: dict[str, object],
         ) -> bool:
             """Validate Oracle connection configuration for testing."""
             required_fields = ["host", "port", "service_name", "username", "password"]
@@ -89,23 +87,20 @@ class TestsFlextMeltanoTapOracleUtilities(FlextTestsUtilities):
 
         @staticmethod
         def generate_mock_oracle_data(
-            table_name: str,
-            row_count: int = 10,
-            **kwargs: t.GeneralValueType,
-        ) -> list[dict[str, t.GeneralValueType]]:
+            table_name: str, row_count: int = 10, **kwargs: t.Scalar
+        ) -> list[dict[str, object]]:
             """Generate mock Oracle data for testing."""
-            data = []
+            data: list[dict[str, object]] = []
             for i in range(row_count):
-                row = {"id": i + 1, "name": f"Test Record {i + 1}"}
+                row: dict[str, object] = {
+                    "id": i + 1,
+                    "name": f"Test Record {i + 1}",
+                    "table_name": table_name,
+                }
                 row.update(kwargs)
                 data.append(row)
             return data
 
 
-# Alias for simplified usage
-tu = TestsFlextMeltanoTapOracleUtilities
-
-__all__ = [
-    "TestsFlextMeltanoTapOracleUtilities",
-    "tu",
-]
+u = TestsFlextTapOracleUtilities
+__all__ = ["TestsFlextTapOracleUtilities", "u"]

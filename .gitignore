@@ -15,7 +15,6 @@
 !tests/
 !docs/
 !examples/
-!scripts/
 !ansible/
 !docker/
 !dbt/
@@ -29,7 +28,7 @@
 !poetry.lock
 !Makefile
 !README.md
-!CLAUDE.md
+!AGENTS.md
 !LICENSE
 !.python-version
 !.tool-versions
@@ -57,7 +56,6 @@
 !tests/**
 !docs/**
 !examples/**
-!scripts/**
 !ansible/**
 !docker/**
 !dbt/**
@@ -112,12 +110,12 @@ LEVEL1_*.md
 DUPLICATION_REPORT.md
 DUPLICATE_CODE_*.md
 LINT_CORRECTIONS_*.md
-fix_*.py
-*_fix.py
-*_validation.py
-validate_*.py
-investigate_*.py
-debug_*.py
+/fix_*.py
+/*_fix.py
+/*_validation.py
+/validate_*.py
+/investigate_*.py
+/debug_*.py
 test_fix_*.py
 migrate_*.py
 *_migration.py
@@ -322,7 +320,7 @@ ipython_config.py
 .python-version
 celerybeat-schedule
 celerybeat.pid
-CLAUDE.md
+AGENTS.md
 internal.invalid.md
 .claude/
 .cursor/
@@ -389,19 +387,19 @@ profiles/profiles.yml.backup
 **/.user.yml
 docs/_build/
 site/
-temp_*.py
-*_temp.py
+/temp_*.py
+/*_temp.py
 *_temp.md
-fix_*.py
-*_fix.py
-debug_*.py
-investigate_*.py
-validate_*.py
-*_validation.py
+/fix_*.py
+/*_fix.py
+/debug_*.py
+/investigate_*.py
+/validate_*.py
+/*_validation.py
 *_analysis.txt
 *_output.txt
 *_report.txt
-temp_test_*
+/temp_test_*
 analysis_temp/
 report_*/
 reports_*/
@@ -500,12 +498,12 @@ build/
 *backup*
 
 # Validation and test scripts outside proper directories
-**/validate*.sh
-**/validate*.py
+/validate*.sh
+/validate*.py
 **/validate*.yml
 **/validate*.yaml
-**/test*.sh
-**/test*.py
+/test*.sh
+/test*.py
 **/test*.yml
 **/test*.yaml
 
@@ -526,3 +524,8 @@ staging/
 # Claude AI files
 .claude/
 .github/*.rej
+
+# --- workspace-sync: required ignores (auto-managed) ---
+.reports/
+.venv/
+__pycache__/

@@ -9,20 +9,19 @@ from __future__ import annotations
 
 from typing import Protocol, runtime_checkable
 
-from flext_core import FlextTypes as t
 from flext_tests import FlextTestsProtocols
 
 
-class TestsFlextMeltanoTapOracleProtocols(FlextTestsProtocols):
+class TestsFlextTapOracleProtocols(FlextTestsProtocols):
     """Protocols for flext-tap-oracle tests - uses composition with FlextTestsProtocols.
 
-    Architecture: Uses composition (not inheritance) with FlextTestsProtocols and FlextMeltanoTapOracleProtocols
+    Architecture: Uses composition (not inheritance) with FlextTestsProtocols and FlextTapOracleProtocols
     for flext-tap-oracle-specific protocol definitions.
 
     Access patterns:
-    - TestsFlextMeltanoTapOracleProtocols.Tests.* = flext_tests test protocols (via composition)
-    - TestsFlextMeltanoTapOracleProtocols.TapOracle.* = flext-tap-oracle-specific test protocols
-    - TestsFlextMeltanoTapOracleProtocols.* = FlextTestsProtocols protocols (via composition)
+    - TestsFlextTapOracleProtocols.Tests.* = flext_tests test protocols (via composition)
+    - TestsFlextTapOracleProtocols.TapOracle.* = flext-tap-oracle-specific test protocols
+    - TestsFlextTapOracleProtocols.* = FlextTestsProtocols protocols (via composition)
 
     Rules:
     - Use composition, not inheritance (FlextTestsProtocols deprecates subclassing)
@@ -30,10 +29,6 @@ class TestsFlextMeltanoTapOracleProtocols(FlextTestsProtocols):
     - Generic protocols accessed via Tests namespace
     """
 
-    # Composition: expose FlextTestsProtocols
-    Tests = FlextTestsProtocols
-
-    # TapOracle-specific test protocols namespace
     class TapOracle:
         """Tap Oracle test protocols - domain-specific for Oracle tap testing.
 
@@ -44,7 +39,7 @@ class TestsFlextMeltanoTapOracleProtocols(FlextTestsProtocols):
         """
 
         @runtime_checkable
-        class MockOracleConnectionProtocol(Protocol):
+        class MockOracleConnection(Protocol):
             """Protocol for mock Oracle connections in tests."""
 
             def connect(self) -> bool:
@@ -56,60 +51,49 @@ class TestsFlextMeltanoTapOracleProtocols(FlextTestsProtocols):
                 ...
 
             def execute_query(
-                self,
-                query: str,
-                parameters: dict[str, t.GeneralValueType] | None = None,
-            ) -> list[dict[str, t.GeneralValueType]]:
+                self, query: str, parameters: dict[str, object] | None = None
+            ) -> list[dict[str, object]]:
                 """Execute query on mock database."""
                 ...
 
         @runtime_checkable
-        class TestDataProviderProtocol(Protocol):
+        class TestDataProvider(Protocol):
             """Protocol for test data providers."""
 
-            def get_test_tables(self) -> list[dict[str, t.GeneralValueType]]:
+            def get_test_tables(self) -> list[dict[str, object]]:
                 """Get test table definitions."""
                 ...
 
-            def get_test_data(
-                self, table_name: str
-            ) -> list[dict[str, t.GeneralValueType]]:
+            def get_test_data(self, table_name: str) -> list[dict[str, object]]:
                 """Get test data for a table."""
                 ...
 
-            def get_test_config(self) -> dict[str, t.GeneralValueType]:
+            def get_test_config(self) -> dict[str, object]:
                 """Get test configuration."""
                 ...
 
         @runtime_checkable
-        class TestAssertionProtocol(Protocol):
+        class TestAssertion(Protocol):
             """Protocol for test assertions."""
 
             def assert_oracle_connection_successful(
-                self, config: dict[str, t.GeneralValueType]
+                self, config: dict[str, object]
             ) -> None:
                 """Assert Oracle connection was successful."""
                 ...
 
-            def assert_singer_stream_valid(
-                self, stream: dict[str, t.GeneralValueType]
-            ) -> None:
+            def assert_singer_stream_valid(self, stream: dict[str, object]) -> None:
                 """Assert Singer stream is valid."""
                 ...
 
             def assert_extraction_results_match(
                 self,
-                expected: list[dict[str, t.GeneralValueType]],
-                actual: list[dict[str, t.GeneralValueType]],
+                expected: list[dict[str, object]],
+                actual: list[dict[str, object]],
             ) -> None:
                 """Assert extraction results match expected data."""
                 ...
 
 
-# Alias for simplified usage
-tp = TestsFlextMeltanoTapOracleProtocols
-
-__all__ = [
-    "TestsFlextMeltanoTapOracleProtocols",
-    "tp",
-]
+p = TestsFlextTapOracleProtocols
+__all__ = ["TestsFlextTapOracleProtocols", "p"]
