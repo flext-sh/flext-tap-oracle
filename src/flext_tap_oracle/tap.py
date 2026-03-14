@@ -195,7 +195,7 @@ def create_tap_oracle_cli() -> r[FlextCliCommands]:
         return r[FlextCliCommands].fail(f"CLI creation failed: {e}")
 
 
-def handle_discover_command(*_args: t.Scalar, **kwargs: t.Scalar) -> r:
+def handle_discover_command(*_args: t.Scalar, **kwargs: t.Scalar) -> r[object]:
     """Handle discover command using flext-cli patterns - NO click decorators."""
     try:
         params = OracleTapDiscoverParams.from_click_args(**kwargs)
@@ -204,15 +204,15 @@ def handle_discover_command(*_args: t.Scalar, **kwargs: t.Scalar) -> r:
         if result.is_failure:
             error_message = result.error or "Discovery failed"
             cli_api.print(f"Discovery failed: {error_message}", style="red")
-            return r[bool].fail(error_message)
-        return r[bool].ok(True)
+            return r[object].fail(error_message)
+        return r[object].ok(True)
     except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
         error_message = f"Discovery error: {e}"
         cli_api.print(error_message, style="red")
-        return r[bool].fail(error_message)
+        return r[object].fail(error_message)
 
 
-def handle_sync_command(*_args: t.Scalar, **kwargs: t.Scalar) -> r:
+def handle_sync_command(*_args: t.Scalar, **kwargs: t.Scalar) -> r[object]:
     """Handle sync command using flext-cli patterns - NO click decorators."""
     try:
         params = OracleTapSyncParams.from_click_args(**kwargs)
@@ -221,12 +221,12 @@ def handle_sync_command(*_args: t.Scalar, **kwargs: t.Scalar) -> r:
         if result.is_failure:
             error_message = result.error or "Sync failed"
             cli_api.print(f"Sync failed: {error_message}", style="red")
-            return r[bool].fail(error_message)
-        return r[bool].ok(True)
+            return r[object].fail(error_message)
+        return r[object].ok(True)
     except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
         error_message = f"Sync error: {e}"
         cli_api.print(error_message, style="red")
-        return r[bool].fail(error_message)
+        return r[object].fail(error_message)
 
 
 def cli() -> int:

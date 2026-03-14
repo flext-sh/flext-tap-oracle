@@ -12,7 +12,7 @@ from typing import Protocol
 
 from flext_core import FlextLogger, r
 from flext_db_oracle import FlextDbOracleApi
-from flext_meltano import FlextMeltanoStream as Stream, p
+from flext_meltano import p
 from pydantic import BaseModel
 
 from flext_tap_oracle import c, m, t, u
@@ -38,7 +38,7 @@ class FlextTapOracleStreams:
     class _Tap(Protocol):
         typed_config: OracleValue
 
-    class OracleStream(Stream):
+    class OracleStream(p.Meltano.Stream):
         """Oracle stream using MAXIMUM flext-db-oracle infrastructure.
 
         This implementation leverages ALL available flext-db-oracle functionality:

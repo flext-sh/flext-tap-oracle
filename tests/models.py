@@ -36,7 +36,6 @@ class TestsFlextTapOracleModels(FlextTestsModels):
     Value = FlextModels.Value
     AggregateRoot = FlextModels.AggregateRoot
     DomainEvent = FlextModels.DomainEvent
-    Collections = FlextModels.Collections
 
     # TapOracle-specific test models namespace
     class TapOracle:

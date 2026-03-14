@@ -15,9 +15,10 @@ import os
 import socket
 from abc import ABC, abstractmethod
 from collections.abc import Generator
+from typing import override
 
 import pytest
-from flext_core import r
+from flext_core import r, t
 from flext_tests import FlextTestsDocker
 
 from flext_tap_oracle import FlextOracleTapService, FlextTapOracleSettings
@@ -31,7 +32,7 @@ def docker_control() -> FlextTestsDocker:
 
 
 @pytest.fixture(scope="session")
-def shared_oracle_container(docker_control: FlextTestsDocker) -> Generator[str]:
+def shared_oracle_container(docker_control: FlextTestsDocker) -> str:
     """Managed Oracle container using FlextTestsDocker with auto-start."""
     _ = docker_control
     return "flext-oracle-db-test"
@@ -127,7 +128,7 @@ def oracle_tap_config() -> dict[str, object]:
 def oracle_tap(oracle_tap_config: dict[str, object]) -> FlextOracleTapService:
     """Oracle tap service instance for testing."""
     config_result = r[FlextTapOracleSettings].ok(
-        FlextTapOracleSettings.get_global()(oracle_tap_config)
+        FlextTapOracleSettings.model_validate(oracle_tap_config)
     )
     if config_result.is_success:
         return FlextOracleTapService(config=config_result.value)
@@ -515,14 +516,14 @@ def pytest_configure(config: pytest.Config) -> None:
 
 
 @pytest.fixture
-def mock_oracle_tap() -> type[object]:
+def mock_oracle_tap() -> type:
     """Mock Oracle tap for testing."""
 
     class MockOracleTap:
         def __init__(self, config: dict[str, object]) -> None:
             """Initialize the instance."""
             self.config = config
-            self._catalog = None
+            self._catalog: dict[str, t.GeneralValueType] | None = None
             self.__state: dict[str, object] = {}
 
         def discover(self) -> dict[str, object]:
@@ -602,7 +603,7 @@ def mock_oracle_tap() -> type[object]:
 
 
 @pytest.fixture
-def mock_oracle_connection() -> type[object]:
+def mock_oracle_connection() -> type:
     """Mock Oracle connection for testing."""
 
     class MockOracleConnection:
@@ -658,6 +659,7 @@ class _MockQueryStrategy(ABC):
 class _TablesQueryStrategy(_MockQueryStrategy):
     """Strategy for tables query - Single Responsibility."""
 
+    @override
     def execute(self) -> list[dict[str, object]]:
         """Return mock table data."""
         return [
@@ -669,6 +671,7 @@ class _TablesQueryStrategy(_MockQueryStrategy):
 class _ColumnsQueryStrategy(_MockQueryStrategy):
     """Strategy for columns query - Single Responsibility."""
 
+    @override
     def execute(self) -> list[dict[str, object]]:
         """Return mock column data."""
         return [
@@ -692,6 +695,7 @@ class _ColumnsQueryStrategy(_MockQueryStrategy):
 class _DefaultQueryStrategy(_MockQueryStrategy):
     """Default strategy for generic queries - Single Responsibility."""
 
+    @override
     def execute(self) -> list[dict[str, object]]:
         """Return mock default data."""
         return [{"id": 1, "name": "Test Record"}]
