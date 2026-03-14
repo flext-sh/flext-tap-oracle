@@ -1,0 +1,39 @@
+src/flext_tap_oracle/models.py
+  46b21b0cde7bba81 26,569
+src/flext_tap_oracle/typings.py
+  e4957bb44a91f01a 138-140
+  46b21b0cde7bba81 132-137,141-142
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.12",
+  "base_commit_sha": "41f7a88f402efb71190b2a0c9ce84cfa55b39bfa",
+  "prompts": {
+    "46b21b0cde7bba81": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_312ba68dbffetEW3DIq7PIrAnq",
+        "model": "anthropic/claude-haiku-4-5"
+      },
+      "human_author": "FLEXT Bot <team@flext.sh>",
+      "messages": [],
+      "total_additions": 74,
+      "total_deletions": 57,
+      "accepted_lines": 10,
+      "overriden_lines": 0
+    },
+    "e4957bb44a91f01a": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_312b11ca8ffeaDOiOLD1kzjBwe",
+        "model": "anthropic/claude-haiku-4-5"
+      },
+      "human_author": "FLEXT Bot <team@flext.sh>",
+      "messages": [],
+      "total_additions": 18,
+      "total_deletions": 21,
+      "accepted_lines": 3,
+      "overriden_lines": 0
+    }
+  }
+}
