@@ -1,3 +1,6 @@
+# AUTO-GENERATED FILE — DO NOT EDIT MANUALLY.
+# Regenerate with: make codegen
+#
 """FLEXT Tap Oracle - Oracle Database Singer Tap for FLEXT ecosystem.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
@@ -8,33 +11,53 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from flext_core import t as core_t
 from flext_core.lazy import cleanup_submodule_namespace, lazy_getattr
 
 if TYPE_CHECKING:
-    from flext_tap_oracle.__version__ import __version__, __version_info__
+    from flext_tap_oracle.__version__ import (
+        __all__,
+        __author__,
+        __author_email__,
+        __description__,
+        __license__,
+        __title__,
+        __url__,
+        __version__,
+        __version_info__,
+    )
     from flext_tap_oracle.client import (
         FlextOracleConnectionTestService,
         FlextOracleDiscoveryService,
+        FlextOracleDiscoveryService as s,
         FlextOracleTableFilterService,
         FlextOracleTapService,
+        create_oracle_discovery_service,
+        create_oracle_tap_service,
     )
-    from flext_tap_oracle.constants import (
-        FlextTapOracleConstants,
-        FlextTapOracleConstants as c,
+    from flext_tap_oracle.constants import FlextTapOracleConstants, c
+    from flext_tap_oracle.models import FlextTapOracleModels, m
+    from flext_tap_oracle.protocols import FlextTapOracleProtocols, p
+    from flext_tap_oracle.settings import (
+        FlextTapOracleSettings,
+        create_oracle_tap_config,
+        validate_oracle_tap_configuration,
     )
-    from flext_tap_oracle.models import FlextTapOracleModels, FlextTapOracleModels as m
-    from flext_tap_oracle.protocols import (
-        FlextTapOracleProtocols,
-        FlextTapOracleProtocols as p,
-    )
-    from flext_tap_oracle.settings import FlextTapOracleSettings
     from flext_tap_oracle.streams import FlextTapOracleStreams
-    from flext_tap_oracle.typings import FlextTapOracleTypes, FlextTapOracleTypes as t
-    from flext_tap_oracle.utilities import (
-        FlextTapOracleUtilities,
-        FlextTapOracleUtilities as u,
+    from flext_tap_oracle.tap import (
+        OracleTapDiscoverCommand,
+        OracleTapDiscoverParams,
+        OracleTapSyncCommand,
+        OracleTapSyncParams,
+        cli,
+        cli_api,
+        create_tap_oracle_cli,
+        handle_discover_command,
+        handle_sync_command,
+        logger,
+        main,
     )
+    from flext_tap_oracle.typings import FlextTapOracleTypes, t
+    from flext_tap_oracle.utilities import FlextTapOracleUtilities, u
 
 # Lazy import mapping: export_name -> (module_path, attr_name)
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
@@ -67,13 +90,48 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
         "flext_tap_oracle.utilities",
         "FlextTapOracleUtilities",
     ),
+    "OracleTapDiscoverCommand": ("flext_tap_oracle.tap", "OracleTapDiscoverCommand"),
+    "OracleTapDiscoverParams": ("flext_tap_oracle.tap", "OracleTapDiscoverParams"),
+    "OracleTapSyncCommand": ("flext_tap_oracle.tap", "OracleTapSyncCommand"),
+    "OracleTapSyncParams": ("flext_tap_oracle.tap", "OracleTapSyncParams"),
+    "__all__": ("flext_tap_oracle.__version__", "__all__"),
+    "__author__": ("flext_tap_oracle.__version__", "__author__"),
+    "__author_email__": ("flext_tap_oracle.__version__", "__author_email__"),
+    "__description__": ("flext_tap_oracle.__version__", "__description__"),
+    "__license__": ("flext_tap_oracle.__version__", "__license__"),
+    "__title__": ("flext_tap_oracle.__version__", "__title__"),
+    "__url__": ("flext_tap_oracle.__version__", "__url__"),
     "__version__": ("flext_tap_oracle.__version__", "__version__"),
     "__version_info__": ("flext_tap_oracle.__version__", "__version_info__"),
-    "c": ("flext_tap_oracle.constants", "FlextTapOracleConstants"),
-    "m": ("flext_tap_oracle.models", "FlextTapOracleModels"),
-    "p": ("flext_tap_oracle.protocols", "FlextTapOracleProtocols"),
-    "t": ("flext_tap_oracle.typings", "FlextTapOracleTypes"),
-    "u": ("flext_tap_oracle.utilities", "FlextTapOracleUtilities"),
+    "c": ("flext_tap_oracle.constants", "c"),
+    "cli": ("flext_tap_oracle.tap", "cli"),
+    "cli_api": ("flext_tap_oracle.tap", "cli_api"),
+    "create_oracle_discovery_service": (
+        "flext_tap_oracle.client",
+        "create_oracle_discovery_service",
+    ),
+    "create_oracle_tap_config": (
+        "flext_tap_oracle.settings",
+        "create_oracle_tap_config",
+    ),
+    "create_oracle_tap_service": (
+        "flext_tap_oracle.client",
+        "create_oracle_tap_service",
+    ),
+    "create_tap_oracle_cli": ("flext_tap_oracle.tap", "create_tap_oracle_cli"),
+    "handle_discover_command": ("flext_tap_oracle.tap", "handle_discover_command"),
+    "handle_sync_command": ("flext_tap_oracle.tap", "handle_sync_command"),
+    "logger": ("flext_tap_oracle.tap", "logger"),
+    "m": ("flext_tap_oracle.models", "m"),
+    "main": ("flext_tap_oracle.tap", "main"),
+    "p": ("flext_tap_oracle.protocols", "p"),
+    "s": ("flext_tap_oracle.client", "FlextOracleDiscoveryService"),
+    "t": ("flext_tap_oracle.typings", "t"),
+    "u": ("flext_tap_oracle.utilities", "u"),
+    "validate_oracle_tap_configuration": (
+        "flext_tap_oracle.settings",
+        "validate_oracle_tap_configuration",
+    ),
 }
 
 __all__ = [
@@ -88,19 +146,40 @@ __all__ = [
     "FlextTapOracleStreams",
     "FlextTapOracleTypes",
     "FlextTapOracleUtilities",
+    "OracleTapDiscoverCommand",
+    "OracleTapDiscoverParams",
+    "OracleTapSyncCommand",
+    "OracleTapSyncParams",
+    "__all__",
+    "__author__",
+    "__author_email__",
+    "__description__",
+    "__license__",
+    "__title__",
+    "__url__",
     "__version__",
     "__version_info__",
     "c",
+    "cli",
+    "cli_api",
+    "create_oracle_discovery_service",
+    "create_oracle_tap_config",
+    "create_oracle_tap_service",
+    "create_tap_oracle_cli",
+    "handle_discover_command",
+    "handle_sync_command",
+    "logger",
     "m",
+    "main",
     "p",
+    "s",
     "t",
     "u",
+    "validate_oracle_tap_configuration",
 ]
 
 
-def __getattr__(
-    name: str,
-) -> core_t.ModuleExport:
+def __getattr__(name: str) -> t.ModuleExport:
     """Lazy-load module attributes on first access (PEP 562)."""
     return lazy_getattr(name, _LAZY_IMPORTS, globals(), __name__)
 
