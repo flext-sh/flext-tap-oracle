@@ -17,7 +17,7 @@ from pydantic import BaseModel
 
 from flext_tap_oracle import c, m, t, u
 
-type OracleValue = m.NormalizedValue | BaseModel | None
+type OracleValue = t.NormalizedValue | BaseModel | None
 
 
 class FlextTapOracleStreams:
@@ -66,7 +66,7 @@ class FlextTapOracleStreams:
             self._observability_manager: Mapping[str, OracleValue] | None = None
 
         @property
-        def metadata_manager(self) -> object:
+        def metadata_manager(self) -> Mapping[str, OracleValue]:
             """Get flext-db-oracle metadata manager with lazy initialization."""
             if self._metadata_manager is None:
                 connection = self.oracle_api.connection
@@ -85,7 +85,7 @@ class FlextTapOracleStreams:
             return self._metadata_manager
 
         @property
-        def observability_manager(self) -> object:
+        def observability_manager(self) -> Mapping[str, OracleValue]:
             """Get flext-db-oracle observability manager with lazy initialization."""
             if self._observability_manager is None:
                 obs_placeholder: dict[str, t.Container] = {}
