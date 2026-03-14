@@ -18,6 +18,9 @@ from typing import Literal
 
 from flext_db_oracle.typings import FlextDbOracleTypes
 from flext_meltano import FlextMeltanoTypes
+from pydantic import BaseModel
+
+from flext_tap_oracle import t
 
 
 class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
@@ -137,3 +140,6 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
 
 t = FlextTapOracleTypes
 __all__ = ["FlextTapOracleTypes", "t"]
+
+
+type OracleValue = t.NormalizedValue | BaseModel | None

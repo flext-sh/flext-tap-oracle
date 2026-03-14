@@ -13,11 +13,9 @@ from typing import Protocol
 from flext_core import FlextLogger, r
 from flext_db_oracle import FlextDbOracleApi
 from flext_meltano import p
-from pydantic import BaseModel
 
 from flext_tap_oracle import c, m, t, u
-
-type OracleValue = t.NormalizedValue | BaseModel | None
+from flext_tap_oracle.typings import OracleValue
 
 
 class FlextTapOracleStreams:
