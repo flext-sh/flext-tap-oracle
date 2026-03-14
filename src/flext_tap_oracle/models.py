@@ -87,7 +87,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             ]
 
         @staticmethod
-        def get_system_summary() -> dict[str, t.GeneralValueType | None]:
+    def get_system_summary() -> dict[str, t.GeneralValueType | None]:
             """Complete Singer Oracle tap system summary with database extraction capabilities."""
             return {
                 "total_models": len(
