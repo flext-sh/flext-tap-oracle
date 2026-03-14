@@ -132,13 +132,7 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
         class Summary:
             """Summary and reporting complex types."""
 
-            type SummaryData = dict[
-                str,
-                t.GeneralValueType
-                | list[t.GeneralValueType]
-                | dict[str, t.GeneralValueType | list[t.GeneralValueType] | bool | None]
-                | None,
-            ]
+            type SummaryData = dict[str, t.GeneralValueType | None]
 
 
 t = FlextTapOracleTypes
