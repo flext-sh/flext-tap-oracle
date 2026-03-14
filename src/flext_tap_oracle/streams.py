@@ -38,7 +38,7 @@ class FlextTapOracleStreams:
     class _Tap(Protocol):
         typed_config: OracleValue
 
-    class OracleStream(p.Meltano.Stream):
+    class OracleStream:
         """Oracle stream using MAXIMUM flext-db-oracle infrastructure.
 
         This implementation leverages ALL available flext-db-oracle functionality:
@@ -53,7 +53,7 @@ class FlextTapOracleStreams:
             tap: p.Meltano.Tap,
             name: str,
             table_name: str,
-            schema: Mapping[str, OracleValue],
+            schema: Mapping[str, t.GeneralValueType],
             oracle_api: FlextDbOracleApi,
         ) -> None:
             """Initialize Oracle stream with maximum flext-db-oracle integration."""
@@ -157,17 +157,17 @@ class FlextTapOracleStreams:
                 msg = f"Failed to get records: {e}"
                 raise RuntimeError(msg) from e
 
-        def get_stream_metadata(self) -> Mapping[str, OracleValue]:
+        def get_stream_metadata(self) -> Mapping[str, t.GeneralValueType | None]:
             """Get complete stream metadata."""
             return {
                 "name": self.name,
                 "table_name": self.table_name,
                 "schema": {},
-                "table_info": self.get_table_info(),
+                "table_info": str(self.get_table_info()),
                 "estimated_rows": self.estimate_row_count(),
             }
 
-        def get_table_info(self) -> Mapping[str, OracleValue]:
+        def get_table_info(self) -> Mapping[str, t.GeneralValueType | None]:
             """Get Oracle table information using flext-db-oracle metadata."""
             try:
                 mgr = self.metadata_manager
@@ -352,7 +352,7 @@ class FlextTapOracleStreams:
             tap: p.Meltano.Tap,
             name: str,
             table_name: str,
-            schema: Mapping[str, OracleValue],
+            schema: Mapping[str, t.GeneralValueType],
             oracle_api: FlextDbOracleApi,
         ) -> FlextTapOracleStreams.OracleStream:
             """Create Oracle stream.
@@ -402,8 +402,8 @@ class FlextTapOracleStreams:
                 else c.TapOracle.DEFAULT_OPERATION_NAME
             )
             stream_name = f"{stream_prefix}_{table_name.lower()}"
-            properties: dict[str, OracleValue] = {}
-            schema: dict[str, OracleValue] = {
+            properties: dict[str, t.GeneralValueType] = {}
+            schema: dict[str, t.GeneralValueType] = {
                 "type": "object",
                 "properties": properties,
             }

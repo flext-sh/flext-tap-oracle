@@ -13,7 +13,8 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Annotated, Self
 
-from flext_cli import FlextCli, FlextCliCommands
+from flext_cli import FlextCli
+from flext_cli.commands import FlextCliCommands
 from flext_core import FlextLogger, r, t
 from pydantic import BaseModel, Field, TypeAdapter
 
@@ -180,12 +181,20 @@ def create_tap_oracle_cli() -> r[FlextCliCommands]:
             name="tap-oracle",
             description="FLEXT Tap Oracle - Modern Singer Tap for Oracle Database",
         )
-        discover_result = cli_main.register_command("discover", handle_discover_command)
+        discover_result = FlextCliCommands.register_command(
+            cli_main,
+            "discover",
+            handle_discover_command,
+        )
         if discover_result.is_failure:
             return r[FlextCliCommands].fail(
                 f"Discover command registration failed: {discover_result.error}"
             )
-        sync_result = cli_main.register_command("sync", handle_sync_command)
+        sync_result = FlextCliCommands.register_command(
+            cli_main,
+            "sync",
+            handle_sync_command,
+        )
         if sync_result.is_failure:
             return r[FlextCliCommands].fail(
                 f"Sync command registration failed: {sync_result.error}"

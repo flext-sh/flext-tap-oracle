@@ -15,7 +15,7 @@ import os
 import socket
 from abc import ABC, abstractmethod
 from collections.abc import Generator
-from typing import override
+from typing import TypeGuard, override
 
 import pytest
 from flext_core import r, t
@@ -82,13 +82,21 @@ def _can_connect(host: str, port: int, timeout: float = 0.5) -> bool:
         return False
 
 
+def _is_str_object_dict(value: object) -> TypeGuard[dict[str, object]]:
+    return isinstance(value, dict)
+
+
+def _is_dict_list(value: object) -> TypeGuard[list[dict[str, object]]]:
+    return isinstance(value, list)
+
+
 @pytest.fixture(autouse=True)
-def skip_e2e_if_no_oracle(request: pytest.FixtureRequest) -> None:
+def skip_e2e_if_no_oracle() -> None:
     """Skip E2E tests gracefully when Oracle is not available locally.
 
     We only skip tests under the e2e/ directory to avoid hiding other failures.
     """
-    fspath = str(request.node.fspath) if hasattr(request.node, "fspath") else ""
+    fspath = os.environ.get("PYTEST_CURRENT_TEST", "")
     if "/e2e/" not in fspath and "\\e2e\\" not in fspath:
         return
     host = os.environ.get(
@@ -546,27 +554,22 @@ def mock_oracle_tap() -> type:
 
         def sync(
             self,
-            catalog: dict[str, object],
+            catalog: dict[str, list[dict[str, object]]],
             _state: dict[str, object],
         ) -> Generator[dict[str, object]]:
             """Sync data using mock extraction."""
-            if not isinstance(catalog, dict) or "streams" not in catalog:
+            if "streams" not in catalog:
                 return
             streams = catalog["streams"]
-            if not isinstance(streams, list):
-                return
             for stream_raw in streams:
-                if not isinstance(stream_raw, dict):
-                    continue
                 metadata_raw = stream_raw.get("metadata")
-                if not isinstance(metadata_raw, list) or not metadata_raw:
+                if not _is_dict_list(metadata_raw) or not metadata_raw:
                     continue
-                first_metadata = metadata_raw[0]
-                if not isinstance(first_metadata, dict):
+                first_metadata: dict[str, object] = metadata_raw[0]
+                metadata_map_raw = first_metadata.get("metadata")
+                if not _is_str_object_dict(metadata_map_raw):
                     continue
-                metadata_map = first_metadata.get("metadata")
-                if not isinstance(metadata_map, dict):
-                    continue
+                metadata_map: dict[str, object] = metadata_map_raw
                 if not bool(metadata_map.get("selected")):
                     continue
                 stream_id_raw = stream_raw.get("tap_stream_id")
