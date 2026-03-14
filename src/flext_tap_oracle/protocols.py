@@ -12,6 +12,8 @@ from typing import Protocol, runtime_checkable
 from flext_db_oracle.protocols import FlextDbOracleProtocols
 from flext_meltano import FlextMeltanoModels as m, FlextMeltanoProtocols
 
+from flext_tap_oracle.typings import t
+
 
 class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
     """Singer Tap Oracle protocols extending Oracle and Meltano protocols.
@@ -46,12 +48,14 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
         """Tap Oracle  namespace for cross-project access."""
 
         @runtime_checkable
-        class OracleConnection(FlextDbOracleProtocols.Service[object], Protocol):
+        class OracleConnection(
+            FlextDbOracleProtocols.Service[t.GeneralValueType], Protocol
+        ):
             """Protocol for Oracle database connection management."""
 
             def connect(
-                self, config: Mapping[str, object]
-            ) -> FlextMeltanoProtocols.Result[object]:
+                self, config: Mapping[str, t.GeneralValueType]
+            ) -> FlextMeltanoProtocols.Result[t.GeneralValueType]:
                 """Connect to Oracle database with provided configuration."""
                 ...
 
@@ -60,56 +64,60 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
                 ...
 
             def test_connection(
-                self, config: Mapping[str, object]
+                self, config: Mapping[str, t.GeneralValueType]
             ) -> FlextMeltanoProtocols.Result[bool]:
                 """Test Oracle database connection with validation."""
                 ...
 
         @runtime_checkable
-        class SchemaDiscovery(FlextDbOracleProtocols.Service[object], Protocol):
+        class SchemaDiscovery(
+            FlextDbOracleProtocols.Service[t.GeneralValueType], Protocol
+        ):
             """Protocol for Oracle schema discovery."""
 
             def discover_schemas(
-                self, config: Mapping[str, object]
-            ) -> FlextMeltanoProtocols.Result[list[object]]:
+                self, config: Mapping[str, t.GeneralValueType]
+            ) -> FlextMeltanoProtocols.Result[list[t.GeneralValueType]]:
                 """Discover accessible Oracle schemas."""
                 ...
 
             def discover_tables(
                 self, schema: str
-            ) -> FlextMeltanoProtocols.Result[list[object]]:
+            ) -> FlextMeltanoProtocols.Result[list[t.GeneralValueType]]:
                 """Discover Oracle tables in specified schema."""
                 ...
 
             def get_table_metadata(
                 self, schema: str, table: str
-            ) -> FlextMeltanoProtocols.Result[object]:
+            ) -> FlextMeltanoProtocols.Result[t.GeneralValueType]:
                 """Get Oracle table metadata and column definitions."""
                 ...
 
         @runtime_checkable
-        class DataExtraction(FlextDbOracleProtocols.Service[object], Protocol):
+        class DataExtraction(
+            FlextDbOracleProtocols.Service[t.GeneralValueType], Protocol
+        ):
             """Protocol for Oracle data extraction."""
 
             def extract_incremental(
-                self, table: str, state: Mapping[str, object]
-            ) -> FlextMeltanoProtocols.Result[list[object]]:
+                self, table: str, state: Mapping[str, t.GeneralValueType]
+            ) -> FlextMeltanoProtocols.Result[list[t.GeneralValueType]]:
                 """Extract incremental data from Oracle table using state."""
                 ...
 
             def extract_table_data(
-                self, table: str, config: Mapping[str, object]
-            ) -> FlextMeltanoProtocols.Result[list[object]]:
+                self, table: str, config: Mapping[str, t.GeneralValueType]
+            ) -> FlextMeltanoProtocols.Result[list[t.GeneralValueType]]:
                 """Extract all data from Oracle table."""
                 ...
 
         @runtime_checkable
-        class TypeMapping(FlextDbOracleProtocols.Service[object], Protocol):
+        class TypeMapping(FlextDbOracleProtocols.Service[t.GeneralValueType], Protocol):
             """Protocol for Oracle to Singer type mapping."""
 
             def convert_value(
-                self, value: object, oracle_type: str
-            ) -> FlextMeltanoProtocols.Result[object]:
+                self, value: t.GeneralValueType, oracle_type: str
+            ) -> FlextMeltanoProtocols.Result[t.GeneralValueType]:
                 """Convert Oracle value to Singer-compatible format."""
                 ...
 
@@ -120,23 +128,25 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
                 ...
 
         @runtime_checkable
-        class StreamGeneration(FlextDbOracleProtocols.Service[object], Protocol):
+        class StreamGeneration(
+            FlextDbOracleProtocols.Service[t.GeneralValueType], Protocol
+        ):
             """Protocol for Singer stream generation."""
 
             def generate_catalog(
-                self, config: Mapping[str, object]
+                self, config: Mapping[str, t.GeneralValueType]
             ) -> FlextMeltanoProtocols.Result[m.Meltano.SingerCatalog]:
                 """Generate Singer catalog from Oracle schema."""
                 ...
 
             def sync_stream(
-                self, stream: str, state: Mapping[str, object]
+                self, stream: str, state: Mapping[str, t.GeneralValueType]
             ) -> FlextMeltanoProtocols.Result[m.Meltano.SingerStateMessage]:
                 """Sync Singer stream from Oracle table."""
                 ...
 
         @runtime_checkable
-        class Performance(FlextDbOracleProtocols.Service[object], Protocol):
+        class Performance(FlextDbOracleProtocols.Service[t.GeneralValueType], Protocol):
             """Protocol for Oracle extraction performance."""
 
             def configure_batch_size(
@@ -150,28 +160,28 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
                 ...
 
         @runtime_checkable
-        class Validation(FlextDbOracleProtocols.Service[object], Protocol):
+        class Validation(FlextDbOracleProtocols.Service[t.GeneralValueType], Protocol):
             """Protocol for Oracle data validation."""
 
             def validate_config(
-                self, config: Mapping[str, object]
+                self, config: Mapping[str, t.GeneralValueType]
             ) -> FlextMeltanoProtocols.Result[bool]:
                 """Validate tap configuration."""
                 ...
 
             def validate_schema(
-                self, schema: Mapping[str, object]
+                self, schema: Mapping[str, t.GeneralValueType]
             ) -> FlextMeltanoProtocols.Result[bool]:
                 """Validate Oracle schema definition."""
                 ...
 
         @runtime_checkable
-        class Monitoring(FlextDbOracleProtocols.Service[object], Protocol):
+        class Monitoring(FlextDbOracleProtocols.Service[t.GeneralValueType], Protocol):
             """Protocol for Oracle extraction monitoring."""
 
             def get_statistics(
                 self,
-            ) -> FlextMeltanoProtocols.Result[object]:
+            ) -> FlextMeltanoProtocols.Result[t.GeneralValueType]:
                 """Get extraction statistics."""
                 ...
 

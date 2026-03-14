@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from datetime import datetime
 from typing import Annotated, Literal, Self
 
@@ -23,6 +23,7 @@ from pydantic import (
 )
 
 from flext_tap_oracle.constants import c
+from flext_tap_oracle.typings import t
 
 
 class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
@@ -86,7 +87,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             ]
 
         @staticmethod
-        def get_system_summary() -> Mapping[str, object]:
+        def get_system_summary() -> dict[str, t.GeneralValueType | None]:
             """Complete Singer Oracle tap system summary with database extraction capabilities."""
             return {
                 "total_models": len(
@@ -190,8 +191,13 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             ]
 
             @computed_field
-            def stream_metadata_summary(self) -> Mapping[str, object]:
+            def stream_metadata_summary(self) -> dict[str, t.GeneralValueType | None]:
                 """Oracle stream metadata summary."""
+                estimated_volume: dict[str, int] = {}
+                if self.estimated_rows is not None:
+                    estimated_volume["rows"] = self.estimated_rows
+                if self.column_count is not None:
+                    estimated_volume["columns"] = self.column_count
                 return {
                     "stream_name": self.stream_name,
                     "table_reference": f"{self.schema_name}.{self.table_name}"
@@ -201,10 +207,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     "is_incremental": self.replication_method == "INCREMENTAL",
                     "replication_column": self.replication_key,
                     "selected_for_extraction": self.is_selected,
-                    "estimated_volume": {
-                        "rows": self.estimated_rows,
-                        "columns": self.column_count,
-                    },
+                    "estimated_volume": estimated_volume,
                 }
 
             @field_validator("stream_name")
@@ -350,7 +353,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             ]
 
             @computed_field
-            def discovery_scope_summary(self) -> Mapping[str, object]:
+            def discovery_scope_summary(self) -> dict[str, t.GeneralValueType | None]:
                 """Oracle discovery scope summary."""
                 return {
                     "target_schemas": len(self.schema_names),
@@ -448,7 +451,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             ]
 
             @computed_field
-            def extraction_config_summary(self) -> Mapping[str, object]:
+            def extraction_config_summary(self) -> dict[str, t.GeneralValueType | None]:
                 """Oracle extraction configuration summary."""
                 return {
                     "batch_processing": {
@@ -562,7 +565,9 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             ]
 
             @computed_field
-            def performance_analysis_summary(self) -> Mapping[str, object]:
+            def performance_analysis_summary(
+                self,
+            ) -> dict[str, t.GeneralValueType | None]:
                 """Oracle tap performance analysis summary."""
                 duration = 0.0
                 if self.start_time and self.end_time:
@@ -673,7 +678,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             ]
 
             @computed_field
-            def stream_info_summary(self) -> Mapping[str, object]:
+            def stream_info_summary(self) -> dict[str, t.GeneralValueType | None]:
                 """Oracle stream information summary."""
                 return {
                     "stream_identity": {
@@ -697,7 +702,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     },
                 }
 
-            def to_singer_stream_info(self) -> Mapping[str, object]:
+            def to_singer_stream_info(self) -> dict[str, t.GeneralValueType | None]:
                 """Convert to Singer stream information format."""
                 return {
                     "tap_stream_id": self.stream_name,
@@ -812,7 +817,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             ]
 
             @computed_field
-            def discovery_result_summary(self) -> Mapping[str, object]:
+            def discovery_result_summary(self) -> dict[str, t.GeneralValueType | None]:
                 """Oracle discovery result summary."""
                 selected_streams = len([s for s in self.stream_info if s.is_selected])
 
@@ -857,7 +862,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                         return table
                 return None
 
-            def to_singer_catalog(self) -> Mapping[str, object]:
+            def to_singer_catalog(self) -> dict[str, t.GeneralValueType | None]:
                 """Convert to Singer catalog format."""
                 return {
                     "streams": [
@@ -998,7 +1003,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             ]
 
             @computed_field
-            def execution_stats_summary(self) -> Mapping[str, object]:
+            def execution_stats_summary(self) -> dict[str, t.GeneralValueType | None]:
                 """Oracle tap execution statistics summary."""
                 success_rate = 0.0
                 if self.streams_processed > 0:
@@ -1081,7 +1086,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     },
                 )
 
-            def to_summary(self) -> Mapping[str, object]:
+            def to_summary(self) -> dict[str, t.GeneralValueType | None]:
                 """Create execution summary."""
                 return {
                     "execution_id": self.execution_id,

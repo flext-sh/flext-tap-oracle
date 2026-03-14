@@ -129,6 +129,17 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
             type SingerProtocolConfig = dict[str, t.GeneralValueType]
             type TapOraclePipelineConfig = dict[str, t.GeneralValueType]
 
+        class Summary:
+            """Summary and reporting complex types."""
+
+            type SummaryData = dict[
+                str,
+                t.GeneralValueType
+                | list[t.GeneralValueType]
+                | dict[str, t.GeneralValueType | list[t.GeneralValueType] | bool | None]
+                | None,
+            ]
+
 
 t = FlextTapOracleTypes
 __all__ = ["FlextTapOracleTypes", "t"]

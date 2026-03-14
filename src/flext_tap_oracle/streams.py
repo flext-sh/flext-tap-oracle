@@ -13,8 +13,11 @@ from typing import Protocol
 from flext_core import FlextLogger, r
 from flext_db_oracle import FlextDbOracleApi
 from flext_meltano import FlextMeltanoStream as Stream, p
+from pydantic import BaseModel
 
 from flext_tap_oracle import c, m, t, u
+
+type OracleValue = m.NormalizedValue | BaseModel | None
 
 
 class FlextTapOracleStreams:
@@ -33,7 +36,7 @@ class FlextTapOracleStreams:
     logger = FlextLogger(__name__)
 
     class _Tap(Protocol):
-        typed_config: object
+        typed_config: OracleValue
 
     class OracleStream(Stream):
         """Oracle stream using MAXIMUM flext-db-oracle infrastructure.
@@ -50,7 +53,7 @@ class FlextTapOracleStreams:
             tap: p.Meltano.Tap,
             name: str,
             table_name: str,
-            schema: Mapping[str, object],
+            schema: Mapping[str, OracleValue],
             oracle_api: FlextDbOracleApi,
         ) -> None:
             """Initialize Oracle stream with maximum flext-db-oracle integration."""
@@ -59,8 +62,8 @@ class FlextTapOracleStreams:
             self.table_name: str = table_name
             self.oracle_api: FlextDbOracleApi = oracle_api
             self._tap: p.Meltano.Tap = tap
-            self._metadata_manager: object | None = None
-            self._observability_manager: object | None = None
+            self._metadata_manager: Mapping[str, OracleValue] | None = None
+            self._observability_manager: Mapping[str, OracleValue] | None = None
 
         @property
         def metadata_manager(self) -> object:
@@ -68,7 +71,7 @@ class FlextTapOracleStreams:
             if self._metadata_manager is None:
                 connection = self.oracle_api.connection
                 if connection is None:
-                    tap_config: object = getattr(self._tap, "typed_config", None)
+                    tap_config: OracleValue = getattr(self._tap, "typed_config", None)
                     if (
                         tap_config
                         and getattr(tap_config, "get_oracle_config", None) is not None
@@ -123,8 +126,8 @@ class FlextTapOracleStreams:
                 return None
 
         def get_records(
-            self, context: Mapping[str, object] | None = None
-        ) -> Iterable[dict[str, object]]:
+            self, context: Mapping[str, OracleValue] | None = None
+        ) -> Iterable[dict[str, OracleValue]]:
             """Get records from Oracle table using flext-db-oracle exclusively - NO direct SQLAlchemy."""
             try:
                 _ = context
@@ -145,7 +148,7 @@ class FlextTapOracleStreams:
                         return
                     rows: list[m.Dict] = query_result.unwrap_or([])
                     for row in rows:
-                        record: dict[str, object] = dict(row.root)
+                        record: dict[str, OracleValue] = dict(row.root)
                         yield record
             except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                 FlextTapOracleStreams.logger.exception(
@@ -154,7 +157,7 @@ class FlextTapOracleStreams:
                 msg = f"Failed to get records: {e}"
                 raise RuntimeError(msg) from e
 
-        def get_stream_metadata(self) -> Mapping[str, object]:
+        def get_stream_metadata(self) -> Mapping[str, OracleValue]:
             """Get complete stream metadata."""
             return {
                 "name": self.name,
@@ -164,7 +167,7 @@ class FlextTapOracleStreams:
                 "estimated_rows": self.estimate_row_count(),
             }
 
-        def get_table_info(self) -> Mapping[str, object]:
+        def get_table_info(self) -> Mapping[str, OracleValue]:
             """Get Oracle table information using flext-db-oracle metadata."""
             try:
                 mgr = self.metadata_manager
@@ -198,8 +201,8 @@ class FlextTapOracleStreams:
                 return {"table_name": self.table_name, "error": str(e)}
 
         def _process_results_fallback(
-            self, query_data: object
-        ) -> Iterable[Mapping[str, object]]:
+            self, query_data: OracleValue
+        ) -> Iterable[Mapping[str, OracleValue]]:
             """Fallback processing without metadata (minimal implementation)."""
             column_names: list[str] = []
             if not isinstance(query_data, Iterable) or isinstance(
@@ -209,10 +212,10 @@ class FlextTapOracleStreams:
                     "Cannot process query data in fallback mode"
                 )
                 return
-            data_rows: Iterable[object] = query_data
+            data_rows: Iterable[OracleValue] = query_data
             for row_data in data_rows:
                 try:
-                    record: dict[str, object]
+                    record: dict[str, OracleValue]
                     match row_data:
                         case list() as row_list:
                             if column_names:
@@ -239,7 +242,7 @@ class FlextTapOracleStreams:
                                 for column, value in row_mapping.items()
                             }
                         case _:
-                            str_val: object = str(row_data)
+                            str_val: OracleValue = str(row_data)
                             record = {"data": str_val}
                     yield record
                 except (ValueError, TypeError, KeyError, AttributeError, OSError):
@@ -249,8 +252,8 @@ class FlextTapOracleStreams:
                     continue
 
         def _process_results_with_table_metadata(
-            self, query_data: object, table_metadata: object
-        ) -> Iterable[Mapping[str, object]]:
+            self, query_data: OracleValue, table_metadata: OracleValue
+        ) -> Iterable[Mapping[str, OracleValue]]:
             """Process results using flext-db-oracle table metadata."""
             columns = getattr(table_metadata, "columns", None)
             if columns is None or not u.is_list_like(columns):
@@ -268,10 +271,10 @@ class FlextTapOracleStreams:
                 )
                 yield from self._process_results_fallback(query_data)
                 return
-            data_rows: Iterable[object] = query_data
+            data_rows: Iterable[OracleValue] = query_data
             for row_data in data_rows:
                 try:
-                    record: dict[str, object]
+                    record: dict[str, OracleValue]
                     match row_data:
                         case list() as row_list:
                             record = dict(zip(column_names, row_list, strict=False))
@@ -301,12 +304,12 @@ class FlextTapOracleStreams:
 
         def _transform_oracle_types_with_table_metadata(
             self,
-            record: Mapping[str, object],
-            column_metadata: Sequence[object],
-        ) -> dict[str, object]:
+            record: Mapping[str, OracleValue],
+            column_metadata: Sequence[OracleValue],
+        ) -> dict[str, OracleValue]:
             """Transform Oracle data types using flext-db-oracle type knowledge."""
-            transformed_record: dict[str, object] = {}
-            meta_lookup: dict[str, object] = {}
+            transformed_record: dict[str, OracleValue] = {}
+            meta_lookup: dict[str, OracleValue] = {}
             for col_meta_value in column_metadata:
                 col_name = getattr(col_meta_value, "name", None) or getattr(
                     col_meta_value, "column_name", None
@@ -349,7 +352,7 @@ class FlextTapOracleStreams:
             tap: p.Meltano.Tap,
             name: str,
             table_name: str,
-            schema: Mapping[str, object],
+            schema: Mapping[str, OracleValue],
             oracle_api: FlextDbOracleApi,
         ) -> FlextTapOracleStreams.OracleStream:
             """Create Oracle stream.
@@ -376,7 +379,7 @@ class FlextTapOracleStreams:
         @staticmethod
         def create_oracle_stream_from_table(
             tap: p.Meltano.Tap,
-            table_metadata: object,
+            table_metadata: OracleValue,
             oracle_api: FlextDbOracleApi,
             stream_prefix: str = c.TapOracle.DEFAULT_STREAM_PREFIX,
         ) -> FlextTapOracleStreams.OracleStream:
@@ -399,8 +402,8 @@ class FlextTapOracleStreams:
                 else c.TapOracle.DEFAULT_OPERATION_NAME
             )
             stream_name = f"{stream_prefix}_{table_name.lower()}"
-            properties: dict[str, object] = {}
-            schema: dict[str, object] = {
+            properties: dict[str, OracleValue] = {}
+            schema: dict[str, OracleValue] = {
                 "type": "object",
                 "properties": properties,
             }
