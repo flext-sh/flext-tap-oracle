@@ -33,8 +33,8 @@ class OracleTapDiscoverParams(BaseModel):
     @classmethod
     def from_click_args(cls, **kwargs: t.Scalar) -> Self:
         """Create discover params from Click command arguments."""
-        config_file_value: object = kwargs.get("config_file")
-        output_file_value: object = kwargs.get("output_file")
+        config_file_value: t.Scalar | None = kwargs.get("config_file")
+        output_file_value: t.Scalar | None = kwargs.get("output_file")
         return cls(
             config_file=str(config_file_value) if config_file_value else None,
             output_file=str(output_file_value) if output_file_value else None,
@@ -51,9 +51,9 @@ class OracleTapSyncParams(BaseModel):
     @classmethod
     def from_click_args(cls, **kwargs: t.Scalar) -> Self:
         """Create sync params from Click command arguments."""
-        config_file_value: object = kwargs.get("config_file")
-        catalog_file_value: object = kwargs.get("catalog_file")
-        state_file_value: object = kwargs.get("state_file")
+        config_file_value: t.Scalar | None = kwargs.get("config_file")
+        catalog_file_value: t.Scalar | None = kwargs.get("catalog_file")
+        state_file_value: t.Scalar | None = kwargs.get("state_file")
         return cls(
             config_file=str(config_file_value) if config_file_value else None,
             catalog_file=str(catalog_file_value) if catalog_file_value else None,
@@ -72,12 +72,12 @@ class OracleTapDiscoverCommand:
         self.params = params
         self._logger = FlextLogger(__name__)
 
-    def execute(self) -> r[Mapping[str, object]]:
+    def execute(self) -> r[Mapping[str, t.GeneralValueType]]:
         """Execute Oracle tap discovery using modern patterns."""
         self._logger.info("Starting Oracle database discovery")
         try:
             if not self.params.config_file:
-                return r[Mapping[str, object]].fail(
+                return r[Mapping[str, t.GeneralValueType]].fail(
                     "Configuration file is required for discovery"
                 )
             config_data: str = Path(self.params.config_file).read_text(encoding="utf-8")
@@ -87,24 +87,24 @@ class OracleTapDiscoverCommand:
             oracle_config = config.get_oracle_config()
             schema_name = str(oracle_config.get("schema_name", "USER"))
             self._logger.info("Discovering Oracle schema: %s", schema_name)
-            catalog_dict: dict[str, object] = {
+            catalog_dict: dict[str, t.GeneralValueType] = {
                 "streams": [],
                 "schema_name": schema_name,
             }
             if self.params.output_file:
                 output_path = Path(self.params.output_file)
                 output_path.write_text(
-                    TypeAdapter(dict[str, object])
+                    TypeAdapter(dict[str, t.GeneralValueType])
                     .dump_json(catalog_dict, indent=2)
                     .decode("utf-8"),
                     encoding="utf-8",
                 )
                 self._logger.info("Catalog written to %s", output_path)
             self._logger.info("Oracle schema discovery completed")
-            return r[Mapping[str, object]].ok(catalog_dict)
+            return r[Mapping[str, t.GeneralValueType]].ok(catalog_dict)
         except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
             logger.exception("Oracle discovery failed")
-            return r[Mapping[str, object]].fail(f"Discovery error: {e}")
+            return r[Mapping[str, t.GeneralValueType]].fail(f"Discovery error: {e}")
 
     def validate_business_rules(self) -> r[bool]:
         """Validate business rules for Oracle tap discovery."""
@@ -123,12 +123,12 @@ class OracleTapSyncCommand:
         self.params = params
         self._logger = FlextLogger(__name__)
 
-    def execute(self) -> r[Mapping[str, object]]:
+    def execute(self) -> r[Mapping[str, t.GeneralValueType]]:
         """Execute Oracle tap sync using modern patterns."""
         self._logger.info("Starting Oracle data extraction")
         try:
             if not self.params.config_file:
-                return r[Mapping[str, object]].fail(
+                return r[Mapping[str, t.GeneralValueType]].fail(
                     "Configuration file is required for sync"
                 )
             config_data: str = Path(self.params.config_file).read_text(encoding="utf-8")
@@ -145,7 +145,7 @@ class OracleTapSyncCommand:
             self._logger.info("Preparing extraction from Oracle database...")
             schema_name = str(oracle_config.get("schema_name", "USER"))
             record_count = c.TapOracle.INITIAL_RECORD_COUNT
-            result_data: dict[str, object] = {
+            result_data: dict[str, t.GeneralValueType] = {
                 "records_extracted": record_count,
                 "schema_name": schema_name,
                 "status": "completed",
@@ -155,10 +155,10 @@ class OracleTapSyncCommand:
                 schema_name,
                 record_count,
             )
-            return r[Mapping[str, object]].ok(result_data)
+            return r[Mapping[str, t.GeneralValueType]].ok(result_data)
         except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
             logger.exception("Oracle sync failed")
-            return r[Mapping[str, object]].fail(f"Sync error: {e}")
+            return r[Mapping[str, t.GeneralValueType]].fail(f"Sync error: {e}")
 
     def validate_business_rules(self) -> r[bool]:
         """Validate business rules for Oracle tap sync."""
@@ -195,7 +195,7 @@ def create_tap_oracle_cli() -> r[FlextCliCommands]:
         return r[FlextCliCommands].fail(f"CLI creation failed: {e}")
 
 
-def handle_discover_command(*_args: object, **kwargs: t.Scalar) -> r[object]:
+def handle_discover_command(*_args: t.Scalar, **kwargs: t.Scalar) -> r:
     """Handle discover command using flext-cli patterns - NO click decorators."""
     try:
         params = OracleTapDiscoverParams.from_click_args(**kwargs)
@@ -204,15 +204,15 @@ def handle_discover_command(*_args: object, **kwargs: t.Scalar) -> r[object]:
         if result.is_failure:
             error_message = result.error or "Discovery failed"
             cli_api.print(f"Discovery failed: {error_message}", style="red")
-            return r[object].fail(error_message)
-        return r[object].ok(True)
+            return r[bool].fail(error_message)
+        return r[bool].ok(True)
     except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
         error_message = f"Discovery error: {e}"
         cli_api.print(error_message, style="red")
-        return r[object].fail(error_message)
+        return r[bool].fail(error_message)
 
 
-def handle_sync_command(*_args: object, **kwargs: t.Scalar) -> r[object]:
+def handle_sync_command(*_args: t.Scalar, **kwargs: t.Scalar) -> r:
     """Handle sync command using flext-cli patterns - NO click decorators."""
     try:
         params = OracleTapSyncParams.from_click_args(**kwargs)
@@ -221,12 +221,12 @@ def handle_sync_command(*_args: object, **kwargs: t.Scalar) -> r[object]:
         if result.is_failure:
             error_message = result.error or "Sync failed"
             cli_api.print(f"Sync failed: {error_message}", style="red")
-            return r[object].fail(error_message)
-        return r[object].ok(True)
+            return r[bool].fail(error_message)
+        return r[bool].ok(True)
     except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
         error_message = f"Sync error: {e}"
         cli_api.print(error_message, style="red")
-        return r[object].fail(error_message)
+        return r[bool].fail(error_message)
 
 
 def cli() -> int:
