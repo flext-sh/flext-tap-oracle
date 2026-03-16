@@ -20,7 +20,7 @@ from flext_db_oracle.typings import FlextDbOracleTypes
 from flext_meltano import FlextMeltanoTypes
 from pydantic import BaseModel
 
-from flext_tap_oracle import t
+from flext_tap_oracle import t as _tap_t
 
 
 class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
@@ -71,32 +71,34 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
         class Extraction:
             """Oracle extraction complex types."""
 
-            type ExtractionConfiguration = dict[str, t.GeneralValueType]
-            type ExtractionState = dict[str, t.Container]
-            type ExtractionMetrics = dict[str, t.GeneralValueType]
-            type BatchConfiguration = dict[str, t.GeneralValueType]
-            type StreamDefinition = dict[str, str | list[str] | dict[str, t.Scalar]]
-            type TableMetadata = dict[str, list[t.Scalar]]
+            type ExtractionConfiguration = dict[str, _tap_t.GeneralValueType]
+            type ExtractionState = dict[str, _tap_t.Container]
+            type ExtractionMetrics = dict[str, _tap_t.GeneralValueType]
+            type BatchConfiguration = dict[str, _tap_t.GeneralValueType]
+            type StreamDefinition = dict[
+                str, str | list[str] | dict[str, _tap_t.Scalar]
+            ]
+            type TableMetadata = dict[str, list[_tap_t.Scalar]]
 
         class Singer:
             """Singer protocol complex types."""
 
-            type CatalogEntry = dict[str, str | dict[str, t.Container]]
-            type StreamSchema = dict[str, dict[str, t.Container]]
-            type TapConfiguration = dict[str, t.GeneralValueType]
-            type StateBookmark = dict[str, t.Container]
-            type RecordMessage = dict[str, str | dict[str, t.Scalar]]
-            type SchemaMessage = dict[str, str | dict[str, t.Container]]
+            type CatalogEntry = dict[str, str | dict[str, _tap_t.Container]]
+            type StreamSchema = dict[str, dict[str, _tap_t.Container]]
+            type TapConfiguration = dict[str, _tap_t.GeneralValueType]
+            type StateBookmark = dict[str, _tap_t.Container]
+            type RecordMessage = dict[str, str | dict[str, _tap_t.Scalar]]
+            type SchemaMessage = dict[str, str | dict[str, _tap_t.Container]]
 
         class Configuration:
             """Oracle tap configuration complex types."""
 
-            type TapOracleConfig = dict[str, t.GeneralValueType]
-            type ConnectionSettings = dict[str, t.GeneralValueType]
-            type ExtractionSettings = dict[str, t.GeneralValueType]
-            type PerformanceSettings = dict[str, t.GeneralValueType]
-            type SecuritySettings = dict[str, t.GeneralValueType]
-            type StreamSettings = dict[str, t.GeneralValueType]
+            type TapOracleConfig = dict[str, _tap_t.GeneralValueType]
+            type ConnectionSettings = dict[str, _tap_t.GeneralValueType]
+            type ExtractionSettings = dict[str, _tap_t.GeneralValueType]
+            type PerformanceSettings = dict[str, _tap_t.GeneralValueType]
+            type SecuritySettings = dict[str, _tap_t.GeneralValueType]
+            type StreamSettings = dict[str, _tap_t.GeneralValueType]
 
         class Project:
             """Singer Tap Oracle-specific project types.
@@ -127,19 +129,19 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
                 "oracle-tap",
                 "singer-integration",
             ]
-            type SingerTapOracleProjectConfig = dict[str, t.GeneralValueType]
+            type SingerTapOracleProjectConfig = dict[str, _tap_t.GeneralValueType]
             type OracleExtractorConfig = dict[str, str | int | bool | list[str]]
-            type SingerProtocolConfig = dict[str, t.GeneralValueType]
-            type TapOraclePipelineConfig = dict[str, t.GeneralValueType]
+            type SingerProtocolConfig = dict[str, _tap_t.GeneralValueType]
+            type TapOraclePipelineConfig = dict[str, _tap_t.GeneralValueType]
 
         class Summary:
             """Summary and reporting complex types."""
 
-            type SummaryData = dict[str, t.GeneralValueType | None]
+            type SummaryData = dict[str, _tap_t.GeneralValueType | None]
 
 
 t = FlextTapOracleTypes
 __all__ = ["FlextTapOracleTypes", "t"]
 
 
-type OracleValue = t.NormalizedValue | BaseModel | None
+type OracleValue = _tap_t.NormalizedValue | BaseModel | None
