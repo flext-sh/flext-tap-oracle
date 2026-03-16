@@ -14,7 +14,7 @@ from flext_core import FlextLogger, r
 from flext_db_oracle import FlextDbOracleApi
 from flext_meltano import p
 
-from flext_tap_oracle import c, m, t, u
+from flext_tap_oracle import c, t, u
 from flext_tap_oracle.typings import OracleValue
 
 
@@ -103,10 +103,10 @@ class FlextTapOracleStreams:
                     return None
                 safe_table_name = self.table_name.replace('"', '""')
                 sql: str = f'SELECT COUNT(*) FROM "{safe_table_name}"'
-                result: r[list[m.Dict]] = self.oracle_api.query(sql)
+                result: r[list[t.Dict]] = self.oracle_api.query(sql)
                 if result.is_success and result.value:
-                    result_rows: list[m.Dict] = result.value
-                    first_row: m.Dict = result_rows[0]
+                    result_rows: list[t.Dict] = result.value
+                    first_row: t.Dict = result_rows[0]
                     first_val = next(iter(first_row.root.values()), None)
                     if isinstance(first_val, int | float):
                         return int(first_val)
@@ -137,14 +137,14 @@ class FlextTapOracleStreams:
                         if schema_name
                         else f'SELECT * FROM "{safe_table}"'
                     )
-                    query_result: r[list[m.Dict]] = api.query(sql)
+                    query_result: r[list[t.Dict]] = api.query(sql)
                     if query_result.is_failure:
                         error_msg: str = query_result.error or "unknown query error"
                         FlextTapOracleStreams.logger.error(
                             "Failed to execute query: %s", error_msg
                         )
                         return
-                    rows: list[m.Dict] = query_result.unwrap_or([])
+                    rows: list[t.Dict] = query_result.unwrap_or([])
                     for row in rows:
                         record: dict[str, OracleValue] = dict(row.root)
                         yield record
