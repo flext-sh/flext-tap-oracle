@@ -11,7 +11,7 @@ from typing import Literal
 
 from flext_tests import FlextTestsTypes
 
-from flext_tap_oracle import t
+from flext_tap_oracle import c, t
 
 
 class TestsFlextTapOracleTypes(FlextTestsTypes):
@@ -40,10 +40,10 @@ class TestsFlextTapOracleTypes(FlextTestsTypes):
         - Test scenario types
         """
 
-        type TestOracleHost = Literal["localhost", "test-host"]
+        type TestOracleHost = c.TestOracleHost
         type TestOraclePort = Literal[1521, 10521, 1522]
-        type TestServiceName = Literal["XE", "ORCL", "TESTDB"]
-        type TestReplicationMethod = Literal["FULL_TABLE", "INCREMENTAL"]
+        type TestServiceName = c.TestServiceName
+        type TestReplicationMethod = c.TestReplicationMethod
         type MockOracleRecord = dict[str, t.Scalar]
         type MockOracleTable = list[MockOracleRecord]
         type TestScenario = dict[str, object]

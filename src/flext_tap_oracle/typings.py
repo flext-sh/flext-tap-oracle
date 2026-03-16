@@ -14,13 +14,11 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import Literal
-
 from flext_db_oracle.typings import FlextDbOracleTypes
 from flext_meltano import FlextMeltanoTypes
 from pydantic import BaseModel
 
-from flext_tap_oracle import t as _tap_t
+from flext_tap_oracle import c, t as _tap_t
 
 
 class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
@@ -41,32 +39,7 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
         organized by functional domains.
         """
 
-        type MeltanoTapOracleProjectType = Literal[
-            "library",
-            "application",
-            "service",
-            "meltano-project",
-            "elt-pipeline",
-            "data-pipeline",
-            "etl-service",
-            "singer-tap",
-            "singer-target",
-            "dbt-project",
-            "data-integration",
-            "meltano-plugin",
-            "data-connector",
-            "oracle-service",
-            "database-service",
-            "data-warehouse",
-            "oracle-client",
-            "db-migration",
-            "schema-manager",
-            "sql-service",
-            "oracle-api",
-            "database-api",
-            "oracle-tap",
-            "oracle-target",
-        ]
+        type MeltanoTapOracleProjectType = c.MeltanoTapOracleProjectType
 
         class Extraction:
             """Oracle extraction complex types."""
@@ -108,27 +81,7 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
             Singer tap Oracle domain owns Oracle extraction and Singer protocol-specific types.
             """
 
-            type ProjectType = Literal[
-                "library",
-                "application",
-                "service",
-                "singer-tap",
-                "oracle-extractor",
-                "database-extractor",
-                "singer-tap-oracle",
-                "tap-oracle",
-                "oracle-connector",
-                "database-connector",
-                "singer-protocol",
-                "oracle-etl",
-                "database-etl",
-                "oracle-integration",
-                "singer-stream",
-                "etl-tap",
-                "data-pipeline",
-                "oracle-tap",
-                "singer-integration",
-            ]
+            type ProjectType = c.ProjectType
             type SingerTapOracleProjectConfig = dict[str, _tap_t.GeneralValueType]
             type OracleExtractorConfig = dict[str, str | int | bool | list[str]]
             type SingerProtocolConfig = dict[str, _tap_t.GeneralValueType]

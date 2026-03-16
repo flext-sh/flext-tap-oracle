@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from enum import StrEnum
+from enum import StrEnum, unique
 from typing import Final, Literal
 
 from flext_db_oracle import FlextDbOracleConstants
@@ -95,6 +95,7 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
         class Replication:
             """Oracle replication method constants."""
 
+            @unique
             class Method(StrEnum):
                 """Oracle replication methods using StrEnum for type safety.
 
@@ -178,6 +179,71 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
         TapReplicationMethod = Literal["FULL_TABLE", "INCREMENTAL"]
         TapStreamSelection = Literal["selected", "automatic", "excluded"]
         TapExecutionMode = Literal["discovery", "extraction", "test", "validate"]
+
+    @unique
+    class MeltanoTapOracleProjectType(StrEnum):
+        LIBRARY = "library"
+        APPLICATION = "application"
+        SERVICE = "service"
+        MELTANO_PROJECT = "meltano-project"
+        ELT_PIPELINE = "elt-pipeline"
+        DATA_PIPELINE = "data-pipeline"
+        ETL_SERVICE = "etl-service"
+        SINGER_TAP = "singer-tap"
+        SINGER_TARGET = "singer-target"
+        DBT_PROJECT = "dbt-project"
+        DATA_INTEGRATION = "data-integration"
+        MELTANO_PLUGIN = "meltano-plugin"
+        DATA_CONNECTOR = "data-connector"
+        ORACLE_SERVICE = "oracle-service"
+        DATABASE_SERVICE = "database-service"
+        DATA_WAREHOUSE = "data-warehouse"
+        ORACLE_CLIENT = "oracle-client"
+        DB_MIGRATION = "db-migration"
+        SCHEMA_MANAGER = "schema-manager"
+        SQL_SERVICE = "sql-service"
+        ORACLE_API = "oracle-api"
+        DATABASE_API = "database-api"
+        ORACLE_TAP = "oracle-tap"
+        ORACLE_TARGET = "oracle-target"
+
+    @unique
+    class ProjectType(StrEnum):
+        LIBRARY = "library"
+        APPLICATION = "application"
+        SERVICE = "service"
+        SINGER_TAP = "singer-tap"
+        ORACLE_EXTRACTOR = "oracle-extractor"
+        DATABASE_EXTRACTOR = "database-extractor"
+        SINGER_TAP_ORACLE = "singer-tap-oracle"
+        TAP_ORACLE = "tap-oracle"
+        ORACLE_CONNECTOR = "oracle-connector"
+        DATABASE_CONNECTOR = "database-connector"
+        SINGER_PROTOCOL = "singer-protocol"
+        ORACLE_ETL = "oracle-etl"
+        DATABASE_ETL = "database-etl"
+        ORACLE_INTEGRATION = "oracle-integration"
+        SINGER_STREAM = "singer-stream"
+        ETL_TAP = "etl-tap"
+        DATA_PIPELINE = "data-pipeline"
+        ORACLE_TAP = "oracle-tap"
+        SINGER_INTEGRATION = "singer-integration"
+
+    @unique
+    class TestOracleHost(StrEnum):
+        LOCALHOST = "localhost"
+        TEST_HOST = "test-host"
+
+    @unique
+    class TestServiceName(StrEnum):
+        XE = "XE"
+        ORCL = "ORCL"
+        TESTDB = "TESTDB"
+
+    @unique
+    class TestReplicationMethod(StrEnum):
+        FULL_TABLE = "FULL_TABLE"
+        INCREMENTAL = "INCREMENTAL"
 
 
 c = FlextTapOracleConstants

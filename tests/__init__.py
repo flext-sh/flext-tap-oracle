@@ -44,10 +44,7 @@ if TYPE_CHECKING:
         skip_e2e_if_no_oracle,
         stream_config,
     )
-    from tests.constants import (
-        TestsFlextTapOracleConstants,
-        TestsFlextTapOracleConstants as c,
-    )
+    from tests.constants import TestsFlextTapOracleConstants, c
     from tests.models import TestsFlextTapOracleModels, m, tm
     from tests.protocols import TestsFlextTapOracleProtocols, p
     from tests.test_enterprise_tap import TestFlextOracleTapSettingsAndHelpers
@@ -68,7 +65,7 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "TestsFlextTapOracleProtocols": ("tests.protocols", "TestsFlextTapOracleProtocols"),
     "TestsFlextTapOracleTypes": ("tests.typings", "TestsFlextTapOracleTypes"),
     "TestsFlextTapOracleUtilities": ("tests.utilities", "TestsFlextTapOracleUtilities"),
-    "c": ("tests.constants", "TestsFlextTapOracleConstants"),
+    "c": ("tests.constants", "c"),
     "discovery_config": ("tests.conftest", "discovery_config"),
     "docker_control": ("tests.conftest", "docker_control"),
     "error_scenarios": ("tests.conftest", "error_scenarios"),

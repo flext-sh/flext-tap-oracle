@@ -15,7 +15,7 @@ import os
 import socket
 from abc import ABC, abstractmethod
 from collections.abc import Generator
-from typing import TypeGuard, override
+from typing import TypeIs, override
 
 import pytest
 from flext_core import r, t
@@ -82,11 +82,11 @@ def _can_connect(host: str, port: int, timeout: float = 0.5) -> bool:
         return False
 
 
-def _is_str_object_dict(value: object) -> TypeGuard[dict[str, object]]:
+def _is_str_object_dict(value: object) -> TypeIs[dict[str, object]]:
     return isinstance(value, dict)
 
 
-def _is_dict_list(value: object) -> TypeGuard[list[dict[str, object]]]:
+def _is_dict_list(value: object) -> TypeIs[list[dict[str, object]]]:
     return isinstance(value, list)
 
 
