@@ -182,6 +182,8 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
 
     @unique
     class MeltanoTapOracleProjectType(StrEnum):
+        """Project type literals for Meltano tap metadata."""
+
         LIBRARY = "library"
         APPLICATION = "application"
         SERVICE = "service"
@@ -209,6 +211,8 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
 
     @unique
     class ProjectType(StrEnum):
+        """Project type literals for tap package metadata."""
+
         LIBRARY = "library"
         APPLICATION = "application"
         SERVICE = "service"
@@ -231,17 +235,23 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
 
     @unique
     class TestOracleHost(StrEnum):
+        """Test Oracle host literals."""
+
         LOCALHOST = "localhost"
         TEST_HOST = "test-host"
 
     @unique
     class TestServiceName(StrEnum):
+        """Test Oracle service name literals."""
+
         XE = "XE"
         ORCL = "ORCL"
         TESTDB = "TESTDB"
 
     @unique
     class TestReplicationMethod(StrEnum):
+        """Test replication method literals."""
+
         FULL_TABLE = "FULL_TABLE"
         INCREMENTAL = "INCREMENTAL"
 
