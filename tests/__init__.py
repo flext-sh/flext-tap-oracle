@@ -20,7 +20,7 @@ from flext_core.lazy import cleanup_submodule_namespace, lazy_getattr
 if TYPE_CHECKING:
     from flext_core.typings import FlextTypes
 
-    from tests.conftest import (
+    from .conftest import (
         discovery_config,
         docker_control,
         error_scenarios,
@@ -44,16 +44,12 @@ if TYPE_CHECKING:
         skip_e2e_if_no_oracle,
         stream_config,
     )
-    from tests.constants import TestsFlextTapOracleConstants, c
-    from tests.models import TestsFlextTapOracleModels, m, tm
-    from tests.protocols import TestsFlextTapOracleProtocols, p
-    from tests.test_enterprise_tap import TestFlextOracleTapSettingsAndHelpers
-    from tests.typings import (
-        TestsFlextTapOracleTypes,
-        TestsFlextTapOracleTypes as t,
-        tt,
-    )
-    from tests.utilities import TestsFlextTapOracleUtilities, u
+    from .constants import TestsFlextTapOracleConstants, c
+    from .models import TestsFlextTapOracleModels, m, tm
+    from .protocols import TestsFlextTapOracleProtocols, p
+    from .test_enterprise_tap import TestFlextOracleTapSettingsAndHelpers
+    from .typings import TestsFlextTapOracleTypes, TestsFlextTapOracleTypes as t, tt
+    from .utilities import TestsFlextTapOracleUtilities, u
 
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "TestFlextOracleTapSettingsAndHelpers": (
