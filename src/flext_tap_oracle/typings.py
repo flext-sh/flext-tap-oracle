@@ -91,10 +91,12 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
             """Summary and reporting complex types."""
 
             type SummaryData = dict[str, _tap_t.GeneralValueType | None]
+            type OracleValue = _tap_t.NormalizedValue | BaseModel | None
 
 
 t = FlextTapOracleTypes
-__all__ = ["FlextTapOracleTypes", "t"]
 
+# Re-export from class for module-level access
+OracleValue = t.TapOracle.Summary.OracleValue
 
-type OracleValue = _tap_t.NormalizedValue | BaseModel | None
+__all__ = ["FlextTapOracleTypes", "OracleValue", "t"]
