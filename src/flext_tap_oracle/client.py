@@ -21,7 +21,9 @@ class FlextOracleDiscoveryService:
     """Oracle table discovery service - simplified without Pydantic validation."""
 
     def __init__(
-        self, oracle_api: FlextDbOracleApi, schema_name: str | None = None
+        self,
+        oracle_api: FlextDbOracleApi,
+        schema_name: str | None = None,
     ) -> None:
         """Initialize Oracle table discovery service.
 
@@ -49,7 +51,9 @@ class FlextOracleDiscoveryService:
                 for table_name in table_names
             ]
             logger.info(
-                "Discovered %d Oracle tables in schema %s", len(tables), schema_name
+                "Discovered %d Oracle tables in schema %s",
+                len(tables),
+                schema_name,
             )
             return r[list[FlextDbOracleModels.DbOracle.Table]].ok(tables)
         except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
@@ -105,7 +109,7 @@ class FlextOracleTableFilterService:
         try:
             tap_configuration: Mapping[str, t.Scalar] = self.tap_config.get_tap_config()
             tables_filter: t.Scalar | list[t.Scalar] | None = tap_configuration.get(
-                "tables_filter"
+                "tables_filter",
             )
             if isinstance(tables_filter, list) and tables_filter:
                 tables_filter_list: list[str] = list(map(str, tables_filter))
@@ -142,7 +146,8 @@ class FlextOracleTableFilterService:
                 )
                 return r[list[str]].ok(filtered_tables)
             logger.info(
-                "No table exclusions configured, using all %d tables", len(table_names)
+                "No table exclusions configured, using all %d tables",
+                len(table_names),
             )
             return r[list[str]].ok(table_names)
         except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
@@ -177,17 +182,18 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table
         oracle_settings = FlextDbOracleSettings.model_validate(oracle_config)
         self._oracle_api = FlextDbOracleApi(oracle_settings)
         schema_name = oracle_config.get("schema_name") or oracle_config.get(
-            "service_name"
+            "service_name",
         )
         self._discovery_service = FlextOracleDiscoveryService(
             oracle_api=self._oracle_api,
             schema_name=str(schema_name) if schema_name else None,
         )
         self._connection_test_service = FlextOracleConnectionTestService(
-            oracle_api=self._oracle_api
+            oracle_api=self._oracle_api,
         )
         self._table_filter_service = FlextOracleTableFilterService(
-            tap_config=config, discovery_service=self._discovery_service
+            tap_config=config,
+            discovery_service=self._discovery_service,
         )
 
     @property
@@ -211,12 +217,14 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table
         return self._table_filter_service
 
     def discover_oracle_tables(
-        self, schema_name: str | None = None
+        self,
+        schema_name: str | None = None,
     ) -> r[list[FlextDbOracleModels.DbOracle.Table]]:
         """Discover Oracle tables using domain service."""
         if schema_name:
             discovery_service = FlextOracleDiscoveryService(
-                oracle_api=self._oracle_api, schema_name=schema_name
+                oracle_api=self._oracle_api,
+                schema_name=schema_name,
             )
             return discovery_service.execute()
         return self._discovery_service.execute()
@@ -242,10 +250,10 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table
                 logger.info("Oracle tap status: healthy")
                 return r[bool].ok(value=True)
             logger.warning(
-                f"Oracle tap status check failed: {connection_test_result.error}"
+                f"Oracle tap status check failed: {connection_test_result.error}",
             )
             return r[bool].fail(
-                f"Connection test failed: {connection_test_result.error}"
+                f"Connection test failed: {connection_test_result.error}",
             )
         except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
             logger.exception("Failed to get tap status")
@@ -258,10 +266,10 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table
             connection_result = self.test_oracle_connection()
             if connection_result.is_failure:
                 logger.error(
-                    f"Oracle connection test failed: {connection_result.error}"
+                    f"Oracle connection test failed: {connection_result.error}",
                 )
                 return r[bool].fail(
-                    f"Connection test failed: {connection_result.error}"
+                    f"Connection test failed: {connection_result.error}",
                 )
             tables_result = self.get_filtered_tables()
             if tables_result.is_failure:
@@ -303,7 +311,8 @@ def create_oracle_tap_service(
 
 
 def create_oracle_discovery_service(
-    oracle_api: FlextDbOracleApi, schema_name: str | None = None
+    oracle_api: FlextDbOracleApi,
+    schema_name: str | None = None,
 ) -> r[FlextOracleDiscoveryService]:
     """Create Oracle discovery service.
 
@@ -317,12 +326,13 @@ def create_oracle_discovery_service(
     """
     try:
         service = FlextOracleDiscoveryService(
-            oracle_api=oracle_api, schema_name=schema_name
+            oracle_api=oracle_api,
+            schema_name=schema_name,
         )
         return r[FlextOracleDiscoveryService].ok(service)
     except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
         return r[FlextOracleDiscoveryService].fail(
-            f"Oracle discovery service creation failed: {e}"
+            f"Oracle discovery service creation failed: {e}",
         )
 
 

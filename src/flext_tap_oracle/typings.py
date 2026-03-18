@@ -49,7 +49,8 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
             type ExtractionMetrics = dict[str, _tap_t.GeneralValueType]
             type BatchConfiguration = dict[str, _tap_t.GeneralValueType]
             type StreamDefinition = dict[
-                str, str | list[str] | dict[str, _tap_t.Scalar]
+                str,
+                str | list[str] | dict[str, _tap_t.Scalar],
             ]
             type TableMetadata = dict[str, list[_tap_t.Scalar]]
 

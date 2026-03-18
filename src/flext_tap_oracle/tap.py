@@ -79,15 +79,15 @@ class OracleTapDiscoverCommand:
         try:
             if not self.params.config_file:
                 return r[Mapping[str, t.GeneralValueType]].fail(
-                    "Configuration file is required for discovery"
+                    "Configuration file is required for discovery",
                 )
             config_data: str = Path(self.params.config_file).read_text(encoding="utf-8")
             config: FlextTapOracleSettings = FlextTapOracleSettings.model_validate_json(
-                config_data
+                config_data,
             )
             oracle_config = config.get_oracle_config()
             schema_name = str(oracle_config.get("schema_name", "USER"))
-            self._logger.info(f"Discovering Oracle schema: {schema_name}")
+            self._logger.info("Discovering Oracle schema: %s", schema_name)
             catalog_dict: dict[str, t.GeneralValueType] = {
                 "streams": [],
                 "schema_name": schema_name,
@@ -100,7 +100,7 @@ class OracleTapDiscoverCommand:
                     .decode("utf-8"),
                     encoding="utf-8",
                 )
-                self._logger.info(f"Catalog written to {output_path}")
+                self._logger.info("Catalog written to %s", output_path)
             self._logger.info("Oracle schema discovery completed")
             return r[Mapping[str, t.GeneralValueType]].ok(catalog_dict)
         except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
@@ -111,7 +111,7 @@ class OracleTapDiscoverCommand:
         """Validate business rules for Oracle tap discovery."""
         if self.params.config_file and (not Path(self.params.config_file).exists()):
             return r[bool].fail(
-                f"Configuration file not found: {self.params.config_file}"
+                f"Configuration file not found: {self.params.config_file}",
             )
         return r[bool].ok(value=True)
 
@@ -130,11 +130,11 @@ class OracleTapSyncCommand:
         try:
             if not self.params.config_file:
                 return r[Mapping[str, t.GeneralValueType]].fail(
-                    "Configuration file is required for sync"
+                    "Configuration file is required for sync",
                 )
             config_data: str = Path(self.params.config_file).read_text(encoding="utf-8")
             config: FlextTapOracleSettings = FlextTapOracleSettings.model_validate_json(
-                config_data
+                config_data,
             )
             oracle_config = config.get_oracle_config()
             if self.params.catalog_file:
@@ -152,7 +152,9 @@ class OracleTapSyncCommand:
                 "status": "completed",
             }
             self._logger.info(
-                f"Sync completed for schema {schema_name}; records extracted: {record_count}"
+                "Sync completed for schema %s; records extracted: %s",
+                schema_name,
+                record_count,
             )
             return r[Mapping[str, t.GeneralValueType]].ok(result_data)
         except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
@@ -163,7 +165,7 @@ class OracleTapSyncCommand:
         """Validate business rules for Oracle tap sync."""
         if self.params.config_file and (not Path(self.params.config_file).exists()):
             return r[bool].fail(
-                f"Configuration file not found: {self.params.config_file}"
+                f"Configuration file not found: {self.params.config_file}",
             )
         if self.params.catalog_file and (not Path(self.params.catalog_file).exists()):
             return r[bool].fail(f"Catalog file not found: {self.params.catalog_file}")
@@ -212,7 +214,7 @@ def create_tap_oracle_cli() -> r[FlextCliCommands]:
         )
         if discover_result.is_failure:
             return r[FlextCliCommands].fail(
-                f"Discover command registration failed: {discover_result.error}"
+                f"Discover command registration failed: {discover_result.error}",
             )
         sync_result = FlextCliCommands.register_command(
             cli_main,
@@ -221,7 +223,7 @@ def create_tap_oracle_cli() -> r[FlextCliCommands]:
         )
         if sync_result.is_failure:
             return r[FlextCliCommands].fail(
-                f"Sync command registration failed: {sync_result.error}"
+                f"Sync command registration failed: {sync_result.error}",
             )
         return r[FlextCliCommands].ok(cli_main)
     except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
@@ -229,7 +231,8 @@ def create_tap_oracle_cli() -> r[FlextCliCommands]:
 
 
 def handle_discover_command(
-    *_args: t.Scalar, **kwargs: t.Scalar
+    *_args: t.Scalar,
+    **kwargs: t.Scalar,
 ) -> r[ct.Cli.JsonValue]:
     """Handle discover command using flext-cli patterns - NO click decorators."""
     return _run_tap_command(

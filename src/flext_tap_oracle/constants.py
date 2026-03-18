@@ -10,11 +10,6 @@ from __future__ import annotations
 from enum import StrEnum, unique
 from typing import Final, Literal
 
-from flext_core.constants import (
-    PROJECT_KIND_APPLICATION,
-    PROJECT_KIND_LIBRARY,
-    PROJECT_KIND_SERVICE,
-)
 from flext_db_oracle import FlextDbOracleConstants
 from flext_meltano import FlextMeltanoConstants
 
@@ -218,9 +213,6 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
     class TapOracleProjectType(StrEnum):
         """Project type literals for tap package metadata."""
 
-        LIBRARY = PROJECT_KIND_LIBRARY
-        APPLICATION = PROJECT_KIND_APPLICATION
-        SERVICE = PROJECT_KIND_SERVICE
         SINGER_TAP = "singer-tap"
         ORACLE_EXTRACTOR = "oracle-extractor"
         DATABASE_EXTRACTOR = "database-extractor"

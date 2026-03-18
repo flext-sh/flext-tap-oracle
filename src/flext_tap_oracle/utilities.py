@@ -110,7 +110,8 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
 
             @staticmethod
             def create_discovery_error(
-                message: str = "Table discovery failed", schema_name: str | None = None
+                message: str = "Table discovery failed",
+                schema_name: str | None = None,
             ) -> FlextExceptions.OperationError:
                 """Create discovery errors with schema context."""
                 context: dict[str, str] = {}
@@ -192,7 +193,8 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
 
             @staticmethod
             def create_discovery_result(
-                tables: list[FlextDbOracleModels.DbOracle.Table], schema_name: str
+                tables: list[FlextDbOracleModels.DbOracle.Table],
+                schema_name: str,
             ) -> r[m.TapOracle.OracleTapDiscoveryResult]:
                 """Create discovery result from Oracle tables."""
                 try:
@@ -204,7 +206,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                             case _:
                                 continue
                         stream_result = FlextTapOracleUtilities.TapOracle.StreamManagement.create_stream_info_from_oracle_table(
-                            oracle_table
+                            oracle_table,
                         )
                         if stream_result.is_success:
                             stream_infos.append(stream_result.value)
@@ -221,7 +223,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                     return r[m.TapOracle.OracleTapDiscoveryResult].ok(discovery_result)
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                     return r[m.TapOracle.OracleTapDiscoveryResult].fail(
-                        f"Failed to create discovery result: {e}"
+                        f"Failed to create discovery result: {e}",
                     )
 
             @staticmethod
@@ -250,7 +252,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                     return r[m.TapOracle.OracleTapStreamInfo].ok(stream_info)
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                     return r[m.TapOracle.OracleTapStreamInfo].fail(
-                        f"Failed to create stream info from Oracle table: {e}"
+                        f"Failed to create stream info from Oracle table: {e}",
                     )
 
         class ConfigurationValidation:
@@ -286,7 +288,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                     validation_result = cfg_validator.validate_oracle_config(config)
                     if validation_result.is_failure:
                         return r[Mapping[str, t.GeneralValueType]].fail(
-                            validation_result.error
+                            validation_result.error,
                         )
                     connectivity_result = {
                         "status": "validated",
@@ -298,7 +300,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                     return r[Mapping[str, t.GeneralValueType]].ok(connectivity_result)
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                     return r[Mapping[str, t.GeneralValueType]].fail(
-                        f"Oracle connectivity test failed: {e}"
+                        f"Oracle connectivity test failed: {e}",
                     )
 
             @staticmethod
@@ -318,28 +320,28 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                     for field in required_fields:
                         if field not in validated_config:
                             return r[Mapping[str, t.GeneralValueType]].fail(
-                                f"Missing required Oracle field: {field}"
+                                f"Missing required Oracle field: {field}",
                             )
                         if not validated_config[field]:
                             return r[Mapping[str, t.GeneralValueType]].fail(
-                                f"Empty Oracle field: {field}"
+                                f"Empty Oracle field: {field}",
                             )
                     max_port = c.TapOracle.MAX_PORT_NUMBER
                     try:
                         port = int(str(validated_config["port"]))
                         if port <= 0 or port > max_port:
                             return r[Mapping[str, t.GeneralValueType]].fail(
-                                f"Oracle port must be between 1 and {max_port}"
+                                f"Oracle port must be between 1 and {max_port}",
                             )
                         validated_config["port"] = port
                     except ValueError:
                         return r[Mapping[str, t.GeneralValueType]].fail(
-                            "Oracle port must be numeric"
+                            "Oracle port must be numeric",
                         )
                     return r[Mapping[str, t.GeneralValueType]].ok(validated_config)
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                     return r[Mapping[str, t.GeneralValueType]].fail(
-                        f"Oracle config validation failed: {e}"
+                        f"Oracle config validation failed: {e}",
                     )
 
         class PerformanceOptimization:
@@ -353,7 +355,9 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
 
             @staticmethod
             def calculate_extraction_metrics(
-                start_time: float, end_time: float, records_processed: int
+                start_time: float,
+                end_time: float,
+                records_processed: int,
             ) -> r[Mapping[str, t.GeneralValueType]]:
                 """Calculate extraction performance metrics."""
                 try:
@@ -379,12 +383,13 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                     return r[Mapping[str, t.GeneralValueType]].ok(metrics)
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                     return r[Mapping[str, t.GeneralValueType]].fail(
-                        f"Metrics calculation failed: {e}"
+                        f"Metrics calculation failed: {e}",
                     )
 
             @staticmethod
             def optimize_extraction_query(
-                base_query: str, table_stats: Mapping[str, t.GeneralValueType]
+                base_query: str,
+                table_stats: Mapping[str, t.GeneralValueType],
             ) -> r[str]:
                 """Optimize extraction query based on table statistics."""
                 try:

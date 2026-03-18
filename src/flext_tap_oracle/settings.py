@@ -24,23 +24,28 @@ class FlextTapOracleSettings(FlextSettings):
     """Runtime settings for Oracle Singer tap operations."""
 
     oracle_host: Annotated[
-        str, Field(default="localhost", description="Oracle database host")
+        str,
+        Field(default="localhost", description="Oracle database host"),
     ]
     oracle_port: Annotated[int, Field(default=1521, description="Oracle database port")]
     oracle_service_name: Annotated[
-        str, Field(default="ORCL", description="Oracle service name or SID")
+        str,
+        Field(default="ORCL", description="Oracle service name or SID"),
     ]
     oracle_user: Annotated[SecretStr, Field(description="Oracle database username")]
     oracle_password: Annotated[SecretStr, Field(description="Oracle database password")]
     batch_size: Annotated[
-        int, Field(default=1000, ge=1, description="Batch size for data extraction")
+        int,
+        Field(default=1000, ge=1, description="Batch size for data extraction"),
     ]
     stream_prefix: Annotated[
-        str, Field(default="", description="Prefix for Singer stream names")
+        str,
+        Field(default="", description="Prefix for Singer stream names"),
     ]
     project_root: Annotated[str, Field(default=".", description="Meltano project root")]
     environment: Annotated[
-        str, Field(default="production", description="Environment name")
+        str,
+        Field(default="production", description="Environment name"),
     ]
 
     def validate_business_rules(self) -> r[bool]:
@@ -92,7 +97,8 @@ def create_oracle_tap_config(
         meltano_config = meltano_params or {}
         tap_config.setdefault("batch_size", 1000)
         tap_config.setdefault(
-            "stream_prefix", FlextTapOracleConstants.TapOracle.DEFAULT_STREAM_PREFIX
+            "stream_prefix",
+            FlextTapOracleConstants.TapOracle.DEFAULT_STREAM_PREFIX,
         )
         meltano_config.setdefault("project_root", ".")
         meltano_config.setdefault("environment", "production")
@@ -101,7 +107,7 @@ def create_oracle_tap_config(
         return r[FlextTapOracleSettings].ok(config_instance)
     except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
         return r[FlextTapOracleSettings].fail(
-            f"Oracle tap configuration creation failed: {e}"
+            f"Oracle tap configuration creation failed: {e}",
         )
 
 

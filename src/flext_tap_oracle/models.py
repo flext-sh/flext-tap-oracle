@@ -506,7 +506,8 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Extraction metrics
             extraction_id: Annotated[
-                str, Field(description="Unique extraction identifier")
+                str,
+                Field(description="Unique extraction identifier"),
             ]
             start_time: Annotated[str, Field(description="Extraction start timestamp")]
             end_time: Annotated[
@@ -519,10 +520,12 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Volume metrics
             total_records: Annotated[
-                int, Field(default=0, description="Total records extracted")
+                int,
+                Field(default=0, description="Total records extracted"),
             ]
             total_bytes: Annotated[
-                int, Field(default=0, description="Total bytes processed")
+                int,
+                Field(default=0, description="Total bytes processed"),
             ]
             streams_processed: Annotated[
                 int,
@@ -636,7 +639,8 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             stream_name: Annotated[str, Field(..., description="Singer stream name")]
             table_name: Annotated[str, Field(..., description="Oracle table name")]
             schema_name: Annotated[
-                str | None, Field(None, description="Oracle schema name")
+                str | None,
+                Field(None, description="Oracle schema name"),
             ]
 
             # Stream configuration
@@ -664,10 +668,12 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Runtime information (populated at runtime)
             estimated_rows: Annotated[
-                int | None, Field(None, description="Estimated row count")
+                int | None,
+                Field(None, description="Estimated row count"),
             ]
             column_count: Annotated[
-                int | None, Field(None, description="Number of columns")
+                int | None,
+                Field(None, description="Number of columns"),
             ]
             last_extracted: Annotated[
                 str | None,
@@ -916,13 +922,16 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Execution metadata
             execution_id: Annotated[
-                str, Field(..., description="Unique execution identifier")
+                str,
+                Field(..., description="Unique execution identifier"),
             ]
             start_timestamp: Annotated[
-                str, Field(..., description="Execution start time")
+                str,
+                Field(..., description="Execution start time"),
             ]
             end_timestamp: Annotated[
-                str | None, Field(None, description="Execution end time")
+                str | None,
+                Field(None, description="Execution end time"),
             ]
 
             # Stream statistics
@@ -934,10 +943,12 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 ),
             ]
             total_records: Annotated[
-                int, Field(default=0, description="Total records extracted")
+                int,
+                Field(default=0, description="Total records extracted"),
             ]
             total_bytes: Annotated[
-                int, Field(default=0, description="Total bytes processed")
+                int,
+                Field(default=0, description="Total bytes processed"),
             ]
 
             # Performance metrics
