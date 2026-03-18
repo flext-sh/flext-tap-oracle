@@ -19,6 +19,7 @@ from typing import TypeIs, override
 
 import pytest
 from flext_core import r, t
+from flext_tests.docker import tk
 
 from flext_tap_oracle import FlextOracleTapService, FlextTapOracleSettings
 from flext_tap_oracle.settings import create_oracle_tap_config
