@@ -58,7 +58,7 @@ if TYPE_CHECKING:
         logger,
         main,
     )
-    from flext_tap_oracle.typings import FlextTapOracleTypes, t
+    from flext_tap_oracle.typings import FlextTapOracleTypes, OracleValue, t
     from flext_tap_oracle.utilities import FlextTapOracleUtilities, u
 
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
@@ -95,6 +95,7 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "OracleTapDiscoverParams": ("flext_tap_oracle.tap", "OracleTapDiscoverParams"),
     "OracleTapSyncCommand": ("flext_tap_oracle.tap", "OracleTapSyncCommand"),
     "OracleTapSyncParams": ("flext_tap_oracle.tap", "OracleTapSyncParams"),
+    "OracleValue": ("flext_tap_oracle.typings", "OracleValue"),
     "__all__": ("flext_tap_oracle.__version__", "__all__"),
     "__author__": ("flext_tap_oracle.__version__", "__author__"),
     "__author_email__": ("flext_tap_oracle.__version__", "__author_email__"),
@@ -151,6 +152,7 @@ __all__ = [
     "OracleTapDiscoverParams",
     "OracleTapSyncCommand",
     "OracleTapSyncParams",
+    "OracleValue",
     "__all__",
     "__author__",
     "__author_email__",

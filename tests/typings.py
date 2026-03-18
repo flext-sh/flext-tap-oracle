@@ -53,3 +53,5 @@ class TestsFlextTapOracleTypes(FlextTestsTypes):
 
 tt = TestsFlextTapOracleTypes
 __all__ = ["TestsFlextTapOracleTypes", "tt"]
+
+t = TestsFlextTapOracleTypes
