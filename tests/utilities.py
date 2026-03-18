@@ -1,4 +1,4 @@
-"""Utilities for flext-tap-oracle tests - uses composition with FlextTestsUtilities.
+"""Utilities for flext-tap-oracle tests - uses composition with u.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -11,24 +11,24 @@ from flext_core import t
 from flext_tests import u
 
 
-class TestsFlextTapOracleUtilities(FlextTestsUtilities):
-    """Utilities for flext-tap-oracle tests - uses composition with FlextTestsUtilities.
+class TestsFlextTapOracleUtilities(u):
+    """Utilities for flext-tap-oracle tests - uses composition with u.
 
-    Architecture: Uses composition (not inheritance) with FlextTestsUtilities and FlextTapOracleUtilities
+    Architecture: Uses composition (not inheritance) with u and FlextTapOracleUtilities
     for flext-tap-oracle-specific utility definitions.
 
     Access patterns:
     - TestsFlextTapOracleUtilities.Tests.* = flext_tests test utilities (via composition)
     - TestsFlextTapOracleUtilities.TapOracle.* = flext-tap-oracle-specific test utilities
-    - TestsFlextTapOracleUtilities.* = FlextTestsUtilities methods (via composition)
+    - TestsFlextTapOracleUtilities.* = u methods (via composition)
 
     Rules:
-    - Use composition, not inheritance (FlextTestsUtilities deprecates subclassing)
+    - Use composition, not inheritance (u deprecates subclassing)
     - flext-tap-oracle-specific utilities go in TapOracle namespace
     - Generic utilities accessed via Tests namespace
     """
 
-    Tests = FlextTestsUtilities.Tests
+    Tests = u.Tests
 
     class TapOracle:
         """Tap Oracle test utilities - domain-specific for Oracle tap testing.

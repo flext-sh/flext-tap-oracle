@@ -1,4 +1,4 @@
-"""Protocols for flext-tap-oracle tests - uses composition with FlextTestsProtocols.
+"""Protocols for flext-tap-oracle tests - uses composition with p.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -12,19 +12,19 @@ from typing import Protocol, runtime_checkable
 from flext_tests import p
 
 
-class TestsFlextTapOracleProtocols(FlextTestsProtocols):
-    """Protocols for flext-tap-oracle tests - uses composition with FlextTestsProtocols.
+class TestsFlextTapOracleProtocols(p):
+    """Protocols for flext-tap-oracle tests - uses composition with p.
 
-    Architecture: Uses composition (not inheritance) with FlextTestsProtocols and FlextTapOracleProtocols
+    Architecture: Uses composition (not inheritance) with p and FlextTapOracleProtocols
     for flext-tap-oracle-specific protocol definitions.
 
     Access patterns:
     - TestsFlextTapOracleProtocols.Tests.* = flext_tests test protocols (via composition)
     - TestsFlextTapOracleProtocols.TapOracle.* = flext-tap-oracle-specific test protocols
-    - TestsFlextTapOracleProtocols.* = FlextTestsProtocols protocols (via composition)
+    - TestsFlextTapOracleProtocols.* = p protocols (via composition)
 
     Rules:
-    - Use composition, not inheritance (FlextTestsProtocols deprecates subclassing)
+    - Use composition, not inheritance (p deprecates subclassing)
     - flext-tap-oracle-specific protocols go in TapOracle namespace
     - Generic protocols accessed via Tests namespace
     """

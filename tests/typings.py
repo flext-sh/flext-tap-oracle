@@ -1,4 +1,4 @@
-"""Types for flext-tap-oracle tests - uses composition with FlextTestsTypes.
+"""Types for flext-tap-oracle tests - uses composition with t.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -14,19 +14,19 @@ from flext_tests import t
 from flext_tap_oracle import c, t
 
 
-class TestsFlextTapOracleTypes(FlextTestsTypes):
-    """Types for flext-tap-oracle tests - uses composition with FlextTestsTypes.
+class TestsFlextTapOracleTypes(t):
+    """Types for flext-tap-oracle tests - uses composition with t.
 
-    Architecture: Uses composition (not inheritance) with FlextTestsTypes and FlextTapOracleTypes
+    Architecture: Uses composition (not inheritance) with t and FlextTapOracleTypes
     for flext-tap-oracle-specific type definitions.
 
     Access patterns:
     - TestsFlextTapOracleTypes.Tests.* = flext_tests test types (via composition)
     - TestsFlextTapOracleTypes.TapOracle.* = flext-tap-oracle-specific test types
-    - TestsFlextTapOracleTypes.* = FlextTestsTypes types (via composition)
+    - TestsFlextTapOracleTypes.* = t types (via composition)
 
     Rules:
-    - Use composition, not inheritance (FlextTestsTypes deprecates subclassing)
+    - Use composition, not inheritance (t deprecates subclassing)
     - flext-tap-oracle-specific types go in TapOracle namespace
     - Generic types accessed via Tests namespace
     """

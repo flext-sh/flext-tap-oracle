@@ -25,14 +25,14 @@ from flext_tap_oracle.settings import create_oracle_tap_config
 
 
 @pytest.fixture(scope="session")
-def docker_control() -> FlextTestsDocker:
+def docker_control() -> tk:
     """Provide Docker control instance for tests."""
-    return FlextTestsDocker()
+    return tk()
 
 
 @pytest.fixture(scope="session")
-def shared_oracle_container(docker_control: FlextTestsDocker) -> str:
-    """Managed Oracle container using FlextTestsDocker with auto-start."""
+def shared_oracle_container(docker_control: tk) -> str:
+    """Managed Oracle container using tk with auto-start."""
     _ = docker_control
     return "flext-oracle-db-test"
 

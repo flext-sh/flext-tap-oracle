@@ -1,4 +1,4 @@
-"""Models for flext-tap-oracle tests - uses composition with FlextTestsModels.
+"""Models for flext-tap-oracle tests - uses composition with m.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -8,13 +8,13 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from flext_core import FlextModels
-from flext_tests.models import FlextTestsModels
+from flext_tests.models import m
 
 
-class TestsFlextTapOracleModels(FlextTestsModels):
-    """Models for flext-tap-oracle tests - uses composition with FlextTestsModels.
+class TestsFlextTapOracleModels(m):
+    """Models for flext-tap-oracle tests - uses composition with m.
 
-    Architecture: Uses composition (not inheritance) with FlextTestsModels and FlextModels
+    Architecture: Uses composition (not inheritance) with m and FlextModels
     for flext-tap-oracle-specific model definitions.
 
     Access patterns:
@@ -23,13 +23,13 @@ class TestsFlextTapOracleModels(FlextTestsModels):
     - TestsFlextTapOracleModels.Entity, .Value, etc. = FlextModels domain models (via composition)
 
     Rules:
-    - Use composition, not inheritance (FlextTestsModels deprecates subclassing)
+    - Use composition, not inheritance (m deprecates subclassing)
     - flext-tap-oracle-specific models go in TapOracle namespace
     - Generic models accessed via Tests namespace
     """
 
-    # Composition: expose FlextTestsModels namespaces
-    Tests = FlextTestsModels.Tests
+    # Composition: expose m namespaces
+    Tests = m.Tests
 
     # Composition: expose FlextModels domain model classes
     Entity = FlextModels.Entity
