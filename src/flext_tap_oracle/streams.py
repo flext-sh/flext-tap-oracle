@@ -12,9 +12,8 @@ from typing import Protocol
 
 from flext_core import FlextLogger, r
 from flext_db_oracle import FlextDbOracleApi
-from flext_meltano import p
 
-from flext_tap_oracle import c, t, u
+from flext_tap_oracle import c, p, t, u
 from flext_tap_oracle.typings import OracleValue
 
 

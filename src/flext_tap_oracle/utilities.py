@@ -15,11 +15,11 @@ from collections.abc import Mapping
 from datetime import UTC, datetime
 from typing import Literal
 
-from flext_core import FlextContainer, FlextExceptions, FlextLogger, p, r
+from flext_core import FlextContainer, FlextExceptions, FlextLogger, r
 from flext_db_oracle import FlextDbOracleModels, FlextDbOracleUtilities
 from flext_meltano import FlextMeltanoUtilities
 
-from flext_tap_oracle import c, m, t
+from flext_tap_oracle import c, m, p, t
 
 
 class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
