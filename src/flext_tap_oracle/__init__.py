@@ -15,6 +15,12 @@ from flext_core.lazy import cleanup_submodule_namespace, lazy_getattr
 
 if TYPE_CHECKING:
     from flext_core.typings import FlextTypes
+    from flext_db_oracle.decorators import d
+    from flext_db_oracle.exceptions import e
+    from flext_db_oracle.handlers import h
+    from flext_db_oracle.mixins import x
+    from flext_db_oracle.result import r
+    from flext_db_oracle.service import s
 
     from flext_tap_oracle.__version__ import (
         __all__,
@@ -30,7 +36,6 @@ if TYPE_CHECKING:
     from flext_tap_oracle.client import (
         FlextOracleConnectionTestService,
         FlextOracleDiscoveryService,
-        FlextOracleDiscoveryService as s,
         FlextOracleTableFilterService,
         FlextOracleTapService,
         create_oracle_discovery_service,
@@ -121,19 +126,24 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
         "create_oracle_tap_service",
     ),
     "create_tap_oracle_cli": ("flext_tap_oracle.tap", "create_tap_oracle_cli"),
+    "d": ("flext_db_oracle.decorators", "d"),
+    "e": ("flext_db_oracle.exceptions", "e"),
+    "h": ("flext_db_oracle.handlers", "h"),
     "handle_discover_command": ("flext_tap_oracle.tap", "handle_discover_command"),
     "handle_sync_command": ("flext_tap_oracle.tap", "handle_sync_command"),
     "logger": ("flext_tap_oracle.tap", "logger"),
     "m": ("flext_tap_oracle.models", "m"),
     "main": ("flext_tap_oracle.tap", "main"),
     "p": ("flext_tap_oracle.protocols", "p"),
-    "s": ("flext_tap_oracle.client", "FlextOracleDiscoveryService"),
+    "r": ("flext_db_oracle.result", "r"),
+    "s": ("flext_db_oracle.service", "s"),
     "t": ("flext_tap_oracle.typings", "t"),
     "u": ("flext_tap_oracle.utilities", "u"),
     "validate_oracle_tap_configuration": (
         "flext_tap_oracle.settings",
         "validate_oracle_tap_configuration",
     ),
+    "x": ("flext_db_oracle.mixins", "x"),
 }
 
 __all__ = [
@@ -169,16 +179,21 @@ __all__ = [
     "create_oracle_tap_config",
     "create_oracle_tap_service",
     "create_tap_oracle_cli",
+    "d",
+    "e",
+    "h",
     "handle_discover_command",
     "handle_sync_command",
     "logger",
     "m",
     "main",
     "p",
+    "r",
     "s",
     "t",
     "u",
     "validate_oracle_tap_configuration",
+    "x",
 ]
 
 

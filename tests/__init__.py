@@ -48,7 +48,7 @@ if TYPE_CHECKING:
     from .models import TestsFlextTapOracleModels, m, tm
     from .protocols import TestsFlextTapOracleProtocols, p
     from .test_enterprise_tap import TestFlextOracleTapSettingsAndHelpers
-    from .typings import TestsFlextTapOracleTypes, TestsFlextTapOracleTypes as t, tt
+    from .typings import TestsFlextTapOracleTypes, tt
     from .utilities import TestsFlextTapOracleUtilities, u
 
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
@@ -89,7 +89,6 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "singer_state_message": ("tests.conftest", "singer_state_message"),
     "skip_e2e_if_no_oracle": ("tests.conftest", "skip_e2e_if_no_oracle"),
     "stream_config": ("tests.conftest", "stream_config"),
-    "t": ("tests.typings", "TestsFlextTapOracleTypes"),
     "tm": ("tests.models", "tm"),
     "tt": ("tests.typings", "tt"),
     "u": ("tests.utilities", "u"),
@@ -127,7 +126,6 @@ __all__ = [
     "singer_state_message",
     "skip_e2e_if_no_oracle",
     "stream_config",
-    "t",
     "tm",
     "tt",
     "u",
