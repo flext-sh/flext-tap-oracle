@@ -41,30 +41,18 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
             class Production:
                 """Production environment defaults."""
 
-                MAX_PARALLEL_STREAMS: Final[int] = 4
-                QUERY_TIMEOUT_SECONDS: Final[int] = 300
-
             class Development:
                 """Development environment defaults."""
 
-                MAX_PARALLEL_STREAMS: Final[int] = 1
-                QUERY_TIMEOUT_SECONDS: Final[int] = 60
-
             class Staging:
                 """Staging environment defaults."""
-
-                MAX_PARALLEL_STREAMS: Final[int] = 2
-                QUERY_TIMEOUT_SECONDS: Final[int] = 180
 
         class SingerTypes:
             """Singer protocol type mappings for Oracle data types."""
 
             DEFAULT_TYPE: Final[str] = "string"
-            NUMERIC_TYPE: Final[str] = "number"
-            DATETIME_TYPE: Final[str] = "string"
 
         INITIAL_RECORD_COUNT: Final[int] = 0
-        INITIAL_DURATION_SECONDS: Final[float] = 0.0
 
         class Oracle:
             """Oracle database connection constants."""
@@ -74,12 +62,6 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
             )
             DEFAULT_TIMEOUT: Final[int] = (
                 FlextDbOracleConstants.DbOracle.Connection.DEFAULT_TIMEOUT
-            )
-            DEFAULT_FETCH_SIZE: Final[int] = (
-                FlextDbOracleConstants.DbOracle.Query.DEFAULT_ARRAY_SIZE
-            )
-            MAX_QUERY_TIMEOUT: Final[int] = (
-                FlextDbOracleConstants.DbOracle.Query.MAX_QUERY_TIMEOUT
             )
 
         class Singer:
@@ -108,14 +90,10 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
                 INCREMENTAL = "INCREMENTAL"
                 LOG_BASED = "LOG_BASED"
 
-            DEFAULT_METHOD: Final[str] = Method.INCREMENTAL
-
         class Performance:
             """Oracle tap performance optimization constants."""
 
             DEFAULT_BATCH_SIZE: Final[int] = FlextDbOracleConstants.DEFAULT_BATCH_SIZE
-            MAX_PARALLEL_STREAMS: Final[int] = 5
-            MEMORY_THRESHOLD_MB: Final[int] = 512
 
         class TapValidation:
             """Oracle tap validation constants.
@@ -123,21 +101,7 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
             Note: Does not override parent Validation class to avoid inheritance conflicts.
             """
 
-            MIN_BATCH_SIZE: Final[int] = 1
-            MAX_TIMEOUT: Final[int] = (
-                FlextMeltanoConstants.Performance.MAX_TIMEOUT_SECONDS
-            )
-            MAX_TABLE_NAME_LENGTH: Final[int] = (
-                FlextDbOracleConstants.DbOracle.OracleValidation.MAX_TABLE_NAME_LENGTH
-            )
-            MAX_COLUMN_NAME_LENGTH: Final[int] = (
-                FlextDbOracleConstants.DbOracle.OracleValidation.MAX_COLUMN_NAME_LENGTH
-            )
             MAX_IDENTIFIER_LENGTH: Final[int] = 255
-            MAX_STREAM_PREFIX_LENGTH: Final[int] = MAX_IDENTIFIER_LENGTH
-            MAX_TABLES_FILTER_COUNT: Final[int] = 1000
-            MAX_SCHEMAS_FILTER_COUNT: Final[int] = 100
-            MAX_SAFE_PARALLEL_STREAMS: Final[int] = 8
 
         class Connection:
             """Oracle tap connection configuration."""
@@ -155,19 +119,10 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
             DEFAULT_POOL_MAX: Final[int] = (
                 FlextDbOracleConstants.DbOracle.Connection.DEFAULT_POOL_MAX
             )
-            DEFAULT_POOL_TIMEOUT: Final[int] = (
-                FlextDbOracleConstants.DbOracle.Connection.DEFAULT_POOL_TIMEOUT
-            )
 
         class Extraction:
             """Tap-specific extraction configuration."""
 
-            DEFAULT_QUERY_LIMIT: Final[int] = (
-                FlextDbOracleConstants.DbOracle.Query.DEFAULT_QUERY_LIMIT
-            )
-            DEFAULT_COMMIT_SIZE: Final[int] = (
-                FlextMeltanoConstants.Performance.BatchProcessing.DEFAULT_SIZE
-            )
             TEST_QUERY: Final[str] = FlextDbOracleConstants.DbOracle.Query.TEST_QUERY
 
         type ReplicationMethodLiteral = Literal[

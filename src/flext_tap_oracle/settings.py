@@ -9,6 +9,7 @@ SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
+from flext_tap_oracle import c
 
 from typing import Annotated
 
@@ -16,7 +17,6 @@ from flext_core import FlextLogger, FlextSettings, r
 from pydantic import Field, SecretStr
 
 from flext_tap_oracle import t
-from flext_tap_oracle.constants import FlextTapOracleConstants
 
 logger = FlextLogger(__name__)
 
@@ -99,7 +99,7 @@ def create_oracle_tap_config(
         tap_config.setdefault("batch_size", 1000)
         tap_config.setdefault(
             "stream_prefix",
-            FlextTapOracleConstants.TapOracle.DEFAULT_STREAM_PREFIX,
+            c.TapOracle.DEFAULT_STREAM_PREFIX,
         )
         meltano_config.setdefault("project_root", ".")
         meltano_config.setdefault("environment", "production")
