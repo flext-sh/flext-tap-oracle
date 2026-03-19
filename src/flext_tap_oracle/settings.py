@@ -9,14 +9,13 @@ SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
-from flext_tap_oracle import c
 
 from typing import Annotated
 
 from flext_core import FlextLogger, FlextSettings, r
 from pydantic import Field, SecretStr
 
-from flext_tap_oracle import t
+from flext_tap_oracle import c, t
 
 logger = FlextLogger(__name__)
 
