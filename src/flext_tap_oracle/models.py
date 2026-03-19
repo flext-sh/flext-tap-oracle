@@ -22,8 +22,7 @@ from pydantic import (
     model_validator,
 )
 
-from flext_tap_oracle.constants import c
-from flext_tap_oracle.typings import t
+from flext_tap_oracle import c, t
 
 
 class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):

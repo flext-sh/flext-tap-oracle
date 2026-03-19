@@ -18,7 +18,7 @@ from flext_cli.commands import FlextCliCommands
 from flext_core import FlextLogger, r, t
 from pydantic import BaseModel, Field, TypeAdapter
 
-from flext_tap_oracle.constants import c
+from flext_tap_oracle import c
 from flext_tap_oracle.settings import FlextTapOracleSettings
 
 logger = FlextLogger(__name__)

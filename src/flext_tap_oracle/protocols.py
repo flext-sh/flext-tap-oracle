@@ -12,7 +12,7 @@ from typing import Protocol, runtime_checkable
 from flext_db_oracle.protocols import FlextDbOracleProtocols
 from flext_meltano import FlextMeltanoModels, FlextMeltanoProtocols
 
-from flext_tap_oracle.typings import t
+from flext_tap_oracle import t
 
 
 class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):

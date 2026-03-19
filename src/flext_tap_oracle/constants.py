@@ -113,7 +113,7 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
         class Performance:
             """Oracle tap performance optimization constants."""
 
-            DEFAULT_BATCH_SIZE: Final[int] = 1000
+            DEFAULT_BATCH_SIZE: Final[int] = FlextDbOracleConstants.DEFAULT_BATCH_SIZE
             MAX_PARALLEL_STREAMS: Final[int] = 5
             MEMORY_THRESHOLD_MB: Final[int] = 512
 
@@ -142,7 +142,7 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
         class Connection:
             """Oracle tap connection configuration."""
 
-            DEFAULT_HOST: Final[str] = "localhost"
+            DEFAULT_HOST: Final[str] = FlextDbOracleConstants.Network.LOCALHOST
             DEFAULT_SERVICE_NAME: Final[str] = (
                 FlextDbOracleConstants.DbOracle.Connection.DEFAULT_SERVICE_NAME
             )
