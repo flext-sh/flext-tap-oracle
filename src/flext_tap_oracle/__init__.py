@@ -15,7 +15,7 @@ from flext_core.lazy import cleanup_submodule_namespace, lazy_getattr
 
 if TYPE_CHECKING:
     from flext_core.typings import FlextTypes
-    from flext_db_oracle import d, e, h, r, s, x
+    from flext_db_oracle import d, e, h, r, x
 
     from flext_tap_oracle.__version__ import (
         __all__,
@@ -31,14 +31,21 @@ if TYPE_CHECKING:
     from flext_tap_oracle.client import (
         FlextOracleConnectionTestService,
         FlextOracleDiscoveryService,
+        FlextOracleDiscoveryService as s,
         FlextOracleTableFilterService,
         FlextOracleTapService,
         create_oracle_discovery_service,
         create_oracle_tap_service,
     )
-    from flext_tap_oracle.constants import FlextTapOracleConstants, c
-    from flext_tap_oracle.models import FlextTapOracleModels, m
-    from flext_tap_oracle.protocols import FlextTapOracleProtocols, p
+    from flext_tap_oracle.constants import (
+        FlextTapOracleConstants,
+        FlextTapOracleConstants as c,
+    )
+    from flext_tap_oracle.models import FlextTapOracleModels, FlextTapOracleModels as m
+    from flext_tap_oracle.protocols import (
+        FlextTapOracleProtocols,
+        FlextTapOracleProtocols as p,
+    )
     from flext_tap_oracle.settings import (
         FlextTapOracleSettings,
         create_oracle_tap_config,
@@ -58,8 +65,15 @@ if TYPE_CHECKING:
         logger,
         main,
     )
-    from flext_tap_oracle.typings import FlextTapOracleTypes, OracleValue, t
-    from flext_tap_oracle.utilities import FlextTapOracleUtilities, u
+    from flext_tap_oracle.typings import (
+        FlextTapOracleTypes,
+        FlextTapOracleTypes as t,
+        OracleValue,
+    )
+    from flext_tap_oracle.utilities import (
+        FlextTapOracleUtilities,
+        FlextTapOracleUtilities as u,
+    )
 
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "FlextOracleConnectionTestService": (
@@ -105,7 +119,7 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "__url__": ("flext_tap_oracle.__version__", "__url__"),
     "__version__": ("flext_tap_oracle.__version__", "__version__"),
     "__version_info__": ("flext_tap_oracle.__version__", "__version_info__"),
-    "c": ("flext_tap_oracle.constants", "c"),
+    "c": ("flext_tap_oracle.constants", "FlextTapOracleConstants"),
     "cli": ("flext_tap_oracle.tap", "cli"),
     "cli_api": ("flext_tap_oracle.tap", "cli_api"),
     "create_oracle_discovery_service": (
@@ -127,13 +141,13 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "handle_discover_command": ("flext_tap_oracle.tap", "handle_discover_command"),
     "handle_sync_command": ("flext_tap_oracle.tap", "handle_sync_command"),
     "logger": ("flext_tap_oracle.tap", "logger"),
-    "m": ("flext_tap_oracle.models", "m"),
+    "m": ("flext_tap_oracle.models", "FlextTapOracleModels"),
     "main": ("flext_tap_oracle.tap", "main"),
-    "p": ("flext_tap_oracle.protocols", "p"),
+    "p": ("flext_tap_oracle.protocols", "FlextTapOracleProtocols"),
     "r": ("flext_db_oracle", "r"),
-    "s": ("flext_db_oracle", "s"),
-    "t": ("flext_tap_oracle.typings", "t"),
-    "u": ("flext_tap_oracle.utilities", "u"),
+    "s": ("flext_tap_oracle.client", "FlextOracleDiscoveryService"),
+    "t": ("flext_tap_oracle.typings", "FlextTapOracleTypes"),
+    "u": ("flext_tap_oracle.utilities", "FlextTapOracleUtilities"),
     "validate_oracle_tap_configuration": (
         "flext_tap_oracle.settings",
         "validate_oracle_tap_configuration",
