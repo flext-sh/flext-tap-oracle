@@ -339,7 +339,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             discovery_timeout: Annotated[
                 int,
                 Field(
-                    default=FlextConstants.Network.DEFAULT_TIMEOUT * 10,
+                    default=FlextConstants.DEFAULT_TIMEOUT_SECONDS * 10,
                     description="Discovery timeout in seconds",
                 ),
             ]
