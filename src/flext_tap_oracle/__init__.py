@@ -15,7 +15,7 @@ from flext_core.lazy import cleanup_submodule_namespace, lazy_getattr
 
 if TYPE_CHECKING:
     from flext_core.typings import FlextTypes
-    from flext_db_oracle import d, e, h, r, x
+    from flext_db_oracle import d, e, h, r, s, x
 
     from flext_tap_oracle.__version__ import (
         __all__,
@@ -31,7 +31,6 @@ if TYPE_CHECKING:
     from flext_tap_oracle.client import (
         FlextOracleConnectionTestService,
         FlextOracleDiscoveryService,
-        FlextOracleDiscoveryService as s,
         FlextOracleTableFilterService,
         FlextOracleTapService,
         create_oracle_discovery_service,
@@ -145,7 +144,7 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "main": ("flext_tap_oracle.tap", "main"),
     "p": ("flext_tap_oracle.protocols", "FlextTapOracleProtocols"),
     "r": ("flext_db_oracle", "r"),
-    "s": ("flext_tap_oracle.client", "FlextOracleDiscoveryService"),
+    "s": ("flext_db_oracle", "s"),
     "t": ("flext_tap_oracle.typings", "FlextTapOracleTypes"),
     "u": ("flext_tap_oracle.utilities", "FlextTapOracleUtilities"),
     "validate_oracle_tap_configuration": (
