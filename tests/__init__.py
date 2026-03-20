@@ -44,12 +44,21 @@ if TYPE_CHECKING:
         skip_e2e_if_no_oracle,
         stream_config,
     )
-    from .constants import TestsFlextTapOracleConstants, c
-    from .models import TestsFlextTapOracleModels, m, tm
-    from .protocols import TestsFlextTapOracleProtocols, p
+    from .constants import (
+        TestsFlextTapOracleConstants,
+        TestsFlextTapOracleConstants as c,
+    )
+    from .models import TestsFlextTapOracleModels, TestsFlextTapOracleModels as m, tm
+    from .protocols import (
+        TestsFlextTapOracleProtocols,
+        TestsFlextTapOracleProtocols as p,
+    )
     from .test_enterprise_tap import TestFlextOracleTapSettingsAndHelpers
-    from .typings import TestsFlextTapOracleTypes, tt
-    from .utilities import TestsFlextTapOracleUtilities, u
+    from .typings import TestsFlextTapOracleTypes, TestsFlextTapOracleTypes as t, tt
+    from .utilities import (
+        TestsFlextTapOracleUtilities,
+        TestsFlextTapOracleUtilities as u,
+    )
 
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "TestFlextOracleTapSettingsAndHelpers": (
@@ -61,11 +70,11 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "TestsFlextTapOracleProtocols": ("tests.protocols", "TestsFlextTapOracleProtocols"),
     "TestsFlextTapOracleTypes": ("tests.typings", "TestsFlextTapOracleTypes"),
     "TestsFlextTapOracleUtilities": ("tests.utilities", "TestsFlextTapOracleUtilities"),
-    "c": ("tests.constants", "c"),
+    "c": ("tests.constants", "TestsFlextTapOracleConstants"),
     "discovery_config": ("tests.conftest", "discovery_config"),
     "docker_control": ("tests.conftest", "docker_control"),
     "error_scenarios": ("tests.conftest", "error_scenarios"),
-    "m": ("tests.models", "m"),
+    "m": ("tests.models", "TestsFlextTapOracleModels"),
     "mock_oracle_connection": ("tests.conftest", "mock_oracle_connection"),
     "mock_oracle_tap": ("tests.conftest", "mock_oracle_tap"),
     "oracle_queries": ("tests.conftest", "oracle_queries"),
@@ -75,7 +84,7 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     ),
     "oracle_tap": ("tests.conftest", "oracle_tap"),
     "oracle_tap_config": ("tests.conftest", "oracle_tap_config"),
-    "p": ("tests.protocols", "p"),
+    "p": ("tests.protocols", "TestsFlextTapOracleProtocols"),
     "performance_test_config": ("tests.conftest", "performance_test_config"),
     "pytest_configure": ("tests.conftest", "pytest_configure"),
     "sample_oracle_data": ("tests.conftest", "sample_oracle_data"),
@@ -89,9 +98,10 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "singer_state_message": ("tests.conftest", "singer_state_message"),
     "skip_e2e_if_no_oracle": ("tests.conftest", "skip_e2e_if_no_oracle"),
     "stream_config": ("tests.conftest", "stream_config"),
+    "t": ("tests.typings", "TestsFlextTapOracleTypes"),
     "tm": ("tests.models", "tm"),
     "tt": ("tests.typings", "tt"),
-    "u": ("tests.utilities", "u"),
+    "u": ("tests.utilities", "TestsFlextTapOracleUtilities"),
 }
 
 __all__ = [
@@ -126,6 +136,7 @@ __all__ = [
     "singer_state_message",
     "skip_e2e_if_no_oracle",
     "stream_config",
+    "t",
     "tm",
     "tt",
     "u",

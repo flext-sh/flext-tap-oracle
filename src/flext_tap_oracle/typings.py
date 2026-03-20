@@ -14,11 +14,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from flext_core.typings import FlextTypes as _tap_t
 from flext_db_oracle.typings import FlextDbOracleTypes
 from flext_meltano import FlextMeltanoTypes
 from pydantic import BaseModel
 
-from flext_tap_oracle import c, t as _tap_t
+from flext_tap_oracle.constants import FlextTapOracleConstants as c
 
 
 class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
