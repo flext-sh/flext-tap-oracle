@@ -16,10 +16,12 @@ from datetime import UTC, datetime
 from typing import Literal
 
 from flext_core import FlextContainer, FlextExceptions, FlextLogger, r
+from flext_core.constants import c
+from flext_core.models import m
+from flext_core.protocols import FlextProtocols as p
+from flext_core.typings import t
 from flext_db_oracle import FlextDbOracleModels, FlextDbOracleUtilities
 from flext_meltano import FlextMeltanoUtilities
-
-from flext_tap_oracle import c, m, p, t
 
 
 class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):

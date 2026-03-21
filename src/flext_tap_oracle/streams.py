@@ -11,9 +11,12 @@ from datetime import datetime
 from typing import Protocol
 
 from flext_core import FlextLogger, r
+from flext_core.constants import c
+from flext_core.protocols import FlextProtocols as p
+from flext_core.typings import t
+from flext_core.utilities import u
 from flext_db_oracle import FlextDbOracleApi
 
-from flext_tap_oracle import c, p, t, u
 from flext_tap_oracle.typings import OracleValue
 
 

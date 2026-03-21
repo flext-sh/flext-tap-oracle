@@ -13,9 +13,9 @@ from __future__ import annotations
 from typing import Annotated
 
 from flext_core import FlextLogger, FlextSettings, r
+from flext_core.constants import c
+from flext_core.typings import t
 from pydantic import Field, SecretStr
-
-from flext_tap_oracle import c, t
 
 logger = FlextLogger(__name__)
 

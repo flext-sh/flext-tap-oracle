@@ -28,7 +28,7 @@ from flext_tap_oracle.settings import create_oracle_tap_config
 @pytest.fixture(scope="session")
 def docker_control() -> tk:
     """Provide Docker control instance for tests."""
-    return tk()
+    return u.Tests.Docker()
 
 
 @pytest.fixture(scope="session")

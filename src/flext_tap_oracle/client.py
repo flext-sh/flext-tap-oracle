@@ -10,9 +10,9 @@ from collections.abc import Mapping
 from typing import override
 
 from flext_core import FlextLogger, FlextService, r
+from flext_core.typings import t
 from flext_db_oracle import FlextDbOracleApi, FlextDbOracleModels, FlextDbOracleSettings
 
-from flext_tap_oracle import t
 from flext_tap_oracle.settings import FlextTapOracleSettings
 
 logger = FlextLogger(__name__)
