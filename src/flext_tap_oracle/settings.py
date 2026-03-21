@@ -10,7 +10,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import Annotated
+from typing import Annotated, cast
 
 from flext_core import FlextLogger, FlextSettings, r
 from flext_core.typings import t
@@ -57,14 +57,22 @@ class FlextTapOracleSettings(FlextSettings):
             return r[bool].fail("Oracle service name is required")
         return r[bool].ok(True)
 
+    @staticmethod
+    def _resolve_secret(value: SecretStr) -> str:
+        """Resolve a SecretStr to its plain value, handling overrides that bypass coercion."""
+        raw = cast("object", value)
+        if isinstance(raw, SecretStr):
+            return raw.get_secret_value()
+        return str(raw)
+
     def get_oracle_config(self) -> dict[str, t.Scalar]:
         """Get Oracle database connection configuration."""
         return {
             "host": self.oracle_host,
             "port": self.oracle_port,
             "service_name": self.oracle_service_name,
-            "user": self.oracle_user.get_secret_value(),
-            "password": self.oracle_password.get_secret_value(),
+            "user": self._resolve_secret(self.oracle_user),
+            "password": self._resolve_secret(self.oracle_password),
         }
 
     def get_tap_config(self) -> dict[str, t.Scalar]:

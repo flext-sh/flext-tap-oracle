@@ -10,6 +10,7 @@ from __future__ import annotations
 from typing import Literal
 
 from flext_core.typings import FlextTypes
+
 from flext_tap_oracle import c
 from flext_tap_oracle.typings import FlextTapOracleTypes
 

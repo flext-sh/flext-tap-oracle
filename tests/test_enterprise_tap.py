@@ -44,8 +44,9 @@ class TestFlextOracleTapSettingsAndHelpers:
     def reset_settings_singleton(self) -> None:
         """Ensure deterministic tests by resetting singleton settings state."""
         FlextTapOracleSettings.reset_for_testing()
-        os.environ["FLEXT_TAP_ORACLE_SERVICE_NAME"] = "XE"
-        os.environ["FLEXT_TAP_ORACLE_ORACLE_SERVICE_NAME"] = "XE"
+        os.environ["FLEXT_ORACLE_SERVICE_NAME"] = "XE"
+        os.environ["FLEXT_ORACLE_USER"] = "testuser"
+        os.environ["FLEXT_ORACLE_PASSWORD"] = "testpass"
 
     def test_settings_model_validate(self) -> None:
         config = FlextTapOracleSettings.get_global(
@@ -61,7 +62,8 @@ class TestFlextOracleTapSettingsAndHelpers:
         assert config.oracle_host == "test-oracle"
         assert config.oracle_port == 1521
         assert config.oracle_service_name == "TESTDB"
-        assert config.oracle_user.get_secret_value() == "testuser"
+        oracle_config = config.get_oracle_config()
+        assert oracle_config["user"] == "testuser"
         assert config.batch_size == 1000
 
     def test_settings_connection_string(self) -> None:
@@ -95,7 +97,12 @@ class TestFlextOracleTapSettingsAndHelpers:
         assert result.value is not None
         assert result.value.oracle_host == "localhost"
 
-    def test_create_oracle_tap_config_failure_when_missing_credentials(self) -> None:
+    def test_create_oracle_tap_config_failure_when_missing_credentials(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        monkeypatch.delenv("FLEXT_ORACLE_USER", raising=False)
+        monkeypatch.delenv("FLEXT_ORACLE_PASSWORD", raising=False)
         result = create_oracle_tap_config(
             oracle_params={
                 "oracle_host": "localhost",

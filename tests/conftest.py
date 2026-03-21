@@ -64,7 +64,7 @@ def oracle_shared_container_environment(shared_oracle_container: str) -> None:
 def set_test_environment() -> Generator[None]:
     """Set test environment variables."""
     os.environ["FLEXT_ENV"] = "test"
-    os.environ["FLEXT_LOG_LEVEL"] = "debug"
+    os.environ["FLEXT_LOG_LEVEL"] = "DEBUG"
     os.environ["SINGER_SDK_LOG_LEVEL"] = "DEBUG"
     os.environ["ORACLE_TAP_TEST_MODE"] = "true"
     yield

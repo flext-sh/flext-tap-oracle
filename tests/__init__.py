@@ -61,10 +61,7 @@ if TYPE_CHECKING:
     )
 
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
-    "TestFlextOracleTapSettingsAndHelpers": (
-        "tests.test_enterprise_tap",
-        "TestFlextOracleTapSettingsAndHelpers",
-    ),
+    "TestFlextOracleTapSettingsAndHelpers": ("tests.test_enterprise_tap", "TestFlextOracleTapSettingsAndHelpers"),
     "TestsFlextTapOracleConstants": ("tests.constants", "TestsFlextTapOracleConstants"),
     "TestsFlextTapOracleModels": ("tests.models", "TestsFlextTapOracleModels"),
     "TestsFlextTapOracleProtocols": ("tests.protocols", "TestsFlextTapOracleProtocols"),
@@ -78,10 +75,7 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "mock_oracle_connection": ("tests.conftest", "mock_oracle_connection"),
     "mock_oracle_tap": ("tests.conftest", "mock_oracle_tap"),
     "oracle_queries": ("tests.conftest", "oracle_queries"),
-    "oracle_shared_container_environment": (
-        "tests.conftest",
-        "oracle_shared_container_environment",
-    ),
+    "oracle_shared_container_environment": ("tests.conftest", "oracle_shared_container_environment"),
     "oracle_tap": ("tests.conftest", "oracle_tap"),
     "oracle_tap_config": ("tests.conftest", "oracle_tap_config"),
     "p": ("tests.protocols", "TestsFlextTapOracleProtocols"),

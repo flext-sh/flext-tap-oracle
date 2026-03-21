@@ -92,7 +92,7 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
         class Summary:
             """Summary and reporting complex types."""
 
-            type SummaryData = dict[str, _tap_t.GeneralValueType | None]
+            type SummaryData = dict[str, _tap_t.NormalizedValue]
             type OracleValue = _tap_t.NormalizedValue | BaseModel | None
 
 
