@@ -106,7 +106,7 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
         class Connection:
             """Oracle tap connection configuration."""
 
-            DEFAULT_HOST: Final[str] = FlextDbOracleConstants.Network.LOCALHOST
+            DEFAULT_HOST: Final[str] = FlextDbOracleConstants.LOCALHOST
             DEFAULT_SERVICE_NAME: Final[str] = (
                 FlextDbOracleConstants.DbOracle.Connection.DEFAULT_SERVICE_NAME
             )

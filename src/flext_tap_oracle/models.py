@@ -330,7 +330,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             max_tables: Annotated[
                 int,
                 Field(
-                    default=FlextConstants.Performance.BatchProcessing.DEFAULT_SIZE,
+                    default=FlextConstants.DEFAULT_SIZE,
                     description="Maximum number of tables to discover",
                 ),
             ]
@@ -404,8 +404,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             batch_size: Annotated[
                 int,
                 Field(
-                    default=FlextConstants.Performance.BatchProcessing.DEFAULT_SIZE
-                    * 10,
+                    default=FlextConstants.DEFAULT_SIZE * 10,
                     description="Number of rows per batch",
                 ),
             ]
