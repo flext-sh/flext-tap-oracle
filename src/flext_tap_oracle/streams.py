@@ -11,12 +11,11 @@ from datetime import datetime
 from typing import Protocol
 
 from flext_core import FlextLogger, r
-from flext_core.constants import c
-from flext_core.protocols import FlextProtocols as p
 from flext_core.typings import t
 from flext_core.utilities import u
 from flext_db_oracle import FlextDbOracleApi
 
+from flext_tap_oracle.constants import FlextTapOracleConstants as c
 from flext_tap_oracle.typings import OracleValue
 
 
@@ -50,7 +49,7 @@ class FlextTapOracleStreams:
 
         def __init__(
             self,
-            tap: p.Meltano.Tap,
+            tap: FlextTapOracleStreams._Tap,
             name: str,
             table_name: str,
             schema: Mapping[str, t.GeneralValueType],
@@ -61,7 +60,7 @@ class FlextTapOracleStreams:
             self.schema = dict(schema)
             self.table_name: str = table_name
             self.oracle_api: FlextDbOracleApi = oracle_api
-            self._tap: p.Meltano.Tap = tap
+            self._tap: FlextTapOracleStreams._Tap = tap
             self._metadata_manager: Mapping[str, OracleValue] | None = None
             self._observability_manager: Mapping[str, OracleValue] | None = None
 
@@ -370,7 +369,7 @@ class FlextTapOracleStreams:
 
         @staticmethod
         def create_oracle_stream(
-            tap: p.Meltano.Tap,
+            tap: FlextTapOracleStreams._Tap,
             name: str,
             table_name: str,
             schema: Mapping[str, t.GeneralValueType],
@@ -399,7 +398,7 @@ class FlextTapOracleStreams:
 
         @staticmethod
         def create_oracle_stream_from_table(
-            tap: p.Meltano.Tap,
+            tap: FlextTapOracleStreams._Tap,
             table_metadata: OracleValue,
             oracle_api: FlextDbOracleApi,
             stream_prefix: str = c.TapOracle.DEFAULT_STREAM_PREFIX,

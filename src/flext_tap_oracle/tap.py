@@ -16,10 +16,10 @@ from typing import Annotated, Protocol, Self
 from flext_cli import FlextCli, t as ct
 from flext_cli.commands import FlextCliCommands
 from flext_core import FlextLogger, r
-from flext_core.constants import c
 from flext_core.typings import t
 from pydantic import BaseModel, Field, TypeAdapter
 
+from flext_tap_oracle.constants import FlextTapOracleConstants as c
 from flext_tap_oracle.settings import FlextTapOracleSettings
 
 logger = FlextLogger(__name__)

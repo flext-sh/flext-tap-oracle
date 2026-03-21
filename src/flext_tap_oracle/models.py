@@ -12,8 +12,6 @@ from datetime import datetime
 from typing import Annotated, Literal, Self
 
 from flext_core import FlextConstants, FlextModels, r
-from flext_core.constants import c
-from flext_core.typings import t
 from flext_db_oracle import FlextDbOracleModels
 from flext_meltano import FlextMeltanoModels
 from pydantic import (
@@ -23,6 +21,9 @@ from pydantic import (
     field_validator,
     model_validator,
 )
+
+from flext_tap_oracle.constants import FlextTapOracleConstants as c
+from flext_tap_oracle.typings import FlextTapOracleTypes as t
 
 
 class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):

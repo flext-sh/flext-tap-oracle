@@ -48,7 +48,9 @@ class FlextOracleDiscoveryService:
                 return r[list[FlextDbOracleModels.DbOracle.Table]].fail(error_msg)
             table_names = tables_result.value or []
             tables: list[FlextDbOracleModels.DbOracle.Table] = [
-                FlextDbOracleModels.DbOracle.Table(name=table_name, owner=schema_name)
+                FlextDbOracleModels.DbOracle.Table(
+                    name=table_name, owner=schema_name, columns=[]
+                )
                 for table_name in table_names
             ]
             logger.info(

@@ -67,12 +67,8 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
         class Singer:
             """Singer tap configuration constants."""
 
-            DEFAULT_BATCH_SIZE: Final[int] = (
-                FlextMeltanoConstants.Performance.BatchProcessing.DEFAULT_SIZE
-            )
-            MAX_BATCH_SIZE: Final[int] = (
-                FlextMeltanoConstants.Performance.BatchProcessing.MAX_ITEMS
-            )
+            DEFAULT_BATCH_SIZE: Final[int] = FlextMeltanoConstants.DEFAULT_SIZE
+            MAX_BATCH_SIZE: Final[int] = FlextMeltanoConstants.MAX_ITEMS
 
         class Replication:
             """Oracle replication method constants."""
@@ -123,7 +119,7 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
         class Extraction:
             """Tap-specific extraction configuration."""
 
-            TEST_QUERY: Final[str] = FlextDbOracleConstants.DbOracle.Query.TEST_QUERY
+            TEST_QUERY: Final[str] = "SELECT 1 FROM DUAL"
 
         type ReplicationMethodLiteral = Literal[
             Replication.Method.FULL_TABLE,
