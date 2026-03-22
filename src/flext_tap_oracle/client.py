@@ -41,7 +41,7 @@ class FlextOracleDiscoveryService:
         try:
             schema_name = self.schema_name or "USER"
             logger.info("Discovering Oracle tables in schema: %s", schema_name)
-            tables_result = self.oracle_api.services.get_tables(schema=schema_name)  # pyrefly: ignore[union-attr,missing-attribute]
+            tables_result = self.oracle_api.services.get_tables(schema=schema_name)
             if tables_result.is_failure:
                 error_msg = tables_result.error or "Table discovery failed"
                 logger.warning("Oracle table discovery failed: %s", error_msg)
