@@ -224,7 +224,9 @@ class TapOraclePrivate:
     class CommandRunner(Protocol):
         """Structural protocol for Oracle tap command execution."""
 
-        def execute(self) -> r[Mapping[str, t.GeneralValueType]]: ...
+        def execute(self) -> r[Mapping[str, t.GeneralValueType]]:
+            """Execute the Oracle tap command and return results."""
+            ...
 
     class Tap(Protocol):
         """Structural protocol for Oracle tap object used in stream context."""

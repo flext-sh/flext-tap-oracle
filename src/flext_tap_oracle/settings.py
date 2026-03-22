@@ -10,7 +10,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import Annotated, cast
+from typing import Annotated
 
 from flext_core import FlextLogger, FlextSettings, r
 from flext_core.typings import t
@@ -60,10 +60,9 @@ class FlextTapOracleSettings(FlextSettings):
     @staticmethod
     def _resolve_secret(value: SecretStr) -> str:
         """Resolve a SecretStr to its plain value, handling overrides that bypass coercion."""
-        raw = cast("object", value)
-        if isinstance(raw, SecretStr):
-            return raw.get_secret_value()
-        return str(raw)
+        if isinstance(value, SecretStr):
+            return value.get_secret_value()
+        return str(value)
 
     def get_oracle_config(self) -> dict[str, t.Scalar]:
         """Get Oracle database connection configuration."""
