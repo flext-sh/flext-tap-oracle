@@ -1,4 +1,4 @@
-"""Utilities for flext-tap-oracle tests - uses composition with u.
+"""Utilities for flext-tap-oracle tests - uses composition with FlextTestsUtilities.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -7,30 +7,30 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_core import t
-from flext_tests import u
+from flext_core import FlextTypes as _t
+from flext_tests import FlextTestsUtilities
+
+from flext_tap_oracle import FlextTapOracleUtilities
 
 
-class TestsFlextTapOracleUtilities(u):
-    """Utilities for flext-tap-oracle tests - uses composition with u.
+class FlextTapOracleTestUtilities(FlextTestsUtilities, FlextTapOracleUtilities):
+    """Utilities for flext-tap-oracle tests - uses composition with FlextTestsUtilities.
 
-    Architecture: Uses composition (not inheritance) with u and FlextTapOracleUtilities
+    Architecture: Uses composition (not inheritance) with FlextTestsUtilities and FlextTapOracleUtilities
     for flext-tap-oracle-specific utility definitions.
 
     Access patterns:
-    - TestsFlextTapOracleUtilities.Tests.* = flext_tests test utilities (via composition)
-    - TestsFlextTapOracleUtilities.TapOracle.* = flext-tap-oracle-specific test utilities
-    - TestsFlextTapOracleUtilities.* = u methods (via composition)
+    - FlextTapOracleTestUtilities.Tests.* = flext_tests test utilities (via composition)
+    - FlextTapOracleTestUtilities.TapOracle.* = flext-tap-oracle-specific test utilities
+    - FlextTapOracleTestUtilities.* = FlextTestsUtilities methods (via composition)
 
     Rules:
-    - Use composition, not inheritance (u deprecates subclassing)
+    - Use composition, not inheritance (FlextTestsUtilities deprecates subclassing)
     - flext-tap-oracle-specific utilities go in TapOracle namespace
     - Generic utilities accessed via Tests namespace
     """
 
-    Tests = u.Tests
-
-    class TapOracle:
+    class TapOracle(FlextTapOracleUtilities.TapOracle):
         """Tap Oracle test utilities - domain-specific for Oracle tap testing.
 
         Contains test utilities specific to Oracle tap functionality including:
@@ -47,7 +47,7 @@ class TestsFlextTapOracleUtilities(u):
             service_name: str = "XE",
             username: str = "test",
             password: str = "test",
-            **kwargs: t.Scalar,
+            **kwargs: _t.Scalar,
         ) -> dict[str, object]:
             """Create test Oracle configuration."""
             config: dict[str, object] = {
@@ -65,7 +65,7 @@ class TestsFlextTapOracleUtilities(u):
             stream_name: str,
             table_name: str,
             replication_method: str = "FULL_TABLE",
-            **kwargs: t.Scalar,
+            **kwargs: _t.Scalar,
         ) -> dict[str, object]:
             """Create test Singer stream configuration."""
             stream: dict[str, object] = {
@@ -87,7 +87,7 @@ class TestsFlextTapOracleUtilities(u):
 
         @staticmethod
         def generate_mock_oracle_data(
-            table_name: str, row_count: int = 10, **kwargs: t.Scalar
+            table_name: str, row_count: int = 10, **kwargs: _t.Scalar
         ) -> list[dict[str, object]]:
             """Generate mock Oracle data for testing."""
             data: list[dict[str, object]] = []
@@ -102,5 +102,5 @@ class TestsFlextTapOracleUtilities(u):
             return data
 
 
-u = TestsFlextTapOracleUtilities
-__all__ = ["TestsFlextTapOracleUtilities", "u"]
+u = FlextTapOracleTestUtilities
+__all__ = ["FlextTapOracleTestUtilities", "u"]

@@ -1,4 +1,4 @@
-"""Models for flext-tap-oracle tests - uses composition with m.
+"""Models for flext-tap-oracle tests - uses composition with FlextTestsModels.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -7,38 +7,29 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_core import FlextModels
-from flext_tests import m
+from flext_tests import FlextTestsModels
+
+from flext_tap_oracle import FlextTapOracleModels
 
 
-class TestsFlextTapOracleModels(m):
-    """Models for flext-tap-oracle tests - uses composition with m.
+class FlextTapOracleTestModels(FlextTestsModels, FlextTapOracleModels):
+    """Models for flext-tap-oracle tests - uses composition with FlextTestsModels.
 
-    Architecture: Uses composition (not inheritance) with m and FlextModels
+    Architecture: Uses composition (not inheritance) with FlextTestsModels and FlextTapOracleModels
     for flext-tap-oracle-specific model definitions.
 
     Access patterns:
-    - TestsFlextTapOracleModels.Tests.* = flext_tests test models (via composition)
-    - TestsFlextTapOracleModels.TapOracle.* = flext-tap-oracle-specific test models
-    - TestsFlextTapOracleModels.Entity, .Value, etc. = FlextModels domain models (via composition)
+    - FlextTapOracleTestModels.Tests.* = flext_tests test models (via composition)
+    - FlextTapOracleTestModels.TapOracle.* = flext-tap-oracle-specific test models
+    - FlextTapOracleTestModels.Entity, .Value, etc. = FlextTapOracleModels domain models (via composition)
 
     Rules:
-    - Use composition, not inheritance (m deprecates subclassing)
+    - Use composition, not inheritance (FlextTestsModels deprecates subclassing)
     - flext-tap-oracle-specific models go in TapOracle namespace
     - Generic models accessed via Tests namespace
     """
 
-    # Composition: expose m namespaces
-    Tests = m.Tests
-
-    # Composition: expose FlextModels domain model classes
-    Entity = FlextModels.Entity
-    Value = FlextModels.Value
-    AggregateRoot = FlextModels.AggregateRoot
-    DomainEvent = FlextModels.DomainEvent
-
-    # TapOracle-specific test models namespace
-    class TapOracle:
+    class TapOracle(FlextTapOracleModels.TapOracle):
         """Tap Oracle test models - domain-specific for Oracle tap testing.
 
         Contains test models specific to Oracle tap functionality including:
@@ -48,51 +39,51 @@ class TestsFlextTapOracleModels(m):
         - Configuration test models
         """
 
-        class TestOracleConnection(FlextModels.Entity):
-            """Test model for Oracle database connections."""
+        class Tests:
+            """Test models namespace for flext-tap-oracle tests."""
 
-            host: str
-            port: int
-            service_name: str
-            username: str
-            password: str
+            class TestOracleConnection(FlextTapOracleModels.Entity):
+                """Test model for Oracle database connections."""
 
-            @property
-            def connection_string(self) -> str:
-                """Get Oracle connection string."""
-                return f"oracle://{self.username}:***@{self.host}:{self.port}/{self.service_name}"
+                host: str
+                port: int
+                service_name: str
+                username: str
+                password: str
 
-        class TestSingerStream(FlextModels.Entity):
-            """Test model for Singer streams."""
+                @property
+                def connection_string(self) -> str:
+                    """Get Oracle connection string."""
+                    return f"oracle://{self.username}:***@{self.host}:{self.port}/{self.service_name}"
 
-            stream_name: str
-            table_name: str
-            replication_method: str
-            is_selected: bool = True
+            class TestSingerStream(FlextTapOracleModels.Entity):
+                """Test model for Singer streams."""
 
-        class TestOracleTable(FlextModels.Entity):
-            """Test model for Oracle tables."""
+                stream_name: str
+                table_name: str
+                replication_method: str
+                is_selected: bool = True
 
-            table_name: str
-            schema_name: str
-            column_count: int
-            row_count: int | None = None
+            class TestOracleTable(FlextTapOracleModels.Entity):
+                """Test model for Oracle tables."""
 
-        class TestExtractionConfig(FlextModels.Entity):
-            """Test model for extraction configurations."""
+                table_name: str
+                schema_name: str
+                column_count: int
+                row_count: int | None = None
 
-            batch_size: int
-            parallel_streams: int
-            timeout_seconds: int
-            max_rows: int | None = None
+            class TestExtractionConfig(FlextTapOracleModels.Entity):
+                """Test model for extraction configurations."""
+
+                batch_size: int
+                parallel_streams: int
+                timeout_seconds: int
+                max_rows: int | None = None
 
 
-# Alias for simplified usage
-tm = TestsFlextTapOracleModels
-m = TestsFlextTapOracleModels
+m = FlextTapOracleTestModels
 
 __all__ = [
-    "TestsFlextTapOracleModels",
+    "FlextTapOracleTestModels",
     "m",
-    "tm",
 ]

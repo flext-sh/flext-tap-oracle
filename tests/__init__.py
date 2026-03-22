@@ -19,6 +19,7 @@ from flext_core.lazy import cleanup_submodule_namespace, lazy_getattr
 
 if TYPE_CHECKING:
     from flext_core.typings import FlextTypes
+    from flext_tests import d, e, h, r, s, x
 
     from .conftest import (
         discovery_config,
@@ -44,37 +45,31 @@ if TYPE_CHECKING:
         skip_e2e_if_no_oracle,
         stream_config,
     )
-    from .constants import (
-        TestsFlextTapOracleConstants,
-        TestsFlextTapOracleConstants as c,
-    )
-    from .models import TestsFlextTapOracleModels, TestsFlextTapOracleModels as m, tm
-    from .protocols import (
-        TestsFlextTapOracleProtocols,
-        TestsFlextTapOracleProtocols as p,
-    )
+    from .constants import FlextTapOracleTestConstants, FlextTapOracleTestConstants as c
+    from .models import FlextTapOracleTestModels, FlextTapOracleTestModels as m
+    from .protocols import FlextTapOracleTestProtocols, FlextTapOracleTestProtocols as p
     from .test_enterprise_tap import TestFlextOracleTapSettingsAndHelpers
-    from .typings import TestsFlextTapOracleTypes, TestsFlextTapOracleTypes as t, tt
-    from .utilities import (
-        TestsFlextTapOracleUtilities,
-        TestsFlextTapOracleUtilities as u,
-    )
+    from .typings import FlextTapOracleTestTypes, FlextTapOracleTestTypes as t
+    from .utilities import FlextTapOracleTestUtilities, FlextTapOracleTestUtilities as u
 
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
+    "FlextTapOracleTestConstants": ("tests.constants", "FlextTapOracleTestConstants"),
+    "FlextTapOracleTestModels": ("tests.models", "FlextTapOracleTestModels"),
+    "FlextTapOracleTestProtocols": ("tests.protocols", "FlextTapOracleTestProtocols"),
+    "FlextTapOracleTestTypes": ("tests.typings", "FlextTapOracleTestTypes"),
+    "FlextTapOracleTestUtilities": ("tests.utilities", "FlextTapOracleTestUtilities"),
     "TestFlextOracleTapSettingsAndHelpers": (
         "tests.test_enterprise_tap",
         "TestFlextOracleTapSettingsAndHelpers",
     ),
-    "TestsFlextTapOracleConstants": ("tests.constants", "TestsFlextTapOracleConstants"),
-    "TestsFlextTapOracleModels": ("tests.models", "TestsFlextTapOracleModels"),
-    "TestsFlextTapOracleProtocols": ("tests.protocols", "TestsFlextTapOracleProtocols"),
-    "TestsFlextTapOracleTypes": ("tests.typings", "TestsFlextTapOracleTypes"),
-    "TestsFlextTapOracleUtilities": ("tests.utilities", "TestsFlextTapOracleUtilities"),
-    "c": ("tests.constants", "TestsFlextTapOracleConstants"),
+    "c": ("tests.constants", "FlextTapOracleTestConstants"),
+    "d": ("flext_tests", "d"),
     "discovery_config": ("tests.conftest", "discovery_config"),
     "docker_control": ("tests.conftest", "docker_control"),
+    "e": ("flext_tests", "e"),
     "error_scenarios": ("tests.conftest", "error_scenarios"),
-    "m": ("tests.models", "TestsFlextTapOracleModels"),
+    "h": ("flext_tests", "h"),
+    "m": ("tests.models", "FlextTapOracleTestModels"),
     "mock_oracle_connection": ("tests.conftest", "mock_oracle_connection"),
     "mock_oracle_tap": ("tests.conftest", "mock_oracle_tap"),
     "oracle_queries": ("tests.conftest", "oracle_queries"),
@@ -84,9 +79,11 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     ),
     "oracle_tap": ("tests.conftest", "oracle_tap"),
     "oracle_tap_config": ("tests.conftest", "oracle_tap_config"),
-    "p": ("tests.protocols", "TestsFlextTapOracleProtocols"),
+    "p": ("tests.protocols", "FlextTapOracleTestProtocols"),
     "performance_test_config": ("tests.conftest", "performance_test_config"),
     "pytest_configure": ("tests.conftest", "pytest_configure"),
+    "r": ("flext_tests", "r"),
+    "s": ("flext_tests", "s"),
     "sample_oracle_data": ("tests.conftest", "sample_oracle_data"),
     "sample_oracle_tables": ("tests.conftest", "sample_oracle_tables"),
     "set_test_environment": ("tests.conftest", "set_test_environment"),
@@ -98,23 +95,25 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "singer_state_message": ("tests.conftest", "singer_state_message"),
     "skip_e2e_if_no_oracle": ("tests.conftest", "skip_e2e_if_no_oracle"),
     "stream_config": ("tests.conftest", "stream_config"),
-    "t": ("tests.typings", "TestsFlextTapOracleTypes"),
-    "tm": ("tests.models", "tm"),
-    "tt": ("tests.typings", "tt"),
-    "u": ("tests.utilities", "TestsFlextTapOracleUtilities"),
+    "t": ("tests.typings", "FlextTapOracleTestTypes"),
+    "u": ("tests.utilities", "FlextTapOracleTestUtilities"),
+    "x": ("flext_tests", "x"),
 }
 
 __all__ = [
+    "FlextTapOracleTestConstants",
+    "FlextTapOracleTestModels",
+    "FlextTapOracleTestProtocols",
+    "FlextTapOracleTestTypes",
+    "FlextTapOracleTestUtilities",
     "TestFlextOracleTapSettingsAndHelpers",
-    "TestsFlextTapOracleConstants",
-    "TestsFlextTapOracleModels",
-    "TestsFlextTapOracleProtocols",
-    "TestsFlextTapOracleTypes",
-    "TestsFlextTapOracleUtilities",
     "c",
+    "d",
     "discovery_config",
     "docker_control",
+    "e",
     "error_scenarios",
+    "h",
     "m",
     "mock_oracle_connection",
     "mock_oracle_tap",
@@ -125,6 +124,8 @@ __all__ = [
     "p",
     "performance_test_config",
     "pytest_configure",
+    "r",
+    "s",
     "sample_oracle_data",
     "sample_oracle_tables",
     "set_test_environment",
@@ -137,9 +138,8 @@ __all__ = [
     "skip_e2e_if_no_oracle",
     "stream_config",
     "t",
-    "tm",
-    "tt",
     "u",
+    "x",
 ]
 
 

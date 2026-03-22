@@ -1,4 +1,4 @@
-"""Protocols for flext-tap-oracle tests - uses composition with p.
+"""Protocols for flext-tap-oracle tests - uses composition with FlextTestsProtocols.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -9,27 +9,29 @@ from __future__ import annotations
 
 from typing import Protocol, runtime_checkable
 
-from flext_tests import p
+from flext_tests import FlextTestsProtocols
+
+from flext_tap_oracle import FlextTapOracleProtocols
 
 
-class TestsFlextTapOracleProtocols(p):
-    """Protocols for flext-tap-oracle tests - uses composition with p.
+class FlextTapOracleTestProtocols(FlextTestsProtocols, FlextTapOracleProtocols):
+    """Protocols for flext-tap-oracle tests - uses composition with FlextTestsProtocols.
 
-    Architecture: Uses composition (not inheritance) with p and FlextTapOracleProtocols
+    Architecture: Uses composition (not inheritance) with FlextTestsProtocols and FlextTapOracleProtocols
     for flext-tap-oracle-specific protocol definitions.
 
     Access patterns:
-    - TestsFlextTapOracleProtocols.Tests.* = flext_tests test protocols (via composition)
-    - TestsFlextTapOracleProtocols.TapOracle.* = flext-tap-oracle-specific test protocols
-    - TestsFlextTapOracleProtocols.* = p protocols (via composition)
+    - FlextTapOracleTestProtocols.Tests.* = flext_tests test protocols (via composition)
+    - FlextTapOracleTestProtocols.TapOracle.* = flext-tap-oracle-specific test protocols
+    - FlextTapOracleTestProtocols.* = FlextTestsProtocols protocols (via composition)
 
     Rules:
-    - Use composition, not inheritance (p deprecates subclassing)
+    - Use composition, not inheritance (FlextTestsProtocols deprecates subclassing)
     - flext-tap-oracle-specific protocols go in TapOracle namespace
     - Generic protocols accessed via Tests namespace
     """
 
-    class TapOracle:
+    class TapOracle(FlextTapOracleProtocols.TapOracle):
         """Tap Oracle test protocols - domain-specific for Oracle tap testing.
 
         Contains test protocols specific to Oracle tap functionality including:
@@ -38,62 +40,65 @@ class TestsFlextTapOracleProtocols(p):
         - Test assertion protocols
         """
 
-        @runtime_checkable
-        class MockOracleConnection(Protocol):
-            """Protocol for mock Oracle connections in tests."""
+        class Tests:
+            """Internal tests declarations."""
 
-            def connect(self) -> bool:
-                """Connect to mock Oracle database."""
-                ...
+            @runtime_checkable
+            class MockOracleConnection(Protocol):
+                """Protocol for mock Oracle connections in tests."""
 
-            def disconnect(self) -> bool:
-                """Disconnect from mock Oracle database."""
-                ...
+                def connect(self) -> bool:
+                    """Connect to mock Oracle database."""
+                    ...
 
-            def execute_query(
-                self, query: str, parameters: dict[str, object] | None = None
-            ) -> list[dict[str, object]]:
-                """Execute query on mock database."""
-                ...
+                def disconnect(self) -> bool:
+                    """Disconnect from mock Oracle database."""
+                    ...
 
-        @runtime_checkable
-        class TestDataProvider(Protocol):
-            """Protocol for test data providers."""
+                def execute_query(
+                    self, query: str, parameters: dict[str, object] | None = None
+                ) -> list[dict[str, object]]:
+                    """Execute query on mock database."""
+                    ...
 
-            def get_test_tables(self) -> list[dict[str, object]]:
-                """Get test table definitions."""
-                ...
+            @runtime_checkable
+            class TestDataProvider(Protocol):
+                """Protocol for test data providers."""
 
-            def get_test_data(self, table_name: str) -> list[dict[str, object]]:
-                """Get test data for a table."""
-                ...
+                def get_test_tables(self) -> list[dict[str, object]]:
+                    """Get test table definitions."""
+                    ...
 
-            def get_test_config(self) -> dict[str, object]:
-                """Get test configuration."""
-                ...
+                def get_test_data(self, table_name: str) -> list[dict[str, object]]:
+                    """Get test data for a table."""
+                    ...
 
-        @runtime_checkable
-        class TestAssertion(Protocol):
-            """Protocol for test assertions."""
+                def get_test_config(self) -> dict[str, object]:
+                    """Get test configuration."""
+                    ...
 
-            def assert_oracle_connection_successful(
-                self, config: dict[str, object]
-            ) -> None:
-                """Assert Oracle connection was successful."""
-                ...
+            @runtime_checkable
+            class TestAssertion(Protocol):
+                """Protocol for test assertions."""
 
-            def assert_singer_stream_valid(self, stream: dict[str, object]) -> None:
-                """Assert Singer stream is valid."""
-                ...
+                def assert_oracle_connection_successful(
+                    self, config: dict[str, object]
+                ) -> None:
+                    """Assert Oracle connection was successful."""
+                    ...
 
-            def assert_extraction_results_match(
-                self,
-                expected: list[dict[str, object]],
-                actual: list[dict[str, object]],
-            ) -> None:
-                """Assert extraction results match expected data."""
-                ...
+                def assert_singer_stream_valid(self, stream: dict[str, object]) -> None:
+                    """Assert Singer stream is valid."""
+                    ...
+
+                def assert_extraction_results_match(
+                    self,
+                    expected: list[dict[str, object]],
+                    actual: list[dict[str, object]],
+                ) -> None:
+                    """Assert extraction results match expected data."""
+                    ...
 
 
-p = TestsFlextTapOracleProtocols
-__all__ = ["TestsFlextTapOracleProtocols", "p"]
+p = FlextTapOracleTestProtocols
+__all__ = ["FlextTapOracleTestProtocols", "p"]

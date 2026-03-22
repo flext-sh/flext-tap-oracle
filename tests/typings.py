@@ -1,4 +1,4 @@
-"""Types for flext-tap-oracle tests - uses composition with t.
+"""Types for flext-tap-oracle tests - uses composition with FlextTestsTypes.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -10,24 +10,24 @@ from __future__ import annotations
 from typing import Literal
 
 from flext_core.typings import FlextTypes
+from flext_tests import FlextTestsTypes
 
-from flext_tap_oracle import c
-from flext_tap_oracle.typings import FlextTapOracleTypes
+from flext_tap_oracle import FlextTapOracleConstants as _c, FlextTapOracleTypes
 
 
-class TestsFlextTapOracleTypes(FlextTapOracleTypes):
-    """Types for flext-tap-oracle tests - uses composition with t.
+class FlextTapOracleTestTypes(FlextTestsTypes, FlextTapOracleTypes):
+    """Types for flext-tap-oracle tests - uses composition with FlextTestsTypes.
 
-    Architecture: Uses composition (not inheritance) with t and FlextTapOracleTypes
+    Architecture: Uses composition (not inheritance) with FlextTestsTypes and FlextTapOracleTypes
     for flext-tap-oracle-specific type definitions.
 
     Access patterns:
-    - TestsFlextTapOracleTypes.Tests.* = flext_tests test types (via composition)
-    - TestsFlextTapOracleTypes.TapOracleTest.* = flext-tap-oracle-specific test types
-    - TestsFlextTapOracleTypes.* = t types (via composition)
+    - FlextTapOracleTestTypes.Tests.* = flext_tests test types (via composition)
+    - FlextTapOracleTestTypes.TapOracleTest.* = flext-tap-oracle-specific test types
+    - FlextTapOracleTestTypes.* = FlextTestsTypes types (via composition)
 
     Rules:
-    - Use composition, not inheritance (t deprecates subclassing)
+    - Use composition, not inheritance (FlextTestsTypes deprecates subclassing)
     - flext-tap-oracle-specific types go in TapOracleTest namespace
     - Generic types accessed via Tests namespace
     """
@@ -41,10 +41,10 @@ class TestsFlextTapOracleTypes(FlextTapOracleTypes):
         - Test scenario types
         """
 
-        type TestOracleHost = c.TestOracleHost
+        type TestOracleHost = _c.TestOracleHost
         type TestOraclePort = Literal[1521, 10521, 1522]
-        type TestServiceName = c.TestServiceName
-        type TestReplicationMethod = c.TestReplicationMethod
+        type TestServiceName = _c.TestServiceName
+        type TestReplicationMethod = _c.TestReplicationMethod
         type MockOracleRecord = dict[str, FlextTypes.Scalar]
         type MockOracleTable = list[MockOracleRecord]
         type TestScenario = dict[str, object]
@@ -52,7 +52,5 @@ class TestsFlextTapOracleTypes(FlextTapOracleTypes):
         type TestPerformanceResult = dict[str, float | int | str]
 
 
-tt = TestsFlextTapOracleTypes
-__all__ = ["TestsFlextTapOracleTypes", "tt"]
-
-t = TestsFlextTapOracleTypes
+t = FlextTapOracleTestTypes
+__all__ = ["FlextTapOracleTestTypes", "t"]

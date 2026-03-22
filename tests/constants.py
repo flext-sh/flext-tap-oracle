@@ -1,6 +1,6 @@
-"""Module skeleton for TestsFlextTapOracleConstants.
+"""Module skeleton for FlextTapOracleTestConstants.
 
-Test constants for flexttaporacle.
+Test constants for flext-tap-oracle.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -10,9 +10,11 @@ from __future__ import annotations
 
 from enum import StrEnum, unique
 
+from flext_tests import FlextTestsConstants
 
-class TestsFlextTapOracleConstants:
-    """Test constants for flexttaporacle."""
+
+class FlextTapOracleTestConstants(FlextTestsConstants):
+    """Test constants for flext-tap-oracle."""
 
     @unique
     class TestOracleHost(StrEnum):
@@ -37,5 +39,5 @@ class TestsFlextTapOracleConstants:
         INCREMENTAL = "INCREMENTAL"
 
 
-c = TestsFlextTapOracleConstants
-__all__ = ["TestsFlextTapOracleConstants", "c"]
+c = FlextTapOracleTestConstants
+__all__ = ["FlextTapOracleTestConstants", "c"]
