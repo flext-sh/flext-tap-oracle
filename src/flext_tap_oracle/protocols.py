@@ -9,9 +9,11 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Protocol, runtime_checkable
 
-from flext_core.typings import t
-from flext_db_oracle.protocols import FlextDbOracleProtocols
-from flext_meltano import FlextMeltanoModels, FlextMeltanoProtocols
+from flext_core import r
+from flext_db_oracle import FlextDbOracleProtocols
+from flext_meltano import FlextMeltanoProtocols, m
+
+from flext_tap_oracle import t
 
 
 class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
@@ -152,7 +154,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
             def generate_catalog(
                 self,
                 config: Mapping[str, t.GeneralValueType],
-            ) -> FlextMeltanoProtocols.Result[FlextMeltanoModels.Meltano.SingerCatalog]:
+            ) -> FlextMeltanoProtocols.Result[m.Meltano.SingerCatalog]:
                 """Generate Singer catalog from Oracle schema."""
                 ...
 
@@ -160,9 +162,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
                 self,
                 stream: str,
                 state: Mapping[str, t.GeneralValueType],
-            ) -> FlextMeltanoProtocols.Result[
-                FlextMeltanoModels.Meltano.SingerStateMessage
-            ]:
+            ) -> FlextMeltanoProtocols.Result[m.Meltano.SingerStateMessage]:
                 """Sync Singer stream from Oracle table."""
                 ...
 
@@ -225,6 +225,11 @@ class TapOraclePrivate:
         """Structural protocol for Oracle tap command execution."""
 
         def execute(self) -> r[Mapping[str, t.GeneralValueType]]: ...
+
+    class Tap(Protocol):
+        """Structural protocol for Oracle tap object used in stream context."""
+
+        typed_config: t.NormalizedValue
 
 
 p = FlextTapOracleProtocols

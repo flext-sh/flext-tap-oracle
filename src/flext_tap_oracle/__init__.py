@@ -44,6 +44,7 @@ if TYPE_CHECKING:
     from flext_tap_oracle.protocols import (
         FlextTapOracleProtocols,
         FlextTapOracleProtocols as p,
+        TapOraclePrivate,
     )
     from flext_tap_oracle.settings import (
         FlextTapOracleSettings,
@@ -53,9 +54,7 @@ if TYPE_CHECKING:
     from flext_tap_oracle.streams import FlextTapOracleStreams
     from flext_tap_oracle.tap import (
         OracleTapDiscoverCommand,
-        OracleTapDiscoverParams,
         OracleTapSyncCommand,
-        OracleTapSyncParams,
         cli,
         cli_api,
         create_tap_oracle_cli,
@@ -105,10 +104,9 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
         "FlextTapOracleUtilities",
     ),
     "OracleTapDiscoverCommand": ("flext_tap_oracle.tap", "OracleTapDiscoverCommand"),
-    "OracleTapDiscoverParams": ("flext_tap_oracle.tap", "OracleTapDiscoverParams"),
     "OracleTapSyncCommand": ("flext_tap_oracle.tap", "OracleTapSyncCommand"),
-    "OracleTapSyncParams": ("flext_tap_oracle.tap", "OracleTapSyncParams"),
     "OracleValue": ("flext_tap_oracle.typings", "OracleValue"),
+    "TapOraclePrivate": ("flext_tap_oracle.protocols", "TapOraclePrivate"),
     "__all__": ("flext_tap_oracle.__version__", "__all__"),
     "__author__": ("flext_tap_oracle.__version__", "__author__"),
     "__author_email__": ("flext_tap_oracle.__version__", "__author_email__"),
@@ -167,10 +165,9 @@ __all__ = [
     "FlextTapOracleTypes",
     "FlextTapOracleUtilities",
     "OracleTapDiscoverCommand",
-    "OracleTapDiscoverParams",
     "OracleTapSyncCommand",
-    "OracleTapSyncParams",
     "OracleValue",
+    "TapOraclePrivate",
     "__all__",
     "__author__",
     "__author_email__",

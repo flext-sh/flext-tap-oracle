@@ -11,7 +11,7 @@ from collections.abc import Sequence
 from datetime import datetime
 from typing import Annotated, Literal, Self
 
-from flext_core import FlextConstants, FlextModels, r
+from flext_core import r
 from flext_db_oracle import FlextDbOracleModels
 from flext_meltano import FlextMeltanoModels
 from pydantic import (
@@ -22,12 +22,11 @@ from pydantic import (
     model_validator,
 )
 
-from flext_tap_oracle.constants import FlextTapOracleConstants as c
-from flext_tap_oracle.typings import FlextTapOracleTypes as t
+from flext_tap_oracle import c, t
 
 
 class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
-    """Complete models for Oracle tap operations extending FlextModels.
+    """Complete models for Oracle tap operations extending FlextMeltanoModels.
 
     Provides standardized models for all Oracle tap domain entities including:
     - Singer stream metadata and configuration
@@ -36,7 +35,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
     - Performance monitoring and metrics
     - Singer protocol compliance models
 
-    All nested classes inherit FlextModels validation and patterns.
+    All nested classes inherit FlextMeltanoModels validation and patterns.
     """
 
     class TapOracle:
@@ -118,7 +117,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 },
             }
 
-        class OracleTapStreamMetadata(FlextModels.Entity):
+        class OracleTapStreamMetadata(FlextMeltanoModels.Entity):
             """Oracle tap stream metadata with Singer protocol compliance.
 
             Extends Oracle table metadata with tap-specific information
@@ -270,7 +269,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     raise ValueError(msg)
                 return self
 
-        class OracleTapDiscoveryConfig(FlextModels.Entity):
+        class OracleTapDiscoveryConfig(FlextMeltanoModels.Entity):
             """Configuration for Oracle tap discovery operations."""
 
             # Pydantic 2.11 Configuration - Discovery Features
@@ -331,7 +330,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             max_tables: Annotated[
                 int,
                 Field(
-                    default=FlextConstants.DEFAULT_SIZE,
+                    default=c.DEFAULT_SIZE,
                     description="Maximum number of tables to discover",
                 ),
             ]
@@ -340,7 +339,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             discovery_timeout: Annotated[
                 int,
                 Field(
-                    default=FlextConstants.DEFAULT_TIMEOUT_SECONDS * 10,
+                    default=c.DEFAULT_TIMEOUT_SECONDS * 10,
                     description="Discovery timeout in seconds",
                 ),
             ]
@@ -381,7 +380,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     raise ValueError(msg)
                 return self
 
-        class OracleTapExtractionConfig(FlextModels.Entity):
+        class OracleTapExtractionConfig(FlextMeltanoModels.Entity):
             """Configuration for Oracle tap extraction operations."""
 
             # Pydantic 2.11 Configuration - Extraction Features
@@ -405,7 +404,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             batch_size: Annotated[
                 int,
                 Field(
-                    default=FlextConstants.DEFAULT_SIZE * 10,
+                    default=c.DEFAULT_SIZE * 10,
                     description="Number of rows per batch",
                 ),
             ]
@@ -483,7 +482,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     raise ValueError(msg)
                 return self
 
-        class OracleTapPerformanceMetrics(FlextModels.Entity):
+        class OracleTapPerformanceMetrics(FlextMeltanoModels.Entity):
             """Performance metrics for Oracle tap operations."""
 
             # Pydantic 2.11 Configuration - Performance Features
@@ -610,7 +609,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     raise ValueError(msg)
                 return self
 
-        class OracleTapStreamInfo(FlextModels.Entity):
+        class OracleTapStreamInfo(FlextMeltanoModels.Entity):
             """Oracle tap stream information - aggregates tap and Oracle metadata.
 
             This model combines Oracle table metadata with tap-specific stream configuration
@@ -740,7 +739,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     raise ValueError(msg)
                 return self
 
-        class OracleTapDiscoveryResult(FlextModels.Entity):
+        class OracleTapDiscoveryResult(FlextMeltanoModels.Entity):
             """Result of Oracle table discovery operation.
 
             Aggregates discovery results with both raw Oracle metadata and
@@ -895,7 +894,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     raise ValueError(msg)
                 return self
 
-        class OracleTapExecutionStats(FlextModels.Entity):
+        class OracleTapExecutionStats(FlextMeltanoModels.Entity):
             """Oracle tap execution statistics and metrics.
 
             Tracks runtime statistics for tap execution, performance metrics,
@@ -1141,6 +1140,51 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     msg = "Streams processed cannot be negative"
                     raise ValueError(msg)
                 return self
+
+        class OracleTapDiscoverParams(FlextMeltanoModels.Entity):
+            """Parameters for Oracle tap discover command."""
+
+            config_file: Annotated[str | None, Field(default=None)]
+            output_file: Annotated[str | None, Field(default=None)]
+
+            @classmethod
+            def from_click_args(cls, **kwargs: t.Scalar) -> Self:
+                """Create discover params from Click command arguments."""
+                config_file_value: t.Scalar | None = kwargs.get("config_file")
+                output_file_value: t.Scalar | None = kwargs.get("output_file")
+                return cls(
+                    config_file=str(config_file_value) if config_file_value else None,
+                    output_file=str(output_file_value) if output_file_value else None,
+                )
+
+            def validate_business_rules(self) -> r[bool]:
+                """Validate discover params business rules."""
+                return r[bool].ok(value=True)
+
+        class OracleTapSyncParams(FlextMeltanoModels.Entity):
+            """Parameters for Oracle tap sync command."""
+
+            config_file: Annotated[str | None, Field(default=None)]
+            catalog_file: Annotated[str | None, Field(default=None)]
+            state_file: Annotated[str | None, Field(default=None)]
+
+            @classmethod
+            def from_click_args(cls, **kwargs: t.Scalar) -> Self:
+                """Create sync params from Click command arguments."""
+                config_file_value: t.Scalar | None = kwargs.get("config_file")
+                catalog_file_value: t.Scalar | None = kwargs.get("catalog_file")
+                state_file_value: t.Scalar | None = kwargs.get("state_file")
+                return cls(
+                    config_file=str(config_file_value) if config_file_value else None,
+                    catalog_file=str(catalog_file_value)
+                    if catalog_file_value
+                    else None,
+                    state_file=str(state_file_value) if state_file_value else None,
+                )
+
+            def validate_business_rules(self) -> r[bool]:
+                """Validate sync params business rules."""
+                return r[bool].ok(value=True)
 
         # =====================================================
         #

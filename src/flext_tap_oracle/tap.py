@@ -11,56 +11,15 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping
 from pathlib import Path
-from typing import Annotated, Protocol, Self
 
-from flext_cli import FlextCli, t as ct
-from flext_cli.commands import FlextCliCommands
+from flext_cli import FlextCli, FlextCliCommands
 from flext_core import FlextLogger, r
-from flext_core.typings import t
-from pydantic import BaseModel, Field, TypeAdapter
+from pydantic import BaseModel, TypeAdapter
 
-from flext_tap_oracle.constants import FlextTapOracleConstants as c
-from flext_tap_oracle.settings import FlextTapOracleSettings
+from flext_tap_oracle import FlextTapOracleSettings, TapOraclePrivate, c, m, t
 
 logger = FlextLogger(__name__)
 cli_api = FlextCli()
-
-
-class OracleTapDiscoverParams(BaseModel):
-    """Parameters for tap discover command."""
-
-    config_file: Annotated[str | None, Field(default=None)]
-    output_file: Annotated[str | None, Field(default=None)]
-
-    @classmethod
-    def from_click_args(cls, **kwargs: t.Scalar) -> Self:
-        """Create discover params from Click command arguments."""
-        config_file_value: t.Scalar | None = kwargs.get("config_file")
-        output_file_value: t.Scalar | None = kwargs.get("output_file")
-        return cls(
-            config_file=str(config_file_value) if config_file_value else None,
-            output_file=str(output_file_value) if output_file_value else None,
-        )
-
-
-class OracleTapSyncParams(BaseModel):
-    """Parameters for tap sync command."""
-
-    config_file: Annotated[str | None, Field(default=None)]
-    catalog_file: Annotated[str | None, Field(default=None)]
-    state_file: Annotated[str | None, Field(default=None)]
-
-    @classmethod
-    def from_click_args(cls, **kwargs: t.Scalar) -> Self:
-        """Create sync params from Click command arguments."""
-        config_file_value: t.Scalar | None = kwargs.get("config_file")
-        catalog_file_value: t.Scalar | None = kwargs.get("catalog_file")
-        state_file_value: t.Scalar | None = kwargs.get("state_file")
-        return cls(
-            config_file=str(config_file_value) if config_file_value else None,
-            catalog_file=str(catalog_file_value) if catalog_file_value else None,
-            state_file=str(state_file_value) if state_file_value else None,
-        )
 
 
 class OracleTapDiscoverCommand:
@@ -69,7 +28,7 @@ class OracleTapDiscoverCommand:
     Provides discovery of Oracle database schema and Singer catalog generation.
     """
 
-    def __init__(self, params: OracleTapDiscoverParams) -> None:
+    def __init__(self, params: m.TapOracle.OracleTapDiscoverParams) -> None:
         """Initialize command with parameter object pattern."""
         self.params = params
         self._logger = FlextLogger(__name__)
@@ -120,7 +79,7 @@ class OracleTapDiscoverCommand:
 class OracleTapSyncCommand:
     """Oracle tap sync command using modern flext-cli patterns."""
 
-    def __init__(self, params: OracleTapSyncParams) -> None:
+    def __init__(self, params: m.TapOracle.OracleTapSyncParams) -> None:
         """Initialize command with parameter object pattern."""
         self.params = params
         self._logger = FlextLogger(__name__)
@@ -175,17 +134,13 @@ class OracleTapSyncCommand:
         return r[bool].ok(value=True)
 
 
-class _OracleTapCommandRunner(Protocol):
-    def execute(self) -> r[Mapping[str, t.GeneralValueType]]: ...
-
-
 def _run_tap_command[TParams: BaseModel](
     *,
     kwargs: Mapping[str, t.Scalar],
     params_factory: Callable[..., TParams],
-    command_factory: Callable[[TParams], _OracleTapCommandRunner],
+    command_factory: Callable[[TParams], TapOraclePrivate.CommandRunner],
     operation_name: str,
-) -> r[ct.Cli.JsonValue]:
+) -> r[t.Cli.JsonValue]:
     try:
         params = params_factory(**dict(kwargs))
         command = command_factory(params)
@@ -193,12 +148,12 @@ def _run_tap_command[TParams: BaseModel](
         if result.is_failure:
             error_message = result.error or f"{operation_name} failed"
             cli_api.print(f"{operation_name} failed: {error_message}", style="red")
-            return r[ct.Cli.JsonValue].fail(error_message)
-        return r[ct.Cli.JsonValue].ok(value=True)
+            return r[t.Cli.JsonValue].fail(error_message)
+        return r[t.Cli.JsonValue].ok(value=True)
     except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
         error_message = f"{operation_name} error: {e}"
         cli_api.print(error_message, style="red")
-        return r[ct.Cli.JsonValue].fail(error_message)
+        return r[t.Cli.JsonValue].fail(error_message)
 
 
 def create_tap_oracle_cli() -> r[FlextCliCommands]:
@@ -234,21 +189,21 @@ def create_tap_oracle_cli() -> r[FlextCliCommands]:
 def handle_discover_command(
     *_args: t.Scalar,
     **kwargs: t.Scalar,
-) -> r[ct.Cli.JsonValue]:
+) -> r[t.Cli.JsonValue]:
     """Handle discover command using flext-cli patterns - NO click decorators."""
     return _run_tap_command(
         kwargs=kwargs,
-        params_factory=OracleTapDiscoverParams.from_click_args,
+        params_factory=m.TapOracle.OracleTapDiscoverParams.from_click_args,
         command_factory=lambda params: OracleTapDiscoverCommand(params=params),
         operation_name="Discovery",
     )
 
 
-def handle_sync_command(*_args: t.Scalar, **kwargs: t.Scalar) -> r[ct.Cli.JsonValue]:
+def handle_sync_command(*_args: t.Scalar, **kwargs: t.Scalar) -> r[t.Cli.JsonValue]:
     """Handle sync command using flext-cli patterns - NO click decorators."""
     return _run_tap_command(
         kwargs=kwargs,
-        params_factory=OracleTapSyncParams.from_click_args,
+        params_factory=m.TapOracle.OracleTapSyncParams.from_click_args,
         command_factory=lambda params: OracleTapSyncCommand(params=params),
         operation_name="Sync",
     )

@@ -8,15 +8,11 @@ from __future__ import annotations
 
 from collections.abc import Iterable, Mapping, Sequence
 from datetime import datetime
-from typing import Protocol
 
 from flext_core import FlextLogger, r
-from flext_core.typings import t
-from flext_core.utilities import u
 from flext_db_oracle import FlextDbOracleApi
 
-from flext_tap_oracle.constants import FlextTapOracleConstants as c
-from flext_tap_oracle.typings import OracleValue
+from flext_tap_oracle import OracleValue, TapOraclePrivate, c, t, u
 
 
 class FlextTapOracleStreams:
@@ -34,9 +30,6 @@ class FlextTapOracleStreams:
 
     logger = FlextLogger(__name__)
 
-    class _Tap(Protocol):
-        typed_config: OracleValue
-
     class OracleStream:
         """Oracle stream using MAXIMUM flext-db-oracle infrastructure.
 
@@ -49,7 +42,7 @@ class FlextTapOracleStreams:
 
         def __init__(
             self,
-            tap: FlextTapOracleStreams._Tap,
+            tap: TapOraclePrivate.Tap,
             name: str,
             table_name: str,
             schema: Mapping[str, t.GeneralValueType],
@@ -60,7 +53,7 @@ class FlextTapOracleStreams:
             self.schema = dict(schema)
             self.table_name: str = table_name
             self.oracle_api: FlextDbOracleApi = oracle_api
-            self._tap: FlextTapOracleStreams._Tap = tap
+            self._tap: TapOraclePrivate.Tap = tap
             self._metadata_manager: Mapping[str, OracleValue] | None = None
             self._observability_manager: Mapping[str, OracleValue] | None = None
 
@@ -369,7 +362,7 @@ class FlextTapOracleStreams:
 
         @staticmethod
         def create_oracle_stream(
-            tap: FlextTapOracleStreams._Tap,
+            tap: TapOraclePrivate.Tap,
             name: str,
             table_name: str,
             schema: Mapping[str, t.GeneralValueType],
@@ -398,7 +391,7 @@ class FlextTapOracleStreams:
 
         @staticmethod
         def create_oracle_stream_from_table(
-            tap: FlextTapOracleStreams._Tap,
+            tap: TapOraclePrivate.Tap,
             table_metadata: OracleValue,
             oracle_api: FlextDbOracleApi,
             stream_prefix: str = c.TapOracle.DEFAULT_STREAM_PREFIX,
