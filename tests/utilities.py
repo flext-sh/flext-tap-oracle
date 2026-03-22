@@ -11,6 +11,7 @@ from flext_core import FlextTypes as _t
 from flext_tests import FlextTestsUtilities
 
 from flext_tap_oracle import FlextTapOracleUtilities
+from tests import t
 
 
 class FlextTapOracleTestUtilities(FlextTestsUtilities, FlextTapOracleUtilities):
@@ -48,9 +49,9 @@ class FlextTapOracleTestUtilities(FlextTestsUtilities, FlextTapOracleUtilities):
             username: str = "test",
             password: str = "test",
             **kwargs: _t.Scalar,
-        ) -> dict[str, object]:
+        ) -> dict[str, t.NormalizedValue]:
             """Create test Oracle configuration."""
-            config: dict[str, object] = {
+            config: dict[str, t.NormalizedValue] = {
                 "host": host,
                 "port": port,
                 "service_name": service_name,
@@ -66,9 +67,9 @@ class FlextTapOracleTestUtilities(FlextTestsUtilities, FlextTapOracleUtilities):
             table_name: str,
             replication_method: str = "FULL_TABLE",
             **kwargs: _t.Scalar,
-        ) -> dict[str, object]:
+        ) -> dict[str, t.NormalizedValue]:
             """Create test Singer stream configuration."""
-            stream: dict[str, object] = {
+            stream: dict[str, t.NormalizedValue] = {
                 "stream_name": stream_name,
                 "table_name": table_name,
                 "replication_method": replication_method,
@@ -79,7 +80,7 @@ class FlextTapOracleTestUtilities(FlextTestsUtilities, FlextTapOracleUtilities):
 
         @staticmethod
         def validate_oracle_connection_config(
-            config: dict[str, object],
+            config: dict[str, t.NormalizedValue],
         ) -> bool:
             """Validate Oracle connection configuration for testing."""
             required_fields = ["host", "port", "service_name", "username", "password"]
@@ -88,11 +89,11 @@ class FlextTapOracleTestUtilities(FlextTestsUtilities, FlextTapOracleUtilities):
         @staticmethod
         def generate_mock_oracle_data(
             table_name: str, row_count: int = 10, **kwargs: _t.Scalar
-        ) -> list[dict[str, object]]:
+        ) -> list[dict[str, t.NormalizedValue]]:
             """Generate mock Oracle data for testing."""
-            data: list[dict[str, object]] = []
+            data: list[dict[str, t.NormalizedValue]] = []
             for i in range(row_count):
-                row: dict[str, object] = {
+                row: dict[str, t.NormalizedValue] = {
                     "id": i + 1,
                     "name": f"Test Record {i + 1}",
                     "table_name": table_name,

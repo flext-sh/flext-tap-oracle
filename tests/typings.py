@@ -47,7 +47,7 @@ class FlextTapOracleTestTypes(FlextTestsTypes, FlextTapOracleTypes):
         type TestReplicationMethod = _c.TestReplicationMethod
         type MockOracleRecord = dict[str, FlextTypes.Scalar]
         type MockOracleTable = list[MockOracleRecord]
-        type TestScenario = dict[str, object]
+        type TestScenario = dict[str, t.NormalizedValue]
         type TestValidationResult = dict[str, bool | str | list[str]]
         type TestPerformanceResult = dict[str, float | int | str]
 

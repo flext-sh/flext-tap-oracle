@@ -12,6 +12,7 @@ from typing import Protocol, runtime_checkable
 from flext_tests import FlextTestsProtocols
 
 from flext_tap_oracle import FlextTapOracleProtocols
+from tests import t
 
 
 class FlextTapOracleTestProtocols(FlextTestsProtocols, FlextTapOracleProtocols):
@@ -56,8 +57,10 @@ class FlextTapOracleTestProtocols(FlextTestsProtocols, FlextTapOracleProtocols):
                     ...
 
                 def execute_query(
-                    self, query: str, parameters: dict[str, object] | None = None
-                ) -> list[dict[str, object]]:
+                    self,
+                    query: str,
+                    parameters: dict[str, t.NormalizedValue] | None = None,
+                ) -> list[dict[str, t.NormalizedValue]]:
                     """Execute query on mock database."""
                     ...
 
@@ -65,15 +68,17 @@ class FlextTapOracleTestProtocols(FlextTestsProtocols, FlextTapOracleProtocols):
             class TestDataProvider(Protocol):
                 """Protocol for test data providers."""
 
-                def get_test_tables(self) -> list[dict[str, object]]:
+                def get_test_tables(self) -> list[dict[str, t.NormalizedValue]]:
                     """Get test table definitions."""
                     ...
 
-                def get_test_data(self, table_name: str) -> list[dict[str, object]]:
+                def get_test_data(
+                    self, table_name: str
+                ) -> list[dict[str, t.NormalizedValue]]:
                     """Get test data for a table."""
                     ...
 
-                def get_test_config(self) -> dict[str, object]:
+                def get_test_config(self) -> dict[str, t.NormalizedValue]:
                     """Get test configuration."""
                     ...
 
@@ -82,19 +87,21 @@ class FlextTapOracleTestProtocols(FlextTestsProtocols, FlextTapOracleProtocols):
                 """Protocol for test assertions."""
 
                 def assert_oracle_connection_successful(
-                    self, config: dict[str, object]
+                    self, config: dict[str, t.NormalizedValue]
                 ) -> None:
                     """Assert Oracle connection was successful."""
                     ...
 
-                def assert_singer_stream_valid(self, stream: dict[str, object]) -> None:
+                def assert_singer_stream_valid(
+                    self, stream: dict[str, t.NormalizedValue]
+                ) -> None:
                     """Assert Singer stream is valid."""
                     ...
 
                 def assert_extraction_results_match(
                     self,
-                    expected: list[dict[str, object]],
-                    actual: list[dict[str, object]],
+                    expected: list[dict[str, t.NormalizedValue]],
+                    actual: list[dict[str, t.NormalizedValue]],
                 ) -> None:
                     """Assert extraction results match expected data."""
                     ...

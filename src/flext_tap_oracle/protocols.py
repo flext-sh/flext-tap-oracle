@@ -229,7 +229,7 @@ class TapOraclePrivate:
             ...
 
     class Tap(Protocol):
-        """Structural protocol for Oracle tap object used in stream context."""
+        """Structural protocol for Oracle tap t.NormalizedValue used in stream context."""
 
         typed_config: t.NormalizedValue
 

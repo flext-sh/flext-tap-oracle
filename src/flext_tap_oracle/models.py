@@ -42,7 +42,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
         """Tap Oracle  namespace for cross-project access."""
 
         # Pydantic 2.11 Configuration - Enterprise Singer Oracle Tap Features
-        model_config = ConfigDict(
+        model_config: ClassVar[ConfigDict] = ConfigDict(
             validate_assignment=True,
             use_enum_values=True,
             arbitrary_types_allowed=True,
@@ -125,7 +125,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             """
 
             # Pydantic 2.11 Configuration - Stream Metadata Features
-            model_config = ConfigDict(
+            model_config: ClassVar[ConfigDict] = ConfigDict(
                 validate_assignment=True,
                 extra="forbid",
                 frozen=False,
@@ -273,7 +273,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             """Configuration for Oracle tap discovery operations."""
 
             # Pydantic 2.11 Configuration - Discovery Features
-            model_config = ConfigDict(
+            model_config: ClassVar[ConfigDict] = ConfigDict(
                 validate_assignment=True,
                 extra="forbid",
                 frozen=False,
@@ -384,7 +384,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             """Configuration for Oracle tap extraction operations."""
 
             # Pydantic 2.11 Configuration - Extraction Features
-            model_config = ConfigDict(
+            model_config: ClassVar[ConfigDict] = ConfigDict(
                 validate_assignment=True,
                 extra="forbid",
                 frozen=False,
@@ -486,7 +486,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             """Performance metrics for Oracle tap operations."""
 
             # Pydantic 2.11 Configuration - Performance Features
-            model_config = ConfigDict(
+            model_config: ClassVar[ConfigDict] = ConfigDict(
                 validate_assignment=True,
                 extra="forbid",
                 frozen=False,
@@ -617,7 +617,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             """
 
             # Pydantic 2.11 Configuration - Stream Info Features
-            model_config = ConfigDict(
+            model_config: ClassVar[ConfigDict] = ConfigDict(
                 validate_assignment=True,
                 extra="forbid",
                 frozen=False,
@@ -747,7 +747,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             """
 
             # Pydantic 2.11 Configuration - Discovery Result Features
-            model_config = ConfigDict(
+            model_config: ClassVar[ConfigDict] = ConfigDict(
                 validate_assignment=True,
                 extra="forbid",
                 frozen=False,
@@ -902,7 +902,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             """
 
             # Pydantic 2.11 Configuration - Execution Stats Features
-            model_config = ConfigDict(
+            model_config: ClassVar[ConfigDict] = ConfigDict(
                 validate_assignment=True,
                 extra="forbid",
                 frozen=False,

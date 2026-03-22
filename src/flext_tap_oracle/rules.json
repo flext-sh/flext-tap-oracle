@@ -262,7 +262,7 @@
       "ROWID": "string",
       "UROWID": "string",
       "XMLType": "string",
-      "JSON": "object"
+      "JSON": "t.NormalizedValue"
     },
     "type_conversion_rules": {
       "date_format": "YYYY-MM-DD",

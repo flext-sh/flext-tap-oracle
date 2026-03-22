@@ -29,7 +29,7 @@ class OracleTapDiscoverCommand:
     """
 
     def __init__(self, params: m.TapOracle.OracleTapDiscoverParams) -> None:
-        """Initialize command with parameter object pattern."""
+        """Initialize command with parameter t.NormalizedValue pattern."""
         self.params = params
         self._logger = FlextLogger(__name__)
 
@@ -80,7 +80,7 @@ class OracleTapSyncCommand:
     """Oracle tap sync command using modern flext-cli patterns."""
 
     def __init__(self, params: m.TapOracle.OracleTapSyncParams) -> None:
-        """Initialize command with parameter object pattern."""
+        """Initialize command with parameter t.NormalizedValue pattern."""
         self.params = params
         self._logger = FlextLogger(__name__)
 

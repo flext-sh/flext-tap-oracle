@@ -417,7 +417,7 @@ class FlextTapOracleStreams:
             stream_name = f"{stream_prefix}_{table_name.lower()}"
             properties: dict[str, t.GeneralValueType] = {}
             schema: dict[str, t.GeneralValueType] = {
-                "type": "object",
+                "type": "t.NormalizedValue",
                 "properties": properties,
             }
             return FlextTapOracleStreams.StreamFactory.create_oracle_stream(
