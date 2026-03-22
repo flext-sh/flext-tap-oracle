@@ -218,5 +218,14 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
                 ...
 
 
+class TapOraclePrivate:
+    """Private structural protocols for internal flext-tap-oracle use."""
+
+    class CommandRunner(Protocol):
+        """Structural protocol for Oracle tap command execution."""
+
+        def execute(self) -> r[Mapping[str, t.GeneralValueType]]: ...
+
+
 p = FlextTapOracleProtocols
-__all__ = ["FlextTapOracleProtocols", "p"]
+__all__ = ["FlextTapOracleProtocols", "TapOraclePrivate", "p"]
