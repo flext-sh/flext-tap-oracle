@@ -10,6 +10,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from typing import Annotated
 
 from flext_core import FlextLogger, FlextSettings, r, t
@@ -63,7 +64,7 @@ class FlextTapOracleSettings(FlextSettings):
             return value.get_secret_value()
         return str(value)
 
-    def get_oracle_config(self) -> dict[str, t.Scalar]:
+    def get_oracle_config(self) -> Mapping[str, t.Scalar]:
         """Get Oracle database connection configuration."""
         return {
             "host": self.oracle_host,
@@ -73,7 +74,7 @@ class FlextTapOracleSettings(FlextSettings):
             "password": self._resolve_secret(self.oracle_password),
         }
 
-    def get_tap_config(self) -> dict[str, t.Scalar]:
+    def get_tap_config(self) -> Mapping[str, t.Scalar]:
         """Get tap-specific configuration settings."""
         return {
             "batch_size": self.batch_size,
@@ -84,9 +85,9 @@ class FlextTapOracleSettings(FlextSettings):
 
 
 def create_oracle_tap_config(
-    oracle_params: dict[str, t.Scalar],
-    tap_params: dict[str, t.Scalar] | None = None,
-    meltano_params: dict[str, t.Scalar] | None = None,
+    oracle_params: Mapping[str, t.Scalar],
+    tap_params: Mapping[str, t.Scalar] | None = None,
+    meltano_params: Mapping[str, t.Scalar] | None = None,
 ) -> r[FlextTapOracleSettings]:
     """Create Oracle tap configuration using grouped parameters.
 
@@ -125,7 +126,7 @@ def validate_oracle_tap_configuration(
     return config.validate_business_rules()
 
 
-__all__: list[str] = [
+__all__: Sequence[str] = [
     "FlextTapOracleSettings",
     "create_oracle_tap_config",
     "validate_oracle_tap_configuration",

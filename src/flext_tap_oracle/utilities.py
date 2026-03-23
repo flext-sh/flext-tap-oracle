@@ -11,7 +11,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from datetime import UTC, datetime
 from typing import Literal
 
@@ -85,7 +85,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                 config_section: str | None = None,
             ) -> FlextExceptions.ConfigurationError:
                 """Create configuration errors with section context."""
-                context: dict[str, str] = {}
+                context: Mapping[str, str] = {}
                 if config_section is not None:
                     context["config_section"] = config_section
                 return FlextExceptions.ConfigurationError(message, context=context)
@@ -98,7 +98,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                 service_name: str | None = None,
             ) -> FlextExceptions.ConnectionError:
                 """Create Oracle connection errors with context."""
-                context: dict[str, str | int] = {}
+                context: Mapping[str, str | int] = {}
                 if host is not None:
                     context["host"] = host
                 if port is not None:
@@ -113,7 +113,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                 schema_name: str | None = None,
             ) -> FlextExceptions.OperationError:
                 """Create discovery errors with schema context."""
-                context: dict[str, str] = {}
+                context: Mapping[str, str] = {}
                 if schema_name is not None:
                     context["schema_name"] = schema_name
                 return FlextExceptions.OperationError(message, context=context)
@@ -125,7 +125,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                 extraction_method: str | None = None,
             ) -> FlextExceptions.OperationError:
                 """Create extraction errors with method context."""
-                context: dict[str, str] = {}
+                context: Mapping[str, str] = {}
                 if table_name is not None:
                     context["table_name"] = table_name
                 if extraction_method is not None:
@@ -139,7 +139,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                 table_name: str | None = None,
             ) -> FlextExceptions.OperationError:
                 """Create Oracle query errors with SQL context."""
-                context: dict[str, str] = {}
+                context: Mapping[str, str] = {}
                 if sql_query is not None:
                     context["sql_query"] = sql_query
                 if table_name is not None:
@@ -153,7 +153,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                 stream_type: str | None = None,
             ) -> FlextExceptions.OperationError:
                 """Create stream processing errors with stream context."""
-                context: dict[str, str] = {}
+                context: Mapping[str, str] = {}
                 if stream_name is not None:
                     context["stream_name"] = stream_name
                 if stream_type is not None:
@@ -192,12 +192,12 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
 
             @staticmethod
             def create_discovery_result(
-                tables: list[FlextDbOracleModels.DbOracle.Table],
+                tables: Sequence[FlextDbOracleModels.DbOracle.Table],
                 schema_name: str,
             ) -> r[m.TapOracle.OracleTapDiscoveryResult]:
                 """Create discovery result from Oracle tables."""
                 try:
-                    stream_infos: list[m.TapOracle.OracleTapStreamInfo] = []
+                    stream_infos: Sequence[m.TapOracle.OracleTapStreamInfo] = []
                     for table in tables:
                         match table:
                             case FlextDbOracleModels.DbOracle.Table() as oracle_table:
@@ -308,7 +308,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
             ) -> r[Mapping[str, t.GeneralValueType]]:
                 """Validate Oracle configuration parameters."""
                 try:
-                    validated_config: dict[str, t.GeneralValueType] = dict(config)
+                    validated_config: Mapping[str, t.GeneralValueType] = dict(config)
                     required_fields = [
                         "host",
                         "port",
@@ -373,7 +373,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                         > c.TapOracle.MODERATE_PERFORMANCE_THRESHOLD
                         else "slow"
                     )
-                    metrics: dict[str, t.GeneralValueType] = {
+                    metrics: Mapping[str, t.GeneralValueType] = {
                         "duration_seconds": round(duration, 3),
                         "records_processed": records_processed,
                         "records_per_second": round(records_per_second, 2),
@@ -409,4 +409,4 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
 
 
 u = FlextTapOracleUtilities
-__all__: list[str] = ["FlextTapOracleUtilities", "u"]
+__all__: Sequence[str] = ["FlextTapOracleUtilities", "u"]

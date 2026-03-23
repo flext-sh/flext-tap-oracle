@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from datetime import datetime
 from typing import Annotated, ClassVar, Literal, Self
 
@@ -70,7 +70,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
         # Oracle Tap Domain - namespace metadata as static methods on plain class
 
         @staticmethod
-        def get_active_model_names() -> list[str]:
+        def get_active_model_names() -> Sequence[str]:
             """List of active Oracle tap model names."""
             return [
                 "OracleTapStreamMetadata",
@@ -192,7 +192,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             @computed_field
             def stream_metadata_summary(self) -> t.TapOracle.Summary.SummaryData:
                 """Oracle stream metadata summary."""
-                estimated_volume: dict[str, t.NormalizedValue] = {}
+                estimated_volume: Mapping[str, t.NormalizedValue] = {}
                 if self.estimated_rows is not None:
                     estimated_volume["rows"] = self.estimated_rows
                 if self.column_count is not None:
@@ -291,21 +291,21 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Discovery scope
             schema_names: Annotated[
-                list[str],
+                Sequence[str],
                 Field(
                     default_factory=list,
                     description="Oracle schemas to discover",
                 ),
             ]
             table_patterns: Annotated[
-                list[str],
+                Sequence[str],
                 Field(
                     default_factory=list,
                     description="Table name patterns to include",
                 ),
             ]
             exclude_patterns: Annotated[
-                list[str],
+                Sequence[str],
                 Field(
                     default_factory=list,
                     description="Table name patterns to exclude",
@@ -806,14 +806,14 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Filtering results
             filtered_tables: Annotated[
-                list[str],
+                Sequence[str],
                 Field(
                     default_factory=list,
                     description="Table names after applying filters",
                 ),
             ]
             excluded_tables: Annotated[
-                list[str],
+                Sequence[str],
                 Field(
                     default_factory=list,
                     description="Table names that were excluded",
@@ -852,7 +852,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             def get_selected_streams(
                 self,
-            ) -> list[m.TapOracle.OracleTapStreamInfo]:
+            ) -> Sequence[m.TapOracle.OracleTapStreamInfo]:
                 """Get only selected streams."""
                 return [stream for stream in self.stream_info if stream.is_selected]
 
@@ -981,7 +981,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 ),
             ]
             failed_streams: Annotated[
-                list[str],
+                Sequence[str],
                 Field(
                     default_factory=list,
                     description="Names of failed streams",
@@ -1084,7 +1084,9 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             ) -> m.TapOracle.OracleTapExecutionStats:
                 """Return new instance with marked stream error."""
                 new_failed_streams = (
-                    self.failed_streams.copy() if self.failed_streams else list[str]()
+                    self.failed_streams.copy()
+                    if self.failed_streams
+                    else Sequence[str]()
                 )
                 if stream_name not in new_failed_streams:
                     new_failed_streams.append(stream_name)
@@ -1202,7 +1204,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 # Short aliases
 m = FlextTapOracleModels
 
-__all__: list[str] = [
+__all__: Sequence[str] = [
     "FlextTapOracleModels",
     "m",
 ]

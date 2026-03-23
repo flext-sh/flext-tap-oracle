@@ -14,7 +14,7 @@ from __future__ import annotations
 import os
 import socket
 from abc import ABC, abstractmethod
-from collections.abc import Generator
+from collections.abc import Generator, Mapping, Sequence
 from typing import TypeIs, override
 
 import pytest
@@ -84,13 +84,13 @@ def _can_connect(host: str, port: int, timeout: float = 0.5) -> bool:
 
 def _is_str_object_dict(
     value: t.NormalizedValue,
-) -> TypeIs[dict[str, t.NormalizedValue]]:
+) -> TypeIs[Mapping[str, t.NormalizedValue]]:
     return isinstance(value, dict)
 
 
 def _is_dict_list(
     value: t.NormalizedValue,
-) -> TypeIs[list[dict[str, t.NormalizedValue]]]:
+) -> TypeIs[Sequence[Mapping[str, t.NormalizedValue]]]:
     return isinstance(value, list)
 
 
@@ -121,7 +121,7 @@ def skip_e2e_if_no_oracle() -> None:
 
 
 @pytest.fixture
-def oracle_tap_config() -> dict[str, t.NormalizedValue]:
+def oracle_tap_config() -> Mapping[str, t.NormalizedValue]:
     """Oracle tap configuration for testing."""
     return {
         "host": "localhost",
@@ -138,7 +138,7 @@ def oracle_tap_config() -> dict[str, t.NormalizedValue]:
 
 @pytest.fixture
 def oracle_tap(
-    oracle_tap_config: dict[str, t.NormalizedValue],
+    oracle_tap_config: Mapping[str, t.NormalizedValue],
 ) -> FlextOracleTapService:
     """Oracle tap service instance for testing."""
     config_result = r[FlextTapOracleSettings].ok(
@@ -160,7 +160,7 @@ def oracle_tap(
 
 
 @pytest.fixture
-def singer_catalog() -> dict[str, t.NormalizedValue]:
+def singer_catalog() -> Mapping[str, t.NormalizedValue]:
     """Singer catalog for testing."""
     return {
         "streams": [
@@ -224,7 +224,7 @@ def singer_catalog() -> dict[str, t.NormalizedValue]:
 
 
 @pytest.fixture
-def singer_state() -> dict[str, t.NormalizedValue]:
+def singer_state() -> Mapping[str, t.NormalizedValue]:
     """Singer state for testing."""
     return {
         "bookmarks": {
@@ -239,7 +239,7 @@ def singer_state() -> dict[str, t.NormalizedValue]:
 
 
 @pytest.fixture
-def sample_oracle_tables() -> list[dict[str, t.NormalizedValue]]:
+def sample_oracle_tables() -> Sequence[Mapping[str, t.NormalizedValue]]:
     """Sample Oracle table definitions for testing."""
     return [
         {
@@ -319,7 +319,7 @@ def sample_oracle_tables() -> list[dict[str, t.NormalizedValue]]:
 
 
 @pytest.fixture
-def sample_oracle_data() -> dict[str, list[dict[str, t.NormalizedValue]]]:
+def sample_oracle_data() -> Mapping[str, Sequence[Mapping[str, t.NormalizedValue]]]:
     """Sample Oracle data for testing."""
     return {
         "employees": [
@@ -366,7 +366,7 @@ def sample_oracle_data() -> dict[str, list[dict[str, t.NormalizedValue]]]:
 
 
 @pytest.fixture
-def stream_config() -> dict[str, t.NormalizedValue]:
+def stream_config() -> Mapping[str, t.NormalizedValue]:
     """Stream configuration for testing."""
     return {
         "selected": True,
@@ -379,7 +379,7 @@ def stream_config() -> dict[str, t.NormalizedValue]:
 
 
 @pytest.fixture
-def discovery_config() -> dict[str, t.NormalizedValue]:
+def discovery_config() -> Mapping[str, t.NormalizedValue]:
     """Discovery configuration for testing."""
     return {
         "include_views": False,
@@ -393,7 +393,7 @@ def discovery_config() -> dict[str, t.NormalizedValue]:
 
 
 @pytest.fixture
-def oracle_queries() -> dict[str, str]:
+def oracle_queries() -> Mapping[str, str]:
     """Oracle SQL queries for testing."""
     return {
         "list_tables": "\n\n          SELECT table_name, owner, table_type\n          FROM all_tables\n          WHERE owner = :schema_name\n          ORDER BY table_name\n      ",
@@ -405,7 +405,7 @@ def oracle_queries() -> dict[str, str]:
 
 
 @pytest.fixture
-def singer_schema_message() -> dict[str, t.NormalizedValue]:
+def singer_schema_message() -> Mapping[str, t.NormalizedValue]:
     """Singer schema message for testing."""
     return {
         "type": "SCHEMA",
@@ -424,7 +424,7 @@ def singer_schema_message() -> dict[str, t.NormalizedValue]:
 
 
 @pytest.fixture
-def singer_record_messages() -> list[dict[str, t.NormalizedValue]]:
+def singer_record_messages() -> Sequence[Mapping[str, t.NormalizedValue]]:
     """Singer record messages for testing."""
     return [
         {
@@ -453,7 +453,7 @@ def singer_record_messages() -> list[dict[str, t.NormalizedValue]]:
 
 
 @pytest.fixture
-def singer_state_message() -> dict[str, t.NormalizedValue]:
+def singer_state_message() -> Mapping[str, t.NormalizedValue]:
     """Singer state message for testing."""
     return {
         "type": "STATE",
@@ -470,7 +470,7 @@ def singer_state_message() -> dict[str, t.NormalizedValue]:
 
 
 @pytest.fixture
-def performance_test_config() -> dict[str, t.NormalizedValue]:
+def performance_test_config() -> Mapping[str, t.NormalizedValue]:
     """Performance test configuration."""
     return {
         "large_table_rows": 100000,
@@ -482,7 +482,7 @@ def performance_test_config() -> dict[str, t.NormalizedValue]:
 
 
 @pytest.fixture
-def error_scenarios() -> list[dict[str, t.NormalizedValue]]:
+def error_scenarios() -> Sequence[Mapping[str, t.NormalizedValue]]:
     """Error scenarios for testing."""
     return [
         {
@@ -534,13 +534,13 @@ def mock_oracle_tap() -> type:
     """Mock Oracle tap for testing."""
 
     class MockOracleTap:
-        def __init__(self, config: dict[str, t.NormalizedValue]) -> None:
+        def __init__(self, config: Mapping[str, t.NormalizedValue]) -> None:
             """Initialize the instance."""
             self.config = config
-            self._catalog: dict[str, t.GeneralValueType] | None = None
-            self.__state: dict[str, t.NormalizedValue] = {}
+            self._catalog: Mapping[str, t.GeneralValueType] | None = None
+            self.__state: Mapping[str, t.NormalizedValue] = {}
 
-        def discover(self) -> dict[str, t.NormalizedValue]:
+        def discover(self) -> Mapping[str, t.NormalizedValue]:
             """Discover schema using mock data."""
             return {
                 "streams": [
@@ -560,9 +560,9 @@ def mock_oracle_tap() -> type:
 
         def sync(
             self,
-            catalog: dict[str, list[dict[str, t.NormalizedValue]]],
-            _state: dict[str, t.NormalizedValue],
-        ) -> Generator[dict[str, t.NormalizedValue]]:
+            catalog: Mapping[str, Sequence[Mapping[str, t.NormalizedValue]]],
+            _state: Mapping[str, t.NormalizedValue],
+        ) -> Generator[Mapping[str, t.NormalizedValue]]:
             """Sync data using mock extraction."""
             if "streams" not in catalog:
                 return
@@ -571,11 +571,11 @@ def mock_oracle_tap() -> type:
                 metadata_raw = stream_raw.get("metadata")
                 if not _is_dict_list(metadata_raw) or not metadata_raw:
                     continue
-                first_metadata: dict[str, t.NormalizedValue] = metadata_raw[0]
+                first_metadata: Mapping[str, t.NormalizedValue] = metadata_raw[0]
                 metadata_map_raw = first_metadata.get("metadata")
                 if not _is_str_object_dict(metadata_map_raw):
                     continue
-                metadata_map: dict[str, t.NormalizedValue] = metadata_map_raw
+                metadata_map: Mapping[str, t.NormalizedValue] = metadata_map_raw
                 if not bool(metadata_map.get("selected")):
                     continue
                 stream_id_raw = stream_raw.get("tap_stream_id")
@@ -616,7 +616,7 @@ def mock_oracle_connection() -> type:
     """Mock Oracle connection for testing."""
 
     class MockOracleConnection:
-        def __init__(self, config: dict[str, t.NormalizedValue]) -> None:
+        def __init__(self, config: Mapping[str, t.NormalizedValue]) -> None:
             """Initialize the instance."""
             self.config = config
             self.connected = False
@@ -630,8 +630,8 @@ def mock_oracle_connection() -> type:
             return True
 
         def execute_query(
-            self, query: str, _parameters: dict[str, t.NormalizedValue] | None = None
-        ) -> list[dict[str, t.NormalizedValue]]:
+            self, query: str, _parameters: Mapping[str, t.NormalizedValue] | None = None
+        ) -> Sequence[Mapping[str, t.NormalizedValue]]:
             """Execute query and return mock results using Strategy Pattern."""
             return self._get_query_strategy(query).execute()
 
@@ -643,7 +643,7 @@ def mock_oracle_connection() -> type:
                 return _ColumnsQueryStrategy()
             return _DefaultQueryStrategy()
 
-        def get_table_schema(self, table_name: str) -> dict[str, t.NormalizedValue]:
+        def get_table_schema(self, table_name: str) -> Mapping[str, t.NormalizedValue]:
             """Get table schema information."""
             return {
                 "table_name": table_name,
@@ -661,7 +661,7 @@ class _MockQueryStrategy(ABC):
     """Base class for mock query strategies - Strategy Pattern."""
 
     @abstractmethod
-    def execute(self) -> list[dict[str, t.NormalizedValue]]:
+    def execute(self) -> Sequence[Mapping[str, t.NormalizedValue]]:
         """Execute mock query and return results."""
 
 
@@ -669,7 +669,7 @@ class _TablesQueryStrategy(_MockQueryStrategy):
     """Strategy for tables query - Single Responsibility."""
 
     @override
-    def execute(self) -> list[dict[str, t.NormalizedValue]]:
+    def execute(self) -> Sequence[Mapping[str, t.NormalizedValue]]:
         """Return mock table data."""
         return [
             {"table_name": "EMPLOYEES", "owner": "TAP_SCHEMA", "table_type": "TABLE"},
@@ -681,7 +681,7 @@ class _ColumnsQueryStrategy(_MockQueryStrategy):
     """Strategy for columns query - Single Responsibility."""
 
     @override
-    def execute(self) -> list[dict[str, t.NormalizedValue]]:
+    def execute(self) -> Sequence[Mapping[str, t.NormalizedValue]]:
         """Return mock column data."""
         return [
             {
@@ -705,6 +705,6 @@ class _DefaultQueryStrategy(_MockQueryStrategy):
     """Default strategy for generic queries - Single Responsibility."""
 
     @override
-    def execute(self) -> list[dict[str, t.NormalizedValue]]:
+    def execute(self) -> Sequence[Mapping[str, t.NormalizedValue]]:
         """Return mock default data."""
         return [{"id": 1, "name": "Test Record"}]

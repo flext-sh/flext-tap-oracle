@@ -48,14 +48,14 @@ class OracleTapDiscoverCommand:
             oracle_config = config.get_oracle_config()
             schema_name = str(oracle_config.get("schema_name", "USER"))
             self._logger.info("Discovering Oracle schema: %s", schema_name)
-            catalog_dict: dict[str, t.GeneralValueType] = {
+            catalog_dict: Mapping[str, t.GeneralValueType] = {
                 "streams": [],
                 "schema_name": schema_name,
             }
             if self.params.output_file:
                 output_path = Path(self.params.output_file)
                 output_path.write_text(
-                    TypeAdapter(dict[str, t.GeneralValueType])
+                    TypeAdapter(Mapping[str, t.GeneralValueType])
                     .dump_json(catalog_dict, indent=2)
                     .decode("utf-8"),
                     encoding="utf-8",
@@ -106,7 +106,7 @@ class OracleTapSyncCommand:
             self._logger.info("Preparing extraction from Oracle database...")
             schema_name = str(oracle_config.get("schema_name", "USER"))
             record_count = c.TapOracle.INITIAL_RECORD_COUNT
-            result_data: dict[str, t.GeneralValueType] = {
+            result_data: Mapping[str, t.GeneralValueType] = {
                 "records_extracted": record_count,
                 "schema_name": schema_name,
                 "status": "completed",

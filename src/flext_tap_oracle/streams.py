@@ -72,7 +72,7 @@ class FlextTapOracleStreams:
                     else:
                         msg = "Cannot create metadata manager without valid Oracle connection"
                         raise RuntimeError(msg)
-                metadata_placeholder: dict[str, t.Container] = {}
+                metadata_placeholder: Mapping[str, t.Container] = {}
                 self._metadata_manager = metadata_placeholder
             return self._metadata_manager
 
@@ -80,7 +80,7 @@ class FlextTapOracleStreams:
         def observability_manager(self) -> Mapping[str, OracleValue]:
             """Get flext-db-oracle observability manager with lazy initialization."""
             if self._observability_manager is None:
-                obs_placeholder: dict[str, t.Container] = {}
+                obs_placeholder: Mapping[str, t.Container] = {}
                 self._observability_manager = obs_placeholder
             return self._observability_manager
 
@@ -98,9 +98,9 @@ class FlextTapOracleStreams:
                     return None
                 safe_table_name = self.table_name.replace('"', '""')
                 sql: str = f'SELECT COUNT(*) FROM "{safe_table_name}"'
-                result: r[list[t.Dict]] = self.oracle_api.query(sql)
+                result: r[Sequence[t.Dict]] = self.oracle_api.query(sql)
                 if result.is_success and result.value:
-                    result_rows: list[t.Dict] = result.value
+                    result_rows: Sequence[t.Dict] = result.value
                     first_row: t.Dict = result_rows[0]
                     first_val = next(iter(first_row.root.values()), None)
                     if isinstance(first_val, int | float):
@@ -123,7 +123,7 @@ class FlextTapOracleStreams:
         def get_records(
             self,
             context: Mapping[str, OracleValue] | None = None,
-        ) -> Iterable[dict[str, OracleValue]]:
+        ) -> Iterable[Mapping[str, OracleValue]]:
             """Get records from Oracle table using flext-db-oracle exclusively - NO direct SQLAlchemy."""
             try:
                 _ = context
@@ -135,7 +135,7 @@ class FlextTapOracleStreams:
                         if schema_name
                         else f'SELECT * FROM "{safe_table}"'
                     )
-                    query_result: r[list[t.Dict]] = api.query(sql)
+                    query_result: r[Sequence[t.Dict]] = api.query(sql)
                     if query_result.is_failure:
                         error_msg: str = query_result.error or "unknown query error"
                         FlextTapOracleStreams.logger.error(
@@ -143,9 +143,9 @@ class FlextTapOracleStreams:
                             error_msg,
                         )
                         return
-                    rows: list[t.Dict] = query_result.unwrap_or([])
+                    rows: Sequence[t.Dict] = query_result.unwrap_or([])
                     for row in rows:
-                        record: dict[str, OracleValue] = dict(row.root)
+                        record: Mapping[str, OracleValue] = dict(row.root)
                         yield record
             except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                 FlextTapOracleStreams.logger.exception(
@@ -207,7 +207,7 @@ class FlextTapOracleStreams:
             query_data: OracleValue,
         ) -> Iterable[Mapping[str, OracleValue]]:
             """Fallback processing without metadata (minimal implementation)."""
-            column_names: list[str] = []
+            column_names: Sequence[str] = []
             if not isinstance(query_data, Iterable) or isinstance(
                 query_data,
                 str | bytes,
@@ -219,7 +219,7 @@ class FlextTapOracleStreams:
             data_rows: Iterable[OracleValue] = query_data
             for row_data in data_rows:
                 try:
-                    record: dict[str, OracleValue]
+                    record: Mapping[str, OracleValue]
                     match row_data:
                         case list() as row_list:
                             if column_names:
@@ -268,7 +268,7 @@ class FlextTapOracleStreams:
                 )
                 yield from self._process_results_fallback(query_data)
                 return
-            column_names: list[str] = [getattr(col, "name", "") for col in columns]
+            column_names: Sequence[str] = [getattr(col, "name", "") for col in columns]
             if not isinstance(query_data, Iterable) or isinstance(
                 query_data,
                 str | bytes,
@@ -281,7 +281,7 @@ class FlextTapOracleStreams:
             data_rows: Iterable[OracleValue] = query_data
             for row_data in data_rows:
                 try:
-                    record: dict[str, OracleValue]
+                    record: Mapping[str, OracleValue]
                     match row_data:
                         case list() as row_list:
                             record = dict(zip(column_names, row_list, strict=False))
@@ -315,10 +315,10 @@ class FlextTapOracleStreams:
             self,
             record: Mapping[str, OracleValue],
             column_metadata: Sequence[OracleValue],
-        ) -> dict[str, OracleValue]:
+        ) -> Mapping[str, OracleValue]:
             """Transform Oracle data types using flext-db-oracle type knowledge."""
-            transformed_record: dict[str, OracleValue] = {}
-            meta_lookup: dict[str, OracleValue] = {}
+            transformed_record: Mapping[str, OracleValue] = {}
+            meta_lookup: Mapping[str, OracleValue] = {}
             for col_meta_value in column_metadata:
                 col_name = getattr(col_meta_value, "name", None) or getattr(
                     col_meta_value,
@@ -415,8 +415,8 @@ class FlextTapOracleStreams:
                 else c.TapOracle.DEFAULT_OPERATION_NAME
             )
             stream_name = f"{stream_prefix}_{table_name.lower()}"
-            properties: dict[str, t.GeneralValueType] = {}
-            schema: dict[str, t.GeneralValueType] = {
+            properties: Mapping[str, t.GeneralValueType] = {}
+            schema: Mapping[str, t.GeneralValueType] = {
                 "type": "t.NormalizedValue",
                 "properties": properties,
             }

@@ -14,6 +14,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
+
 from flext_core import FlextTypes as _tap_t
 from flext_db_oracle.typings import FlextDbOracleTypes
 from flext_meltano import FlextMeltanoTypes
@@ -45,35 +47,35 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
         class Extraction:
             """Oracle extraction complex types."""
 
-            type ExtractionConfiguration = dict[str, _tap_t.GeneralValueType]
-            type ExtractionState = dict[str, _tap_t.Container]
-            type ExtractionMetrics = dict[str, _tap_t.GeneralValueType]
-            type BatchConfiguration = dict[str, _tap_t.GeneralValueType]
-            type StreamDefinition = dict[
+            type ExtractionConfiguration = Mapping[str, _tap_t.GeneralValueType]
+            type ExtractionState = Mapping[str, _tap_t.Container]
+            type ExtractionMetrics = Mapping[str, _tap_t.GeneralValueType]
+            type BatchConfiguration = Mapping[str, _tap_t.GeneralValueType]
+            type StreamDefinition = Mapping[
                 str,
-                str | list[str] | dict[str, _tap_t.Scalar],
+                str | Sequence[str] | Mapping[str, _tap_t.Scalar],
             ]
-            type TableMetadata = dict[str, list[_tap_t.Scalar]]
+            type TableMetadata = Mapping[str, Sequence[_tap_t.Scalar]]
 
         class Singer:
             """Singer protocol complex types."""
 
-            type CatalogEntry = dict[str, str | dict[str, _tap_t.Container]]
-            type StreamSchema = dict[str, dict[str, _tap_t.Container]]
-            type TapConfiguration = dict[str, _tap_t.GeneralValueType]
-            type StateBookmark = dict[str, _tap_t.Container]
-            type RecordMessage = dict[str, str | dict[str, _tap_t.Scalar]]
-            type SchemaMessage = dict[str, str | dict[str, _tap_t.Container]]
+            type CatalogEntry = Mapping[str, str | Mapping[str, _tap_t.Container]]
+            type StreamSchema = Mapping[str, Mapping[str, _tap_t.Container]]
+            type TapConfiguration = Mapping[str, _tap_t.GeneralValueType]
+            type StateBookmark = Mapping[str, _tap_t.Container]
+            type RecordMessage = Mapping[str, str | Mapping[str, _tap_t.Scalar]]
+            type SchemaMessage = Mapping[str, str | Mapping[str, _tap_t.Container]]
 
         class Configuration:
             """Oracle tap configuration complex types."""
 
-            type TapOracleConfig = dict[str, _tap_t.GeneralValueType]
-            type ConnectionSettings = dict[str, _tap_t.GeneralValueType]
-            type ExtractionSettings = dict[str, _tap_t.GeneralValueType]
-            type PerformanceSettings = dict[str, _tap_t.GeneralValueType]
-            type SecuritySettings = dict[str, _tap_t.GeneralValueType]
-            type StreamSettings = dict[str, _tap_t.GeneralValueType]
+            type TapOracleConfig = Mapping[str, _tap_t.GeneralValueType]
+            type ConnectionSettings = Mapping[str, _tap_t.GeneralValueType]
+            type ExtractionSettings = Mapping[str, _tap_t.GeneralValueType]
+            type PerformanceSettings = Mapping[str, _tap_t.GeneralValueType]
+            type SecuritySettings = Mapping[str, _tap_t.GeneralValueType]
+            type StreamSettings = Mapping[str, _tap_t.GeneralValueType]
 
         class Project:
             """Singer Tap Oracle-specific project types.
@@ -84,15 +86,15 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
             """
 
             type ProjectType = c.ProjectType
-            type SingerTapOracleProjectConfig = dict[str, _tap_t.GeneralValueType]
-            type OracleExtractorConfig = dict[str, str | int | bool | list[str]]
-            type SingerProtocolConfig = dict[str, _tap_t.GeneralValueType]
-            type TapOraclePipelineConfig = dict[str, _tap_t.GeneralValueType]
+            type SingerTapOracleProjectConfig = Mapping[str, _tap_t.GeneralValueType]
+            type OracleExtractorConfig = Mapping[str, str | int | bool | Sequence[str]]
+            type SingerProtocolConfig = Mapping[str, _tap_t.GeneralValueType]
+            type TapOraclePipelineConfig = Mapping[str, _tap_t.GeneralValueType]
 
         class Summary:
             """Summary and reporting complex types."""
 
-            type SummaryData = dict[str, _tap_t.NormalizedValue]
+            type SummaryData = Mapping[str, _tap_t.NormalizedValue]
             type OracleValue = _tap_t.NormalizedValue | BaseModel | None
 
 

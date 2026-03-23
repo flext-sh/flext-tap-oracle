@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from typing import Protocol, runtime_checkable
 
 from flext_core import r
@@ -83,14 +83,14 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
             def discover_schemas(
                 self,
                 config: Mapping[str, t.GeneralValueType],
-            ) -> FlextMeltanoProtocols.Result[list[t.GeneralValueType]]:
+            ) -> FlextMeltanoProtocols.Result[Sequence[t.GeneralValueType]]:
                 """Discover accessible Oracle schemas."""
                 ...
 
             def discover_tables(
                 self,
                 schema: str,
-            ) -> FlextMeltanoProtocols.Result[list[t.GeneralValueType]]:
+            ) -> FlextMeltanoProtocols.Result[Sequence[t.GeneralValueType]]:
                 """Discover Oracle tables in specified schema."""
                 ...
 
@@ -113,7 +113,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
                 self,
                 table: str,
                 state: Mapping[str, t.GeneralValueType],
-            ) -> FlextMeltanoProtocols.Result[list[t.GeneralValueType]]:
+            ) -> FlextMeltanoProtocols.Result[Sequence[t.GeneralValueType]]:
                 """Extract incremental data from Oracle table using state."""
                 ...
 
@@ -121,7 +121,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
                 self,
                 table: str,
                 config: Mapping[str, t.GeneralValueType],
-            ) -> FlextMeltanoProtocols.Result[list[t.GeneralValueType]]:
+            ) -> FlextMeltanoProtocols.Result[Sequence[t.GeneralValueType]]:
                 """Extract all data from Oracle table."""
                 ...
 

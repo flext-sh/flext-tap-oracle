@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from typing import Protocol, runtime_checkable
 
 from flext_tests import FlextTestsProtocols
@@ -59,8 +60,8 @@ class FlextTapOracleTestProtocols(FlextTestsProtocols, FlextTapOracleProtocols):
                 def execute_query(
                     self,
                     query: str,
-                    parameters: dict[str, t.NormalizedValue] | None = None,
-                ) -> list[dict[str, t.NormalizedValue]]:
+                    parameters: Mapping[str, t.NormalizedValue] | None = None,
+                ) -> Sequence[Mapping[str, t.NormalizedValue]]:
                     """Execute query on mock database."""
                     ...
 
@@ -68,17 +69,17 @@ class FlextTapOracleTestProtocols(FlextTestsProtocols, FlextTapOracleProtocols):
             class TestDataProvider(Protocol):
                 """Protocol for test data providers."""
 
-                def get_test_tables(self) -> list[dict[str, t.NormalizedValue]]:
+                def get_test_tables(self) -> Sequence[Mapping[str, t.NormalizedValue]]:
                     """Get test table definitions."""
                     ...
 
                 def get_test_data(
                     self, table_name: str
-                ) -> list[dict[str, t.NormalizedValue]]:
+                ) -> Sequence[Mapping[str, t.NormalizedValue]]:
                     """Get test data for a table."""
                     ...
 
-                def get_test_config(self) -> dict[str, t.NormalizedValue]:
+                def get_test_config(self) -> Mapping[str, t.NormalizedValue]:
                     """Get test configuration."""
                     ...
 
@@ -87,21 +88,21 @@ class FlextTapOracleTestProtocols(FlextTestsProtocols, FlextTapOracleProtocols):
                 """Protocol for test assertions."""
 
                 def assert_oracle_connection_successful(
-                    self, config: dict[str, t.NormalizedValue]
+                    self, config: Mapping[str, t.NormalizedValue]
                 ) -> None:
                     """Assert Oracle connection was successful."""
                     ...
 
                 def assert_singer_stream_valid(
-                    self, stream: dict[str, t.NormalizedValue]
+                    self, stream: Mapping[str, t.NormalizedValue]
                 ) -> None:
                     """Assert Singer stream is valid."""
                     ...
 
                 def assert_extraction_results_match(
                     self,
-                    expected: list[dict[str, t.NormalizedValue]],
-                    actual: list[dict[str, t.NormalizedValue]],
+                    expected: Sequence[Mapping[str, t.NormalizedValue]],
+                    actual: Sequence[Mapping[str, t.NormalizedValue]],
                 ) -> None:
                     """Assert extraction results match expected data."""
                     ...

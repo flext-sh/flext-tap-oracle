@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from typing import override
 
 from flext_core import FlextLogger, FlextService, r, t
@@ -35,7 +35,7 @@ class FlextOracleDiscoveryService:
         self.oracle_api: FlextDbOracleApi = oracle_api
         self.schema_name: str | None = schema_name
 
-    def execute(self) -> r[list[FlextDbOracleModels.DbOracle.Table]]:
+    def execute(self) -> r[Sequence[FlextDbOracleModels.DbOracle.Table]]:
         """Execute Oracle table discovery using Layer 2 flext-db-oracle API."""
         try:
             schema_name = self.schema_name or "USER"
@@ -44,9 +44,9 @@ class FlextOracleDiscoveryService:
             if tables_result.is_failure:
                 error_msg = tables_result.error or "Table discovery failed"
                 logger.warning("Oracle table discovery failed: %s", error_msg)
-                return r[list[FlextDbOracleModels.DbOracle.Table]].fail(error_msg)
+                return r[Sequence[FlextDbOracleModels.DbOracle.Table]].fail(error_msg)
             table_names = tables_result.value or []
-            tables: list[FlextDbOracleModels.DbOracle.Table] = [
+            tables: Sequence[FlextDbOracleModels.DbOracle.Table] = [
                 FlextDbOracleModels.DbOracle.Table(
                     name=table_name, owner=schema_name, columns=[]
                 )
@@ -57,11 +57,11 @@ class FlextOracleDiscoveryService:
                 len(tables),
                 schema_name,
             )
-            return r[list[FlextDbOracleModels.DbOracle.Table]].ok(tables)
+            return r[Sequence[FlextDbOracleModels.DbOracle.Table]].ok(tables)
         except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
             logger.exception("Oracle table discovery error")
             error_msg = f"Table discovery error in schema {self.schema_name}: {e}"
-            return r[list[FlextDbOracleModels.DbOracle.Table]].fail(error_msg)
+            return r[Sequence[FlextDbOracleModels.DbOracle.Table]].fail(error_msg)
 
 
 class FlextOracleConnectionTestService:
@@ -106,35 +106,35 @@ class FlextOracleTableFilterService:
         self.tap_config = tap_config
         self.discovery_service = discovery_service
 
-    def execute(self) -> r[list[str]]:
+    def execute(self) -> r[Sequence[str]]:
         """Execute table filtering based on tap configuration using Layer 2 API."""
         try:
             tap_configuration: Mapping[str, t.Scalar] = self.tap_config.get_tap_config()
-            tables_filter: t.Scalar | list[t.Scalar] | None = tap_configuration.get(
+            tables_filter: t.Scalar | Sequence[t.Scalar] | None = tap_configuration.get(
                 "tables_filter",
             )
             if isinstance(tables_filter, list) and tables_filter:
-                tables_filter_list: list[str] = list(map(str, tables_filter))
+                tables_filter_list: Sequence[str] = list(map(str, tables_filter))
                 logger.info(
                     "Using configured table filter: %s",
                     ", ".join(tables_filter_list),
                 )
-                return r[list[str]].ok(tables_filter_list)
+                return r[Sequence[str]].ok(tables_filter_list)
             tables_result = self.discovery_service.execute()
             if tables_result.is_failure:
                 error_msg = tables_result.error or "Table discovery failed"
                 logger.warning("Table discovery failed: %s", error_msg)
-                return r[list[str]].fail(error_msg)
+                return r[Sequence[str]].fail(error_msg)
             if not tables_result.value:
-                return r[list[str]].fail("No Oracle tables discovered")
-            discovered_tables: list[FlextDbOracleModels.DbOracle.Table] = (
+                return r[Sequence[str]].fail("No Oracle tables discovered")
+            discovered_tables: Sequence[FlextDbOracleModels.DbOracle.Table] = (
                 tables_result.value
             )
-            table_names: list[str] = [table.name for table in discovered_tables]
-            exclude_tables_raw: t.Scalar | list[t.Scalar] | None = (
+            table_names: Sequence[str] = [table.name for table in discovered_tables]
+            exclude_tables_raw: t.Scalar | Sequence[t.Scalar] | None = (
                 tap_configuration.get("exclude_tables")
             )
-            exclude_tables: list[str] = []
+            exclude_tables: Sequence[str] = []
             if isinstance(exclude_tables_raw, list):
                 exclude_tables = list(map(str, exclude_tables_raw))
             if exclude_tables:
@@ -146,19 +146,19 @@ class FlextOracleTableFilterService:
                     len(exclude_tables),
                     len(filtered_tables),
                 )
-                return r[list[str]].ok(filtered_tables)
+                return r[Sequence[str]].ok(filtered_tables)
             logger.info(
                 "No table exclusions configured, using all %d tables",
                 len(table_names),
             )
-            return r[list[str]].ok(table_names)
+            return r[Sequence[str]].ok(table_names)
         except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
             logger.exception("Table filtering error")
             error_msg = f"Table filtering error: {e}"
-            return r[list[str]].fail(error_msg)
+            return r[Sequence[str]].fail(error_msg)
 
 
-class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table]]):
+class FlextOracleTapService(FlextService[Sequence[FlextDbOracleModels.DbOracle.Table]]):
     """Oracle Tap Service using FLEXT Service Pattern.
 
     This class extends FlextService[T] to provide Oracle-specific
@@ -180,7 +180,7 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table
             error_msg = "Configuration is required"
             raise ValueError(error_msg)
         super().__init__()
-        oracle_config: dict[str, t.Scalar] = config.get_oracle_config()
+        oracle_config: Mapping[str, t.Scalar] = config.get_oracle_config()
         oracle_settings = FlextDbOracleSettings.model_validate(oracle_config)
         self._oracle_api = FlextDbOracleApi(oracle_settings)
         schema_name = oracle_config.get("schema_name") or oracle_config.get(
@@ -221,7 +221,7 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table
     def discover_oracle_tables(
         self,
         schema_name: str | None = None,
-    ) -> r[list[FlextDbOracleModels.DbOracle.Table]]:
+    ) -> r[Sequence[FlextDbOracleModels.DbOracle.Table]]:
         """Discover Oracle tables using domain service."""
         if schema_name:
             discovery_service = FlextOracleDiscoveryService(
@@ -232,11 +232,11 @@ class FlextOracleTapService(FlextService[list[FlextDbOracleModels.DbOracle.Table
         return self._discovery_service.execute()
 
     @override
-    def execute(self) -> r[list[FlextDbOracleModels.DbOracle.Table]]:
+    def execute(self) -> r[Sequence[FlextDbOracleModels.DbOracle.Table]]:
         """Execute Oracle tap service - discover tables."""
         return self._discovery_service.execute()
 
-    def get_filtered_tables(self) -> r[list[str]]:
+    def get_filtered_tables(self) -> r[Sequence[str]]:
         """Get filtered table list using domain service."""
         return self._table_filter_service.execute()
 
@@ -338,7 +338,7 @@ def create_oracle_discovery_service(
         )
 
 
-__all__: list[str] = [
+__all__: Sequence[str] = [
     "FlextOracleConnectionTestService",
     "FlextOracleDiscoveryService",
     "FlextOracleTableFilterService",
