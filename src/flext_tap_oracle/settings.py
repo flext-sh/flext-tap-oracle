@@ -12,11 +12,10 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from flext_core import FlextLogger, FlextSettings, r
-from flext_core.typings import t
+from flext_core import FlextLogger, FlextSettings, r, t
 from pydantic import Field, SecretStr
 
-from flext_tap_oracle.constants import FlextTapOracleConstants as c
+from flext_tap_oracle.constants import c
 
 logger = FlextLogger(__name__)
 

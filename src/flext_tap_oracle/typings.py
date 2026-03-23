@@ -19,7 +19,7 @@ from flext_db_oracle.typings import FlextDbOracleTypes
 from flext_meltano import FlextMeltanoTypes
 from pydantic import BaseModel
 
-from flext_tap_oracle.constants import FlextTapOracleConstants as c
+from flext_tap_oracle.constants import c
 
 
 class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):

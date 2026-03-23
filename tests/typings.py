@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from flext_core.typings import FlextTypes
+from flext_core import FlextTypes
 from flext_tests import FlextTestsTypes
 
 from flext_tap_oracle import FlextTapOracleConstants as _c, FlextTapOracleTypes
