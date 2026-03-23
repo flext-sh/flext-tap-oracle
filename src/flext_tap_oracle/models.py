@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from datetime import datetime
 from typing import Annotated, ClassVar, Literal, Self
 
@@ -192,7 +192,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             @computed_field
             def stream_metadata_summary(self) -> t.TapOracle.Summary.SummaryData:
                 """Oracle stream metadata summary."""
-                estimated_volume: Mapping[str, t.NormalizedValue] = {}
+                estimated_volume: dict[str, t.NormalizedValue] = {}
                 if self.estimated_rows is not None:
                     estimated_volume["rows"] = self.estimated_rows
                 if self.column_count is not None:
@@ -1083,10 +1083,10 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 stream_name: str,
             ) -> m.TapOracle.OracleTapExecutionStats:
                 """Return new instance with marked stream error."""
-                new_failed_streams = (
-                    self.failed_streams.copy()
+                new_failed_streams: list[str] = (
+                    list(self.failed_streams)
                     if self.failed_streams
-                    else Sequence[str]()
+                    else []
                 )
                 if stream_name not in new_failed_streams:
                     new_failed_streams.append(stream_name)

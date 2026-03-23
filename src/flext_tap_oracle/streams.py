@@ -317,8 +317,8 @@ class FlextTapOracleStreams:
             column_metadata: Sequence[OracleValue],
         ) -> Mapping[str, OracleValue]:
             """Transform Oracle data types using flext-db-oracle type knowledge."""
-            transformed_record: Mapping[str, OracleValue] = {}
-            meta_lookup: Mapping[str, OracleValue] = {}
+            transformed_record: dict[str, OracleValue] = {}
+            meta_lookup: dict[str, OracleValue] = {}
             for col_meta_value in column_metadata:
                 col_name = getattr(col_meta_value, "name", None) or getattr(
                     col_meta_value,

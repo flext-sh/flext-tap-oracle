@@ -101,8 +101,8 @@ def create_oracle_tap_config(
 
     """
     try:
-        tap_config = tap_params or {}
-        meltano_config = meltano_params or {}
+        tap_config: dict[str, t.Scalar] = dict(tap_params) if tap_params else {}
+        meltano_config: dict[str, t.Scalar] = dict(meltano_params) if meltano_params else {}
         tap_config.setdefault("batch_size", 1000)
         tap_config.setdefault(
             "stream_prefix",
