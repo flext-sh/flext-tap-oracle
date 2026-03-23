@@ -14,7 +14,7 @@ from pathlib import Path
 
 from flext_cli import FlextCli, FlextCliCommands
 from flext_core import FlextLogger, r
-from pydantic import BaseModel, TypeAdapter
+from pydantic import TypeAdapter
 
 from flext_tap_oracle import FlextTapOracleSettings, TapOraclePrivate, c, m, t
 
@@ -134,7 +134,7 @@ class OracleTapSyncCommand:
         return r[bool].ok(value=True)
 
 
-def _run_tap_command[TParams: BaseModel](
+def _run_tap_command[TParams](
     *,
     kwargs: Mapping[str, t.Scalar],
     params_factory: Callable[..., TParams],

@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from flext_core import FlextTypes
     from flext_tests import d, e, h, r, s, x
 
-    from .conftest import (
+    from tests.conftest import (
         discovery_config,
         docker_control,
         error_scenarios,
@@ -45,12 +45,21 @@ if TYPE_CHECKING:
         skip_e2e_if_no_oracle,
         stream_config,
     )
-    from .constants import FlextTapOracleTestConstants, FlextTapOracleTestConstants as c
-    from .models import FlextTapOracleTestModels, FlextTapOracleTestModels as m
-    from .protocols import FlextTapOracleTestProtocols, FlextTapOracleTestProtocols as p
-    from .test_enterprise_tap import TestFlextOracleTapSettingsAndHelpers
-    from .typings import FlextTapOracleTestTypes, FlextTapOracleTestTypes as t
-    from .utilities import FlextTapOracleTestUtilities, FlextTapOracleTestUtilities as u
+    from tests.constants import (
+        FlextTapOracleTestConstants,
+        FlextTapOracleTestConstants as c,
+    )
+    from tests.models import FlextTapOracleTestModels, FlextTapOracleTestModels as m
+    from tests.protocols import (
+        FlextTapOracleTestProtocols,
+        FlextTapOracleTestProtocols as p,
+    )
+    from tests.test_enterprise_tap import TestFlextOracleTapSettingsAndHelpers
+    from tests.typings import FlextTapOracleTestTypes, FlextTapOracleTestTypes as t
+    from tests.utilities import (
+        FlextTapOracleTestUtilities,
+        FlextTapOracleTestUtilities as u,
+    )
 
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "FlextTapOracleTestConstants": ("tests.constants", "FlextTapOracleTestConstants"),
