@@ -8,7 +8,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from enum import StrEnum, unique
-from typing import Final, Literal
+from typing import Final
 
 from flext_db_oracle import FlextDbOracleConstants
 from flext_meltano import FlextMeltanoConstants
@@ -53,22 +53,6 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
             DEFAULT_TYPE: Final[str] = "string"
 
         INITIAL_RECORD_COUNT: Final[int] = 0
-
-        class Oracle:
-            """Oracle database connection constants."""
-
-            DEFAULT_PORT: Final[int] = (
-                FlextDbOracleConstants.DbOracle.Connection.DEFAULT_PORT
-            )
-            DEFAULT_TIMEOUT: Final[int] = (
-                FlextDbOracleConstants.DbOracle.Connection.DEFAULT_TIMEOUT
-            )
-
-        class Singer:
-            """Singer tap configuration constants."""
-
-            DEFAULT_BATCH_SIZE: Final[int] = FlextMeltanoConstants.DEFAULT_SIZE
-            MAX_BATCH_SIZE: Final[int] = FlextMeltanoConstants.MAX_ITEMS
 
         class Replication:
             """Oracle replication method constants."""
@@ -120,16 +104,6 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
             """Tap-specific extraction configuration."""
 
             TEST_QUERY: Final[str] = "SELECT 1 FROM DUAL"
-
-        type ReplicationMethodLiteral = Literal[
-            Replication.Method.FULL_TABLE,
-            Replication.Method.INCREMENTAL,
-            Replication.Method.LOG_BASED,
-        ]
-        "Oracle replication method literal - references Replication.Method StrEnum members."
-        TapReplicationMethod = Literal["FULL_TABLE", "INCREMENTAL"]
-        TapStreamSelection = Literal["selected", "automatic", "excluded"]
-        TapExecutionMode = Literal["discovery", "extraction", "test", "validate"]
 
     @unique
     class MeltanoTapOracleProjectType(StrEnum):

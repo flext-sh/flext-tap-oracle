@@ -1084,9 +1084,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             ) -> m.TapOracle.OracleTapExecutionStats:
                 """Return new instance with marked stream error."""
                 new_failed_streams: list[str] = (
-                    list(self.failed_streams)
-                    if self.failed_streams
-                    else []
+                    list(self.failed_streams) if self.failed_streams else []
                 )
                 if stream_name not in new_failed_streams:
                     new_failed_streams.append(stream_name)

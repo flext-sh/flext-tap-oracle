@@ -36,8 +36,8 @@ class FlextTapOracleSettings(FlextSettings):
     oracle_user: Annotated[SecretStr, Field(description="Oracle database username")]
     oracle_password: Annotated[SecretStr, Field(description="Oracle database password")]
     batch_size: Annotated[
-        int,
-        Field(default=1000, ge=1, description="Batch size for data extraction"),
+        t.BatchSize,
+        Field(default=1000, description="Batch size for data extraction"),
     ]
     stream_prefix: Annotated[
         str,
@@ -102,7 +102,9 @@ def create_oracle_tap_config(
     """
     try:
         tap_config: dict[str, t.Scalar] = dict(tap_params) if tap_params else {}
-        meltano_config: dict[str, t.Scalar] = dict(meltano_params) if meltano_params else {}
+        meltano_config: dict[str, t.Scalar] = (
+            dict(meltano_params) if meltano_params else {}
+        )
         tap_config.setdefault("batch_size", 1000)
         tap_config.setdefault(
             "stream_prefix",
