@@ -11,7 +11,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping, MutableSequence, Sequence
+from collections.abc import Mapping, MutableMapping, MutableSequence, Sequence
 from datetime import UTC, datetime
 from typing import Literal
 
@@ -224,7 +224,9 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
             ) -> r[Mapping[str, t.GeneralValueType]]:
                 """Validate Oracle configuration parameters."""
                 try:
-                    validated_config: dict[str, t.GeneralValueType] = dict(config)
+                    validated_config: MutableMapping[str, t.GeneralValueType] = dict(
+                        config
+                    )
                     required_fields = [
                         "host",
                         "port",

@@ -10,7 +10,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import MutableMapping, Sequence
 from typing import Annotated
 
 from flext_core import FlextLogger, FlextSettings, r, t
@@ -104,8 +104,10 @@ class FlextTapOracleSettings(FlextSettings):
 
         """
         try:
-            tap_config: dict[str, t.Scalar] = dict(tap_params) if tap_params else {}
-            meltano_config: dict[str, t.Scalar] = (
+            tap_config: MutableMapping[str, t.Scalar] = (
+                dict(tap_params) if tap_params else {}
+            )
+            meltano_config: MutableMapping[str, t.Scalar] = (
                 dict(meltano_params) if meltano_params else {}
             )
             tap_config.setdefault("batch_size", 1000)

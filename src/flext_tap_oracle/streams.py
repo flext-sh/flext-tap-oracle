@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Iterable, Mapping, MutableMapping, Sequence
 from datetime import datetime
 
 from flext_core import FlextLogger, r
@@ -329,8 +329,10 @@ class FlextTapOracleStreams:
             column_metadata: Sequence[t.TapOracle.Summary.OracleValue],
         ) -> Mapping[str, t.TapOracle.Summary.OracleValue]:
             """Transform Oracle data types using flext-db-oracle type knowledge."""
-            transformed_record: dict[str, t.TapOracle.Summary.OracleValue] = {}
-            meta_lookup: dict[str, t.TapOracle.Summary.OracleValue] = {}
+            transformed_record: MutableMapping[
+                str, t.TapOracle.Summary.OracleValue
+            ] = {}
+            meta_lookup: MutableMapping[str, t.TapOracle.Summary.OracleValue] = {}
             for col_meta_value in column_metadata:
                 col_name = getattr(col_meta_value, "name", None) or getattr(
                     col_meta_value,
