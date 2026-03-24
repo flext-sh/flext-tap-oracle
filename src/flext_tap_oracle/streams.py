@@ -68,7 +68,9 @@ class FlextTapOracleStreams:
                 connection = self.oracle_api.connection
                 if connection is None:
                     tap_config: t.TapOracle.Summary.OracleValue = getattr(
-                        self._tap, "typed_config", None,
+                        self._tap,
+                        "typed_config",
+                        None,
                     )
                     if (
                         tap_config
