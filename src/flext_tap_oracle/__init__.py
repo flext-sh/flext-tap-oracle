@@ -55,11 +55,7 @@ if TYPE_CHECKING:
         logger,
         main,
     )
-    from flext_tap_oracle.typings import (
-        FlextTapOracleTypes,
-        FlextTapOracleTypes as t,
-        OracleValue,
-    )
+    from flext_tap_oracle.typings import FlextTapOracleTypes, FlextTapOracleTypes as t
     from flext_tap_oracle.utilities import (
         FlextTapOracleUtilities,
         FlextTapOracleUtilities as u,
@@ -101,7 +97,6 @@ _LAZY_IMPORTS: Mapping[str, tuple[str, str]] = {
         "flext_tap_oracle.utilities",
         "FlextTapOracleUtilities",
     ),
-    "OracleValue": ("flext_tap_oracle.typings", "OracleValue"),
     "__all__": ("flext_tap_oracle.__version__", "__all__"),
     "__author__": ("flext_tap_oracle.__version__", "__author__"),
     "__author_email__": ("flext_tap_oracle.__version__", "__author_email__"),
@@ -143,7 +138,6 @@ __all__ = [
     "FlextTapOracleSyncCommand",
     "FlextTapOracleTypes",
     "FlextTapOracleUtilities",
-    "OracleValue",
     "__all__",
     "__author__",
     "__author_email__",

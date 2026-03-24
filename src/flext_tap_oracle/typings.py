@@ -47,7 +47,4 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
 
 t = FlextTapOracleTypes
 
-# Re-export from class for module-level access
-OracleValue = t.TapOracle.Summary.OracleValue
-
-__all__ = ["FlextTapOracleTypes", "OracleValue", "t"]
+__all__ = ["FlextTapOracleTypes", "t"]

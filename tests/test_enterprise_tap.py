@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+from collections.abc import Sequence
 from typing import override
 
 import pytest
@@ -25,8 +26,8 @@ class _DiscoveryStub(FlextOracleDiscoveryService):
         pass
 
     @override
-    def execute(self) -> FlextResult[list[FlextDbOracleModels.DbOracle.Table]]:
-        return FlextResult[list[FlextDbOracleModels.DbOracle.Table]].ok([
+    def execute(self) -> FlextResult[Sequence[FlextDbOracleModels.DbOracle.Table]]:
+        return FlextResult[Sequence[FlextDbOracleModels.DbOracle.Table]].ok([
             FlextDbOracleModels.DbOracle.Table(
                 name="USERS", owner="TESTDB", domain_events=[], columns=[]
             ),
