@@ -55,10 +55,7 @@ if TYPE_CHECKING:
         FlextTapOracleTestProtocols,
         FlextTapOracleTestProtocols as p,
     )
-    from tests.test_enterprise_tap import (
-        TestFlextOracleTapSettingsAndHelpers,
-        create_oracle_tap_config,
-    )
+    from tests.test_enterprise_tap import TestFlextOracleTapSettingsAndHelpers
     from tests.typings import FlextTapOracleTestTypes, FlextTapOracleTestTypes as t
     from tests.utilities import (
         FlextTapOracleTestUtilities,
@@ -76,10 +73,6 @@ _LAZY_IMPORTS: Mapping[str, tuple[str, str]] = {
         "TestFlextOracleTapSettingsAndHelpers",
     ),
     "c": ("tests.constants", "FlextTapOracleTestConstants"),
-    "create_oracle_tap_config": (
-        "tests.test_enterprise_tap",
-        "create_oracle_tap_config",
-    ),
     "d": ("flext_tests", "d"),
     "discovery_config": ("tests.conftest", "discovery_config"),
     "docker_control": ("tests.conftest", "docker_control"),
@@ -125,7 +118,6 @@ __all__ = [
     "FlextTapOracleTestUtilities",
     "TestFlextOracleTapSettingsAndHelpers",
     "c",
-    "create_oracle_tap_config",
     "d",
     "discovery_config",
     "docker_control",

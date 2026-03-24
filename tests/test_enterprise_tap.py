@@ -15,9 +15,7 @@ from flext_tap_oracle import (
     FlextOracleTableFilterService,
     FlextTapOracleSettings,
 )
-from flext_tap_oracle.settings import FlextTapOracleSettings
-
-create_oracle_tap_config = FlextTapOracleSettings.create_oracle_tap_config
+from flext_tap_oracle import FlextTapOracleSettings
 
 
 class _DiscoveryStub(FlextOracleDiscoveryService):
@@ -85,7 +83,7 @@ class TestFlextOracleTapSettingsAndHelpers:
         assert oracle_config["service_name"] == "TESTDB"
 
     def test_create_oracle_tap_config_success(self) -> None:
-        result = create_oracle_tap_config(
+        result = FlextTapOracleSettings.create_oracle_tap_config(
             oracle_params={
                 "oracle_host": "localhost",
                 "oracle_port": 1521,
@@ -106,7 +104,7 @@ class TestFlextOracleTapSettingsAndHelpers:
     ) -> None:
         monkeypatch.delenv("FLEXT_ORACLE_USER", raising=False)
         monkeypatch.delenv("FLEXT_ORACLE_PASSWORD", raising=False)
-        result = create_oracle_tap_config(
+        result = FlextTapOracleSettings.create_oracle_tap_config(
             oracle_params={
                 "oracle_host": "localhost",
                 "oracle_port": 1521,
