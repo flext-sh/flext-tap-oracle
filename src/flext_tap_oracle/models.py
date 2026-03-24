@@ -328,20 +328,14 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 ),
             ]
             max_tables: Annotated[
-                int,
-                Field(
-                    default=c.DEFAULT_SIZE,
-                    description="Maximum number of tables to discover",
-                ),
+                t.PositiveInt,
+                Field(default=c.DEFAULT_SIZE, description="Maximum number of tables to discover"),
             ]
 
             # Performance settings
             discovery_timeout: Annotated[
-                int,
-                Field(
-                    default=c.DEFAULT_TIMEOUT_SECONDS * 10,
-                    description="Discovery timeout in seconds",
-                ),
+                t.PositiveInt,
+                Field(default=c.DEFAULT_TIMEOUT_SECONDS * 10, description="Discovery timeout in seconds"),
             ]
             parallel_discovery: Annotated[
                 bool,
@@ -402,11 +396,8 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Extraction parameters
             batch_size: Annotated[
-                int,
-                Field(
-                    default=c.DEFAULT_SIZE * 10,
-                    description="Number of rows per batch",
-                ),
+                t.PositiveInt,
+                Field(default=c.DEFAULT_SIZE * 10, description="Number of rows per batch"),
             ]
             max_rows: Annotated[
                 int | None,
@@ -418,11 +409,8 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Performance optimization
             parallel_streams: Annotated[
-                int,
-                Field(
-                    default=1,
-                    description="Number of parallel extraction streams",
-                ),
+                t.WorkerCount,
+                Field(default=1, description="Number of parallel extraction streams"),
             ]
             enable_query_hints: Annotated[
                 bool,
