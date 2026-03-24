@@ -68,7 +68,7 @@ class FlextTapOracleStreams:
                 connection = self.oracle_api.connection
                 if connection is None:
                     tap_config: t.TapOracle.Summary.OracleValue = getattr(
-                        self._tap, "typed_config", None
+                        self._tap, "typed_config", None,
                     )
                     if (
                         tap_config
@@ -154,7 +154,7 @@ class FlextTapOracleStreams:
                     rows: Sequence[t.Dict] = query_result.unwrap_or([])
                     for row in rows:
                         record: Mapping[str, t.TapOracle.Summary.OracleValue] = dict(
-                            row.root
+                            row.root,
                         )
                         yield record
             except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
