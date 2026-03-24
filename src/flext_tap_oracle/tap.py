@@ -22,7 +22,7 @@ logger = FlextLogger(__name__)
 cli_api = FlextCli()
 
 
-class OracleTapDiscoverCommand:
+class FlextTapOracleDiscoverCommand:
     """Oracle tap discovery command using modern flext-cli patterns.
 
     Provides discovery of Oracle database schema and Singer catalog generation.
@@ -76,7 +76,7 @@ class OracleTapDiscoverCommand:
         return r[bool].ok(value=True)
 
 
-class OracleTapSyncCommand:
+class FlextTapOracleSyncCommand:
     """Oracle tap sync command using modern flext-cli patterns."""
 
     def __init__(self, params: m.TapOracle.OracleTapSyncParams) -> None:
@@ -134,84 +134,89 @@ class OracleTapSyncCommand:
         return r[bool].ok(value=True)
 
 
-def _run_tap_command[TParams](
-    *,
-    kwargs: t.ConfigurationMapping,
-    params_factory: Callable[..., TParams],
-    command_factory: Callable[[TParams], p.TapOraclePrivate.CommandRunner],
-    operation_name: str,
-) -> r[t.Cli.JsonValue]:
-    try:
-        params = params_factory(**dict(kwargs))
-        command = command_factory(params)
-        result = command.execute()
-        if result.is_failure:
-            error_message = result.error or f"{operation_name} failed"
-            cli_api.print(f"{operation_name} failed: {error_message}", style="red")
+class FlextTapOracleCli:
+    """Facade for Oracle tap CLI operations using flext-cli foundation."""
+
+    @staticmethod
+    def run_tap_command[TParams](
+        *,
+        kwargs: t.ConfigurationMapping,
+        params_factory: Callable[..., TParams],
+        command_factory: Callable[[TParams], p.TapOraclePrivate.CommandRunner],
+        operation_name: str,
+    ) -> r[t.Cli.JsonValue]:
+        """Run a tap command with params factory and command factory."""
+        try:
+            params = params_factory(**dict(kwargs))
+            command = command_factory(params)
+            result = command.execute()
+            if result.is_failure:
+                error_message = result.error or f"{operation_name} failed"
+                cli_api.print(f"{operation_name} failed: {error_message}", style="red")
+                return r[t.Cli.JsonValue].fail(error_message)
+            return r[t.Cli.JsonValue].ok(value=True)
+        except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+            error_message = f"{operation_name} error: {e}"
+            cli_api.print(error_message, style="red")
             return r[t.Cli.JsonValue].fail(error_message)
-        return r[t.Cli.JsonValue].ok(value=True)
-    except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-        error_message = f"{operation_name} error: {e}"
-        cli_api.print(error_message, style="red")
-        return r[t.Cli.JsonValue].fail(error_message)
 
-
-def create_tap_oracle_cli() -> r[FlextCliCommands]:
-    """Create FLEXT Tap Oracle CLI using flext-cli foundation - NO click imports."""
-    try:
-        cli_main = FlextCliCommands(
-            name="tap-oracle",
-            description="FLEXT Tap Oracle - Modern Singer Tap for Oracle Database",
-        )
-        discover_result = FlextCliCommands.register_command(
-            cli_main,
-            "discover",
-            handle_discover_command,
-        )
-        if discover_result.is_failure:
-            return r[FlextCliCommands].fail(
-                f"Discover command registration failed: {discover_result.error}",
+    @staticmethod
+    def create_tap_oracle_cli() -> r[FlextCliCommands]:
+        """Create FLEXT Tap Oracle CLI using flext-cli foundation - NO click imports."""
+        try:
+            cli_main = FlextCliCommands(
+                name="tap-oracle",
+                description="FLEXT Tap Oracle - Modern Singer Tap for Oracle Database",
             )
-        sync_result = FlextCliCommands.register_command(
-            cli_main,
-            "sync",
-            handle_sync_command,
-        )
-        if sync_result.is_failure:
-            return r[FlextCliCommands].fail(
-                f"Sync command registration failed: {sync_result.error}",
+            discover_result = FlextCliCommands.register_command(
+                cli_main,
+                "discover",
+                FlextTapOracleCli.handle_discover_command,
             )
-        return r[FlextCliCommands].ok(cli_main)
-    except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-        return r[FlextCliCommands].fail(f"CLI creation failed: {e}")
+            if discover_result.is_failure:
+                return r[FlextCliCommands].fail(
+                    f"Discover command registration failed: {discover_result.error}",
+                )
+            sync_result = FlextCliCommands.register_command(
+                cli_main,
+                "sync",
+                FlextTapOracleCli.handle_sync_command,
+            )
+            if sync_result.is_failure:
+                return r[FlextCliCommands].fail(
+                    f"Sync command registration failed: {sync_result.error}",
+                )
+            return r[FlextCliCommands].ok(cli_main)
+        except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+            return r[FlextCliCommands].fail(f"CLI creation failed: {e}")
 
+    @staticmethod
+    def handle_discover_command(
+        *_args: t.Scalar,
+        **kwargs: t.Scalar,
+    ) -> r[t.Cli.JsonValue]:
+        """Handle discover command using flext-cli patterns - NO click decorators."""
+        return FlextTapOracleCli.run_tap_command(
+            kwargs=kwargs,
+            params_factory=m.TapOracle.OracleTapDiscoverParams.from_click_args,
+            command_factory=lambda params: FlextTapOracleDiscoverCommand(params=params),
+            operation_name="Discovery",
+        )
 
-def handle_discover_command(
-    *_args: t.Scalar,
-    **kwargs: t.Scalar,
-) -> r[t.Cli.JsonValue]:
-    """Handle discover command using flext-cli patterns - NO click decorators."""
-    return _run_tap_command(
-        kwargs=kwargs,
-        params_factory=m.TapOracle.OracleTapDiscoverParams.from_click_args,
-        command_factory=lambda params: OracleTapDiscoverCommand(params=params),
-        operation_name="Discovery",
-    )
-
-
-def handle_sync_command(*_args: t.Scalar, **kwargs: t.Scalar) -> r[t.Cli.JsonValue]:
-    """Handle sync command using flext-cli patterns - NO click decorators."""
-    return _run_tap_command(
-        kwargs=kwargs,
-        params_factory=m.TapOracle.OracleTapSyncParams.from_click_args,
-        command_factory=lambda params: OracleTapSyncCommand(params=params),
-        operation_name="Sync",
-    )
+    @staticmethod
+    def handle_sync_command(*_args: t.Scalar, **kwargs: t.Scalar) -> r[t.Cli.JsonValue]:
+        """Handle sync command using flext-cli patterns - NO click decorators."""
+        return FlextTapOracleCli.run_tap_command(
+            kwargs=kwargs,
+            params_factory=m.TapOracle.OracleTapSyncParams.from_click_args,
+            command_factory=lambda params: FlextTapOracleSyncCommand(params=params),
+            operation_name="Sync",
+        )
 
 
 def cli() -> int:
     """Main CLI entry point using flext-cli foundation."""
-    cli_result = create_tap_oracle_cli()
+    cli_result = FlextTapOracleCli.create_tap_oracle_cli()
     if cli_result.is_failure:
         logger.error(f"CLI creation failed: {cli_result.error or 'unknown'}")
         return 1

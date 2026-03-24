@@ -293,49 +293,52 @@ class FlextOracleTapService(FlextService[Sequence[FlextDbOracleModels.DbOracle.T
         return self._connection_test_service.execute()
 
 
-def create_oracle_tap_service(
-    config: FlextTapOracleSettings,
-) -> r[FlextOracleTapService]:
-    """Create Oracle tap service using COMPOSITION.
+    @staticmethod
+    def create_oracle_tap_service(
+        config: FlextTapOracleSettings,
+    ) -> r[FlextOracleTapService]:
+        """Create Oracle tap service using COMPOSITION.
 
-    Args:
-    config: Oracle tap configuration
+        Args:
+        config: Oracle tap configuration
 
-    Returns:
-    r containing Oracle tap service
+        Returns:
+        r containing Oracle tap service
 
-    """
-    try:
-        service = FlextOracleTapService(config=config)
-        return r[FlextOracleTapService].ok(service)
-    except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-        return r[FlextOracleTapService].fail(f"Oracle tap service creation failed: {e}")
+        """
+        try:
+            service = FlextOracleTapService(config=config)
+            return r[FlextOracleTapService].ok(service)
+        except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+            return r[FlextOracleTapService].fail(
+                f"Oracle tap service creation failed: {e}"
+            )
 
+    @staticmethod
+    def create_oracle_discovery_service(
+        oracle_api: FlextDbOracleApi,
+        schema_name: str | None = None,
+    ) -> r[FlextOracleDiscoveryService]:
+        """Create Oracle discovery service.
 
-def create_oracle_discovery_service(
-    oracle_api: FlextDbOracleApi,
-    schema_name: str | None = None,
-) -> r[FlextOracleDiscoveryService]:
-    """Create Oracle discovery service.
+        Args:
+        oracle_api: Oracle database API instance
+        schema_name: Optional schema name for discovery
 
-    Args:
-    oracle_api: Oracle database API instance
-    schema_name: Optional schema name for discovery
+        Returns:
+        r containing Oracle discovery service
 
-    Returns:
-    r containing Oracle discovery service
-
-    """
-    try:
-        service = FlextOracleDiscoveryService(
-            oracle_api=oracle_api,
-            schema_name=schema_name,
-        )
-        return r[FlextOracleDiscoveryService].ok(service)
-    except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-        return r[FlextOracleDiscoveryService].fail(
-            f"Oracle discovery service creation failed: {e}",
-        )
+        """
+        try:
+            service = FlextOracleDiscoveryService(
+                oracle_api=oracle_api,
+                schema_name=schema_name,
+            )
+            return r[FlextOracleDiscoveryService].ok(service)
+        except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+            return r[FlextOracleDiscoveryService].fail(
+                f"Oracle discovery service creation failed: {e}",
+            )
 
 
 __all__: Sequence[str] = [
@@ -343,6 +346,4 @@ __all__: Sequence[str] = [
     "FlextOracleDiscoveryService",
     "FlextOracleTableFilterService",
     "FlextOracleTapService",
-    "create_oracle_discovery_service",
-    "create_oracle_tap_service",
 ]
