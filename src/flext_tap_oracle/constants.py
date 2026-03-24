@@ -35,18 +35,6 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
         DEFAULT_STREAM_PREFIX: Final[str] = "oracle"
         DEFAULT_OPERATION_NAME: Final[str] = "unknown"
 
-        class EnvironmentDefaults:
-            """Environment-specific performance defaults."""
-
-            class Production:
-                """Production environment defaults."""
-
-            class Development:
-                """Development environment defaults."""
-
-            class Staging:
-                """Staging environment defaults."""
-
         class SingerTypes:
             """Singer protocol type mappings for Oracle data types."""
 
@@ -70,11 +58,6 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
                 INCREMENTAL = "INCREMENTAL"
                 LOG_BASED = "LOG_BASED"
 
-        class Performance:
-            """Oracle tap performance optimization constants."""
-
-            DEFAULT_BATCH_SIZE: Final[int] = FlextDbOracleConstants.DEFAULT_BATCH_SIZE
-
         class TapValidation:
             """Oracle tap validation constants.
 
@@ -82,23 +65,6 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
             """
 
             MAX_IDENTIFIER_LENGTH: Final[int] = 255
-
-        class Connection:
-            """Oracle tap connection configuration."""
-
-            DEFAULT_HOST: Final[str] = FlextDbOracleConstants.LOCALHOST
-            DEFAULT_SERVICE_NAME: Final[str] = (
-                FlextDbOracleConstants.DbOracle.Connection.DEFAULT_SERVICE_NAME
-            )
-            DEFAULT_USERNAME: Final[str] = (
-                FlextDbOracleConstants.DbOracle.Connection.DEFAULT_USERNAME
-            )
-            DEFAULT_POOL_MIN: Final[int] = (
-                FlextDbOracleConstants.DbOracle.Connection.DEFAULT_POOL_MIN
-            )
-            DEFAULT_POOL_MAX: Final[int] = (
-                FlextDbOracleConstants.DbOracle.Connection.DEFAULT_POOL_MAX
-            )
 
         class Extraction:
             """Tap-specific extraction configuration."""

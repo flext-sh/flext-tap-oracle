@@ -329,13 +329,19 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             ]
             max_tables: Annotated[
                 t.PositiveInt,
-                Field(default=c.DEFAULT_SIZE, description="Maximum number of tables to discover"),
+                Field(
+                    default=c.DEFAULT_SIZE,
+                    description="Maximum number of tables to discover",
+                ),
             ]
 
             # Performance settings
             discovery_timeout: Annotated[
                 t.PositiveInt,
-                Field(default=c.DEFAULT_TIMEOUT_SECONDS * 10, description="Discovery timeout in seconds"),
+                Field(
+                    default=c.DEFAULT_TIMEOUT_SECONDS * 10,
+                    description="Discovery timeout in seconds",
+                ),
             ]
             parallel_discovery: Annotated[
                 bool,
@@ -397,7 +403,9 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             # Extraction parameters
             batch_size: Annotated[
                 t.PositiveInt,
-                Field(default=c.DEFAULT_SIZE * 10, description="Number of rows per batch"),
+                Field(
+                    default=c.DEFAULT_SIZE * 10, description="Number of rows per batch"
+                ),
             ]
             max_rows: Annotated[
                 int | None,
@@ -506,15 +514,15 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Volume metrics
             total_records: Annotated[
-                int,
+                t.NonNegativeInt,
                 Field(default=0, description="Total records extracted"),
             ]
             total_bytes: Annotated[
-                int,
+                t.NonNegativeInt,
                 Field(default=0, description="Total bytes processed"),
             ]
             streams_processed: Annotated[
-                int,
+                t.NonNegativeInt,
                 Field(
                     default=0,
                     description="Number of streams processed",
@@ -523,14 +531,14 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Performance metrics
             avg_records_per_second: Annotated[
-                float,
+                t.NonNegativeFloat,
                 Field(
                     default=0.0,
                     description="Average records per second",
                 ),
             ]
             avg_bytes_per_second: Annotated[
-                float,
+                t.NonNegativeFloat,
                 Field(
                     default=0.0,
                     description="Average bytes per second",
@@ -539,14 +547,14 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Oracle-specific metrics
             oracle_connection_time: Annotated[
-                float,
+                t.NonNegativeFloat,
                 Field(
                     default=0.0,
                     description="Oracle connection establishment time",
                 ),
             ]
             oracle_query_time: Annotated[
-                float,
+                t.NonNegativeFloat,
                 Field(
                     default=0.0,
                     description="Total Oracle query execution time",
@@ -767,11 +775,8 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 ),
             ]
             total_tables: Annotated[
-                int,
-                Field(
-                    ...,
-                    description="Total number of tables discovered",
-                ),
+                t.NonNegativeInt,
+                Field(..., description="Total number of tables discovered"),
             ]
 
             # Raw Oracle metadata
@@ -922,38 +927,38 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Stream statistics
             streams_processed: Annotated[
-                int,
+                t.NonNegativeInt,
                 Field(
                     default=0,
                     description="Number of streams processed",
                 ),
             ]
             total_records: Annotated[
-                int,
+                t.NonNegativeInt,
                 Field(default=0, description="Total records extracted"),
             ]
             total_bytes: Annotated[
-                int,
+                t.NonNegativeInt,
                 Field(default=0, description="Total bytes processed"),
             ]
 
             # Performance metrics
             avg_records_per_second: Annotated[
-                float,
+                t.NonNegativeFloat,
                 Field(
                     default=0.0,
                     description="Average records per second",
                 ),
             ]
             avg_bytes_per_second: Annotated[
-                float,
+                t.NonNegativeFloat,
                 Field(
                     default=0.0,
                     description="Average bytes per second",
                 ),
             ]
             duration_seconds: Annotated[
-                float,
+                t.NonNegativeFloat,
                 Field(
                     default=0.0,
                     description="Total execution duration",
@@ -962,7 +967,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Error tracking
             errors_encountered: Annotated[
-                int,
+                t.NonNegativeInt,
                 Field(
                     default=0,
                     description="Number of errors encountered",
@@ -978,21 +983,21 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Oracle-specific metrics
             oracle_connection_time: Annotated[
-                float,
+                t.NonNegativeFloat,
                 Field(
                     default=0.0,
                     description="Oracle connection time",
                 ),
             ]
             oracle_query_time: Annotated[
-                float,
+                t.NonNegativeFloat,
                 Field(
                     default=0.0,
                     description="Total Oracle query time",
                 ),
             ]
             oracle_result_processing_time: Annotated[
-                float,
+                t.NonNegativeFloat,
                 Field(
                     default=0.0,
                     description="Result processing time",

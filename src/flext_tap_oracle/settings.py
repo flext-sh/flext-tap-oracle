@@ -25,10 +25,12 @@ class FlextTapOracleSettings(FlextSettings):
     """Runtime settings for Oracle Singer tap operations."""
 
     oracle_host: Annotated[
-        str,
+        t.NonEmptyStr,
         Field(default="localhost", description="Oracle database host"),
     ]
-    oracle_port: Annotated[t.PortNumber, Field(default=1521, description="Oracle database port")]
+    oracle_port: Annotated[
+        t.PortNumber, Field(default=1521, description="Oracle database port")
+    ]
     oracle_service_name: Annotated[
         str,
         Field(default="ORCL", description="Oracle service name or SID"),
@@ -59,10 +61,8 @@ class FlextTapOracleSettings(FlextSettings):
 
     @staticmethod
     def _resolve_secret(value: SecretStr) -> str:
-        """Resolve a SecretStr to its plain value, handling overrides that bypass coercion."""
-        if isinstance(value, SecretStr):
-            return value.get_secret_value()
-        return str(value)
+        """Resolve a SecretStr to its plain value."""
+        return value.get_secret_value()
 
     def get_oracle_config(self) -> Mapping[str, t.Scalar]:
         """Get Oracle database connection configuration."""
