@@ -19,7 +19,6 @@ from collections.abc import Mapping
 from flext_core import FlextTypes as _tap_t
 from flext_db_oracle.typings import FlextDbOracleTypes
 from flext_meltano import FlextMeltanoTypes
-from pydantic import BaseModel
 
 
 class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
@@ -44,7 +43,7 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
             """Summary and reporting complex types."""
 
             type SummaryData = Mapping[str, _tap_t.NormalizedValue]
-            type OracleValue = _tap_t.NormalizedValue | BaseModel | None
+            type OracleValue = _tap_t.ValueOrModel | None
 
 
 t = FlextTapOracleTypes

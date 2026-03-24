@@ -392,7 +392,7 @@ def discovery_config() -> t.ContainerMapping:
 
 
 @pytest.fixture
-def oracle_queries() -> t.StrMapping:
+def oracle_queries() -> Mapping[str, str]:
     """Oracle SQL queries for testing."""
     return {
         "list_tables": "\n\n          SELECT table_name, owner, table_type\n          FROM all_tables\n          WHERE owner = :schema_name\n          ORDER BY table_name\n      ",

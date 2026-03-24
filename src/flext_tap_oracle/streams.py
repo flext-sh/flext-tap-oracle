@@ -207,7 +207,7 @@ class FlextTapOracleStreams:
             query_data: OracleValue,
         ) -> Iterable[Mapping[str, OracleValue]]:
             """Fallback processing without metadata (minimal implementation)."""
-            column_names: t.StrSequence = []
+            column_names: Sequence[str] = []
             if not isinstance(query_data, Iterable) or isinstance(
                 query_data,
                 str | bytes,
@@ -268,7 +268,7 @@ class FlextTapOracleStreams:
                 )
                 yield from self._process_results_fallback(query_data)
                 return
-            column_names: t.StrSequence = [getattr(col, "name", "") for col in columns]
+            column_names: Sequence[str] = [getattr(col, "name", "") for col in columns]
             if not isinstance(query_data, Iterable) or isinstance(
                 query_data,
                 str | bytes,
