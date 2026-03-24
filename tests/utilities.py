@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 
 from flext_core import FlextTypes as _t
 from flext_tests import FlextTestsUtilities
@@ -51,9 +51,9 @@ class FlextTapOracleTestUtilities(FlextTestsUtilities, FlextTapOracleUtilities):
             username: str = "test",
             password: str = "test",
             **kwargs: _t.Scalar,
-        ) -> Mapping[str, t.NormalizedValue]:
+        ) -> t.ContainerMapping:
             """Create test Oracle configuration."""
-            config: Mapping[str, t.NormalizedValue] = {
+            config: t.ContainerMapping = {
                 "host": host,
                 "port": port,
                 "service_name": service_name,
@@ -69,9 +69,9 @@ class FlextTapOracleTestUtilities(FlextTestsUtilities, FlextTapOracleUtilities):
             table_name: str,
             replication_method: str = "FULL_TABLE",
             **kwargs: _t.Scalar,
-        ) -> Mapping[str, t.NormalizedValue]:
+        ) -> t.ContainerMapping:
             """Create test Singer stream configuration."""
-            stream: Mapping[str, t.NormalizedValue] = {
+            stream: t.ContainerMapping = {
                 "stream_name": stream_name,
                 "table_name": table_name,
                 "replication_method": replication_method,
@@ -82,7 +82,7 @@ class FlextTapOracleTestUtilities(FlextTestsUtilities, FlextTapOracleUtilities):
 
         @staticmethod
         def validate_oracle_connection_config(
-            config: Mapping[str, t.NormalizedValue],
+            config: t.ContainerMapping,
         ) -> bool:
             """Validate Oracle connection configuration for testing."""
             required_fields = ["host", "port", "service_name", "username", "password"]
@@ -91,11 +91,11 @@ class FlextTapOracleTestUtilities(FlextTestsUtilities, FlextTapOracleUtilities):
         @staticmethod
         def generate_mock_oracle_data(
             table_name: str, row_count: int = 10, **kwargs: _t.Scalar
-        ) -> Sequence[Mapping[str, t.NormalizedValue]]:
+        ) -> Sequence[t.ContainerMapping]:
             """Generate mock Oracle data for testing."""
-            data: Sequence[Mapping[str, t.NormalizedValue]] = []
+            data: Sequence[t.ContainerMapping] = []
             for i in range(row_count):
-                row: Mapping[str, t.NormalizedValue] = {
+                row: t.ContainerMapping = {
                     "id": i + 1,
                     "name": f"Test Record {i + 1}",
                     "table_name": table_name,

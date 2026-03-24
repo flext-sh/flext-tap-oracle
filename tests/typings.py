@@ -48,7 +48,7 @@ class FlextTapOracleTestTypes(FlextTestsTypes, FlextTapOracleTypes):
         type TestReplicationMethod = _c.TestReplicationMethod
         type MockOracleRecord = Mapping[str, FlextTypes.Scalar]
         type MockOracleTable = Sequence[MockOracleRecord]
-        type TestScenario = Mapping[str, t.NormalizedValue]
+        type TestScenario = t.ContainerMapping
         type TestValidationResult = Mapping[str, bool | str | Sequence[str]]
         type TestPerformanceResult = Mapping[str, float | int | str]
 
