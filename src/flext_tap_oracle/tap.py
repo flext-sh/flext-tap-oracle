@@ -136,7 +136,7 @@ class OracleTapSyncCommand:
 
 def _run_tap_command[TParams](
     *,
-    kwargs: Mapping[str, t.Scalar],
+    kwargs: t.ConfigurationMapping,
     params_factory: Callable[..., TParams],
     command_factory: Callable[[TParams], TapOraclePrivate.CommandRunner],
     operation_name: str,

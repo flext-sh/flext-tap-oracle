@@ -10,7 +10,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from typing import Annotated
 
 from flext_core import FlextLogger, FlextSettings, r, t
@@ -60,11 +60,13 @@ class FlextTapOracleSettings(FlextSettings):
         return r[bool].ok(True)
 
     @staticmethod
-    def _resolve_secret(value: SecretStr) -> str:
+    def _resolve_secret(value: SecretStr | str) -> str:
         """Resolve a SecretStr to its plain value."""
-        return value.get_secret_value()
+        if isinstance(value, SecretStr):
+            return value.get_secret_value()
+        return value
 
-    def get_oracle_config(self) -> Mapping[str, t.Scalar]:
+    def get_oracle_config(self) -> t.ConfigurationMapping:
         """Get Oracle database connection configuration."""
         return {
             "host": self.oracle_host,
@@ -74,7 +76,7 @@ class FlextTapOracleSettings(FlextSettings):
             "password": self._resolve_secret(self.oracle_password),
         }
 
-    def get_tap_config(self) -> Mapping[str, t.Scalar]:
+    def get_tap_config(self) -> t.ConfigurationMapping:
         """Get tap-specific configuration settings."""
         return {
             "batch_size": self.batch_size,
@@ -85,9 +87,9 @@ class FlextTapOracleSettings(FlextSettings):
 
     @staticmethod
     def create_oracle_tap_config(
-        oracle_params: Mapping[str, t.Scalar],
-        tap_params: Mapping[str, t.Scalar] | None = None,
-        meltano_params: Mapping[str, t.Scalar] | None = None,
+        oracle_params: t.ConfigurationMapping,
+        tap_params: t.ConfigurationMapping | None = None,
+        meltano_params: t.ConfigurationMapping | None = None,
     ) -> r[FlextTapOracleSettings]:
         """Create Oracle tap configuration using grouped parameters.
 

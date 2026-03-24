@@ -72,7 +72,7 @@ class FlextTapOracleStreams:
                     else:
                         msg = "Cannot create metadata manager without valid Oracle connection"
                         raise RuntimeError(msg)
-                metadata_placeholder: Mapping[str, t.Container] = {}
+                metadata_placeholder: t.FlatContainerMapping = {}
                 self._metadata_manager = metadata_placeholder
             return self._metadata_manager
 
@@ -80,7 +80,7 @@ class FlextTapOracleStreams:
         def observability_manager(self) -> Mapping[str, OracleValue]:
             """Get flext-db-oracle observability manager with lazy initialization."""
             if self._observability_manager is None:
-                obs_placeholder: Mapping[str, t.Container] = {}
+                obs_placeholder: t.FlatContainerMapping = {}
                 self._observability_manager = obs_placeholder
             return self._observability_manager
 
@@ -207,7 +207,7 @@ class FlextTapOracleStreams:
             query_data: OracleValue,
         ) -> Iterable[Mapping[str, OracleValue]]:
             """Fallback processing without metadata (minimal implementation)."""
-            column_names: Sequence[str] = []
+            column_names: t.StrSequence = []
             if not isinstance(query_data, Iterable) or isinstance(
                 query_data,
                 str | bytes,
@@ -268,7 +268,7 @@ class FlextTapOracleStreams:
                 )
                 yield from self._process_results_fallback(query_data)
                 return
-            column_names: Sequence[str] = [getattr(col, "name", "") for col in columns]
+            column_names: t.StrSequence = [getattr(col, "name", "") for col in columns]
             if not isinstance(query_data, Iterable) or isinstance(
                 query_data,
                 str | bytes,

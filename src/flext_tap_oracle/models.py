@@ -43,7 +43,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
         # Oracle Tap Domain - namespace metadata as static methods on plain class
 
         @staticmethod
-        def get_active_model_names() -> Sequence[str]:
+        def get_active_model_names() -> t.StrSequence:
             """List of active Oracle tap model names."""
             return [
                 "OracleTapStreamMetadata",
@@ -216,21 +216,21 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Discovery scope
             schema_names: Annotated[
-                Sequence[str],
+                t.StrSequence,
                 Field(
                     default_factory=list,
                     description="Oracle schemas to discover",
                 ),
             ]
             table_patterns: Annotated[
-                Sequence[str],
+                t.StrSequence,
                 Field(
                     default_factory=list,
                     description="Table name patterns to include",
                 ),
             ]
             exclude_patterns: Annotated[
-                Sequence[str],
+                t.StrSequence,
                 Field(
                     default_factory=list,
                     description="Table name patterns to exclude",
@@ -596,14 +596,14 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Filtering results
             filtered_tables: Annotated[
-                Sequence[str],
+                t.StrSequence,
                 Field(
                     default_factory=list,
                     description="Table names after applying filters",
                 ),
             ]
             excluded_tables: Annotated[
-                Sequence[str],
+                t.StrSequence,
                 Field(
                     default_factory=list,
                     description="Table names that were excluded",
@@ -712,7 +712,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 ),
             ]
             failed_streams: Annotated[
-                Sequence[str],
+                t.StrSequence,
                 Field(
                     default_factory=list,
                     description="Names of failed streams",
@@ -908,7 +908,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 # Short aliases
 m = FlextTapOracleModels
 
-__all__: Sequence[str] = [
+__all__: t.StrSequence = [
     "FlextTapOracleModels",
     "m",
 ]

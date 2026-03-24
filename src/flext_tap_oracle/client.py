@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from typing import override
 
 from flext_core import FlextLogger, FlextService, r, t
@@ -109,8 +109,8 @@ class FlextOracleTableFilterService:
     def execute(self) -> r[Sequence[str]]:
         """Execute table filtering based on tap configuration using Layer 2 API."""
         try:
-            tap_configuration: Mapping[str, t.Scalar] = self.tap_config.get_tap_config()
-            tables_filter: t.Scalar | Sequence[t.Scalar] | None = tap_configuration.get(
+            tap_configuration: t.ConfigurationMapping = self.tap_config.get_tap_config()
+            tables_filter: t.Scalar | t.ScalarList | None = tap_configuration.get(
                 "tables_filter",
             )
             if isinstance(tables_filter, list) and tables_filter:
@@ -131,8 +131,8 @@ class FlextOracleTableFilterService:
                 tables_result.value
             )
             table_names: Sequence[str] = [table.name for table in discovered_tables]
-            exclude_tables_raw: t.Scalar | Sequence[t.Scalar] | None = (
-                tap_configuration.get("exclude_tables")
+            exclude_tables_raw: t.Scalar | t.ScalarList | None = tap_configuration.get(
+                "exclude_tables"
             )
             exclude_tables: Sequence[str] = []
             if isinstance(exclude_tables_raw, list):
@@ -180,7 +180,7 @@ class FlextOracleTapService(FlextService[Sequence[FlextDbOracleModels.DbOracle.T
             error_msg = "Configuration is required"
             raise ValueError(error_msg)
         super().__init__()
-        oracle_config: Mapping[str, t.Scalar] = config.get_oracle_config()
+        oracle_config: t.ConfigurationMapping = config.get_oracle_config()
         oracle_settings = FlextDbOracleSettings.model_validate(oracle_config)
         self._oracle_api = FlextDbOracleApi(oracle_settings)
         schema_name = oracle_config.get("schema_name") or oracle_config.get(
