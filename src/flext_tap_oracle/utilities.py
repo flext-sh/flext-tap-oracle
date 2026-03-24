@@ -11,7 +11,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping, MutableSequence, Sequence
 from datetime import UTC, datetime
 from typing import Literal
 
@@ -113,7 +113,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
             ) -> r[m.TapOracle.OracleTapDiscoveryResult]:
                 """Create discovery result from Oracle tables."""
                 try:
-                    stream_infos: list[m.TapOracle.OracleTapStreamInfo] = []
+                    stream_infos: MutableSequence[m.TapOracle.OracleTapStreamInfo] = []
                     for table in tables:
                         match table:
                             case FlextDbOracleModels.DbOracle.Table() as oracle_table:

@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import MutableSequence, Sequence
 from datetime import datetime
 from typing import Annotated, Literal, Self
 
@@ -803,8 +803,8 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 stream_name: str,
             ) -> m.TapOracle.OracleTapExecutionStats:
                 """Return new instance with marked stream error."""
-                new_failed_streams: list[str] = (
-                    list(self.failed_streams) if self.failed_streams else []
+                new_failed_streams: MutableSequence[str] = (
+                    [*self.failed_streams] if self.failed_streams else []
                 )
                 if stream_name not in new_failed_streams:
                     new_failed_streams.append(stream_name)
