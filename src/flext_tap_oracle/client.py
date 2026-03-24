@@ -292,7 +292,6 @@ class FlextOracleTapService(FlextService[Sequence[FlextDbOracleModels.DbOracle.T
         """Validate service using connection test."""
         return self._connection_test_service.execute()
 
-
     @staticmethod
     def create_oracle_tap_service(
         config: FlextTapOracleSettings,
