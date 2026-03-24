@@ -59,7 +59,9 @@ class FlextTapOracleDiscoverCommand:
             if self.params.output_file:
                 output_path = Path(self.params.output_file)
                 output_path.write_text(
-                    _GENERAL_VALUE_MAP_ADAPTER.dump_json(catalog_dict, indent=2).decode("utf-8"),
+                    _GENERAL_VALUE_MAP_ADAPTER.dump_json(catalog_dict, indent=2).decode(
+                        "utf-8"
+                    ),
                     encoding="utf-8",
                 )
                 self._logger.info("Catalog written to %s", output_path)
