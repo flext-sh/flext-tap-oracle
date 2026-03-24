@@ -47,11 +47,7 @@ if TYPE_CHECKING:
         FlextTapOracleProtocols as p,
         TapOraclePrivate,
     )
-    from flext_tap_oracle.settings import (
-        FlextTapOracleSettings,
-        create_oracle_tap_config,
-        validate_oracle_tap_configuration,
-    )
+    from flext_tap_oracle.settings import FlextTapOracleSettings
     from flext_tap_oracle.streams import FlextTapOracleStreams
     from flext_tap_oracle.tap import (
         OracleTapDiscoverCommand,
@@ -124,10 +120,6 @@ _LAZY_IMPORTS: Mapping[str, tuple[str, str]] = {
         "flext_tap_oracle.client",
         "create_oracle_discovery_service",
     ),
-    "create_oracle_tap_config": (
-        "flext_tap_oracle.settings",
-        "create_oracle_tap_config",
-    ),
     "create_oracle_tap_service": (
         "flext_tap_oracle.client",
         "create_oracle_tap_service",
@@ -146,10 +138,6 @@ _LAZY_IMPORTS: Mapping[str, tuple[str, str]] = {
     "s": ("flext_db_oracle", "s"),
     "t": ("flext_tap_oracle.typings", "FlextTapOracleTypes"),
     "u": ("flext_tap_oracle.utilities", "FlextTapOracleUtilities"),
-    "validate_oracle_tap_configuration": (
-        "flext_tap_oracle.settings",
-        "validate_oracle_tap_configuration",
-    ),
     "x": ("flext_db_oracle", "x"),
 }
 
@@ -182,7 +170,6 @@ __all__ = [
     "cli",
     "cli_api",
     "create_oracle_discovery_service",
-    "create_oracle_tap_config",
     "create_oracle_tap_service",
     "create_tap_oracle_cli",
     "d",
@@ -198,7 +185,6 @@ __all__ = [
     "s",
     "t",
     "u",
-    "validate_oracle_tap_configuration",
     "x",
 ]
 

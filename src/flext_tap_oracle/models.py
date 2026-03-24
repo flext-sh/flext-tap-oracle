@@ -9,13 +9,12 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from datetime import datetime
-from typing import Annotated, ClassVar, Literal, Self
+from typing import Annotated, Literal, Self
 
 from flext_core import r
 from flext_db_oracle import FlextDbOracleModels
 from flext_meltano import FlextMeltanoModels
 from pydantic import (
-    ConfigDict,
     Field,
     computed_field,
     field_validator,
@@ -40,32 +39,6 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
     class TapOracle:
         """Tap Oracle  namespace for cross-project access."""
-
-        # Pydantic 2.11 Configuration - Enterprise Singer Oracle Tap Features
-        model_config: ClassVar[ConfigDict] = ConfigDict(
-            validate_assignment=True,
-            use_enum_values=True,
-            arbitrary_types_allowed=True,
-            extra="forbid",
-            frozen=False,
-            validate_return=True,
-            ser_json_timedelta="iso8601",
-            ser_json_bytes="base64",
-            hide_input_in_errors=True,
-            json_schema_extra={
-                "title": "FLEXT Singer Oracle Tap Models",
-                "description": "Enterprise Oracle database extraction models with Singer protocol compliance",
-                "examples": [
-                    {
-                        "tap_name": "tap-oracle",
-                        "extraction_mode": "incremental_replication",
-                        "oracle_connection": "oracle://user@host:1521/service",
-                    },
-                ],
-                "tags": ["singer", "oracle", "tap", "extraction", "database"],
-                "version": "2.11.0",
-            },
-        )
 
         # Oracle Tap Domain - namespace metadata as static methods on plain class
 
@@ -123,23 +96,6 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             Extends Oracle table metadata with tap-specific information
             for Singer streaming operations and replication configuration.
             """
-
-            # Pydantic 2.11 Configuration - Stream Metadata Features
-            model_config: ClassVar[ConfigDict] = ConfigDict(
-                validate_assignment=True,
-                extra="forbid",
-                frozen=False,
-                json_schema_extra={
-                    "description": "Oracle Singer stream metadata with replication support",
-                    "examples": [
-                        {
-                            "stream_name": "users",
-                            "table_name": "USERS",
-                            "replication_method": "INCREMENTAL",
-                        },
-                    ],
-                },
-            )
 
             # Singer stream configuration
             stream_name: Annotated[str, Field(..., description="Singer stream name")]
@@ -255,39 +211,8 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
                 return self
 
-            @model_validator(mode="after")
-            def validate_stream_metadata(self) -> Self:
-                """Validate Oracle stream metadata."""
-                if (
-                    self.replication_method == "INCREMENTAL"
-                    and not self.replication_key
-                ):
-                    msg = "Incremental replication requires a replication_key"
-                    raise ValueError(msg)
-                if self.replication_method == "FULL_TABLE" and self.replication_key:
-                    msg = "Full table replication should not have replication_key"
-                    raise ValueError(msg)
-                return self
-
         class OracleTapDiscoveryConfig(FlextMeltanoModels.Entity):
             """Configuration for Oracle tap discovery operations."""
-
-            # Pydantic 2.11 Configuration - Discovery Features
-            model_config: ClassVar[ConfigDict] = ConfigDict(
-                validate_assignment=True,
-                extra="forbid",
-                frozen=False,
-                json_schema_extra={
-                    "description": "Oracle database discovery configuration",
-                    "examples": [
-                        {
-                            "schema_names": ["HR", "SALES"],
-                            "include_views": True,
-                            "max_tables": 100,
-                        },
-                    ],
-                },
-            )
 
             # Discovery scope
             schema_names: Annotated[
@@ -369,36 +294,8 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     },
                 }
 
-            @model_validator(mode="after")
-            def validate_discovery_config(self) -> Self:
-                """Validate Oracle discovery configuration."""
-                if self.max_tables <= 0:
-                    msg = "Max tables must be positive"
-                    raise ValueError(msg)
-                if self.discovery_timeout <= 0:
-                    msg = "Discovery timeout must be positive"
-                    raise ValueError(msg)
-                return self
-
         class OracleTapExtractionConfig(FlextMeltanoModels.Entity):
             """Configuration for Oracle tap extraction operations."""
-
-            # Pydantic 2.11 Configuration - Extraction Features
-            model_config: ClassVar[ConfigDict] = ConfigDict(
-                validate_assignment=True,
-                extra="forbid",
-                frozen=False,
-                json_schema_extra={
-                    "description": "Oracle database extraction configuration",
-                    "examples": [
-                        {
-                            "batch_size": 10000,
-                            "parallel_streams": 4,
-                            "incremental_column": "UPDATED_AT",
-                        },
-                    ],
-                },
-            )
 
             # Extraction parameters
             batch_size: Annotated[
@@ -408,7 +305,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 ),
             ]
             max_rows: Annotated[
-                int | None,
+                t.PositiveInt | None,
                 Field(
                     default=None,
                     description="Maximum rows to extract (None for unlimited)",
@@ -464,39 +361,40 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     },
                 }
 
-            @model_validator(mode="after")
-            def validate_extraction_config(self) -> Self:
-                """Validate Oracle extraction configuration."""
-                if self.batch_size <= 0:
-                    msg = "Batch size must be positive"
-                    raise ValueError(msg)
-                if self.parallel_streams <= 0:
-                    msg = "Parallel streams must be positive"
-                    raise ValueError(msg)
-                if self.max_rows is not None and self.max_rows <= 0:
-                    msg = "Max rows must be positive when specified"
-                    raise ValueError(msg)
-                return self
+        class _MetricsBase(FlextMeltanoModels.Entity):
+            """Shared metrics fields for Oracle tap operations."""
 
-        class OracleTapPerformanceMetrics(FlextMeltanoModels.Entity):
+            total_records: Annotated[
+                t.NonNegativeInt,
+                Field(default=0, description="Total records extracted"),
+            ]
+            total_bytes: Annotated[
+                t.NonNegativeInt,
+                Field(default=0, description="Total bytes processed"),
+            ]
+            streams_processed: Annotated[
+                t.NonNegativeInt,
+                Field(default=0, description="Number of streams processed"),
+            ]
+            avg_records_per_second: Annotated[
+                t.NonNegativeFloat,
+                Field(default=0.0, description="Average records per second"),
+            ]
+            avg_bytes_per_second: Annotated[
+                t.NonNegativeFloat,
+                Field(default=0.0, description="Average bytes per second"),
+            ]
+            oracle_connection_time: Annotated[
+                t.NonNegativeFloat,
+                Field(default=0.0, description="Oracle connection time"),
+            ]
+            oracle_query_time: Annotated[
+                t.NonNegativeFloat,
+                Field(default=0.0, description="Total Oracle query time"),
+            ]
+
+        class OracleTapPerformanceMetrics(_MetricsBase):
             """Performance metrics for Oracle tap operations."""
-
-            # Pydantic 2.11 Configuration - Performance Features
-            model_config: ClassVar[ConfigDict] = ConfigDict(
-                validate_assignment=True,
-                extra="forbid",
-                frozen=False,
-                json_schema_extra={
-                    "description": "Oracle tap performance metrics with complete monitoring",
-                    "examples": [
-                        {
-                            "extraction_id": "ext_123",
-                            "total_records": 50000,
-                            "avg_records_per_second": 1000.0,
-                        },
-                    ],
-                },
-            )
 
             # Extraction metrics
             extraction_id: Annotated[
@@ -509,55 +407,6 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 Field(
                     default=None,
                     description="Extraction end timestamp",
-                ),
-            ]
-
-            # Volume metrics
-            total_records: Annotated[
-                t.NonNegativeInt,
-                Field(default=0, description="Total records extracted"),
-            ]
-            total_bytes: Annotated[
-                t.NonNegativeInt,
-                Field(default=0, description="Total bytes processed"),
-            ]
-            streams_processed: Annotated[
-                t.NonNegativeInt,
-                Field(
-                    default=0,
-                    description="Number of streams processed",
-                ),
-            ]
-
-            # Performance metrics
-            avg_records_per_second: Annotated[
-                t.NonNegativeFloat,
-                Field(
-                    default=0.0,
-                    description="Average records per second",
-                ),
-            ]
-            avg_bytes_per_second: Annotated[
-                t.NonNegativeFloat,
-                Field(
-                    default=0.0,
-                    description="Average bytes per second",
-                ),
-            ]
-
-            # Oracle-specific metrics
-            oracle_connection_time: Annotated[
-                t.NonNegativeFloat,
-                Field(
-                    default=0.0,
-                    description="Oracle connection establishment time",
-                ),
-            ]
-            oracle_query_time: Annotated[
-                t.NonNegativeFloat,
-                Field(
-                    default=0.0,
-                    description="Total Oracle query execution time",
                 ),
             ]
 
@@ -594,17 +443,6 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     },
                 }
 
-            @model_validator(mode="after")
-            def validate_performance_metrics(self) -> Self:
-                """Validate Oracle performance metrics."""
-                if self.total_records < 0:
-                    msg = "Total records cannot be negative"
-                    raise ValueError(msg)
-                if self.total_bytes < 0:
-                    msg = "Total bytes cannot be negative"
-                    raise ValueError(msg)
-                return self
-
         class OracleTapStreamInfo(FlextMeltanoModels.Entity):
             """Oracle tap stream information - aggregates tap and Oracle metadata.
 
@@ -612,26 +450,13 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             to provide a complete view of stream information for the tap.
             """
 
-            # Pydantic 2.11 Configuration - Stream Info Features
-            model_config: ClassVar[ConfigDict] = ConfigDict(
-                validate_assignment=True,
-                extra="forbid",
-                frozen=False,
-                json_schema_extra={
-                    "description": "Oracle tap stream with complete metadata",
-                    "examples": [
-                        {
-                            "stream_name": "users",
-                            "table_name": "USERS",
-                            "replication_method": "INCREMENTAL",
-                        },
-                    ],
-                },
-            )
-
             # Stream identity
-            stream_name: Annotated[str, Field(..., description="Singer stream name")]
-            table_name: Annotated[str, Field(..., description="Oracle table name")]
+            stream_name: Annotated[
+                t.NonEmptyStr, Field(..., description="Singer stream name")
+            ]
+            table_name: Annotated[
+                t.NonEmptyStr, Field(..., description="Oracle table name")
+            ]
             schema_name: Annotated[
                 str | None,
                 Field(None, description="Oracle schema name"),
@@ -724,17 +549,6 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 """Validate stream info business rules."""
                 return r[bool].ok(value=True)
 
-            @model_validator(mode="after")
-            def validate_stream_info(self) -> Self:
-                """Validate Oracle stream information."""
-                if not self.stream_name:
-                    msg = "Stream name is required"
-                    raise ValueError(msg)
-                if not self.table_name:
-                    msg = "Table name is required"
-                    raise ValueError(msg)
-                return self
-
         class OracleTapDiscoveryResult(FlextMeltanoModels.Entity):
             """Result of Oracle table discovery operation.
 
@@ -742,26 +556,9 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             processed tap stream information.
             """
 
-            # Pydantic 2.11 Configuration - Discovery Result Features
-            model_config: ClassVar[ConfigDict] = ConfigDict(
-                validate_assignment=True,
-                extra="forbid",
-                frozen=False,
-                json_schema_extra={
-                    "description": "Oracle discovery result with complete metadata",
-                    "examples": [
-                        {
-                            "schema_name": "HR",
-                            "total_tables": 15,
-                            "discovery_timestamp": "2023-01-01T00:00:00Z",
-                        },
-                    ],
-                },
-            )
-
             # Discovery metadata
             schema_name: Annotated[
-                str,
+                t.NonEmptyStr,
                 Field(
                     ...,
                     description="Oracle schema that was discovered",
@@ -876,44 +673,16 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 """Validate discovery result business rules."""
                 return r[bool].ok(value=True)
 
-            @model_validator(mode="after")
-            def validate_discovery_result(self) -> Self:
-                """Validate Oracle discovery result."""
-                if not self.schema_name:
-                    msg = "Schema name is required"
-                    raise ValueError(msg)
-                if self.total_tables < 0:
-                    msg = "Total tables cannot be negative"
-                    raise ValueError(msg)
-                return self
-
-        class OracleTapExecutionStats(FlextMeltanoModels.Entity):
+        class OracleTapExecutionStats(_MetricsBase):
             """Oracle tap execution statistics and metrics.
 
             Tracks runtime statistics for tap execution, performance metrics,
             and operational information.
             """
 
-            # Pydantic 2.11 Configuration - Execution Stats Features
-            model_config: ClassVar[ConfigDict] = ConfigDict(
-                validate_assignment=True,
-                extra="forbid",
-                frozen=False,
-                json_schema_extra={
-                    "description": "Oracle tap execution statistics with performance tracking",
-                    "examples": [
-                        {
-                            "execution_id": "exec_123",
-                            "streams_processed": 5,
-                            "total_records": 100000,
-                        },
-                    ],
-                },
-            )
-
             # Execution metadata
             execution_id: Annotated[
-                str,
+                t.NonEmptyStr,
                 Field(..., description="Unique execution identifier"),
             ]
             start_timestamp: Annotated[
@@ -925,38 +694,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 Field(None, description="Execution end time"),
             ]
 
-            # Stream statistics
-            streams_processed: Annotated[
-                t.NonNegativeInt,
-                Field(
-                    default=0,
-                    description="Number of streams processed",
-                ),
-            ]
-            total_records: Annotated[
-                t.NonNegativeInt,
-                Field(default=0, description="Total records extracted"),
-            ]
-            total_bytes: Annotated[
-                t.NonNegativeInt,
-                Field(default=0, description="Total bytes processed"),
-            ]
-
-            # Performance metrics
-            avg_records_per_second: Annotated[
-                t.NonNegativeFloat,
-                Field(
-                    default=0.0,
-                    description="Average records per second",
-                ),
-            ]
-            avg_bytes_per_second: Annotated[
-                t.NonNegativeFloat,
-                Field(
-                    default=0.0,
-                    description="Average bytes per second",
-                ),
-            ]
+            # Execution-specific metrics
             duration_seconds: Annotated[
                 t.NonNegativeFloat,
                 Field(
@@ -981,21 +719,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 ),
             ]
 
-            # Oracle-specific metrics
-            oracle_connection_time: Annotated[
-                t.NonNegativeFloat,
-                Field(
-                    default=0.0,
-                    description="Oracle connection time",
-                ),
-            ]
-            oracle_query_time: Annotated[
-                t.NonNegativeFloat,
-                Field(
-                    default=0.0,
-                    description="Total Oracle query time",
-                ),
-            ]
+            # Oracle-specific execution metrics
             oracle_result_processing_time: Annotated[
                 t.NonNegativeFloat,
                 Field(
@@ -1122,17 +846,6 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             def validate_business_rules(self) -> r[bool]:
                 """Validate execution stats business rules."""
                 return r[bool].ok(value=True)
-
-            @model_validator(mode="after")
-            def validate_execution_stats(self) -> Self:
-                """Validate Oracle execution statistics."""
-                if not self.execution_id:
-                    msg = "Execution ID is required"
-                    raise ValueError(msg)
-                if self.streams_processed < 0:
-                    msg = "Streams processed cannot be negative"
-                    raise ValueError(msg)
-                return self
 
         class OracleTapDiscoverParams(FlextMeltanoModels.Entity):
             """Parameters for Oracle tap discover command."""

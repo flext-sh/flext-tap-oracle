@@ -14,7 +14,9 @@ from flext_tap_oracle import (
     FlextOracleTableFilterService,
     FlextTapOracleSettings,
 )
-from flext_tap_oracle.settings import create_oracle_tap_config
+from flext_tap_oracle.settings import FlextTapOracleSettings
+
+create_oracle_tap_config = FlextTapOracleSettings.create_oracle_tap_config
 
 
 class _DiscoveryStub(FlextOracleDiscoveryService):

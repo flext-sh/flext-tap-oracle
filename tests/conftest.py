@@ -22,7 +22,6 @@ from flext_core import r, t
 from flext_tests import tk
 
 from flext_tap_oracle import FlextOracleTapService, FlextTapOracleSettings
-from flext_tap_oracle.settings import create_oracle_tap_config
 
 
 @pytest.fixture(scope="session")
@@ -146,7 +145,7 @@ def oracle_tap(
     )
     if config_result.is_success:
         return FlextOracleTapService(config=config_result.value)
-    fallback_result = create_oracle_tap_config(
+    fallback_result = FlextTapOracleSettings.create_oracle_tap_config(
         oracle_params={
             "host": str(oracle_tap_config.get("host", "localhost")),
             "username": str(oracle_tap_config.get("username", "test")),

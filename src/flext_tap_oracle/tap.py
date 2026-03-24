@@ -38,7 +38,7 @@ class OracleTapDiscoverCommand:
         self._logger.info("Starting Oracle database discovery")
         try:
             if not self.params.config_file:
-                return r[Mapping[str, t.GeneralValueType]].fail(
+                return r[t.GeneralValueMapping].fail(
                     "Configuration file is required for discovery",
                 )
             config_data: str = Path(self.params.config_file).read_text(encoding="utf-8")
@@ -55,17 +55,17 @@ class OracleTapDiscoverCommand:
             if self.params.output_file:
                 output_path = Path(self.params.output_file)
                 output_path.write_text(
-                    TypeAdapter(Mapping[str, t.GeneralValueType])
+                    TypeAdapter(t.GeneralValueMapping)
                     .dump_json(catalog_dict, indent=2)
                     .decode("utf-8"),
                     encoding="utf-8",
                 )
                 self._logger.info("Catalog written to %s", output_path)
             self._logger.info("Oracle schema discovery completed")
-            return r[Mapping[str, t.GeneralValueType]].ok(catalog_dict)
+            return r[t.GeneralValueMapping].ok(catalog_dict)
         except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
             logger.exception("Oracle discovery failed")
-            return r[Mapping[str, t.GeneralValueType]].fail(f"Discovery error: {e}")
+            return r[t.GeneralValueMapping].fail(f"Discovery error: {e}")
 
     def validate_business_rules(self) -> r[bool]:
         """Validate business rules for Oracle tap discovery."""
@@ -89,7 +89,7 @@ class OracleTapSyncCommand:
         self._logger.info("Starting Oracle data extraction")
         try:
             if not self.params.config_file:
-                return r[Mapping[str, t.GeneralValueType]].fail(
+                return r[t.GeneralValueMapping].fail(
                     "Configuration file is required for sync",
                 )
             config_data: str = Path(self.params.config_file).read_text(encoding="utf-8")
@@ -116,10 +116,10 @@ class OracleTapSyncCommand:
                 schema_name,
                 record_count,
             )
-            return r[Mapping[str, t.GeneralValueType]].ok(result_data)
+            return r[t.GeneralValueMapping].ok(result_data)
         except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
             logger.exception("Oracle sync failed")
-            return r[Mapping[str, t.GeneralValueType]].fail(f"Sync error: {e}")
+            return r[t.GeneralValueMapping].fail(f"Sync error: {e}")
 
     def validate_business_rules(self) -> r[bool]:
         """Validate business rules for Oracle tap sync."""
