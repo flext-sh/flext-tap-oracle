@@ -18,6 +18,10 @@ from pydantic import TypeAdapter
 
 from flext_tap_oracle import FlextTapOracleSettings, c, m, p, t
 
+_GENERAL_VALUE_MAP_ADAPTER: TypeAdapter[t.GeneralValueMapping] = TypeAdapter(
+    t.GeneralValueMapping,
+)
+
 logger = FlextLogger(__name__)
 cli_api = FlextCli()
 
@@ -54,11 +58,8 @@ class FlextTapOracleDiscoverCommand:
             }
             if self.params.output_file:
                 output_path = Path(self.params.output_file)
-                adapter: TypeAdapter[Mapping[str, t.GeneralValueType]] = TypeAdapter(
-                    t.GeneralValueMapping,
-                )
                 output_path.write_text(
-                    adapter.dump_json(catalog_dict, indent=2).decode("utf-8"),
+                    _GENERAL_VALUE_MAP_ADAPTER.dump_json(catalog_dict, indent=2).decode("utf-8"),
                     encoding="utf-8",
                 )
                 self._logger.info("Catalog written to %s", output_path)
