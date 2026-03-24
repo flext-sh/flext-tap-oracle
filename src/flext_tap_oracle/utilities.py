@@ -325,4 +325,4 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
 
 
 u = FlextTapOracleUtilities
-__all__: Sequence[str] = ["FlextTapOracleUtilities", "u"]
+__all__: t.StrSequence = ["FlextTapOracleUtilities", "u"]
