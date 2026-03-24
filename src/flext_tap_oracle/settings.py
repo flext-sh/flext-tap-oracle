@@ -83,53 +83,51 @@ class FlextTapOracleSettings(FlextSettings):
             "environment": self.environment,
         }
 
+    @staticmethod
+    def create_oracle_tap_config(
+        oracle_params: Mapping[str, t.Scalar],
+        tap_params: Mapping[str, t.Scalar] | None = None,
+        meltano_params: Mapping[str, t.Scalar] | None = None,
+    ) -> r[FlextTapOracleSettings]:
+        """Create Oracle tap configuration using grouped parameters.
 
-def create_oracle_tap_config(
-    oracle_params: Mapping[str, t.Scalar],
-    tap_params: Mapping[str, t.Scalar] | None = None,
-    meltano_params: Mapping[str, t.Scalar] | None = None,
-) -> r[FlextTapOracleSettings]:
-    """Create Oracle tap configuration using grouped parameters.
+        Args:
+            oracle_params: Oracle database connection parameters
+            tap_params: Optional tap-specific parameters
+            meltano_params: Optional Meltano parameters
 
-    Args:
-        oracle_params: Oracle database connection parameters
-        tap_params: Optional tap-specific parameters
-        meltano_params: Optional Meltano parameters
+        Returns:
+            r containing validated Oracle tap configuration
 
-    Returns:
-        r containing validated Oracle tap configuration
+        """
+        try:
+            tap_config: dict[str, t.Scalar] = dict(tap_params) if tap_params else {}
+            meltano_config: dict[str, t.Scalar] = (
+                dict(meltano_params) if meltano_params else {}
+            )
+            tap_config.setdefault("batch_size", 1000)
+            tap_config.setdefault(
+                "stream_prefix",
+                c.TapOracle.DEFAULT_STREAM_PREFIX,
+            )
+            meltano_config.setdefault("project_root", ".")
+            meltano_config.setdefault("environment", "production")
+            config_data = {**oracle_params, **tap_config, **meltano_config}
+            config_instance = FlextTapOracleSettings.model_validate(config_data)
+            return r[FlextTapOracleSettings].ok(config_instance)
+        except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+            return r[FlextTapOracleSettings].fail(
+                f"Oracle tap configuration creation failed: {e}",
+            )
 
-    """
-    try:
-        tap_config: dict[str, t.Scalar] = dict(tap_params) if tap_params else {}
-        meltano_config: dict[str, t.Scalar] = (
-            dict(meltano_params) if meltano_params else {}
-        )
-        tap_config.setdefault("batch_size", 1000)
-        tap_config.setdefault(
-            "stream_prefix",
-            c.TapOracle.DEFAULT_STREAM_PREFIX,
-        )
-        meltano_config.setdefault("project_root", ".")
-        meltano_config.setdefault("environment", "production")
-        config_data = {**oracle_params, **tap_config, **meltano_config}
-        config_instance = FlextTapOracleSettings.model_validate(config_data)
-        return r[FlextTapOracleSettings].ok(config_instance)
-    except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-        return r[FlextTapOracleSettings].fail(
-            f"Oracle tap configuration creation failed: {e}",
-        )
-
-
-def validate_oracle_tap_configuration(
-    config: FlextTapOracleSettings,
-) -> r[bool]:
-    """Validate Oracle tap configuration using FlextSettings patterns."""
-    return config.validate_business_rules()
+    @staticmethod
+    def validate_oracle_tap_configuration(
+        config: FlextTapOracleSettings,
+    ) -> r[bool]:
+        """Validate Oracle tap configuration using FlextSettings patterns."""
+        return config.validate_business_rules()
 
 
 __all__: Sequence[str] = [
     "FlextTapOracleSettings",
-    "create_oracle_tap_config",
-    "validate_oracle_tap_configuration",
 ]
