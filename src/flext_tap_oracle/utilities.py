@@ -77,88 +77,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
             })
 
         class ErrorHandling:
-            """Oracle tap error handling utilities with enhanced context."""
-
-            @staticmethod
-            def create_configuration_error(
-                message: str = "Configuration validation failed",
-                config_section: str | None = None,
-            ) -> FlextExceptions.ConfigurationError:
-                """Create configuration errors with section context."""
-                context: dict[str, str] = {}
-                if config_section is not None:
-                    context["config_section"] = config_section
-                return FlextExceptions.ConfigurationError(message, context=context)
-
-            @staticmethod
-            def create_connection_error(
-                message: str = "Oracle connection failed",
-                host: str | None = None,
-                port: int | None = None,
-                service_name: str | None = None,
-            ) -> FlextExceptions.ConnectionError:
-                """Create Oracle connection errors with context."""
-                context: dict[str, str | int] = {}
-                if host is not None:
-                    context["host"] = host
-                if port is not None:
-                    context["port"] = port
-                if service_name is not None:
-                    context["service_name"] = service_name
-                return FlextExceptions.ConnectionError(message, context=context)
-
-            @staticmethod
-            def create_discovery_error(
-                message: str = "Table discovery failed",
-                schema_name: str | None = None,
-            ) -> FlextExceptions.OperationError:
-                """Create discovery errors with schema context."""
-                context: dict[str, str] = {}
-                if schema_name is not None:
-                    context["schema_name"] = schema_name
-                return FlextExceptions.OperationError(message, context=context)
-
-            @staticmethod
-            def create_extraction_error(
-                message: str = "Data extraction failed",
-                table_name: str | None = None,
-                extraction_method: str | None = None,
-            ) -> FlextExceptions.OperationError:
-                """Create extraction errors with method context."""
-                context: dict[str, str] = {}
-                if table_name is not None:
-                    context["table_name"] = table_name
-                if extraction_method is not None:
-                    context["extraction_method"] = extraction_method
-                return FlextExceptions.OperationError(message, context=context)
-
-            @staticmethod
-            def create_query_error(
-                message: str = "Oracle query execution failed",
-                sql_query: str | None = None,
-                table_name: str | None = None,
-            ) -> FlextExceptions.OperationError:
-                """Create Oracle query errors with SQL context."""
-                context: dict[str, str] = {}
-                if sql_query is not None:
-                    context["sql_query"] = sql_query
-                if table_name is not None:
-                    context["table_name"] = table_name
-                return FlextExceptions.OperationError(message, context=context)
-
-            @staticmethod
-            def create_stream_error(
-                message: str = "Stream processing failed",
-                stream_name: str | None = None,
-                stream_type: str | None = None,
-            ) -> FlextExceptions.OperationError:
-                """Create stream processing errors with stream context."""
-                context: dict[str, str] = {}
-                if stream_name is not None:
-                    context["stream_name"] = stream_name
-                if stream_type is not None:
-                    context["stream_type"] = stream_type
-                return FlextExceptions.OperationError(message, context=context)
+            """Oracle tap error handling utilities."""
 
             @staticmethod
             def handle_oracle_exception(
@@ -169,20 +88,16 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                 try:
                     error_message = f"Oracle {operation} failed: {exception}"
                     exc_str = str(exception).lower()
-                    err_handling = FlextTapOracleUtilities.TapOracle.ErrorHandling
                     err: (
                         FlextExceptions.ConnectionError
                         | FlextExceptions.OperationError
-                        | FlextExceptions.ConfigurationError
                     )
                     if "connection" in exc_str:
-                        err = err_handling.create_connection_error(error_message)
-                    elif "sql" in exc_str or "query" in exc_str:
-                        err = err_handling.create_query_error(error_message)
-                    elif "discovery" in exc_str:
-                        err = err_handling.create_discovery_error(error_message)
+                        err = FlextExceptions.ConnectionError(error_message)
+                    elif "sql" in exc_str or "query" in exc_str or "discovery" in exc_str:
+                        err = FlextExceptions.OperationError(error_message)
                     else:
-                        err = err_handling.create_extraction_error(error_message)
+                        err = FlextExceptions.OperationError(error_message)
                     return r[bool].fail(str(err))
                 except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
                     return r[bool].fail(f"Exception handling failed: {e}")
