@@ -301,7 +301,8 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             batch_size: Annotated[
                 t.PositiveInt,
                 Field(
-                    default=c.DEFAULT_SIZE * 10, description="Number of rows per batch"
+                    default=c.DEFAULT_SIZE * 10,
+                    description="Number of rows per batch",
                 ),
             ]
             max_rows: Annotated[
@@ -452,10 +453,12 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Stream identity
             stream_name: Annotated[
-                t.NonEmptyStr, Field(..., description="Singer stream name")
+                t.NonEmptyStr,
+                Field(..., description="Singer stream name"),
             ]
             table_name: Annotated[
-                t.NonEmptyStr, Field(..., description="Oracle table name")
+                t.NonEmptyStr,
+                Field(..., description="Oracle table name"),
             ]
             schema_name: Annotated[
                 str | None,

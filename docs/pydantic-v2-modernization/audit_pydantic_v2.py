@@ -45,20 +45,24 @@ class AuditResult(BaseModel):
     project: str = Field(description="Project name")
     status: str = Field(description="Audit status: PASS, FAIL, WARNING, PENDING, SKIP")
     critical: Sequence[AuditViolation] = Field(
-        default_factory=Sequence[AuditViolation], description="Critical violations"
+        default_factory=Sequence[AuditViolation],
+        description="Critical violations",
     )
     high: Sequence[AuditViolation] = Field(
-        default_factory=Sequence[AuditViolation], description="High priority violations"
+        default_factory=Sequence[AuditViolation],
+        description="High priority violations",
     )
     medium: Sequence[AuditViolation] = Field(
         default_factory=Sequence[AuditViolation],
         description="Medium priority violations",
     )
     recommendations: t.StrSequence = Field(
-        default_factory=list, description="Audit recommendations"
+        default_factory=list,
+        description="Audit recommendations",
     )
     stats: Mapping[str, t.Primitives] = Field(
-        default_factory=dict, description="Audit statistics"
+        default_factory=dict,
+        description="Audit statistics",
     )
 
     @property

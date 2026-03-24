@@ -29,7 +29,8 @@ class FlextTapOracleSettings(FlextSettings):
         Field(default="localhost", description="Oracle database host"),
     ]
     oracle_port: Annotated[
-        t.PortNumber, Field(default=1521, description="Oracle database port")
+        t.PortNumber,
+        Field(default=1521, description="Oracle database port"),
     ]
     oracle_service_name: Annotated[
         str,

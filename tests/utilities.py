@@ -90,7 +90,9 @@ class FlextTapOracleTestUtilities(FlextTestsUtilities, FlextTapOracleUtilities):
 
         @staticmethod
         def generate_mock_oracle_data(
-            table_name: str, row_count: int = 10, **kwargs: _t.Scalar
+            table_name: str,
+            row_count: int = 10,
+            **kwargs: _t.Scalar,
         ) -> Sequence[t.ContainerMapping]:
             """Generate mock Oracle data for testing."""
             data: Sequence[t.ContainerMapping] = []

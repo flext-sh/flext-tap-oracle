@@ -55,7 +55,8 @@ def oracle_shared_container_environment(shared_oracle_container: str) -> None:
     os.environ.setdefault("ORACLE_USERNAME", os.environ["FLEXT_TAP_ORACLE_USERNAME"])
     os.environ.setdefault("ORACLE_PASSWORD", os.environ["FLEXT_TAP_ORACLE_PASSWORD"])
     os.environ.setdefault(
-        "ORACLE_SERVICE_NAME", os.environ["FLEXT_TAP_ORACLE_SERVICE_NAME"]
+        "ORACLE_SERVICE_NAME",
+        os.environ["FLEXT_TAP_ORACLE_SERVICE_NAME"],
     )
 
 
@@ -103,10 +104,12 @@ def skip_e2e_if_no_oracle() -> None:
     if "/e2e/" not in fspath and "\\e2e\\" not in fspath:
         return
     host = os.environ.get(
-        "ORACLE_HOST", os.environ.get("FLEXT_TAP_ORACLE_HOST", "localhost")
+        "ORACLE_HOST",
+        os.environ.get("FLEXT_TAP_ORACLE_HOST", "localhost"),
     )
     port_str = os.environ.get(
-        "ORACLE_PORT", os.environ.get("FLEXT_TAP_ORACLE_PORT", "1521")
+        "ORACLE_PORT",
+        os.environ.get("FLEXT_TAP_ORACLE_PORT", "1521"),
     )
     try:
         port = int(port_str)
@@ -141,7 +144,7 @@ def oracle_tap(
 ) -> FlextOracleTapService:
     """Oracle tap service instance for testing."""
     config_result = r[FlextTapOracleSettings].ok(
-        FlextTapOracleSettings.model_validate(oracle_tap_config)
+        FlextTapOracleSettings.model_validate(oracle_tap_config),
     )
     if config_result.is_success:
         return FlextOracleTapService(config=config_result.value)
@@ -150,7 +153,7 @@ def oracle_tap(
             "host": str(oracle_tap_config.get("host", "localhost")),
             "username": str(oracle_tap_config.get("username", "test")),
             "password": str(oracle_tap_config.get("password", "test")),
-        }
+        },
     )
     if fallback_result.is_success:
         return FlextOracleTapService(config=fallback_result.value)
@@ -215,10 +218,10 @@ def singer_catalog() -> t.ContainerMapping:
                             "table-key-properties": ["id"],
                             "forced-replication-method": "FULL_TABLE",
                         },
-                    }
+                    },
                 ],
             },
-        ]
+        ],
     }
 
 
@@ -233,7 +236,7 @@ def singer_state() -> t.ContainerMapping:
                 "version": 1,
             },
             "departments": {"version": 1},
-        }
+        },
     }
 
 
@@ -462,8 +465,8 @@ def singer_state_message() -> t.ContainerMapping:
                     "replication_key": "hire_date",
                     "replication_key_value": "2023-01-01T00:00:00Z",
                     "version": 1,
-                }
-            }
+                },
+            },
         },
     }
 
@@ -553,8 +556,8 @@ def mock_oracle_tap() -> type:
                             },
                         },
                         "metadata": [],
-                    }
-                ]
+                    },
+                ],
             }
 
         def sync(
@@ -602,8 +605,8 @@ def mock_oracle_tap() -> type:
                             stream_id_raw: {
                                 "version": 1,
                                 "replication_key_value": "2023-01-01T12:00:00Z",
-                            }
-                        }
+                            },
+                        },
                     },
                 }
 
@@ -629,7 +632,9 @@ def mock_oracle_connection() -> type:
             return True
 
         def execute_query(
-            self, query: str, _parameters: t.ContainerMapping | None = None
+            self,
+            query: str,
+            _parameters: t.ContainerMapping | None = None,
         ) -> Sequence[t.ContainerMapping]:
             """Execute query and return mock results using Strategy Pattern."""
             return self._get_query_strategy(query).execute()

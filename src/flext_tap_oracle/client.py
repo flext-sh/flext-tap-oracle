@@ -48,7 +48,9 @@ class FlextOracleDiscoveryService:
             table_names = tables_result.value or []
             tables: Sequence[FlextDbOracleModels.DbOracle.Table] = [
                 FlextDbOracleModels.DbOracle.Table(
-                    name=table_name, owner=schema_name, columns=[]
+                    name=table_name,
+                    owner=schema_name,
+                    columns=[],
                 )
                 for table_name in table_names
             ]
@@ -132,7 +134,7 @@ class FlextOracleTableFilterService:
             )
             table_names: Sequence[str] = [table.name for table in discovered_tables]
             exclude_tables_raw: t.Scalar | t.ScalarList | None = tap_configuration.get(
-                "exclude_tables"
+                "exclude_tables",
             )
             exclude_tables: Sequence[str] = []
             if isinstance(exclude_tables_raw, list):
@@ -310,7 +312,7 @@ class FlextOracleTapService(FlextService[Sequence[FlextDbOracleModels.DbOracle.T
             return r[FlextOracleTapService].ok(service)
         except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
             return r[FlextOracleTapService].fail(
-                f"Oracle tap service creation failed: {e}"
+                f"Oracle tap service creation failed: {e}",
             )
 
     @staticmethod

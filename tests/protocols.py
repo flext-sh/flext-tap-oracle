@@ -74,7 +74,8 @@ class FlextTapOracleTestProtocols(FlextTestsProtocols, FlextTapOracleProtocols):
                     ...
 
                 def get_test_data(
-                    self, table_name: str
+                    self,
+                    table_name: str,
                 ) -> Sequence[t.ContainerMapping]:
                     """Get test data for a table."""
                     ...
@@ -88,13 +89,15 @@ class FlextTapOracleTestProtocols(FlextTestsProtocols, FlextTapOracleProtocols):
                 """Protocol for test assertions."""
 
                 def assert_oracle_connection_successful(
-                    self, config: t.ContainerMapping
+                    self,
+                    config: t.ContainerMapping,
                 ) -> None:
                     """Assert Oracle connection was successful."""
                     ...
 
                 def assert_singer_stream_valid(
-                    self, stream: t.ContainerMapping
+                    self,
+                    stream: t.ContainerMapping,
                 ) -> None:
                     """Assert Singer stream is valid."""
                     ...
