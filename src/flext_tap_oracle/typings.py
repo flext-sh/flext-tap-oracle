@@ -16,8 +16,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from flext_core import FlextTypes as _tap_t
-from flext_db_oracle.typings import FlextDbOracleTypes
+from flext_db_oracle import FlextDbOracleTypes
 from flext_meltano import FlextMeltanoTypes
 
 
@@ -42,8 +41,8 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
         class Summary:
             """Summary and reporting complex types."""
 
-            type SummaryData = Mapping[str, _tap_t.NormalizedValue]
-            type OracleValue = _tap_t.ValueOrModel | None
+            type SummaryData = Mapping[str, FlextDbOracleTypes.NormalizedValue]
+            type OracleValue = FlextDbOracleTypes.ValueOrModel | None
 
 
 t = FlextTapOracleTypes

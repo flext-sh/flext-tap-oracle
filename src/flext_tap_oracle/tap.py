@@ -16,7 +16,7 @@ from flext_cli import FlextCli, FlextCliCommands
 from flext_core import FlextLogger, r
 from pydantic import TypeAdapter
 
-from flext_tap_oracle import FlextTapOracleSettings, TapOraclePrivate, c, m, t
+from flext_tap_oracle import FlextTapOracleSettings, c, m, p, t
 
 logger = FlextLogger(__name__)
 cli_api = FlextCli()
@@ -138,7 +138,7 @@ def _run_tap_command[TParams](
     *,
     kwargs: t.ConfigurationMapping,
     params_factory: Callable[..., TParams],
-    command_factory: Callable[[TParams], TapOraclePrivate.CommandRunner],
+    command_factory: Callable[[TParams], p.TapOraclePrivate.CommandRunner],
     operation_name: str,
 ) -> r[t.Cli.JsonValue]:
     try:

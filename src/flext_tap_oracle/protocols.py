@@ -217,22 +217,21 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
                 """Track Oracle table extraction progress."""
                 ...
 
+    class TapOraclePrivate:
+        """Private structural protocols for internal flext-tap-oracle use."""
 
-class TapOraclePrivate:
-    """Private structural protocols for internal flext-tap-oracle use."""
+        class CommandRunner(Protocol):
+            """Structural protocol for Oracle tap command execution."""
 
-    class CommandRunner(Protocol):
-        """Structural protocol for Oracle tap command execution."""
+            def execute(self) -> r[Mapping[str, t.GeneralValueType]]:
+                """Execute the Oracle tap command and return results."""
+                ...
 
-        def execute(self) -> r[Mapping[str, t.GeneralValueType]]:
-            """Execute the Oracle tap command and return results."""
-            ...
+        class Tap(Protocol):
+            """Structural protocol for Oracle tap t.NormalizedValue used in stream context."""
 
-    class Tap(Protocol):
-        """Structural protocol for Oracle tap t.NormalizedValue used in stream context."""
-
-        typed_config: t.NormalizedValue
+            typed_config: t.NormalizedValue
 
 
 p = FlextTapOracleProtocols
-__all__ = ["FlextTapOracleProtocols", "TapOraclePrivate", "p"]
+__all__ = ["FlextTapOracleProtocols", "p"]
