@@ -89,12 +89,13 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                     error_message = f"Oracle {operation} failed: {exception}"
                     exc_str = str(exception).lower()
                     err: (
-                        FlextExceptions.ConnectionError
-                        | FlextExceptions.OperationError
+                        FlextExceptions.ConnectionError | FlextExceptions.OperationError
                     )
                     if "connection" in exc_str:
                         err = FlextExceptions.ConnectionError(error_message)
-                    elif "sql" in exc_str or "query" in exc_str or "discovery" in exc_str:
+                    elif (
+                        "sql" in exc_str or "query" in exc_str or "discovery" in exc_str
+                    ):
                         err = FlextExceptions.OperationError(error_message)
                     else:
                         err = FlextExceptions.OperationError(error_message)
