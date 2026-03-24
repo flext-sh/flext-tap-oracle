@@ -61,66 +61,66 @@ if TYPE_CHECKING:
         FlextTapOracleUtilities as u,
     )
 
-_LAZY_IMPORTS: Mapping[str, tuple[str, str]] = {
-    "FlextOracleConnectionTestService": (
+_LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
+    "FlextOracleConnectionTestService": [
         "flext_tap_oracle.client",
         "FlextOracleConnectionTestService",
-    ),
-    "FlextOracleDiscoveryService": (
+    ],
+    "FlextOracleDiscoveryService": [
         "flext_tap_oracle.client",
         "FlextOracleDiscoveryService",
-    ),
-    "FlextOracleTableFilterService": (
+    ],
+    "FlextOracleTableFilterService": [
         "flext_tap_oracle.client",
         "FlextOracleTableFilterService",
-    ),
-    "FlextOracleTapService": ("flext_tap_oracle.client", "FlextOracleTapService"),
-    "FlextTapOracleCli": ("flext_tap_oracle.tap", "FlextTapOracleCli"),
-    "FlextTapOracleConstants": (
+    ],
+    "FlextOracleTapService": ["flext_tap_oracle.client", "FlextOracleTapService"],
+    "FlextTapOracleCli": ["flext_tap_oracle.tap", "FlextTapOracleCli"],
+    "FlextTapOracleConstants": [
         "flext_tap_oracle.constants",
         "FlextTapOracleConstants",
-    ),
-    "FlextTapOracleDiscoverCommand": (
+    ],
+    "FlextTapOracleDiscoverCommand": [
         "flext_tap_oracle.tap",
         "FlextTapOracleDiscoverCommand",
-    ),
-    "FlextTapOracleModels": ("flext_tap_oracle.models", "FlextTapOracleModels"),
-    "FlextTapOracleProtocols": (
+    ],
+    "FlextTapOracleModels": ["flext_tap_oracle.models", "FlextTapOracleModels"],
+    "FlextTapOracleProtocols": [
         "flext_tap_oracle.protocols",
         "FlextTapOracleProtocols",
-    ),
-    "FlextTapOracleSettings": ("flext_tap_oracle.settings", "FlextTapOracleSettings"),
-    "FlextTapOracleStreams": ("flext_tap_oracle.streams", "FlextTapOracleStreams"),
-    "FlextTapOracleSyncCommand": ("flext_tap_oracle.tap", "FlextTapOracleSyncCommand"),
-    "FlextTapOracleTypes": ("flext_tap_oracle.typings", "FlextTapOracleTypes"),
-    "FlextTapOracleUtilities": (
+    ],
+    "FlextTapOracleSettings": ["flext_tap_oracle.settings", "FlextTapOracleSettings"],
+    "FlextTapOracleStreams": ["flext_tap_oracle.streams", "FlextTapOracleStreams"],
+    "FlextTapOracleSyncCommand": ["flext_tap_oracle.tap", "FlextTapOracleSyncCommand"],
+    "FlextTapOracleTypes": ["flext_tap_oracle.typings", "FlextTapOracleTypes"],
+    "FlextTapOracleUtilities": [
         "flext_tap_oracle.utilities",
         "FlextTapOracleUtilities",
-    ),
-    "__all__": ("flext_tap_oracle.__version__", "__all__"),
-    "__author__": ("flext_tap_oracle.__version__", "__author__"),
-    "__author_email__": ("flext_tap_oracle.__version__", "__author_email__"),
-    "__description__": ("flext_tap_oracle.__version__", "__description__"),
-    "__license__": ("flext_tap_oracle.__version__", "__license__"),
-    "__title__": ("flext_tap_oracle.__version__", "__title__"),
-    "__url__": ("flext_tap_oracle.__version__", "__url__"),
-    "__version__": ("flext_tap_oracle.__version__", "__version__"),
-    "__version_info__": ("flext_tap_oracle.__version__", "__version_info__"),
-    "c": ("flext_tap_oracle.constants", "FlextTapOracleConstants"),
-    "cli": ("flext_tap_oracle.tap", "cli"),
-    "cli_api": ("flext_tap_oracle.tap", "cli_api"),
-    "d": ("flext_db_oracle", "d"),
-    "e": ("flext_db_oracle", "e"),
-    "h": ("flext_db_oracle", "h"),
-    "logger": ("flext_tap_oracle.tap", "logger"),
-    "m": ("flext_tap_oracle.models", "FlextTapOracleModels"),
-    "main": ("flext_tap_oracle.tap", "main"),
-    "p": ("flext_tap_oracle.protocols", "FlextTapOracleProtocols"),
-    "r": ("flext_db_oracle", "r"),
-    "s": ("flext_db_oracle", "s"),
-    "t": ("flext_tap_oracle.typings", "FlextTapOracleTypes"),
-    "u": ("flext_tap_oracle.utilities", "FlextTapOracleUtilities"),
-    "x": ("flext_db_oracle", "x"),
+    ],
+    "__all__": ["flext_tap_oracle.__version__", "__all__"],
+    "__author__": ["flext_tap_oracle.__version__", "__author__"],
+    "__author_email__": ["flext_tap_oracle.__version__", "__author_email__"],
+    "__description__": ["flext_tap_oracle.__version__", "__description__"],
+    "__license__": ["flext_tap_oracle.__version__", "__license__"],
+    "__title__": ["flext_tap_oracle.__version__", "__title__"],
+    "__url__": ["flext_tap_oracle.__version__", "__url__"],
+    "__version__": ["flext_tap_oracle.__version__", "__version__"],
+    "__version_info__": ["flext_tap_oracle.__version__", "__version_info__"],
+    "c": ["flext_tap_oracle.constants", "FlextTapOracleConstants"],
+    "cli": ["flext_tap_oracle.tap", "cli"],
+    "cli_api": ["flext_tap_oracle.tap", "cli_api"],
+    "d": ["flext_db_oracle", "d"],
+    "e": ["flext_db_oracle", "e"],
+    "h": ["flext_db_oracle", "h"],
+    "logger": ["flext_tap_oracle.tap", "logger"],
+    "m": ["flext_tap_oracle.models", "FlextTapOracleModels"],
+    "main": ["flext_tap_oracle.tap", "main"],
+    "p": ["flext_tap_oracle.protocols", "FlextTapOracleProtocols"],
+    "r": ["flext_db_oracle", "r"],
+    "s": ["flext_db_oracle", "s"],
+    "t": ["flext_tap_oracle.typings", "FlextTapOracleTypes"],
+    "u": ["flext_tap_oracle.utilities", "FlextTapOracleUtilities"],
+    "x": ["flext_db_oracle", "x"],
 }
 
 __all__ = [
