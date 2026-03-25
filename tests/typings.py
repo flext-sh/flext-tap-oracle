@@ -42,10 +42,10 @@ class FlextTapOracleTestTypes(FlextTestsTypes, FlextTapOracleTypes):
         - Test scenario types
         """
 
-        type TestOracleHost = _c.TestOracleHost
+        type TestOracleHost = _c.TapOracle.Tests.TestOracleHost
         type TestOraclePort = Literal[1521, 10521, 1522]
-        type TestServiceName = _c.TestServiceName
-        type TestReplicationMethod = _c.TestReplicationMethod
+        type TestServiceName = _c.TapOracle.Tests.TestServiceName
+        type TestReplicationMethod = _c.TapOracle.Tests.TestReplicationMethod
         type MockOracleRecord = Mapping[str, FlextTypes.Scalar]
         type MockOracleTable = Sequence[MockOracleRecord]
         type TestScenario = t.ContainerMapping

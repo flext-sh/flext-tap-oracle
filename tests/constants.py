@@ -12,31 +12,39 @@ from enum import StrEnum, unique
 
 from flext_tests import FlextTestsConstants
 
+from flext_tap_oracle import FlextTapOracleConstants
 
-class FlextTapOracleTestConstants(FlextTestsConstants):
+
+class FlextTapOracleTestConstants(FlextTestsConstants, FlextTapOracleConstants):
     """Test constants for flext-tap-oracle."""
 
-    @unique
-    class TestOracleHost(StrEnum):
-        """Test Oracle host literals."""
+    class TapOracle(FlextTapOracleConstants.TapOracle):
+        """TapOracle domain namespace — inherits production constants."""
 
-        LOCALHOST = "localhost"
-        TEST_HOST = "test-host"
+        class Tests:
+            """Test-specific constants."""
 
-    @unique
-    class TestServiceName(StrEnum):
-        """Test Oracle service name literals."""
+            @unique
+            class TestOracleHost(StrEnum):
+                """Test Oracle host literals."""
 
-        XE = "XE"
-        ORCL = "ORCL"
-        TESTDB = "TESTDB"
+                LOCALHOST = "localhost"
+                TEST_HOST = "test-host"
 
-    @unique
-    class TestReplicationMethod(StrEnum):
-        """Test replication method literals."""
+            @unique
+            class TestServiceName(StrEnum):
+                """Test Oracle service name literals."""
 
-        FULL_TABLE = "FULL_TABLE"
-        INCREMENTAL = "INCREMENTAL"
+                XE = "XE"
+                ORCL = "ORCL"
+                TESTDB = "TESTDB"
+
+            @unique
+            class TestReplicationMethod(StrEnum):
+                """Test replication method literals."""
+
+                FULL_TABLE = "FULL_TABLE"
+                INCREMENTAL = "INCREMENTAL"
 
 
 c = FlextTapOracleTestConstants

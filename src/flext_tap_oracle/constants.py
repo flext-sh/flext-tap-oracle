@@ -71,78 +71,86 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
 
             TEST_QUERY: Final[str] = "SELECT 1 FROM DUAL"
 
-    @unique
-    class MeltanoTapOracleProjectType(StrEnum):
-        """Project type literals for Meltano tap metadata."""
+        @unique
+        class MeltanoTapOracleProjectType(StrEnum):
+            """Project type literals for Meltano tap metadata."""
 
-        LIBRARY = "library"
-        APPLICATION = "application"
-        SERVICE = "service"
-        MELTANO_PROJECT = "meltano-project"
-        ELT_PIPELINE = "elt-pipeline"
-        DATA_PIPELINE = "data-pipeline"
-        ETL_SERVICE = "etl-service"
-        SINGER_TAP = "singer-tap"
-        SINGER_TARGET = "singer-target"
-        DBT_PROJECT = "dbt-project"
-        DATA_INTEGRATION = "data-integration"
-        MELTANO_PLUGIN = "meltano-plugin"
-        DATA_CONNECTOR = "data-connector"
-        ORACLE_SERVICE = "oracle-service"
-        DATABASE_SERVICE = "database-service"
-        DATA_WAREHOUSE = "data-warehouse"
-        ORACLE_CLIENT = "oracle-client"
-        DB_MIGRATION = "db-migration"
-        SCHEMA_MANAGER = "schema-manager"
-        SQL_SERVICE = "sql-service"
-        ORACLE_API = "oracle-api"
-        DATABASE_API = "database-api"
-        ORACLE_TAP = "oracle-tap"
-        ORACLE_TARGET = "oracle-target"
+            LIBRARY = "library"
+            APPLICATION = "application"
+            SERVICE = "service"
+            MELTANO_PROJECT = "meltano-project"
+            ELT_PIPELINE = "elt-pipeline"
+            DATA_PIPELINE = "data-pipeline"
+            ETL_SERVICE = "etl-service"
+            SINGER_TAP = "singer-tap"
+            SINGER_TARGET = "singer-target"
+            DBT_PROJECT = "dbt-project"
+            DATA_INTEGRATION = "data-integration"
+            MELTANO_PLUGIN = "meltano-plugin"
+            DATA_CONNECTOR = "data-connector"
+            ORACLE_SERVICE = "oracle-service"
+            DATABASE_SERVICE = "database-service"
+            DATA_WAREHOUSE = "data-warehouse"
+            ORACLE_CLIENT = "oracle-client"
+            DB_MIGRATION = "db-migration"
+            SCHEMA_MANAGER = "schema-manager"
+            SQL_SERVICE = "sql-service"
+            ORACLE_API = "oracle-api"
+            DATABASE_API = "database-api"
+            ORACLE_TAP = "oracle-tap"
+            ORACLE_TARGET = "oracle-target"
 
-    @unique
-    class TapOracleProjectType(StrEnum):
-        """Project type literals for tap package metadata."""
+        @unique
+        class TapOracleProjectType(StrEnum):
+            """Project type literals for tap package metadata."""
 
-        SINGER_TAP = "singer-tap"
-        ORACLE_EXTRACTOR = "oracle-extractor"
-        DATABASE_EXTRACTOR = "database-extractor"
-        SINGER_TAP_ORACLE = "singer-tap-oracle"
-        TAP_ORACLE = "tap-oracle"
-        ORACLE_CONNECTOR = "oracle-connector"
-        DATABASE_CONNECTOR = "database-connector"
-        SINGER_PROTOCOL = "singer-protocol"
-        ORACLE_ETL = "oracle-etl"
-        DATABASE_ETL = "database-etl"
-        ORACLE_INTEGRATION = "oracle-integration"
-        SINGER_STREAM = "singer-stream"
-        ETL_TAP = "etl-tap"
-        DATA_PIPELINE = "data-pipeline"
-        ORACLE_TAP = "oracle-tap"
-        SINGER_INTEGRATION = "singer-integration"
+            SINGER_TAP = "singer-tap"
+            ORACLE_EXTRACTOR = "oracle-extractor"
+            DATABASE_EXTRACTOR = "database-extractor"
+            SINGER_TAP_ORACLE = "singer-tap-oracle"
+            TAP_ORACLE = "tap-oracle"
+            ORACLE_CONNECTOR = "oracle-connector"
+            DATABASE_CONNECTOR = "database-connector"
+            SINGER_PROTOCOL = "singer-protocol"
+            ORACLE_ETL = "oracle-etl"
+            DATABASE_ETL = "database-etl"
+            ORACLE_INTEGRATION = "oracle-integration"
+            SINGER_STREAM = "singer-stream"
+            ETL_TAP = "etl-tap"
+            DATA_PIPELINE = "data-pipeline"
+            ORACLE_TAP = "oracle-tap"
+            SINGER_INTEGRATION = "singer-integration"
 
-    @unique
-    class TestOracleHost(StrEnum):
-        """Test Oracle host literals."""
+        @unique
+        class TestOracleHost(StrEnum):
+            """Test Oracle host literals."""
 
-        LOCALHOST = "localhost"
-        TEST_HOST = "test-host"
+            LOCALHOST = "localhost"
+            TEST_HOST = "test-host"
 
-    @unique
-    class TestServiceName(StrEnum):
-        """Test Oracle service name literals."""
+        @unique
+        class TestServiceName(StrEnum):
+            """Test Oracle service name literals."""
 
-        XE = "XE"
-        ORCL = "ORCL"
-        TESTDB = "TESTDB"
+            XE = "XE"
+            ORCL = "ORCL"
+            TESTDB = "TESTDB"
 
-    @unique
-    class TestReplicationMethod(StrEnum):
-        """Test replication method literals."""
+        @unique
+        class TestReplicationMethod(StrEnum):
+            """Test replication method literals."""
 
-        FULL_TABLE = "FULL_TABLE"
-        INCREMENTAL = "INCREMENTAL"
+            FULL_TABLE = "FULL_TABLE"
+            INCREMENTAL = "INCREMENTAL"
 
+
+MeltanoTapOracleProjectType = (
+    FlextTapOracleConstants.TapOracle.MeltanoTapOracleProjectType
+)
+TapOracleProjectType = FlextTapOracleConstants.TapOracle.TapOracleProjectType
+TestOracleHost = FlextTapOracleConstants.TapOracle.TestOracleHost
+TestServiceName = FlextTapOracleConstants.TapOracle.TestServiceName
+TestReplicationMethod = FlextTapOracleConstants.TapOracle.TestReplicationMethod
 
 c = FlextTapOracleConstants
 __all__ = ["FlextTapOracleConstants", "c"]
