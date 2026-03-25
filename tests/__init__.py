@@ -18,6 +18,7 @@ from typing import TYPE_CHECKING
 
 from flext_core.lazy import cleanup_submodule_namespace, lazy_getattr
 
+
 if TYPE_CHECKING:
     from flext_core import FlextTypes
     from flext_tests import d, e, h, r, s, x
@@ -68,10 +69,7 @@ _LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
     "FlextTapOracleTestProtocols": ["tests.protocols", "FlextTapOracleTestProtocols"],
     "FlextTapOracleTestTypes": ["tests.typings", "FlextTapOracleTestTypes"],
     "FlextTapOracleTestUtilities": ["tests.utilities", "FlextTapOracleTestUtilities"],
-    "TestFlextOracleTapSettingsAndHelpers": [
-        "tests.test_enterprise_tap",
-        "TestFlextOracleTapSettingsAndHelpers",
-    ],
+    "TestFlextOracleTapSettingsAndHelpers": ["tests.test_enterprise_tap", "TestFlextOracleTapSettingsAndHelpers"],
     "c": ["tests.constants", "FlextTapOracleTestConstants"],
     "d": ["flext_tests", "d"],
     "discovery_config": ["tests.conftest", "discovery_config"],
@@ -83,10 +81,7 @@ _LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
     "mock_oracle_connection": ["tests.conftest", "mock_oracle_connection"],
     "mock_oracle_tap": ["tests.conftest", "mock_oracle_tap"],
     "oracle_queries": ["tests.conftest", "oracle_queries"],
-    "oracle_shared_container_environment": [
-        "tests.conftest",
-        "oracle_shared_container_environment",
-    ],
+    "oracle_shared_container_environment": ["tests.conftest", "oracle_shared_container_environment"],
     "oracle_tap": ["tests.conftest", "oracle_tap"],
     "oracle_tap_config": ["tests.conftest", "oracle_tap_config"],
     "p": ["tests.protocols", "FlextTapOracleTestProtocols"],
@@ -170,7 +165,6 @@ def __getattr__(name: str) -> FlextTypes.ModuleExport:
 
     Raises:
         AttributeError: If attribute not registered.
-
     """
     if name in _LAZY_CACHE:
         return _LAZY_CACHE[name]
@@ -185,7 +179,6 @@ def __dir__() -> Sequence[str]:
 
     Returns:
         List of public names from module exports.
-
     """
     return sorted(__all__)
 
