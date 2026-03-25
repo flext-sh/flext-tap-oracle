@@ -52,8 +52,9 @@ class FlextTapOracleDiscoverCommand:
             oracle_config = config.get_oracle_config()
             schema_name = str(oracle_config.get("schema_name", "USER"))
             self._logger.info("Discovering Oracle schema: %s", schema_name)
+            streams: list[t.GeneralValueType] = []
             catalog_dict: Mapping[str, t.GeneralValueType] = {
-                "streams": [],
+                "streams": streams,
                 "schema_name": schema_name,
             }
             if self.params.output_file:
