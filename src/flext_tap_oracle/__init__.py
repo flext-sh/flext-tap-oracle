@@ -1,5 +1,5 @@
 # AUTO-GENERATED FILE — DO NOT EDIT MANUALLY.
-# Regenerate with: make codegen
+# Regenerate with: make gen
 #
 """FLEXT Tap Oracle - Oracle Database Singer Tap for FLEXT ecosystem.
 
