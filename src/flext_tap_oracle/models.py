@@ -218,24 +218,21 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             schema_names: Annotated[
                 t.StrSequence,
                 Field(
-                    default_factory=list,
                     description="Oracle schemas to discover",
                 ),
-            ]
+            ] = Field(default_factory=list)
             table_patterns: Annotated[
                 t.StrSequence,
                 Field(
-                    default_factory=list,
                     description="Table name patterns to include",
                 ),
-            ]
+            ] = Field(default_factory=list)
             exclude_patterns: Annotated[
                 t.StrSequence,
                 Field(
-                    default_factory=list,
                     description="Table name patterns to exclude",
                 ),
-            ]
+            ] = Field(default_factory=list)
 
             # Discovery options
             include_views: Annotated[
@@ -583,35 +580,31 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             oracle_tables: Annotated[
                 Sequence[FlextDbOracleModels.DbOracle.Table],
                 Field(
-                    default_factory=list,
                     description="Raw Oracle table metadata from flext-db-oracle",
                 ),
-            ]
+            ] = Field(default_factory=list)
 
             # Processed stream information
             stream_info: Annotated[
                 Sequence[FlextTapOracleModels.TapOracle.OracleTapStreamInfo],
                 Field(
-                    default_factory=list,
                     description="Processed stream information for tap use",
                 ),
-            ]
+            ] = Field(default_factory=list)
 
             # Filtering results
             filtered_tables: Annotated[
                 t.StrSequence,
                 Field(
-                    default_factory=list,
                     description="Table names after applying filters",
                 ),
-            ]
+            ] = Field(default_factory=list)
             excluded_tables: Annotated[
                 t.StrSequence,
                 Field(
-                    default_factory=list,
                     description="Table names that were excluded",
                 ),
-            ]
+            ] = Field(default_factory=list)
 
             @computed_field
             def discovery_result_summary(self) -> t.TapOracle.Summary.SummaryData:
@@ -717,10 +710,9 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             failed_streams: Annotated[
                 t.StrSequence,
                 Field(
-                    default_factory=list,
                     description="Names of failed streams",
                 ),
-            ]
+            ] = Field(default_factory=list)
 
             # Oracle-specific execution metrics
             oracle_result_processing_time: Annotated[
