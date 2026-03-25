@@ -144,13 +144,5 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
             INCREMENTAL = "INCREMENTAL"
 
 
-MeltanoTapOracleProjectType = (
-    FlextTapOracleConstants.TapOracle.MeltanoTapOracleProjectType
-)
-TapOracleProjectType = FlextTapOracleConstants.TapOracle.TapOracleProjectType
-TestOracleHost = FlextTapOracleConstants.TapOracle.TestOracleHost
-TestServiceName = FlextTapOracleConstants.TapOracle.TestServiceName
-TestReplicationMethod = FlextTapOracleConstants.TapOracle.TestReplicationMethod
-
 c = FlextTapOracleConstants
 __all__ = ["FlextTapOracleConstants", "c"]
