@@ -582,7 +582,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 Field(
                     description="Raw Oracle table metadata from flext-db-oracle",
                 ),
-            ] = Field(default_factory=lambda: [])
+            ] = Field(default_factory=list)
 
             # Processed stream information
             stream_info: Annotated[
@@ -590,7 +590,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 Field(
                     description="Processed stream information for tap use",
                 ),
-            ] = Field(default_factory=lambda: [])
+            ] = Field(default_factory=list)
 
             # Filtering results
             filtered_tables: Annotated[
