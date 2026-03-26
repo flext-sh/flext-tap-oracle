@@ -12,7 +12,7 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 from pathlib import Path
 
-from flext_cli import FlextCli
+from flext_cli import cli
 from flext_core import FlextLogger, r
 from pydantic import TypeAdapter
 
@@ -23,7 +23,7 @@ _GENERAL_VALUE_MAP_ADAPTER: TypeAdapter[t.GeneralValueMapping] = TypeAdapter(
 )
 
 logger = FlextLogger(__name__)
-cli_api = FlextCli()
+cli_api = cli()
 
 
 class FlextTapOracleDiscoverCommand:
@@ -166,10 +166,10 @@ class FlextTapOracleCli:
             return r[t.Cli.JsonValue].fail(error_message)
 
     @staticmethod
-    def create_tap_oracle_cli() -> r[FlextCli]:
+    def create_tap_oracle_cli() -> r[cli]:
         """Create FLEXT Tap Oracle CLI using flext-cli foundation - NO click imports."""
         try:
-            cli_main = FlextCli.create(
+            cli_main = cli.create(
                 name="tap-oracle",
                 description="FLEXT Tap Oracle - Modern Singer Tap for Oracle Database",
             )
@@ -178,7 +178,7 @@ class FlextTapOracleCli:
                 FlextTapOracleCli.handle_discover_command,
             )
             if discover_result.is_failure:
-                return r[FlextCli].fail(
+                return r[cli].fail(
                     f"Discover command registration failed: {discover_result.error}",
                 )
             sync_result = cli_main.register_command(
@@ -186,12 +186,12 @@ class FlextTapOracleCli:
                 FlextTapOracleCli.handle_sync_command,
             )
             if sync_result.is_failure:
-                return r[FlextCli].fail(
+                return r[cli].fail(
                     f"Sync command registration failed: {sync_result.error}",
                 )
-            return r[FlextCli].ok(cli_main)
+            return r[cli].ok(cli_main)
         except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-            return r[FlextCli].fail(f"CLI creation failed: {e}")
+            return r[cli].fail(f"CLI creation failed: {e}")
 
     @staticmethod
     def handle_discover_command(
