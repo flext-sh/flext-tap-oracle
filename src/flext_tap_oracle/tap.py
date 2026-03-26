@@ -12,7 +12,7 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 from pathlib import Path
 
-from flext_cli import cli
+from flext_cli import FlextCli, cli
 from flext_core import FlextLogger, r
 from pydantic import TypeAdapter
 
@@ -23,7 +23,7 @@ _GENERAL_VALUE_MAP_ADAPTER: TypeAdapter[t.GeneralValueMapping] = TypeAdapter(
 )
 
 logger = FlextLogger(__name__)
-cli_api = cli()
+cli_api = cli
 
 
 class FlextTapOracleDiscoverCommand:
@@ -166,10 +166,10 @@ class FlextTapOracleCli:
             return r[t.Cli.JsonValue].fail(error_message)
 
     @staticmethod
-    def create_tap_oracle_cli() -> r[cli]:
+    def create_tap_oracle_cli() -> r[FlextCli]:
         """Create FLEXT Tap Oracle CLI using flext-cli foundation - NO click imports."""
         try:
-            cli_main = cli.create(
+            cli_main = FlextCli.create(
                 name="tap-oracle",
                 description="FLEXT Tap Oracle - Modern Singer Tap for Oracle Database",
             )
@@ -178,7 +178,7 @@ class FlextTapOracleCli:
                 FlextTapOracleCli.handle_discover_command,
             )
             if discover_result.is_failure:
-                return r[cli].fail(
+                return r[FlextCli].fail(
                     f"Discover command registration failed: {discover_result.error}",
                 )
             sync_result = cli_main.register_command(
@@ -186,12 +186,12 @@ class FlextTapOracleCli:
                 FlextTapOracleCli.handle_sync_command,
             )
             if sync_result.is_failure:
-                return r[cli].fail(
+                return r[FlextCli].fail(
                     f"Sync command registration failed: {sync_result.error}",
                 )
-            return r[cli].ok(cli_main)
+            return r[FlextCli].ok(cli_main)
         except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-            return r[cli].fail(f"CLI creation failed: {e}")
+            return r[FlextCli].fail(f"CLI creation failed: {e}")
 
     @staticmethod
     def handle_discover_command(
@@ -217,7 +217,7 @@ class FlextTapOracleCli:
         )
 
 
-def cli() -> int:
+def run_cli() -> int:
     """Main CLI entry point using flext-cli foundation."""
     cli_result = FlextTapOracleCli.create_tap_oracle_cli()
     if cli_result.is_failure:
@@ -231,7 +231,7 @@ def cli() -> int:
 def main() -> None:
     """Provide CLI entry point using flext-cli patterns."""
     try:
-        exit_code = cli()
+        exit_code = run_cli()
         raise SystemExit(exit_code)
     except KeyboardInterrupt:
         cli_api.print("Operation cancelled by user", style="yellow")

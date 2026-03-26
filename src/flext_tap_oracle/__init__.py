@@ -50,10 +50,10 @@ if TYPE_CHECKING:
         FlextTapOracleCli,
         FlextTapOracleDiscoverCommand,
         FlextTapOracleSyncCommand,
-        cli,
         cli_api,
         logger,
         main,
+        run_cli,
     )
     from flext_tap_oracle.typings import FlextTapOracleTypes, FlextTapOracleTypes as t
     from flext_tap_oracle.utilities import (
@@ -107,7 +107,6 @@ _LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
     "__version__": ["flext_tap_oracle.__version__", "__version__"],
     "__version_info__": ["flext_tap_oracle.__version__", "__version_info__"],
     "c": ["flext_tap_oracle.constants", "FlextTapOracleConstants"],
-    "cli": ["flext_tap_oracle.tap", "cli"],
     "cli_api": ["flext_tap_oracle.tap", "cli_api"],
     "d": ["flext_db_oracle", "d"],
     "e": ["flext_db_oracle", "e"],
@@ -117,6 +116,7 @@ _LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
     "main": ["flext_tap_oracle.tap", "main"],
     "p": ["flext_tap_oracle.protocols", "FlextTapOracleProtocols"],
     "r": ["flext_db_oracle", "r"],
+    "run_cli": ["flext_tap_oracle.tap", "run_cli"],
     "s": ["flext_db_oracle", "s"],
     "t": ["flext_tap_oracle.typings", "FlextTapOracleTypes"],
     "u": ["flext_tap_oracle.utilities", "FlextTapOracleUtilities"],
@@ -148,7 +148,6 @@ __all__ = [
     "__version__",
     "__version_info__",
     "c",
-    "cli",
     "cli_api",
     "d",
     "e",
@@ -158,6 +157,7 @@ __all__ = [
     "main",
     "p",
     "r",
+    "run_cli",
     "s",
     "t",
     "u",
