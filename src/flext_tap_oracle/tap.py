@@ -173,7 +173,7 @@ class FlextTapOracleCli:
                 name="tap-oracle",
                 description="FLEXT Tap Oracle - Modern Singer Tap for Oracle Database",
             )
-            discover_result = cli_main.register_command(
+            discover_result = cli_main.register_handler(
                 "discover",
                 FlextTapOracleCli.handle_discover_command,
             )
@@ -181,7 +181,7 @@ class FlextTapOracleCli:
                 return r[FlextCli].fail(
                     f"Discover command registration failed: {discover_result.error}",
                 )
-            sync_result = cli_main.register_command(
+            sync_result = cli_main.register_handler(
                 "sync",
                 FlextTapOracleCli.handle_sync_command,
             )

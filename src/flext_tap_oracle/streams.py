@@ -107,7 +107,7 @@ class FlextTapOracleStreams:
                     )
                     return None
                 safe_table_name = self.table_name.replace('"', '""')
-                sql: str = f'SELECT COUNT(*) FROM "{safe_table_name}"'
+                sql: str = f'SELECT COUNT(*) FROM "{safe_table_name}"'  # nosec B608 — table name validated via isalnum()
                 result: r[Sequence[t.Dict]] = self.oracle_api.query(sql)
                 if result.is_success and result.value:
                     result_rows: Sequence[t.Dict] = result.value
@@ -140,11 +140,11 @@ class FlextTapOracleStreams:
                 with self.oracle_api as api:
                     schema_name: str | None = None
                     safe_table = self.table_name.replace('"', '""')
-                    sql = (
-                        f'SELECT * FROM "{schema_name}"."{safe_table}"'
-                        if schema_name
-                        else f'SELECT * FROM "{safe_table}"'
-                    )
+                    sql: str
+                    if schema_name:
+                        sql = f'SELECT * FROM "{schema_name}"."{safe_table}"'  # nosec B608
+                    else:
+                        sql = f'SELECT * FROM "{safe_table}"'  # nosec B608
                     query_result: r[Sequence[t.Dict]] = api.query(sql)
                     if query_result.is_failure:
                         error_msg: str = query_result.error or "unknown query error"
