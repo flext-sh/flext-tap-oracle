@@ -12,7 +12,7 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 from pathlib import Path
 
-from flext_cli import FlextCli, FlextCliCommands
+from flext_cli import FlextCli
 from flext_core import FlextLogger, r
 from pydantic import TypeAdapter
 
@@ -166,34 +166,32 @@ class FlextTapOracleCli:
             return r[t.Cli.JsonValue].fail(error_message)
 
     @staticmethod
-    def create_tap_oracle_cli() -> r[FlextCliCommands]:
+    def create_tap_oracle_cli() -> r[FlextCli]:
         """Create FLEXT Tap Oracle CLI using flext-cli foundation - NO click imports."""
         try:
-            cli_main = FlextCliCommands(
+            cli_main = FlextCli.create(
                 name="tap-oracle",
                 description="FLEXT Tap Oracle - Modern Singer Tap for Oracle Database",
             )
-            discover_result = FlextCliCommands.register_command(
-                cli_main,
+            discover_result = cli_main.register_command(
                 "discover",
                 FlextTapOracleCli.handle_discover_command,
             )
             if discover_result.is_failure:
-                return r[FlextCliCommands].fail(
+                return r[FlextCli].fail(
                     f"Discover command registration failed: {discover_result.error}",
                 )
-            sync_result = FlextCliCommands.register_command(
-                cli_main,
+            sync_result = cli_main.register_command(
                 "sync",
                 FlextTapOracleCli.handle_sync_command,
             )
             if sync_result.is_failure:
-                return r[FlextCliCommands].fail(
+                return r[FlextCli].fail(
                     f"Sync command registration failed: {sync_result.error}",
                 )
-            return r[FlextCliCommands].ok(cli_main)
+            return r[FlextCli].ok(cli_main)
         except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-            return r[FlextCliCommands].fail(f"CLI creation failed: {e}")
+            return r[FlextCli].fail(f"CLI creation failed: {e}")
 
     @staticmethod
     def handle_discover_command(
