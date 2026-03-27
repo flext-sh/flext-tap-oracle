@@ -312,7 +312,7 @@ class FlextTapOracleStreams:
                                 row_type_name,
                             )
                             continue
-                    record = self._transform_oracle_types_with_table_metadata(
+                    record = self._transform_oracle_types(
                         record,
                         columns,
                     )
@@ -323,7 +323,7 @@ class FlextTapOracleStreams:
                     )
                     continue
 
-        def _transform_oracle_types_with_table_metadata(
+        def _transform_oracle_types(
             self,
             record: Mapping[str, t.TapOracle.Summary.OracleValue],
             column_metadata: Sequence[t.TapOracle.Summary.OracleValue],
