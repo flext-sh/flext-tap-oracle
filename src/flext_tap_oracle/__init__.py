@@ -34,6 +34,7 @@ if TYPE_CHECKING:
         FlextOracleDiscoveryService,
         FlextOracleTableFilterService,
         FlextOracleTapService,
+        FlextTapOracleUtilitiesClientMixin,
     )
     from flext_tap_oracle.constants import (
         FlextTapOracleConstants,
@@ -100,6 +101,10 @@ _LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
         "flext_tap_oracle.utilities",
         "FlextTapOracleUtilities",
     ],
+    "FlextTapOracleUtilitiesClientMixin": [
+        "flext_tap_oracle._utilities._client",
+        "FlextTapOracleUtilitiesClientMixin",
+    ],
     "__all__": ["flext_tap_oracle.__version__", "__all__"],
     "__author__": ["flext_tap_oracle.__version__", "__author__"],
     "__author_email__": ["flext_tap_oracle.__version__", "__author_email__"],
@@ -141,6 +146,7 @@ __all__ = [
     "FlextTapOracleSyncCommand",
     "FlextTapOracleTypes",
     "FlextTapOracleUtilities",
+    "FlextTapOracleUtilitiesClientMixin",
     "__all__",
     "__author__",
     "__author_email__",
