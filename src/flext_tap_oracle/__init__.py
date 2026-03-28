@@ -29,7 +29,7 @@ if TYPE_CHECKING:
         __version__,
         __version_info__,
     )
-    from flext_tap_oracle.client import (
+    from flext_tap_oracle._utilities._client import (
         FlextOracleConnectionTestService,
         FlextOracleDiscoveryService,
         FlextOracleTableFilterService,
@@ -63,18 +63,21 @@ if TYPE_CHECKING:
 
 _LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
     "FlextOracleConnectionTestService": [
-        "flext_tap_oracle.client",
+        "flext_tap_oracle._utilities._client",
         "FlextOracleConnectionTestService",
     ],
     "FlextOracleDiscoveryService": [
-        "flext_tap_oracle.client",
+        "flext_tap_oracle._utilities._client",
         "FlextOracleDiscoveryService",
     ],
     "FlextOracleTableFilterService": [
-        "flext_tap_oracle.client",
+        "flext_tap_oracle._utilities._client",
         "FlextOracleTableFilterService",
     ],
-    "FlextOracleTapService": ["flext_tap_oracle.client", "FlextOracleTapService"],
+    "FlextOracleTapService": [
+        "flext_tap_oracle._utilities._client",
+        "FlextOracleTapService",
+    ],
     "FlextTapOracleCli": ["flext_tap_oracle.tap", "FlextTapOracleCli"],
     "FlextTapOracleConstants": [
         "flext_tap_oracle.constants",

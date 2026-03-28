@@ -20,6 +20,7 @@ from flext_db_oracle import FlextDbOracleModels, FlextDbOracleUtilities
 from flext_meltano import FlextMeltanoUtilities
 
 from flext_tap_oracle import t
+from flext_tap_oracle._utilities._client import FlextTapOracleUtilitiesClientMixin
 from flext_tap_oracle.constants import c
 from flext_tap_oracle.models import m
 
@@ -33,13 +34,16 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
     - Discovery operations
     - Configuration validation
     - Performance optimization
+    - Client services (discovery, connection test, table filter, tap service)
     - Data extraction helpers
 
     Follows FLEXT pattern: single class with nested subclasses.
     """
 
     class TapOracle:
-        """Tap Oracle  namespace for cross-project access."""
+        """Tap Oracle namespace for cross-project access."""
+
+        Client = FlextTapOracleUtilitiesClientMixin.TapOracle.Client
 
         def __init__(self) -> None:
             """Initialize FlextTapOracleUtilities service."""
