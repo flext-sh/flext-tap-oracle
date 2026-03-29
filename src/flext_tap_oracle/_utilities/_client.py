@@ -16,6 +16,7 @@ from flext_core import FlextLogger, FlextService, r
 from flext_db_oracle import FlextDbOracleApi, FlextDbOracleModels, FlextDbOracleSettings
 
 from flext_tap_oracle import t
+from flext_tap_oracle.constants import c
 from flext_tap_oracle.settings import FlextTapOracleSettings
 
 logger = FlextLogger(__name__)
@@ -88,13 +89,7 @@ class FlextTapOracleUtilitiesClientMixin:
                         return r[Sequence[FlextDbOracleModels.DbOracle.Table]].ok(
                             tables
                         )
-                    except (
-                        ValueError,
-                        TypeError,
-                        KeyError,
-                        AttributeError,
-                        OSError,
-                    ) as e:
+                    except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
                         logger.exception("Oracle table discovery error")
                         error_msg = (
                             f"Table discovery error in schema {self.schema_name}: {e}"
@@ -124,13 +119,7 @@ class FlextTapOracleUtilitiesClientMixin:
                             error_msg,
                         )
                         return r[bool].fail(error_msg)
-                    except (
-                        ValueError,
-                        TypeError,
-                        KeyError,
-                        AttributeError,
-                        OSError,
-                    ) as e:
+                    except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
                         logger.exception("Oracle connection test error")
                         error_msg = f"Connection test error: {e}"
                         return r[bool].fail(error_msg)
@@ -212,13 +201,7 @@ class FlextTapOracleUtilitiesClientMixin:
                             len(table_names),
                         )
                         return r[Sequence[str]].ok(table_names)
-                    except (
-                        ValueError,
-                        TypeError,
-                        KeyError,
-                        AttributeError,
-                        OSError,
-                    ) as e:
+                    except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
                         logger.exception("Table filtering error")
                         error_msg = f"Table filtering error: {e}"
                         return r[Sequence[str]].fail(error_msg)
@@ -330,13 +313,7 @@ class FlextTapOracleUtilitiesClientMixin:
                         return r[bool].fail(
                             f"Connection test failed: {connection_test_result.error}",
                         )
-                    except (
-                        ValueError,
-                        TypeError,
-                        KeyError,
-                        AttributeError,
-                        OSError,
-                    ) as e:
+                    except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
                         logger.exception("Failed to get tap status")
                         return r[bool].fail(f"Status check failed: {e}")
 
@@ -366,13 +343,7 @@ class FlextTapOracleUtilitiesClientMixin:
                             "Oracle tap initialization completed successfully",
                         )
                         return r[bool].ok(value=True)
-                    except (
-                        ValueError,
-                        TypeError,
-                        KeyError,
-                        AttributeError,
-                        OSError,
-                    ) as e:
+                    except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
                         logger.exception("Oracle tap initialization failed")
                         error_msg = f"Initialization failed: {e}"
                         return r[bool].fail(error_msg)
@@ -405,13 +376,7 @@ class FlextTapOracleUtilitiesClientMixin:
                         return r[
                             FlextTapOracleUtilitiesClientMixin.TapOracle.Client.TapService
                         ].ok(service)
-                    except (
-                        ValueError,
-                        TypeError,
-                        KeyError,
-                        AttributeError,
-                        OSError,
-                    ) as e:
+                    except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
                         return r[
                             FlextTapOracleUtilitiesClientMixin.TapOracle.Client.TapService
                         ].fail(
@@ -443,13 +408,7 @@ class FlextTapOracleUtilitiesClientMixin:
                         return r[
                             FlextTapOracleUtilitiesClientMixin.TapOracle.Client.DiscoveryService
                         ].ok(service)
-                    except (
-                        ValueError,
-                        TypeError,
-                        KeyError,
-                        AttributeError,
-                        OSError,
-                    ) as e:
+                    except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
                         return r[
                             FlextTapOracleUtilitiesClientMixin.TapOracle.Client.DiscoveryService
                         ].fail(

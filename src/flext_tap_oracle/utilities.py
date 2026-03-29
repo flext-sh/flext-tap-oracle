@@ -105,7 +105,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                     else:
                         err = FlextExceptions.OperationError(error_message)
                     return r[bool].fail(str(err))
-                except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+                except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
                     return r[bool].fail(f"Exception handling failed: {e}")
 
         class StreamManagement:
@@ -141,7 +141,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                         excluded_tables=[],
                     )
                     return r[m.TapOracle.OracleTapDiscoveryResult].ok(discovery_result)
-                except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+                except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
                     return r[m.TapOracle.OracleTapDiscoveryResult].fail(
                         f"Failed to create discovery result: {e}",
                     )
@@ -170,7 +170,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                         is_selected=False,
                     )
                     return r[m.TapOracle.OracleTapStreamInfo].ok(stream_info)
-                except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+                except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
                     return r[m.TapOracle.OracleTapStreamInfo].fail(
                         f"Failed to create stream info from Oracle table: {e}",
                     )
@@ -193,7 +193,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                     validated_config = validation_result.value
                     connection_string = f"oracle://{validated_config['username']}:{validated_config['password']}@{validated_config['host']}:{validated_config['port']}/{validated_config['service_name']}"
                     return r[str].ok(connection_string)
-                except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+                except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
                     return r[str].fail(f"Connection string building failed: {e}")
 
             @staticmethod
@@ -218,7 +218,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                         "connection_test": "structural_validation_passed",
                     }
                     return r[t.GeneralValueMapping].ok(connectivity_result)
-                except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+                except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
                     return r[t.GeneralValueMapping].fail(
                         f"Oracle connectivity test failed: {e}",
                     )
@@ -261,7 +261,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                             "Oracle port must be numeric",
                         )
                     return r[t.GeneralValueMapping].ok(validated_config)
-                except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+                except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
                     return r[t.GeneralValueMapping].fail(
                         f"Oracle config validation failed: {e}",
                     )
@@ -303,7 +303,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                         "performance_rating": performance_rating,
                     }
                     return r[t.GeneralValueMapping].ok(metrics)
-                except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+                except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
                     return r[t.GeneralValueMapping].fail(
                         f"Metrics calculation failed: {e}",
                     )
@@ -327,7 +327,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                             f"/*+ INDEX_ASC({pk_column}) */ {optimized_query}"
                         )
                     return r[str].ok(optimized_query)
-                except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+                except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
                     return r[str].fail(f"Query optimization failed: {e}")
 
 

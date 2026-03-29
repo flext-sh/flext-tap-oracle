@@ -82,7 +82,7 @@ class FlextTapOracleStreams:
                         case _:
                             return None
                 return None
-            except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+            except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
                 err_msg = str(e)
                 FlextTapOracleStreams.logger.warning(
                     "Failed to estimate row count for %s: %s",
@@ -122,14 +122,7 @@ class FlextTapOracleStreams:
                         rows,
                         table_metadata_result.value,
                     )
-            except (
-                RuntimeError,
-                ValueError,
-                TypeError,
-                KeyError,
-                AttributeError,
-                OSError,
-            ) as e:
+            except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
                 FlextTapOracleStreams.logger.exception(
                     "Error getting records from %s",
                     self.table_name,
@@ -171,7 +164,7 @@ class FlextTapOracleStreams:
                     "table_name": self.table_name,
                     "error": table_metadata_result.error or "Metadata not available",
                 }
-            except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+            except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
                 FlextTapOracleStreams.logger.exception("Failed to get table info")
                 return {"table_name": self.table_name, "error": str(e)}
 
@@ -211,14 +204,7 @@ class FlextTapOracleStreams:
                         columns,
                     )
                     yield record
-                except (
-                    RuntimeError,
-                    ValueError,
-                    TypeError,
-                    KeyError,
-                    AttributeError,
-                    OSError,
-                ) as e:
+                except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
                     msg = f"Failed to process Oracle record: {e}"
                     raise RuntimeError(msg) from e
 

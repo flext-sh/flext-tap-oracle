@@ -1,7 +1,7 @@
-"""FLEXT Tap Oracle - Modern CLI using flext-cli foundation patterns.
+"""FLEXT Tap Oracle - Singer Tap using flext-meltano abstractions.
 
-Singer Tap interface with modern Click CLI integration using flext-cli patterns
-with zero boilerplate and maximum integration with FLEXT ecosystem.
+Singer Tap interface using flext-meltano patterns with zero boilerplate
+and maximum integration with FLEXT ecosystem.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT.
@@ -9,11 +9,12 @@ SPDX-License-Identifier: MIT.
 
 from __future__ import annotations
 
+import sys
 from collections.abc import Callable, Mapping
 from pathlib import Path
 
-from flext_cli import FlextCli, cli
 from flext_core import FlextLogger, r
+from flext_meltano import FlextMeltanoAbstractions
 from pydantic import TypeAdapter
 
 from flext_tap_oracle import FlextTapOracleSettings, c, m, p, t
@@ -23,11 +24,11 @@ _GENERAL_VALUE_MAP_ADAPTER: TypeAdapter[t.GeneralValueMapping] = TypeAdapter(
 )
 
 logger = FlextLogger(__name__)
-cli_api = cli
+cli_api = FlextMeltanoAbstractions()
 
 
 class FlextTapOracleDiscoverCommand:
-    """Oracle tap discovery command using modern flext-cli patterns.
+    """Oracle tap discovery command using flext-meltano patterns.
 
     Provides discovery of Oracle database schema and Singer catalog generation.
     """
@@ -68,7 +69,7 @@ class FlextTapOracleDiscoverCommand:
                 self._logger.info("Catalog written to %s", output_path)
             self._logger.info("Oracle schema discovery completed")
             return r[t.GeneralValueMapping].ok(catalog_dict)
-        except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+        except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
             logger.exception("Oracle discovery failed")
             return r[t.GeneralValueMapping].fail(f"Discovery error: {e}")
 
@@ -82,7 +83,7 @@ class FlextTapOracleDiscoverCommand:
 
 
 class FlextTapOracleSyncCommand:
-    """Oracle tap sync command using modern flext-cli patterns."""
+    """Oracle tap sync command using flext-meltano patterns."""
 
     def __init__(self, params: m.TapOracle.OracleTapSyncParams) -> None:
         """Initialize command with parameter t.NormalizedValue pattern."""
@@ -122,7 +123,7 @@ class FlextTapOracleSyncCommand:
                 record_count,
             )
             return r[t.GeneralValueMapping].ok(result_data)
-        except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+        except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
             logger.exception("Oracle sync failed")
             return r[t.GeneralValueMapping].fail(f"Sync error: {e}")
 
@@ -140,7 +141,7 @@ class FlextTapOracleSyncCommand:
 
 
 class FlextTapOracleCli:
-    """Facade for Oracle tap CLI operations using flext-cli foundation."""
+    """Facade for Oracle tap CLI operations using flext-meltano abstractions."""
 
     @staticmethod
     def run_tap_command[TParams](
@@ -157,48 +158,20 @@ class FlextTapOracleCli:
             result = command.execute()
             if result.is_failure:
                 error_message = result.error or f"{operation_name} failed"
-                cli_api.print(f"{operation_name} failed: {error_message}", style="red")
+                logger.error(f"{operation_name} failed: {error_message}")
                 return r[t.Cli.JsonValue].fail(error_message)
             return r[t.Cli.JsonValue].ok(value=True)
-        except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+        except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
             error_message = f"{operation_name} error: {e}"
-            cli_api.print(error_message, style="red")
+            logger.exception(error_message)
             return r[t.Cli.JsonValue].fail(error_message)
-
-    @staticmethod
-    def create_tap_oracle_cli() -> r[FlextCli]:
-        """Create FLEXT Tap Oracle CLI using flext-cli foundation - NO click imports."""
-        try:
-            cli_main = FlextCli.create(
-                name="tap-oracle",
-                description="FLEXT Tap Oracle - Modern Singer Tap for Oracle Database",
-            )
-            discover_result = cli_main.register_handler(
-                "discover",
-                FlextTapOracleCli.handle_discover_command,
-            )
-            if discover_result.is_failure:
-                return r[FlextCli].fail(
-                    f"Discover command registration failed: {discover_result.error}",
-                )
-            sync_result = cli_main.register_handler(
-                "sync",
-                FlextTapOracleCli.handle_sync_command,
-            )
-            if sync_result.is_failure:
-                return r[FlextCli].fail(
-                    f"Sync command registration failed: {sync_result.error}",
-                )
-            return r[FlextCli].ok(cli_main)
-        except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-            return r[FlextCli].fail(f"CLI creation failed: {e}")
 
     @staticmethod
     def handle_discover_command(
         *_args: t.Scalar,
         **kwargs: t.Scalar,
     ) -> r[t.Cli.JsonValue]:
-        """Handle discover command using flext-cli patterns - NO click decorators."""
+        """Handle discover command using flext-meltano patterns."""
         return FlextTapOracleCli.run_tap_command(
             kwargs=kwargs,
             params_factory=m.TapOracle.OracleTapDiscoverParams.from_click_args,
@@ -208,7 +181,7 @@ class FlextTapOracleCli:
 
     @staticmethod
     def handle_sync_command(*_args: t.Scalar, **kwargs: t.Scalar) -> r[t.Cli.JsonValue]:
-        """Handle sync command using flext-cli patterns - NO click decorators."""
+        """Handle sync command using flext-meltano patterns."""
         return FlextTapOracleCli.run_tap_command(
             kwargs=kwargs,
             params_factory=m.TapOracle.OracleTapSyncParams.from_click_args,
@@ -218,26 +191,27 @@ class FlextTapOracleCli:
 
 
 def run_cli() -> int:
-    """Main CLI entry point using flext-cli foundation."""
-    cli_result = FlextTapOracleCli.create_tap_oracle_cli()
-    if cli_result.is_failure:
-        logger.error(f"CLI creation failed: {cli_result.error or 'unknown'}")
-        return 1
-    cli_main = cli_result.value
-    cli_main.execute()
-    return 0
+    """Main CLI entry point using flext-meltano abstractions."""
+    if "--discover" in sys.argv:
+        result = FlextTapOracleCli.handle_discover_command()
+        return 0 if result.is_success else 1
+    if "--sync" in sys.argv or len(sys.argv) <= 1:
+        result = FlextTapOracleCli.handle_sync_command()
+        return 0 if result.is_success else 1
+    logger.warning("Unknown command. Use --discover or --sync.")
+    return 1
 
 
 def main() -> None:
-    """Provide CLI entry point using flext-cli patterns."""
+    """Provide CLI entry point using flext-meltano patterns."""
     try:
         exit_code = run_cli()
         raise SystemExit(exit_code)
     except KeyboardInterrupt:
-        cli_api.print("Operation cancelled by user", style="yellow")
+        logger.warning("Operation cancelled by user")
         raise SystemExit(0) from None
-    except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-        cli_api.print(f"Unexpected error: {e}", style="red")
+    except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
+        logger.exception("Unexpected error")
         raise SystemExit(1) from e
 
 
