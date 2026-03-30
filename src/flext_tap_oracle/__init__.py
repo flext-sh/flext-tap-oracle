@@ -9,112 +9,92 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping, MutableMapping, Sequence
+from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING
 
-from flext_core.lazy import cleanup_submodule_namespace, lazy_getattr
+from flext_core.lazy import install_lazy_exports
 
 from flext_tap_oracle.__version__ import (
-    __author__,
-    __author_email__,
-    __description__,
-    __license__,
-    __title__,
-    __url__,
-    __version__,
-    __version_info__,
+    __author__ as __author__,
+    __author_email__ as __author_email__,
+    __description__ as __description__,
+    __license__ as __license__,
+    __title__ as __title__,
+    __url__ as __url__,
+    __version__ as __version__,
+    __version_info__ as __version_info__,
 )
 
 if TYPE_CHECKING:
-    from flext_core import FlextTypes
     from flext_db_oracle import d, e, h, r, s, x
 
     from flext_tap_oracle import (
-        constants,
-        models,
-        protocols,
-        settings,
-        streams,
-        tap,
-        typings,
-        utilities,
+        constants as constants,
+        models as models,
+        protocols as protocols,
+        settings as settings,
+        streams as streams,
+        tap as tap,
+        typings as typings,
+        utilities as utilities,
     )
     from flext_tap_oracle._utilities._client import (
-        FlextOracleConnectionTestService,
-        FlextOracleDiscoveryService,
-        FlextOracleTableFilterService,
-        FlextOracleTapService,
-        FlextTapOracleUtilitiesClientMixin,
+        FlextOracleConnectionTestService as FlextOracleConnectionTestService,
+        FlextOracleDiscoveryService as FlextOracleDiscoveryService,
+        FlextOracleTableFilterService as FlextOracleTableFilterService,
+        FlextOracleTapService as FlextOracleTapService,
+        FlextTapOracleUtilitiesClientMixin as FlextTapOracleUtilitiesClientMixin,
     )
     from flext_tap_oracle.constants import (
-        FlextTapOracleConstants,
+        FlextTapOracleConstants as FlextTapOracleConstants,
         FlextTapOracleConstants as c,
     )
-    from flext_tap_oracle.models import FlextTapOracleModels, FlextTapOracleModels as m
+    from flext_tap_oracle.models import (
+        FlextTapOracleModels as FlextTapOracleModels,
+        FlextTapOracleModels as m,
+    )
     from flext_tap_oracle.protocols import (
-        FlextTapOracleProtocols,
+        FlextTapOracleProtocols as FlextTapOracleProtocols,
         FlextTapOracleProtocols as p,
     )
-    from flext_tap_oracle.settings import FlextTapOracleSettings
-    from flext_tap_oracle.streams import FlextTapOracleStreams
-    from flext_tap_oracle.tap import (
-        FlextTapOracleCli,
-        FlextTapOracleDiscoverCommand,
-        FlextTapOracleSyncCommand,
-        cli_api,
-        logger,
-        main,
-        run_cli,
+    from flext_tap_oracle.settings import (
+        FlextTapOracleSettings as FlextTapOracleSettings,
     )
-    from flext_tap_oracle.typings import FlextTapOracleTypes, FlextTapOracleTypes as t
+    from flext_tap_oracle.streams import FlextTapOracleStreams as FlextTapOracleStreams
+    from flext_tap_oracle.tap import (
+        FlextTapOracleCli as FlextTapOracleCli,
+        FlextTapOracleDiscoverCommand as FlextTapOracleDiscoverCommand,
+        FlextTapOracleSyncCommand as FlextTapOracleSyncCommand,
+        cli_api as cli_api,
+        logger as logger,
+        main as main,
+        run_cli as run_cli,
+    )
+    from flext_tap_oracle.typings import (
+        FlextTapOracleTypes as FlextTapOracleTypes,
+        FlextTapOracleTypes as t,
+    )
     from flext_tap_oracle.utilities import (
-        FlextTapOracleUtilities,
+        FlextTapOracleUtilities as FlextTapOracleUtilities,
         FlextTapOracleUtilities as u,
     )
 
 _LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
-    "FlextOracleConnectionTestService": [
-        "flext_tap_oracle._utilities._client",
-        "FlextOracleConnectionTestService",
-    ],
-    "FlextOracleDiscoveryService": [
-        "flext_tap_oracle._utilities._client",
-        "FlextOracleDiscoveryService",
-    ],
-    "FlextOracleTableFilterService": [
-        "flext_tap_oracle._utilities._client",
-        "FlextOracleTableFilterService",
-    ],
-    "FlextOracleTapService": [
-        "flext_tap_oracle._utilities._client",
-        "FlextOracleTapService",
-    ],
+    "FlextOracleConnectionTestService": ["flext_tap_oracle._utilities._client", "FlextOracleConnectionTestService"],
+    "FlextOracleDiscoveryService": ["flext_tap_oracle._utilities._client", "FlextOracleDiscoveryService"],
+    "FlextOracleTableFilterService": ["flext_tap_oracle._utilities._client", "FlextOracleTableFilterService"],
+    "FlextOracleTapService": ["flext_tap_oracle._utilities._client", "FlextOracleTapService"],
     "FlextTapOracleCli": ["flext_tap_oracle.tap", "FlextTapOracleCli"],
-    "FlextTapOracleConstants": [
-        "flext_tap_oracle.constants",
-        "FlextTapOracleConstants",
-    ],
-    "FlextTapOracleDiscoverCommand": [
-        "flext_tap_oracle.tap",
-        "FlextTapOracleDiscoverCommand",
-    ],
+    "FlextTapOracleConstants": ["flext_tap_oracle.constants", "FlextTapOracleConstants"],
+    "FlextTapOracleDiscoverCommand": ["flext_tap_oracle.tap", "FlextTapOracleDiscoverCommand"],
     "FlextTapOracleModels": ["flext_tap_oracle.models", "FlextTapOracleModels"],
-    "FlextTapOracleProtocols": [
-        "flext_tap_oracle.protocols",
-        "FlextTapOracleProtocols",
-    ],
+    "FlextTapOracleProtocols": ["flext_tap_oracle.protocols", "FlextTapOracleProtocols"],
     "FlextTapOracleSettings": ["flext_tap_oracle.settings", "FlextTapOracleSettings"],
     "FlextTapOracleStreams": ["flext_tap_oracle.streams", "FlextTapOracleStreams"],
     "FlextTapOracleSyncCommand": ["flext_tap_oracle.tap", "FlextTapOracleSyncCommand"],
     "FlextTapOracleTypes": ["flext_tap_oracle.typings", "FlextTapOracleTypes"],
-    "FlextTapOracleUtilities": [
-        "flext_tap_oracle.utilities",
-        "FlextTapOracleUtilities",
-    ],
-    "FlextTapOracleUtilitiesClientMixin": [
-        "flext_tap_oracle._utilities._client",
-        "FlextTapOracleUtilitiesClientMixin",
-    ],
+    "FlextTapOracleUtilities": ["flext_tap_oracle.utilities", "FlextTapOracleUtilities"],
+    "FlextTapOracleUtilitiesClientMixin": ["flext_tap_oracle._utilities._client", "FlextTapOracleUtilitiesClientMixin"],
     "c": ["flext_tap_oracle.constants", "FlextTapOracleConstants"],
     "cli_api": ["flext_tap_oracle.tap", "cli_api"],
     "constants": ["flext_tap_oracle.constants", ""],
@@ -140,7 +120,7 @@ _LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
     "x": ["flext_db_oracle", "x"],
 }
 
-__all__ = [
+_EXPORTS: Sequence[str] = [
     "FlextOracleConnectionTestService",
     "FlextOracleDiscoveryService",
     "FlextOracleTableFilterService",
@@ -190,41 +170,4 @@ __all__ = [
 ]
 
 
-_LAZY_CACHE: MutableMapping[str, FlextTypes.ModuleExport] = {}
-
-
-def __getattr__(name: str) -> FlextTypes.ModuleExport:
-    """Lazy-load module attributes on first access (PEP 562).
-
-    A local cache ``_LAZY_CACHE`` persists resolved objects across repeated
-    accesses during process lifetime.
-
-    Args:
-        name: Attribute name requested by dir()/import.
-
-    Returns:
-        Lazy-loaded module export type.
-
-    Raises:
-        AttributeError: If attribute not registered.
-
-    """
-    if name in _LAZY_CACHE:
-        return _LAZY_CACHE[name]
-
-    value = lazy_getattr(name, _LAZY_IMPORTS, globals(), __name__)
-    _LAZY_CACHE[name] = value
-    return value
-
-
-def __dir__() -> Sequence[str]:
-    """Return list of available attributes for dir() and autocomplete.
-
-    Returns:
-        List of public names from module exports.
-
-    """
-    return sorted(__all__)
-
-
-cleanup_submodule_namespace(__name__, _LAZY_IMPORTS)
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, _EXPORTS)
