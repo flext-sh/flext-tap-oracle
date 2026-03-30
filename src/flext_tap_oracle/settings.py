@@ -16,8 +16,7 @@ from typing import Annotated
 from flext_core import FlextLogger, FlextSettings, r
 from pydantic import Field, SecretStr
 
-from flext_tap_oracle import t
-from flext_tap_oracle.constants import c
+from flext_tap_oracle import c, t
 
 logger = FlextLogger(__name__)
 

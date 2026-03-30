@@ -19,10 +19,7 @@ from flext_core import FlextContainer, FlextExceptions, FlextLogger, p, r
 from flext_db_oracle import FlextDbOracleModels, FlextDbOracleUtilities
 from flext_meltano import FlextMeltanoUtilities
 
-from flext_tap_oracle import t
-from flext_tap_oracle._utilities._client import FlextTapOracleUtilitiesClientMixin
-from flext_tap_oracle.constants import c
-from flext_tap_oracle.models import m
+from flext_tap_oracle import FlextTapOracleUtilitiesClientMixin, c, m, t
 
 
 class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):

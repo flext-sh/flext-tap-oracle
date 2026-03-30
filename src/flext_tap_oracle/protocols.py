@@ -29,7 +29,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
     - PROVIDES: Root-level alias `p` for convenient access
 
     Usage:
-    from flext_tap_oracle.protocols import p
+    from flext_tap_oracle import p
 
     # Foundation protocols (inherited)
     result: p.Result[str]
