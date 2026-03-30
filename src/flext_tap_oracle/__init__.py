@@ -14,20 +14,21 @@ from typing import TYPE_CHECKING
 
 from flext_core.lazy import cleanup_submodule_namespace, lazy_getattr
 
+from flext_tap_oracle.__version__ import (
+    __author__,
+    __author_email__,
+    __description__,
+    __license__,
+    __title__,
+    __url__,
+    __version__,
+    __version_info__,
+)
+
 if TYPE_CHECKING:
     from flext_core import FlextTypes
     from flext_db_oracle import d, e, h, r, s, x
 
-    from flext_tap_oracle.__version__ import (
-        __author__,
-        __author_email__,
-        __description__,
-        __license__,
-        __title__,
-        __url__,
-        __version__,
-        __version_info__,
-    )
     from flext_tap_oracle._utilities._client import (
         FlextOracleConnectionTestService,
         FlextOracleDiscoveryService,
@@ -104,14 +105,6 @@ _LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
         "flext_tap_oracle._utilities._client",
         "FlextTapOracleUtilitiesClientMixin",
     ],
-    "__author__": ["flext_tap_oracle.__version__", "__author__"],
-    "__author_email__": ["flext_tap_oracle.__version__", "__author_email__"],
-    "__description__": ["flext_tap_oracle.__version__", "__description__"],
-    "__license__": ["flext_tap_oracle.__version__", "__license__"],
-    "__title__": ["flext_tap_oracle.__version__", "__title__"],
-    "__url__": ["flext_tap_oracle.__version__", "__url__"],
-    "__version__": ["flext_tap_oracle.__version__", "__version__"],
-    "__version_info__": ["flext_tap_oracle.__version__", "__version_info__"],
     "c": ["flext_tap_oracle.constants", "FlextTapOracleConstants"],
     "cli_api": ["flext_tap_oracle.tap", "cli_api"],
     "d": ["flext_db_oracle", "d"],
