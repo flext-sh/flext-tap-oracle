@@ -14,31 +14,11 @@ from typing import TYPE_CHECKING
 
 from flext_core.lazy import install_lazy_exports
 
-from flext_tap_oracle.__version__ import (
-    __author__,
-    __author_email__,
-    __description__,
-    __license__,
-    __title__,
-    __url__,
-    __version__,
-    __version_info__,
-)
+from flext_tap_oracle._utilities import _LAZY_IMPORTS as _CHILD_LAZY_0
 
 if TYPE_CHECKING:
-    from flext_db_oracle import *
-
-    from flext_tap_oracle import (
-        constants,
-        models,
-        protocols,
-        settings,
-        streams,
-        tap,
-        typings,
-        utilities,
-    )
-    from flext_tap_oracle._utilities._client import *
+    from flext_tap_oracle.__version__ import *
+    from flext_tap_oracle._utilities import *
     from flext_tap_oracle.constants import *
     from flext_tap_oracle.models import *
     from flext_tap_oracle.protocols import *
@@ -49,10 +29,7 @@ if TYPE_CHECKING:
     from flext_tap_oracle.utilities import *
 
 _LAZY_IMPORTS: Mapping[str, str | Sequence[str]] = {
-    "FlextOracleConnectionTestService": "flext_tap_oracle._utilities._client",
-    "FlextOracleDiscoveryService": "flext_tap_oracle._utilities._client",
-    "FlextOracleTableFilterService": "flext_tap_oracle._utilities._client",
-    "FlextOracleTapService": "flext_tap_oracle._utilities._client",
+    **_CHILD_LAZY_0,
     "FlextTapOracleCli": "flext_tap_oracle.tap",
     "FlextTapOracleConstants": "flext_tap_oracle.constants",
     "FlextTapOracleDiscoverCommand": "flext_tap_oracle.tap",
@@ -63,7 +40,15 @@ _LAZY_IMPORTS: Mapping[str, str | Sequence[str]] = {
     "FlextTapOracleSyncCommand": "flext_tap_oracle.tap",
     "FlextTapOracleTypes": "flext_tap_oracle.typings",
     "FlextTapOracleUtilities": "flext_tap_oracle.utilities",
-    "FlextTapOracleUtilitiesClientMixin": "flext_tap_oracle._utilities._client",
+    "__author__": "flext_tap_oracle.__version__",
+    "__author_email__": "flext_tap_oracle.__version__",
+    "__description__": "flext_tap_oracle.__version__",
+    "__license__": "flext_tap_oracle.__version__",
+    "__title__": "flext_tap_oracle.__version__",
+    "__url__": "flext_tap_oracle.__version__",
+    "__version__": "flext_tap_oracle.__version__",
+    "__version_info__": "flext_tap_oracle.__version__",
+    "_utilities": "flext_tap_oracle._utilities",
     "c": ["flext_tap_oracle.constants", "FlextTapOracleConstants"],
     "cli_api": "flext_tap_oracle.tap",
     "constants": "flext_tap_oracle.constants",
@@ -90,4 +75,4 @@ _LAZY_IMPORTS: Mapping[str, str | Sequence[str]] = {
 }
 
 
-install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, sorted(_LAZY_IMPORTS))
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS)
