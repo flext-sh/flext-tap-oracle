@@ -14,10 +14,21 @@ from typing import TYPE_CHECKING as _TYPE_CHECKING
 
 from flext_core.lazy import install_lazy_exports, merge_lazy_imports
 
+from flext_tap_oracle.__version__ import (
+    __author__,
+    __author_email__,
+    __description__,
+    __license__,
+    __title__,
+    __url__,
+    __version__,
+    __version_info__,
+)
+
 if _TYPE_CHECKING:
+    from flext_core import FlextTypes
     from flext_db_oracle import d, e, h, r, s, x
 
-    from flext_tap_oracle.__version__ import *
     from flext_tap_oracle._utilities import *
     from flext_tap_oracle.constants import *
     from flext_tap_oracle.models import *
@@ -41,14 +52,6 @@ _LAZY_IMPORTS: Mapping[str, str | Sequence[str]] = merge_lazy_imports(
         "FlextTapOracleSyncCommand": "flext_tap_oracle.tap",
         "FlextTapOracleTypes": "flext_tap_oracle.typings",
         "FlextTapOracleUtilities": "flext_tap_oracle.utilities",
-        "__author__": "flext_tap_oracle.__version__",
-        "__author_email__": "flext_tap_oracle.__version__",
-        "__description__": "flext_tap_oracle.__version__",
-        "__license__": "flext_tap_oracle.__version__",
-        "__title__": "flext_tap_oracle.__version__",
-        "__url__": "flext_tap_oracle.__version__",
-        "__version__": "flext_tap_oracle.__version__",
-        "__version_info__": "flext_tap_oracle.__version__",
         "_utilities": "flext_tap_oracle._utilities",
         "c": ("flext_tap_oracle.constants", "FlextTapOracleConstants"),
         "cli_api": "flext_tap_oracle.tap",
@@ -77,4 +80,18 @@ _LAZY_IMPORTS: Mapping[str, str | Sequence[str]] = merge_lazy_imports(
 )
 
 
-install_lazy_exports(__name__, globals(), _LAZY_IMPORTS)
+install_lazy_exports(
+    __name__,
+    globals(),
+    _LAZY_IMPORTS,
+    [
+        "__author__",
+        "__author_email__",
+        "__description__",
+        "__license__",
+        "__title__",
+        "__url__",
+        "__version__",
+        "__version_info__",
+    ],
+)
