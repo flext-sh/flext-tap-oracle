@@ -26,7 +26,7 @@ if _TYPE_CHECKING:
     from tests.constants import *
     from tests.models import *
     from tests.protocols import *
-    from tests.test_enterprise_tap import *
+    from tests.test_enterprise_tap import TestFlextOracleTapSettingsAndHelpers
     from tests.typings import *
     from tests.utilities import *
 
