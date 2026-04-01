@@ -29,15 +29,49 @@ if _TYPE_CHECKING:
     from flext_core import FlextTypes
     from flext_db_oracle import d, e, h, r, s, x
 
-    from flext_tap_oracle._utilities import *
-    from flext_tap_oracle.constants import *
-    from flext_tap_oracle.models import *
-    from flext_tap_oracle.protocols import *
-    from flext_tap_oracle.settings import *
-    from flext_tap_oracle.streams import *
-    from flext_tap_oracle.tap import *
-    from flext_tap_oracle.typings import *
-    from flext_tap_oracle.utilities import *
+    from flext_tap_oracle import (
+        _utilities,
+        constants,
+        models,
+        protocols,
+        settings,
+        streams,
+        tap,
+        typings,
+        utilities,
+    )
+    from flext_tap_oracle._utilities import (
+        FlextOracleConnectionTestService,
+        FlextOracleDiscoveryService,
+        FlextOracleTableFilterService,
+        FlextOracleTapService,
+        FlextTapOracleUtilitiesClientMixin,
+    )
+    from flext_tap_oracle.constants import (
+        FlextTapOracleConstants,
+        FlextTapOracleConstants as c,
+    )
+    from flext_tap_oracle.models import FlextTapOracleModels, FlextTapOracleModels as m
+    from flext_tap_oracle.protocols import (
+        FlextTapOracleProtocols,
+        FlextTapOracleProtocols as p,
+    )
+    from flext_tap_oracle.settings import FlextTapOracleSettings
+    from flext_tap_oracle.streams import FlextTapOracleStreams
+    from flext_tap_oracle.tap import (
+        FlextTapOracleCli,
+        FlextTapOracleDiscoverCommand,
+        FlextTapOracleSyncCommand,
+        cli_api,
+        logger,
+        main,
+        run_cli,
+    )
+    from flext_tap_oracle.typings import FlextTapOracleTypes, FlextTapOracleTypes as t
+    from flext_tap_oracle.utilities import (
+        FlextTapOracleUtilities,
+        FlextTapOracleUtilities as u,
+    )
 
 _LAZY_IMPORTS: Mapping[str, str | Sequence[str]] = merge_lazy_imports(
     ("flext_tap_oracle._utilities",),

@@ -17,7 +17,14 @@ from flext_core.lazy import install_lazy_exports
 if _TYPE_CHECKING:
     from flext_core import FlextTypes
 
-    from flext_tap_oracle._utilities._client import *
+    from flext_tap_oracle._utilities import _client
+    from flext_tap_oracle._utilities._client import (
+        FlextOracleConnectionTestService,
+        FlextOracleDiscoveryService,
+        FlextOracleTableFilterService,
+        FlextOracleTapService,
+        FlextTapOracleUtilitiesClientMixin,
+    )
 
 _LAZY_IMPORTS: Mapping[str, str | Sequence[str]] = {
     "FlextOracleConnectionTestService": "flext_tap_oracle._utilities._client",

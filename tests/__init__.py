@@ -22,13 +22,54 @@ if _TYPE_CHECKING:
     from flext_core import FlextTypes
     from flext_tests import d, e, h, r, s, x
 
-    from tests.conftest import *
-    from tests.constants import *
-    from tests.models import *
-    from tests.protocols import *
+    from tests import (
+        conftest,
+        constants,
+        models,
+        protocols,
+        test_enterprise_tap,
+        typings,
+        utilities,
+    )
+    from tests.conftest import (
+        discovery_config,
+        docker_control,
+        error_scenarios,
+        mock_oracle_connection,
+        mock_oracle_tap,
+        oracle_queries,
+        oracle_shared_container_environment,
+        oracle_tap,
+        oracle_tap_config,
+        performance_test_config,
+        pytest_configure,
+        sample_oracle_data,
+        sample_oracle_tables,
+        set_test_environment,
+        shared_oracle_container,
+        singer_catalog,
+        singer_record_messages,
+        singer_schema_message,
+        singer_state,
+        singer_state_message,
+        skip_e2e_if_no_oracle,
+        stream_config,
+    )
+    from tests.constants import (
+        FlextTapOracleTestConstants,
+        FlextTapOracleTestConstants as c,
+    )
+    from tests.models import FlextTapOracleTestModels, FlextTapOracleTestModels as m
+    from tests.protocols import (
+        FlextTapOracleTestProtocols,
+        FlextTapOracleTestProtocols as p,
+    )
     from tests.test_enterprise_tap import TestFlextOracleTapSettingsAndHelpers
-    from tests.typings import *
-    from tests.utilities import *
+    from tests.typings import FlextTapOracleTestTypes, FlextTapOracleTestTypes as t
+    from tests.utilities import (
+        FlextTapOracleTestUtilities,
+        FlextTapOracleTestUtilities as u,
+    )
 
 _LAZY_IMPORTS: Mapping[str, str | Sequence[str]] = {
     "FlextTapOracleTestConstants": "tests.constants",
