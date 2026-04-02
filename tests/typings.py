@@ -13,7 +13,7 @@ from typing import Literal
 from flext_core import FlextTypes
 from flext_tests import FlextTestsTypes
 
-from flext_tap_oracle import FlextTapOracleConstants as _c, FlextTapOracleTypes
+from flext_tap_oracle import FlextTapOracleTypes
 
 
 class FlextTapOracleTestTypes(FlextTestsTypes, FlextTapOracleTypes):
@@ -42,10 +42,7 @@ class FlextTapOracleTestTypes(FlextTestsTypes, FlextTapOracleTypes):
         - Test scenario types
         """
 
-        type TestOracleHost = _c.TapOracle.TestOracleHost
         type TestOraclePort = Literal[1521, 10521, 1522]
-        type TestServiceName = _c.TapOracle.TestServiceName
-        type TestReplicationMethod = _c.TapOracle.TestReplicationMethod
         type MockOracleRecord = Mapping[str, FlextTypes.Scalar]
         type MockOracleTable = Sequence[MockOracleRecord]
         type TestScenario = t.ContainerMapping

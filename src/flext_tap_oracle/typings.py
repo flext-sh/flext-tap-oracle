@@ -14,8 +14,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping
-
 from flext_db_oracle import FlextDbOracleTypes
 from flext_meltano import FlextMeltanoTypes
 
@@ -37,7 +35,7 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
         class Summary:
             """Summary and reporting complex types."""
 
-            type SummaryData = Mapping[str, FlextDbOracleTypes.NormalizedValue]
+            type SummaryData = FlextDbOracleTypes.ContainerValueMapping
             type OracleValue = FlextDbOracleTypes.ValueOrModel | None
 
 
