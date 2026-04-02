@@ -21,15 +21,11 @@ from flext_meltano import FlextMeltanoTypes
 
 
 class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
-    """Oracle tap-specific type definitions extending t.
+    """MRO facade composing Meltano + DbOracle type namespaces.
 
-    Domain-specific type system for Oracle database extraction operations.
-    Contains ONLY complex Oracle tap-specific types, no simple aliases.
-    Uses Python 3.13+ type syntax and patterns.
+    Access: ``t.Meltano.*`` (Singer protocol), ``t.DbOracle.*`` (Oracle domain),
+    and all core ``t.*`` types via MRO inheritance.
     """
-
-    class Project(FlextMeltanoTypes.Meltano.Project):
-        """Unified project types resolving MRO between Meltano and DbOracle."""
 
     class TapOracle:
         """Tap Oracle namespace for type definitions.

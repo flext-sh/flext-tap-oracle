@@ -8,14 +8,13 @@ from typing import override
 
 import pytest
 from flext_core import FlextResult
-from flext_db_oracle import FlextDbOracleModels
 
 from flext_tap_oracle import (
     FlextOracleDiscoveryService,
     FlextOracleTableFilterService,
     FlextTapOracleSettings,
 )
-from flext_tap_oracle import FlextTapOracleSettings
+from tests import m
 
 
 class _DiscoveryStub(FlextOracleDiscoveryService):
@@ -24,15 +23,15 @@ class _DiscoveryStub(FlextOracleDiscoveryService):
         pass
 
     @override
-    def execute(self) -> FlextResult[Sequence[FlextDbOracleModels.DbOracle.Table]]:
-        return FlextResult[Sequence[FlextDbOracleModels.DbOracle.Table]].ok([
-            FlextDbOracleModels.DbOracle.Table(
+    def execute(self) -> FlextResult[Sequence[m.DbOracle.Table]]:
+        return FlextResult[Sequence[m.DbOracle.Table]].ok([
+            m.DbOracle.Table(
                 name="USERS", owner="TESTDB", domain_events=[], columns=[]
             ),
-            FlextDbOracleModels.DbOracle.Table(
+            m.DbOracle.Table(
                 name="ORDERS", owner="TESTDB", domain_events=[], columns=[]
             ),
-            FlextDbOracleModels.DbOracle.Table(
+            m.DbOracle.Table(
                 name="PRODUCTS", owner="TESTDB", domain_events=[], columns=[]
             ),
         ])

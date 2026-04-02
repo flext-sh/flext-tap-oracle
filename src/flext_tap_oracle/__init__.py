@@ -31,6 +31,7 @@ if _TYPE_CHECKING:
 
     from flext_tap_oracle import (
         _utilities,
+        api,
         constants,
         models,
         protocols,
@@ -47,6 +48,7 @@ if _TYPE_CHECKING:
         FlextOracleTapService,
         FlextTapOracleUtilitiesClientMixin,
     )
+    from flext_tap_oracle.api import FlextTapOracleService
     from flext_tap_oracle.constants import (
         FlextTapOracleConstants,
         FlextTapOracleConstants as c,
@@ -81,12 +83,14 @@ _LAZY_IMPORTS: Mapping[str, str | Sequence[str]] = merge_lazy_imports(
         "FlextTapOracleDiscoverCommand": "flext_tap_oracle.tap",
         "FlextTapOracleModels": "flext_tap_oracle.models",
         "FlextTapOracleProtocols": "flext_tap_oracle.protocols",
+        "FlextTapOracleService": "flext_tap_oracle.api",
         "FlextTapOracleSettings": "flext_tap_oracle.settings",
         "FlextTapOracleStreams": "flext_tap_oracle.streams",
         "FlextTapOracleSyncCommand": "flext_tap_oracle.tap",
         "FlextTapOracleTypes": "flext_tap_oracle.typings",
         "FlextTapOracleUtilities": "flext_tap_oracle.utilities",
         "_utilities": "flext_tap_oracle._utilities",
+        "api": "flext_tap_oracle.api",
         "c": ("flext_tap_oracle.constants", "FlextTapOracleConstants"),
         "cli_api": "flext_tap_oracle.tap",
         "constants": "flext_tap_oracle.constants",
