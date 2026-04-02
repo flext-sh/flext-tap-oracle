@@ -14,7 +14,6 @@ from typing import override
 
 from flext_core import FlextLogger, FlextService, r
 from flext_db_oracle import FlextDbOracleApi, FlextDbOracleModels, FlextDbOracleSettings
-
 from flext_tap_oracle import FlextTapOracleSettings, c, t
 
 logger = FlextLogger(__name__)

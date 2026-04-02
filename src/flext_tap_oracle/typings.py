@@ -14,6 +14,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from pydantic import TypeAdapter
+
 from flext_db_oracle import FlextDbOracleTypes
 from flext_meltano import FlextMeltanoTypes
 
@@ -24,6 +26,10 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
     Access: ``t.Meltano.*`` (Singer protocol), ``t.DbOracle.*`` (Oracle domain),
     and all core ``t.*`` types via MRO inheritance.
     """
+
+    GENERAL_VALUE_MAP_ADAPTER: TypeAdapter[FlextMeltanoTypes.GeneralValueMapping] = (
+        TypeAdapter(FlextMeltanoTypes.GeneralValueMapping)
+    )
 
     class TapOracle:
         """Tap Oracle namespace for type definitions.

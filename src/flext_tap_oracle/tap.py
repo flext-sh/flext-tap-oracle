@@ -15,13 +15,7 @@ from pathlib import Path
 
 from flext_core import FlextLogger, r
 from flext_meltano import FlextMeltanoAbstractions
-from pydantic import TypeAdapter
-
 from flext_tap_oracle import FlextTapOracleSettings, c, m, p, t
-
-_GENERAL_VALUE_MAP_ADAPTER: TypeAdapter[t.GeneralValueMapping] = TypeAdapter(
-    t.GeneralValueMapping,
-)
 
 logger = FlextLogger(__name__)
 cli_api = FlextMeltanoAbstractions()
@@ -61,7 +55,9 @@ class FlextTapOracleDiscoverCommand:
             if self.params.output_file:
                 output_path = Path(self.params.output_file)
                 output_path.write_text(
-                    _GENERAL_VALUE_MAP_ADAPTER.dump_json(catalog_dict, indent=2).decode(
+                    t.GENERAL_VALUE_MAP_ADAPTER.dump_json(
+                        catalog_dict, indent=2
+                    ).decode(
                         "utf-8",
                     ),
                     encoding="utf-8",

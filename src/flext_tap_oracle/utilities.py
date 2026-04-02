@@ -15,10 +15,9 @@ from collections.abc import Mapping, MutableMapping, MutableSequence, Sequence
 from datetime import UTC, datetime
 from typing import Literal
 
-from flext_core import FlextContainer, FlextExceptions, FlextLogger, p, r
+from flext_core import FlextExceptions, r
 from flext_db_oracle import FlextDbOracleModels, FlextDbOracleUtilities
 from flext_meltano import FlextMeltanoUtilities
-
 from flext_tap_oracle import FlextTapOracleUtilitiesClientMixin, c, m, t
 
 
@@ -41,42 +40,6 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
         """Tap Oracle namespace for cross-project access."""
 
         Client = FlextTapOracleUtilitiesClientMixin.TapOracle.Client
-
-        def __init__(self) -> None:
-            """Initialize FlextTapOracleUtilities service."""
-            super().__init__()
-            self._container = FlextContainer.get_global()
-            self._logger = FlextLogger(__name__)
-
-        @property
-        def container(self) -> p.Container:
-            """Get container instance."""
-            return self._container
-
-        @property
-        def logger(self) -> FlextLogger:
-            """Get logger instance."""
-            return self._logger
-
-        def execute(self) -> r[Mapping[str, t.GeneralValueType]]:
-            """Execute the main domain service operation.
-
-            Returns:
-            r[Mapping[str, t.GeneralValueType]]: Service status and capabilities.
-
-            """
-            return r[t.GeneralValueMapping].ok({
-                "status": "operational",
-                "service": "flext-tap-oracle-utilities",
-                "capabilities": [
-                    "error_handling",
-                    "stream_management",
-                    "discovery_operations",
-                    "configuration_validation",
-                    "performance_optimization",
-                    "data_extraction",
-                ],
-            })
 
         class ErrorHandling:
             """Oracle tap error handling utilities."""

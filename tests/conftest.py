@@ -18,9 +18,9 @@ from collections.abc import Generator, Mapping, Sequence
 from typing import TypeIs, override
 
 import pytest
-from flext_core import r
 from flext_tests import tk
 
+from flext_core import r
 from flext_tap_oracle import FlextOracleTapService, FlextTapOracleSettings
 from tests import t
 

@@ -11,9 +11,6 @@ from collections.abc import MutableMapping, MutableSequence, Sequence
 from datetime import datetime
 from typing import Annotated, Literal, Self
 
-from flext_core import r
-from flext_db_oracle import FlextDbOracleModels
-from flext_meltano import FlextMeltanoModels
 from pydantic import (
     Field,
     computed_field,
@@ -21,6 +18,9 @@ from pydantic import (
     model_validator,
 )
 
+from flext_core import r
+from flext_db_oracle import FlextDbOracleModels
+from flext_meltano import FlextMeltanoModels
 from flext_tap_oracle import c, t
 
 

@@ -10,9 +10,9 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import Literal
 
-from flext_core import FlextTypes
 from flext_tests import FlextTestsTypes
 
+from flext_core import FlextTypes
 from flext_tap_oracle import FlextTapOracleTypes
 
 

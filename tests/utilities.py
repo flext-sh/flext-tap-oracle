@@ -9,9 +9,9 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
-from flext_core import FlextTypes as _t
 from flext_tests import FlextTestsUtilities
 
+from flext_core import FlextTypes as _t
 from flext_tap_oracle import FlextTapOracleUtilities
 from tests import t
 

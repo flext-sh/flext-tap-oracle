@@ -12,7 +12,6 @@ from typing import Protocol, runtime_checkable
 from flext_core import r
 from flext_db_oracle import FlextDbOracleProtocols
 from flext_meltano import FlextMeltanoProtocols, m
-
 from flext_tap_oracle import t
 
 

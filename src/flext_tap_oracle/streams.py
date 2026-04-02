@@ -11,7 +11,6 @@ from datetime import datetime
 
 from flext_core import FlextLogger, r
 from flext_db_oracle import FlextDbOracleApi
-
 from flext_tap_oracle import c, p, t, u
 
 

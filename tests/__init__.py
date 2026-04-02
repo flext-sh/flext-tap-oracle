@@ -19,9 +19,9 @@ from typing import TYPE_CHECKING as _TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if _TYPE_CHECKING:
-    from flext_core import FlextTypes
     from flext_tests import d, e, h, r, s, x
 
+    from flext_core import FlextTypes
     from tests import (
         conftest,
         constants,
@@ -71,7 +71,7 @@ if _TYPE_CHECKING:
         FlextTapOracleTestUtilities as u,
     )
 
-_LAZY_IMPORTS: Mapping[str, str | Sequence[str]] = {
+_LAZY_IMPORTS: FlextTypes.LazyImportIndex = {
     "FlextTapOracleTestConstants": "tests.constants",
     "FlextTapOracleTestModels": "tests.models",
     "FlextTapOracleTestProtocols": "tests.protocols",
