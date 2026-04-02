@@ -30,6 +30,9 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
     GENERAL_VALUE_MAP_ADAPTER: TypeAdapter[FlextMeltanoTypes.GeneralValueMapping] = (
         TypeAdapter(FlextMeltanoTypes.GeneralValueMapping)
     )
+    INTEGER_ADAPTER: TypeAdapter[FlextMeltanoTypes.IntegerValue] = TypeAdapter(
+        FlextMeltanoTypes.IntegerValue
+    )
 
     class TapOracle:
         """Tap Oracle namespace for type definitions.

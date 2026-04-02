@@ -139,7 +139,7 @@ class FlextTapOracleUtilitiesClientMixin:
                     self.tap_config = tap_config
                     self.discovery_service = discovery_service
 
-                def execute(self) -> r[Sequence[str]]:
+                def execute(self) -> r[t.StrSequence]:
                     """Execute table filtering based on tap configuration."""
                     try:
                         tap_configuration: t.ConfigurationMapping = (
@@ -149,14 +149,14 @@ class FlextTapOracleUtilitiesClientMixin:
                             tap_configuration.get("tables_filter")
                         )
                         if isinstance(tables_filter, list) and tables_filter:
-                            tables_filter_list: Sequence[str] = list(
+                            tables_filter_list: t.StrSequence = list(
                                 map(str, tables_filter),
                             )
                             logger.info(
                                 "Using configured table filter: %s",
                                 ", ".join(tables_filter_list),
                             )
-                            return r[Sequence[str]].ok(tables_filter_list)
+                            return r[t.StrSequence].ok(tables_filter_list)
                         tables_result = self.discovery_service.execute()
                         if tables_result.is_failure:
                             error_msg = tables_result.error or "Table discovery failed"
@@ -164,21 +164,21 @@ class FlextTapOracleUtilitiesClientMixin:
                                 "Table discovery failed: %s",
                                 error_msg,
                             )
-                            return r[Sequence[str]].fail(error_msg)
+                            return r[t.StrSequence].fail(error_msg)
                         if not tables_result.value:
-                            return r[Sequence[str]].fail(
+                            return r[t.StrSequence].fail(
                                 "No Oracle tables discovered",
                             )
                         discovered_tables: Sequence[
                             FlextDbOracleModels.DbOracle.Table
                         ] = tables_result.value
-                        table_names: Sequence[str] = [
+                        table_names: t.StrSequence = [
                             table.name for table in discovered_tables
                         ]
                         exclude_tables_raw: t.Scalar | t.ScalarList | None = (
                             tap_configuration.get("exclude_tables")
                         )
-                        exclude_tables: Sequence[str] = []
+                        exclude_tables: t.StrSequence = []
                         if isinstance(exclude_tables_raw, list):
                             exclude_tables = list(map(str, exclude_tables_raw))
                         if exclude_tables:
@@ -192,16 +192,16 @@ class FlextTapOracleUtilitiesClientMixin:
                                 len(exclude_tables),
                                 len(filtered_tables),
                             )
-                            return r[Sequence[str]].ok(filtered_tables)
+                            return r[t.StrSequence].ok(filtered_tables)
                         logger.info(
                             "No table exclusions configured, using all %d tables",
                             len(table_names),
                         )
-                        return r[Sequence[str]].ok(table_names)
+                        return r[t.StrSequence].ok(table_names)
                     except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
                         logger.exception("Table filtering error")
                         error_msg = f"Table filtering error: {e}"
-                        return r[Sequence[str]].fail(error_msg)
+                        return r[t.StrSequence].fail(error_msg)
 
             class TapService(
                 FlextService[Sequence[FlextDbOracleModels.DbOracle.Table]],
@@ -288,7 +288,7 @@ class FlextTapOracleUtilitiesClientMixin:
                     """Execute Oracle tap service - discover tables."""
                     return self._discovery_service.execute()
 
-                def get_filtered_tables(self) -> r[Sequence[str]]:
+                def get_filtered_tables(self) -> r[t.StrSequence]:
                     """Get filtered table list using domain service."""
                     return self._table_filter_service.execute()
 

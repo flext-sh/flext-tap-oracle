@@ -10,7 +10,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import MutableMapping, Sequence
 from typing import Annotated
 
 from pydantic import Field, SecretStr
@@ -104,10 +103,8 @@ class FlextTapOracleSettings(FlextSettings):
 
         """
         try:
-            tap_config: MutableMapping[str, t.Scalar] = (
-                dict(tap_params) if tap_params else {}
-            )
-            meltano_config: MutableMapping[str, t.Scalar] = (
+            tap_config: t.MutableScalarMapping = dict(tap_params) if tap_params else {}
+            meltano_config: t.MutableScalarMapping = (
                 dict(meltano_params) if meltano_params else {}
             )
             tap_config.setdefault("batch_size", 1000)
@@ -133,6 +130,6 @@ class FlextTapOracleSettings(FlextSettings):
         return config.validate_business_rules()
 
 
-__all__: Sequence[str] = [
+__all__: t.StrSequence = [
     "FlextTapOracleSettings",
 ]

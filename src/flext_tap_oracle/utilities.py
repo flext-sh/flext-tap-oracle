@@ -15,6 +15,8 @@ from collections.abc import Mapping, MutableMapping, MutableSequence, Sequence
 from datetime import UTC, datetime
 from typing import Literal
 
+from pydantic import ValidationError
+
 from flext_core import FlextExceptions, r
 from flext_db_oracle import FlextDbOracleModels, FlextDbOracleUtilities
 from flext_meltano import FlextMeltanoUtilities
@@ -210,13 +212,15 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                             )
                     max_port = c.TapOracle.MAX_PORT_NUMBER
                     try:
-                        port = int(str(validated_config["port"]))
+                        port = t.INTEGER_ADAPTER.validate_python(
+                            validated_config["port"]
+                        )
                         if port <= 0 or port > max_port:
                             return r[t.GeneralValueMapping].fail(
                                 f"Oracle port must be between 1 and {max_port}",
                             )
                         validated_config["port"] = port
-                    except ValueError:
+                    except ValidationError:
                         return r[t.GeneralValueMapping].fail(
                             "Oracle port must be numeric",
                         )
@@ -277,7 +281,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                 try:
                     optimized_query = base_query
                     row_count = table_stats.get("row_count", 0)
-                    if isinstance(row_count, int | float):
+                    if isinstance(row_count, t.Numeric):
                         numeric_row_count = float(row_count)
                         if numeric_row_count > c.TapOracle.LARGE_TABLE_THRESHOLD:
                             optimized_query = f"/*+ PARALLEL(4) */ {optimized_query}"
