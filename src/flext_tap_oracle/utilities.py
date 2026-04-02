@@ -281,7 +281,10 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                 try:
                     optimized_query = base_query
                     row_count = table_stats.get("row_count", 0)
-                    if isinstance(row_count, t.Numeric):
+                    if isinstance(row_count, t.NUMERIC_TYPES) and not isinstance(
+                        row_count,
+                        bool,
+                    ):
                         numeric_row_count = float(row_count)
                         if numeric_row_count > c.TapOracle.LARGE_TABLE_THRESHOLD:
                             optimized_query = f"/*+ PARALLEL(4) */ {optimized_query}"

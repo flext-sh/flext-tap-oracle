@@ -26,7 +26,12 @@ from flext_tap_oracle.__version__ import (
 
 if _TYPE_CHECKING:
     from flext_core import FlextTypes
-    from flext_db_oracle import d, e, h, r, s, x
+    from flext_core.decorators import FlextDecorators as d
+    from flext_core.handlers import FlextHandlers as h
+    from flext_core.mixins import FlextMixins as x
+    from flext_core.result import FlextResult as r
+    from flext_core.service import FlextService as s
+    from flext_db_oracle.exceptions import FlextDbOracleExceptions as e
     from flext_tap_oracle import (
         _utilities,
         api,
@@ -92,18 +97,18 @@ _LAZY_IMPORTS: FlextTypes.LazyImportIndex = merge_lazy_imports(
         "c": ("flext_tap_oracle.constants", "FlextTapOracleConstants"),
         "cli_api": "flext_tap_oracle.tap",
         "constants": "flext_tap_oracle.constants",
-        "d": "flext_db_oracle",
-        "e": "flext_db_oracle",
-        "h": "flext_db_oracle",
+        "d": ("flext_core.decorators", "FlextDecorators"),
+        "e": ("flext_db_oracle.exceptions", "FlextDbOracleExceptions"),
+        "h": ("flext_core.handlers", "FlextHandlers"),
         "logger": "flext_tap_oracle.tap",
         "m": ("flext_tap_oracle.models", "FlextTapOracleModels"),
         "main": "flext_tap_oracle.tap",
         "models": "flext_tap_oracle.models",
         "p": ("flext_tap_oracle.protocols", "FlextTapOracleProtocols"),
         "protocols": "flext_tap_oracle.protocols",
-        "r": "flext_db_oracle",
+        "r": ("flext_core.result", "FlextResult"),
         "run_cli": "flext_tap_oracle.tap",
-        "s": "flext_db_oracle",
+        "s": ("flext_core.service", "FlextService"),
         "settings": "flext_tap_oracle.settings",
         "streams": "flext_tap_oracle.streams",
         "t": ("flext_tap_oracle.typings", "FlextTapOracleTypes"),
@@ -111,7 +116,7 @@ _LAZY_IMPORTS: FlextTypes.LazyImportIndex = merge_lazy_imports(
         "typings": "flext_tap_oracle.typings",
         "u": ("flext_tap_oracle.utilities", "FlextTapOracleUtilities"),
         "utilities": "flext_tap_oracle.utilities",
-        "x": "flext_db_oracle",
+        "x": ("flext_core.mixins", "FlextMixins"),
     },
 )
 

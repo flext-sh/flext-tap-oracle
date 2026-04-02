@@ -44,7 +44,7 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
         class Summary:
             """Summary and reporting complex types."""
 
-            type SummaryData = FlextDbOracleTypes.ContainerValueMapping
+            type SummaryData = FlextDbOracleTypes.ContainerMapping
             type OracleValue = FlextDbOracleTypes.ValueOrModel | None
 
 

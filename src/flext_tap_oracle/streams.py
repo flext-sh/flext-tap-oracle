@@ -73,7 +73,10 @@ class FlextTapOracleStreams:
                     result_rows: Sequence[t.Dict] = result.value
                     first_row: t.Dict = result_rows[0]
                     first_val = next(iter(first_row.root.values()), None)
-                    if isinstance(first_val, t.Numeric):
+                    if isinstance(first_val, t.NUMERIC_TYPES) and not isinstance(
+                        first_val,
+                        bool,
+                    ):
                         return int(first_val)
                     match first_val:
                         case str() as first_str:
