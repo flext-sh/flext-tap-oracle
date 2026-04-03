@@ -1,11 +1,7 @@
 # AUTO-GENERATED FILE — DO NOT EDIT MANUALLY.
 # Regenerate with: make gen
 #
-"""FLEXT Tap Oracle Utilities - Internal subpackage.
-
-Copyright (c) 2025 FLEXT Contributors
-SPDX-License-Identifier: MIT
-"""
+"""Utilities package."""
 
 from __future__ import annotations
 
