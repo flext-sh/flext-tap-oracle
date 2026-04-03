@@ -13,14 +13,12 @@ if _t.TYPE_CHECKING:
     import flext_tap_oracle._utilities._client as _flext_tap_oracle__utilities__client
 
     _client = _flext_tap_oracle__utilities__client
-
-    _ = (
+    from flext_tap_oracle._utilities._client import (
         FlextOracleConnectionTestService,
         FlextOracleDiscoveryService,
         FlextOracleTableFilterService,
         FlextOracleTapService,
         FlextTapOracleUtilitiesClientMixin,
-        _client,
     )
 _LAZY_IMPORTS = {
     "FlextOracleConnectionTestService": "flext_tap_oracle._utilities._client",
