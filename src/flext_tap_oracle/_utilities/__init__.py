@@ -5,23 +5,24 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
-from typing import TYPE_CHECKING as _TYPE_CHECKING
+import typing as _t
 
 from flext_core.lazy import install_lazy_exports
 
-if _TYPE_CHECKING:
-    from flext_core import FlextTypes
-    from flext_tap_oracle._utilities import _client
-    from flext_tap_oracle._utilities._client import (
+if _t.TYPE_CHECKING:
+    import flext_tap_oracle._utilities._client as _flext_tap_oracle__utilities__client
+
+    _client = _flext_tap_oracle__utilities__client
+
+    _ = (
         FlextOracleConnectionTestService,
         FlextOracleDiscoveryService,
         FlextOracleTableFilterService,
         FlextOracleTapService,
         FlextTapOracleUtilitiesClientMixin,
+        _client,
     )
-
-_LAZY_IMPORTS: FlextTypes.LazyImportIndex = {
+_LAZY_IMPORTS = {
     "FlextOracleConnectionTestService": "flext_tap_oracle._utilities._client",
     "FlextOracleDiscoveryService": "flext_tap_oracle._utilities._client",
     "FlextOracleTableFilterService": "flext_tap_oracle._utilities._client",
@@ -29,6 +30,15 @@ _LAZY_IMPORTS: FlextTypes.LazyImportIndex = {
     "FlextTapOracleUtilitiesClientMixin": "flext_tap_oracle._utilities._client",
     "_client": "flext_tap_oracle._utilities._client",
 }
+
+__all__ = [
+    "FlextOracleConnectionTestService",
+    "FlextOracleDiscoveryService",
+    "FlextOracleTableFilterService",
+    "FlextOracleTapService",
+    "FlextTapOracleUtilitiesClientMixin",
+    "_client",
+]
 
 
 install_lazy_exports(__name__, globals(), _LAZY_IMPORTS)

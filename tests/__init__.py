@@ -5,40 +5,108 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
-from typing import TYPE_CHECKING as _TYPE_CHECKING
+import typing as _t
 
+from flext_core.decorators import FlextDecorators as d
+from flext_core.exceptions import FlextExceptions as e
+from flext_core.handlers import FlextHandlers as h
 from flext_core.lazy import install_lazy_exports
+from flext_core.mixins import FlextMixins as x
+from flext_core.result import FlextResult as r
+from flext_core.service import FlextService as s
+from tests.conftest import (
+    discovery_config,
+    docker_control,
+    error_scenarios,
+    mock_oracle_connection,
+    mock_oracle_tap,
+    oracle_queries,
+    oracle_shared_container_environment,
+    oracle_tap,
+    oracle_tap_config,
+    performance_test_config,
+    pytest_configure,
+    sample_oracle_data,
+    sample_oracle_tables,
+    set_test_environment,
+    shared_oracle_container,
+    singer_catalog,
+    singer_record_messages,
+    singer_schema_message,
+    singer_state,
+    singer_state_message,
+    skip_e2e_if_no_oracle,
+    stream_config,
+)
+from tests.constants import (
+    FlextTapOracleTestConstants,
+    FlextTapOracleTestConstants as c,
+)
+from tests.models import FlextTapOracleTestModels, FlextTapOracleTestModels as m
+from tests.protocols import (
+    FlextTapOracleTestProtocols,
+    FlextTapOracleTestProtocols as p,
+)
+from tests.test_enterprise_tap import TestFlextOracleTapSettingsAndHelpers
+from tests.typings import FlextTapOracleTestTypes, FlextTapOracleTestTypes as t
+from tests.utilities import (
+    FlextTapOracleTestUtilities,
+    FlextTapOracleTestUtilities as u,
+)
 
-if _TYPE_CHECKING:
-    from flext_core import FlextTypes
-    from flext_core.decorators import FlextDecorators as d
-    from flext_core.exceptions import FlextExceptions as e
-    from flext_core.handlers import FlextHandlers as h
-    from flext_core.mixins import FlextMixins as x
-    from flext_core.result import FlextResult as r
-    from flext_core.service import FlextService as s
-    from tests import (
+if _t.TYPE_CHECKING:
+    import tests.conftest as _tests_conftest
+
+    conftest = _tests_conftest
+    import tests.constants as _tests_constants
+
+    constants = _tests_constants
+    import tests.models as _tests_models
+
+    models = _tests_models
+    import tests.protocols as _tests_protocols
+
+    protocols = _tests_protocols
+    import tests.test_enterprise_tap as _tests_test_enterprise_tap
+
+    test_enterprise_tap = _tests_test_enterprise_tap
+    import tests.typings as _tests_typings
+
+    typings = _tests_typings
+    import tests.utilities as _tests_utilities
+
+    utilities = _tests_utilities
+
+    _ = (
+        FlextTapOracleTestConstants,
+        FlextTapOracleTestModels,
+        FlextTapOracleTestProtocols,
+        FlextTapOracleTestTypes,
+        FlextTapOracleTestUtilities,
+        TestFlextOracleTapSettingsAndHelpers,
+        c,
         conftest,
         constants,
-        models,
-        protocols,
-        test_enterprise_tap,
-        typings,
-        utilities,
-    )
-    from tests.conftest import (
+        d,
         discovery_config,
         docker_control,
+        e,
         error_scenarios,
+        h,
+        m,
         mock_oracle_connection,
         mock_oracle_tap,
+        models,
         oracle_queries,
         oracle_shared_container_environment,
         oracle_tap,
         oracle_tap_config,
+        p,
         performance_test_config,
+        protocols,
         pytest_configure,
+        r,
+        s,
         sample_oracle_data,
         sample_oracle_tables,
         set_test_environment,
@@ -50,24 +118,14 @@ if _TYPE_CHECKING:
         singer_state_message,
         skip_e2e_if_no_oracle,
         stream_config,
+        t,
+        test_enterprise_tap,
+        typings,
+        u,
+        utilities,
+        x,
     )
-    from tests.constants import (
-        FlextTapOracleTestConstants,
-        FlextTapOracleTestConstants as c,
-    )
-    from tests.models import FlextTapOracleTestModels, FlextTapOracleTestModels as m
-    from tests.protocols import (
-        FlextTapOracleTestProtocols,
-        FlextTapOracleTestProtocols as p,
-    )
-    from tests.test_enterprise_tap import TestFlextOracleTapSettingsAndHelpers
-    from tests.typings import FlextTapOracleTestTypes, FlextTapOracleTestTypes as t
-    from tests.utilities import (
-        FlextTapOracleTestUtilities,
-        FlextTapOracleTestUtilities as u,
-    )
-
-_LAZY_IMPORTS: FlextTypes.LazyImportIndex = {
+_LAZY_IMPORTS = {
     "FlextTapOracleTestConstants": "tests.constants",
     "FlextTapOracleTestModels": "tests.models",
     "FlextTapOracleTestProtocols": "tests.protocols",
@@ -115,6 +173,55 @@ _LAZY_IMPORTS: FlextTypes.LazyImportIndex = {
     "utilities": "tests.utilities",
     "x": ("flext_core.mixins", "FlextMixins"),
 }
+
+__all__ = [
+    "FlextTapOracleTestConstants",
+    "FlextTapOracleTestModels",
+    "FlextTapOracleTestProtocols",
+    "FlextTapOracleTestTypes",
+    "FlextTapOracleTestUtilities",
+    "TestFlextOracleTapSettingsAndHelpers",
+    "c",
+    "conftest",
+    "constants",
+    "d",
+    "discovery_config",
+    "docker_control",
+    "e",
+    "error_scenarios",
+    "h",
+    "m",
+    "mock_oracle_connection",
+    "mock_oracle_tap",
+    "models",
+    "oracle_queries",
+    "oracle_shared_container_environment",
+    "oracle_tap",
+    "oracle_tap_config",
+    "p",
+    "performance_test_config",
+    "protocols",
+    "pytest_configure",
+    "r",
+    "s",
+    "sample_oracle_data",
+    "sample_oracle_tables",
+    "set_test_environment",
+    "shared_oracle_container",
+    "singer_catalog",
+    "singer_record_messages",
+    "singer_schema_message",
+    "singer_state",
+    "singer_state_message",
+    "skip_e2e_if_no_oracle",
+    "stream_config",
+    "t",
+    "test_enterprise_tap",
+    "typings",
+    "u",
+    "utilities",
+    "x",
+]
 
 
 install_lazy_exports(__name__, globals(), _LAZY_IMPORTS)
