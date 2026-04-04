@@ -11,7 +11,6 @@ from collections.abc import Sequence
 
 from flext_tests import FlextTestsUtilities
 
-from flext_core import FlextTypes as _t
 from flext_tap_oracle import FlextTapOracleUtilities
 from tests import t
 
@@ -50,7 +49,7 @@ class FlextTapOracleTestUtilities(FlextTestsUtilities, FlextTapOracleUtilities):
             service_name: str = "XE",
             username: str = "test",
             password: str = "test",
-            **kwargs: _t.Scalar,
+            **kwargs: t.Scalar,
         ) -> t.ContainerMapping:
             """Create test Oracle configuration."""
             config: t.MutableContainerMapping = {
@@ -68,7 +67,7 @@ class FlextTapOracleTestUtilities(FlextTestsUtilities, FlextTapOracleUtilities):
             stream_name: str,
             table_name: str,
             replication_method: str = "FULL_TABLE",
-            **kwargs: _t.Scalar,
+            **kwargs: t.Scalar,
         ) -> t.ContainerMapping:
             """Create test Singer stream configuration."""
             stream: t.MutableContainerMapping = {
@@ -92,7 +91,7 @@ class FlextTapOracleTestUtilities(FlextTestsUtilities, FlextTapOracleUtilities):
         def generate_mock_oracle_data(
             table_name: str,
             row_count: int = 10,
-            **kwargs: _t.Scalar,
+            **kwargs: t.Scalar,
         ) -> Sequence[t.ContainerMapping]:
             """Generate mock Oracle data for testing."""
             data: list[t.ContainerMapping] = []
