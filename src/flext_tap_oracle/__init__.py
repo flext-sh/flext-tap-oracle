@@ -25,7 +25,7 @@ if _t.TYPE_CHECKING:
 
     _utilities = _flext_tap_oracle__utilities
     import flext_tap_oracle.api as _flext_tap_oracle_api
-    from flext_tap_oracle._utilities._client import (
+    from flext_tap_oracle._utilities import (
         FlextOracleConnectionTestService,
         FlextOracleDiscoveryService,
         FlextOracleTableFilterService,
