@@ -10,9 +10,10 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import Annotated
+from typing import Annotated, ClassVar
 
 from pydantic import Field, SecretStr
+from pydantic_settings import SettingsConfigDict
 
 from flext_core import FlextLogger, FlextSettings, r
 from flext_tap_oracle import c, t
@@ -20,20 +21,35 @@ from flext_tap_oracle import c, t
 logger = FlextLogger(__name__)
 
 
+@FlextSettings.auto_register("tap-oracle")
 class FlextTapOracleSettings(FlextSettings):
     """Runtime settings for Oracle Singer tap operations."""
 
+    model_config: ClassVar[SettingsConfigDict] = SettingsConfigDict(
+        env_prefix="FLEXT_TAP_ORACLE_",
+        extra="ignore",
+    )
+
     oracle_host: Annotated[
         t.NonEmptyStr,
-        Field(default="localhost", description="Oracle database host"),
+        Field(
+            default=c.DbOracle.OracleDefaults.DEFAULT_HOST,
+            description="Oracle database host",
+        ),
     ]
     oracle_port: Annotated[
         t.PortNumber,
-        Field(default=1521, description="Oracle database port"),
+        Field(
+            default=c.DbOracle.Connection.DEFAULT_PORT,
+            description="Oracle database port",
+        ),
     ]
     oracle_service_name: Annotated[
         str,
-        Field(default="ORCL", description="Oracle service name or SID"),
+        Field(
+            default=c.DbOracle.Connection.DEFAULT_SERVICE_NAME,
+            description="Oracle service name or SID",
+        ),
     ]
     oracle_user: Annotated[SecretStr, Field(description="Oracle database username")]
     oracle_password: Annotated[SecretStr, Field(description="Oracle database password")]

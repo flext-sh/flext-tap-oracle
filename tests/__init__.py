@@ -26,6 +26,7 @@ if _t.TYPE_CHECKING:
         oracle_tap_config,
         performance_test_config,
         pytest_configure,
+        pytest_plugins,
         sample_oracle_data,
         sample_oracle_tables,
         set_test_environment,
@@ -37,6 +38,7 @@ if _t.TYPE_CHECKING:
         singer_state_message,
         skip_e2e_if_no_oracle,
         stream_config,
+        tap_oracle_settings,
     )
 
     constants = _tests_constants
@@ -104,6 +106,7 @@ _LAZY_IMPORTS = {
     "performance_test_config": "tests.conftest",
     "protocols": "tests.protocols",
     "pytest_configure": "tests.conftest",
+    "pytest_plugins": "tests.conftest",
     "r": ("flext_core.result", "FlextResult"),
     "s": ("flext_core.service", "FlextService"),
     "sample_oracle_data": "tests.conftest",
@@ -118,6 +121,7 @@ _LAZY_IMPORTS = {
     "skip_e2e_if_no_oracle": "tests.conftest",
     "stream_config": "tests.conftest",
     "t": ("tests.typings", "FlextTapOracleTestTypes"),
+    "tap_oracle_settings": "tests.conftest",
     "test_enterprise_tap": "tests.test_enterprise_tap",
     "typings": "tests.typings",
     "u": ("tests.utilities", "FlextTapOracleTestUtilities"),
@@ -153,6 +157,7 @@ __all__ = [
     "performance_test_config",
     "protocols",
     "pytest_configure",
+    "pytest_plugins",
     "r",
     "s",
     "sample_oracle_data",
@@ -167,6 +172,7 @@ __all__ = [
     "skip_e2e_if_no_oracle",
     "stream_config",
     "t",
+    "tap_oracle_settings",
     "test_enterprise_tap",
     "typings",
     "u",

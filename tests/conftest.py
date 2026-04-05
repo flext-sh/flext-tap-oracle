@@ -24,6 +24,14 @@ from flext_core import r
 from flext_tap_oracle import FlextOracleTapService, FlextTapOracleSettings
 from tests import t
 
+pytest_plugins = ["flext_tests.conftest_plugin"]
+
+
+@pytest.fixture
+def tap_oracle_settings() -> FlextTapOracleSettings:
+    """Provide clean FlextTapOracleSettings for tap-oracle tests."""
+    return FlextTapOracleSettings(debug=True)
+
 
 @pytest.fixture(scope="session")
 def docker_control() -> tk:
