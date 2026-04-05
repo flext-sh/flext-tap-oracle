@@ -133,7 +133,7 @@ class FlextTapOracleSettings(FlextSettings):
             config_data = {**oracle_params, **tap_config, **meltano_config}
             config_instance = FlextTapOracleSettings.model_validate(config_data)
             return r[FlextTapOracleSettings].ok(config_instance)
-        except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
+        except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
             return r[FlextTapOracleSettings].fail(
                 f"Oracle tap configuration creation failed: {e}",
             )

@@ -10,32 +10,18 @@ import typing as _t
 from flext_core.lazy import install_lazy_exports
 
 if _t.TYPE_CHECKING:
-    import flext_tap_oracle._utilities._client as _flext_tap_oracle__utilities__client
+    import flext_tap_oracle._utilities.client as _flext_tap_oracle__utilities_client
 
-    _client = _flext_tap_oracle__utilities__client
-    from flext_tap_oracle._utilities._client import (
-        FlextOracleConnectionTestService,
-        FlextOracleDiscoveryService,
-        FlextOracleTableFilterService,
-        FlextOracleTapService,
-        FlextTapOracleUtilitiesClientMixin,
-    )
+    client = _flext_tap_oracle__utilities_client
+    from flext_tap_oracle._utilities.client import FlextTapOracleUtilitiesClientMixin
 _LAZY_IMPORTS = {
-    "FlextOracleConnectionTestService": "flext_tap_oracle._utilities._client",
-    "FlextOracleDiscoveryService": "flext_tap_oracle._utilities._client",
-    "FlextOracleTableFilterService": "flext_tap_oracle._utilities._client",
-    "FlextOracleTapService": "flext_tap_oracle._utilities._client",
-    "FlextTapOracleUtilitiesClientMixin": "flext_tap_oracle._utilities._client",
-    "_client": "flext_tap_oracle._utilities._client",
+    "FlextTapOracleUtilitiesClientMixin": "flext_tap_oracle._utilities.client",
+    "client": "flext_tap_oracle._utilities.client",
 }
 
 __all__ = [
-    "FlextOracleConnectionTestService",
-    "FlextOracleDiscoveryService",
-    "FlextOracleTableFilterService",
-    "FlextOracleTapService",
     "FlextTapOracleUtilitiesClientMixin",
-    "_client",
+    "client",
 ]
 
 

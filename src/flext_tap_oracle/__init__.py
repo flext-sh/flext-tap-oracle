@@ -15,13 +15,7 @@ if _t.TYPE_CHECKING:
 
     _utilities = _flext_tap_oracle__utilities
     import flext_tap_oracle.api as _flext_tap_oracle_api
-    from flext_tap_oracle._utilities import (
-        FlextOracleConnectionTestService,
-        FlextOracleDiscoveryService,
-        FlextOracleTableFilterService,
-        FlextOracleTapService,
-        FlextTapOracleUtilitiesClientMixin,
-    )
+    from flext_tap_oracle._utilities import FlextTapOracleUtilitiesClientMixin, client
 
     api = _flext_tap_oracle_api
     import flext_tap_oracle.constants as _flext_tap_oracle_constants
@@ -130,10 +124,6 @@ _LAZY_IMPORTS = merge_lazy_imports(
 )
 
 __all__ = [
-    "FlextOracleConnectionTestService",
-    "FlextOracleDiscoveryService",
-    "FlextOracleTableFilterService",
-    "FlextOracleTapService",
     "FlextTapOracleCli",
     "FlextTapOracleConstants",
     "FlextTapOracleDiscoverCommand",
@@ -158,6 +148,7 @@ __all__ = [
     "api",
     "c",
     "cli_api",
+    "client",
     "constants",
     "d",
     "e",

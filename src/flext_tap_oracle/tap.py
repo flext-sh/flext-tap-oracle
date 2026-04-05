@@ -65,7 +65,7 @@ class FlextTapOracleDiscoverCommand:
                 self._logger.info("Catalog written to %s", output_path)
             self._logger.info("Oracle schema discovery completed")
             return r[t.GeneralValueMapping].ok(catalog_dict)
-        except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
+        except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
             logger.exception("Oracle discovery failed")
             return r[t.GeneralValueMapping].fail(f"Discovery error: {e}")
 
@@ -119,7 +119,7 @@ class FlextTapOracleSyncCommand:
                 record_count,
             )
             return r[t.GeneralValueMapping].ok(result_data)
-        except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
+        except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
             logger.exception("Oracle sync failed")
             return r[t.GeneralValueMapping].fail(f"Sync error: {e}")
 
@@ -157,7 +157,7 @@ class FlextTapOracleCli:
                 logger.error(f"{operation_name} failed: {error_message}")
                 return r[t.Cli.JsonValue].fail(error_message)
             return r[t.Cli.JsonValue].ok(value=True)
-        except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
+        except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
             error_message = f"{operation_name} error: {e}"
             logger.exception(error_message)
             return r[t.Cli.JsonValue].fail(error_message)
@@ -206,7 +206,7 @@ def main() -> None:
     except KeyboardInterrupt:
         logger.warning("Operation cancelled by user")
         raise SystemExit(0) from None
-    except c.Meltano.Singer.SAFE_EXCEPTIONS as e:
+    except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
         logger.exception("Unexpected error")
         raise SystemExit(1) from e
 
