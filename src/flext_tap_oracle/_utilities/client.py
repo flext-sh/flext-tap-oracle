@@ -128,7 +128,7 @@ class FlextTapOracleUtilitiesClientMixin:
     @staticmethod
     def tap_oracle_client_initialize_tap(
         oracle_api: FlextDbOracleApi,
-        tap_config: FlextTapOracleSettings,
+        _tap_config: FlextTapOracleSettings,
         schema_name: str | None = None,
     ) -> r[bool]:
         """Initialize Oracle tap by testing connection and discovering tables."""
