@@ -15,7 +15,10 @@ if _t.TYPE_CHECKING:
     client = _flext_tap_oracle__utilities_client
     from flext_tap_oracle._utilities.client import FlextTapOracleUtilitiesClientMixin
 _LAZY_IMPORTS = {
-    "FlextTapOracleUtilitiesClientMixin": "flext_tap_oracle._utilities.client",
+    "FlextTapOracleUtilitiesClientMixin": (
+        "flext_tap_oracle._utilities.client",
+        "FlextTapOracleUtilitiesClientMixin",
+    ),
     "client": "flext_tap_oracle._utilities.client",
 }
 

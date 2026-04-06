@@ -174,9 +174,9 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     raise ValueError(msg)
 
                 # Enhanced validation with proper limits
-                # max_length = c.TapOracle.MAX_IDENTIFIER_LENGTH
-                if len(v) > max_length:
-                    msg = f"Stream name too long: {len(v)} > {max_length} characters"
+                # c.TapOracle.MAX_IDENTIFIER_LENGTH = c.TapOracle.MAX_IDENTIFIER_LENGTH
+                if len(v) > c.TapOracle.MAX_IDENTIFIER_LENGTH:
+                    msg = f"Stream name too long: {len(v)} > {c.TapOracle.MAX_IDENTIFIER_LENGTH} characters"
                     raise ValueError(msg)
 
                 if v.startswith(("_", "-")) or v.endswith(("_", "-")):
