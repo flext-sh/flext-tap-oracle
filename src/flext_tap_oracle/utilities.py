@@ -17,10 +17,10 @@ from typing import Literal
 
 from pydantic import ValidationError
 
-from flext_core import FlextExceptions, r
+from flext_core import r
 from flext_db_oracle import FlextDbOracleModels, FlextDbOracleUtilities
 from flext_meltano import FlextMeltanoUtilities
-from flext_tap_oracle import FlextTapOracleUtilitiesClientMixin, c, m, t
+from flext_tap_oracle import FlextTapOracleUtilitiesClientMixin, c, e, m, t
 
 
 class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
@@ -38,16 +38,16 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
             try:
                 error_message = f"Oracle {operation} failed: {exception}"
                 exc_str = str(exception).lower()
-                err: FlextExceptions.ConnectionError | FlextExceptions.OperationError
+                err: e.ConnectionError | e.OperationError
                 if "connection" in exc_str:
-                    err = FlextExceptions.ConnectionError(error_message)
+                    err = e.ConnectionError(error_message)
                 elif "sql" in exc_str or "query" in exc_str or "discovery" in exc_str:
-                    err = FlextExceptions.OperationError(error_message)
+                    err = e.OperationError(error_message)
                 else:
-                    err = FlextExceptions.OperationError(error_message)
+                    err = e.OperationError(error_message)
                 return r[bool].fail(str(err))
-            except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
-                return r[bool].fail(f"Exception handling failed: {e}")
+            except c.Meltano.SINGER_SAFE_EXCEPTIONS as exc:
+                return r[bool].fail(f"Exception handling failed: {exc}")
 
         @staticmethod
         def create_discovery_result(

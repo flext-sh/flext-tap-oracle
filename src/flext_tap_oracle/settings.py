@@ -10,7 +10,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import Annotated, ClassVar
+from typing import Annotated, ClassVar, Self
 
 from pydantic import Field, SecretStr
 from pydantic_settings import SettingsConfigDict
@@ -138,9 +138,10 @@ class FlextTapOracleSettings(FlextSettings):
                 f"Oracle tap configuration creation failed: {e}",
             )
 
-    @staticmethod
+    @classmethod
     def validate_oracle_tap_configuration(
-        config: FlextTapOracleSettings,
+        cls,
+        config: Self,
     ) -> r[bool]:
         """Validate Oracle tap configuration using FlextSettings patterns."""
         return config.validate_business_rules()

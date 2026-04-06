@@ -4,37 +4,14 @@ from __future__ import annotations
 
 import os
 from collections.abc import Sequence
-from typing import override
 
 import pytest
-from flext_core import FlextResult
 
 from flext_tap_oracle import (
-    FlextOracleDiscoveryService,
-    FlextOracleTableFilterService,
     FlextTapOracleSettings,
+    u,
 )
 from tests import m
-
-
-class _DiscoveryStub(FlextOracleDiscoveryService):
-    @override
-    def __init__(self) -> None:
-        pass
-
-    @override
-    def execute(self) -> FlextResult[Sequence[m.DbOracle.Table]]:
-        return FlextResult[Sequence[m.DbOracle.Table]].ok([
-            m.DbOracle.Table(
-                name="USERS", owner="TESTDB", domain_events=[], columns=[]
-            ),
-            m.DbOracle.Table(
-                name="ORDERS", owner="TESTDB", domain_events=[], columns=[]
-            ),
-            m.DbOracle.Table(
-                name="PRODUCTS", owner="TESTDB", domain_events=[], columns=[]
-            ),
-        ])
 
 
 class TestFlextOracleTapSettingsAndHelpers:
@@ -124,9 +101,20 @@ class TestFlextOracleTapSettingsAndHelpers:
                 "batch_size": 1000,
             }
         )
-        service = FlextOracleTableFilterService(
-            tap_config=config, discovery_service=_DiscoveryStub()
+        discovered_tables: Sequence[m.DbOracle.Table] = [
+            m.DbOracle.Table(
+                name="USERS", owner="TESTDB", domain_events=[], columns=[]
+            ),
+            m.DbOracle.Table(
+                name="ORDERS", owner="TESTDB", domain_events=[], columns=[]
+            ),
+            m.DbOracle.Table(
+                name="PRODUCTS", owner="TESTDB", domain_events=[], columns=[]
+            ),
+        ]
+        result = u.TapOracle.tap_oracle_client_filter_tables(
+            tap_config=config,
+            discovered_tables=discovered_tables,
         )
-        result = service.execute()
         assert result.is_success
         assert result.value == ["USERS", "ORDERS", "PRODUCTS"]

@@ -21,7 +21,7 @@ import pytest
 from flext_tests import tk
 
 from flext_core import r
-from flext_tap_oracle import FlextOracleTapService, FlextTapOracleSettings
+from flext_tap_oracle import FlextTapOracleService, FlextTapOracleSettings
 from tests import t
 
 pytest_plugins = ["flext_tests.conftest_plugin"]
@@ -150,13 +150,15 @@ def oracle_tap_config() -> t.ContainerMapping:
 @pytest.fixture
 def oracle_tap(
     oracle_tap_config: t.ContainerMapping,
-) -> FlextOracleTapService:
+) -> FlextTapOracleService:
     """Oracle tap service instance for testing."""
     config_result = r[FlextTapOracleSettings].ok(
         FlextTapOracleSettings.model_validate(oracle_tap_config),
     )
     if config_result.is_success:
-        return FlextOracleTapService(config=config_result.value)
+        return FlextTapOracleService(
+            config_overrides=config_result.value.model_dump(),
+        )
     fallback_result = FlextTapOracleSettings.create_oracle_tap_config(
         oracle_params={
             "host": str(oracle_tap_config.get("host", "localhost")),
@@ -165,7 +167,9 @@ def oracle_tap(
         },
     )
     if fallback_result.is_success:
-        return FlextOracleTapService(config=fallback_result.value)
+        return FlextTapOracleService(
+            config_overrides=fallback_result.value.model_dump(),
+        )
     error_msg = "Failed to create oracle tap service for testing"
     raise RuntimeError(error_msg)
 

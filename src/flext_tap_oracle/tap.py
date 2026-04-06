@@ -41,7 +41,7 @@ class FlextTapOracleDiscoverCommand:
                     "Configuration file is required for discovery",
                 )
             config_data: str = Path(self.params.config_file).read_text(encoding="utf-8")
-            config: FlextTapOracleSettings = FlextTapOracleSettings.model_validate_json(
+            config = FlextTapOracleSettings.model_validate_json(
                 config_data,
             )
             oracle_config = config.get_oracle_config()
@@ -95,7 +95,7 @@ class FlextTapOracleSyncCommand:
                     "Configuration file is required for sync",
                 )
             config_data: str = Path(self.params.config_file).read_text(encoding="utf-8")
-            config: FlextTapOracleSettings = FlextTapOracleSettings.model_validate_json(
+            config = FlextTapOracleSettings.model_validate_json(
                 config_data,
             )
             oracle_config = config.get_oracle_config()
