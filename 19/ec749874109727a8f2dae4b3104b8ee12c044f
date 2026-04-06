@@ -1,0 +1,27 @@
+src/flext_tap_oracle/utilities.py
+  d3ada1e5d497edb1 20,23,41,43,45,47,49-50
+src/flext_tap_oracle/tap.py
+  d3ada1e5d497edb1 44,98
+src/flext_tap_oracle/settings.py
+  d3ada1e5d497edb1 13,141,143-144
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "19ec749874109727a8f2dae4b3104b8ee12c044f",
+  "prompts": {
+    "d3ada1e5d497edb1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7a3e077c-5cc8-4cbe-b4df-b55506e62047",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "FLEXT Bot",
+      "messages": [],
+      "total_additions": 14,
+      "total_deletions": 13,
+      "accepted_lines": 14,
+      "overriden_lines": 0
+    }
+  }
+}
