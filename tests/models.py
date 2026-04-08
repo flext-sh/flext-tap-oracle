@@ -1,4 +1,4 @@
-"""Models for flext-tap-oracle tests - uses composition with FlextTestsModels.
+"""Models for flext-tap-oracle tests - uses composition with TestsFlextModels.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -12,19 +12,19 @@ from flext_tests import FlextTestsModels
 from flext_tap_oracle import FlextTapOracleModels
 
 
-class FlextTapOracleTestModels(FlextTestsModels, FlextTapOracleModels):
-    """Models for flext-tap-oracle tests - uses composition with FlextTestsModels.
+class TestsFlextTapOracleModels(FlextTestsModels, FlextTapOracleModels):
+    """Models for flext-tap-oracle tests - uses composition with TestsFlextModels.
 
-    Architecture: Uses composition (not inheritance) with FlextTestsModels and FlextTapOracleModels
+    Architecture: Uses composition (not inheritance) with TestsFlextModels and FlextTapOracleModels
     for flext-tap-oracle-specific model definitions.
 
     Access patterns:
-    - FlextTapOracleTestModels.Tests.* = flext_tests test models (via composition)
-    - FlextTapOracleTestModels.TapOracle.* = flext-tap-oracle-specific test models
-    - FlextTapOracleTestModels.Entity, .Value, etc. = FlextTapOracleModels domain models (via composition)
+    - TestsFlextTapOracleModels.Tests.* = flext_tests test models (via composition)
+    - TestsFlextTapOracleModels.TapOracle.* = flext-tap-oracle-specific test models
+    - TestsFlextTapOracleModels.Entity, .Value, etc. = FlextTapOracleModels domain models (via composition)
 
     Rules:
-    - Use composition, not inheritance (FlextTestsModels deprecates subclassing)
+    - Use composition, not inheritance (TestsFlextModels deprecates subclassing)
     - flext-tap-oracle-specific models go in TapOracle namespace
     - Generic models accessed via Tests namespace
     """
@@ -81,9 +81,9 @@ class FlextTapOracleTestModels(FlextTestsModels, FlextTapOracleModels):
                 max_rows: int | None = None
 
 
-m = FlextTapOracleTestModels
+m = TestsFlextTapOracleModels
 
 __all__ = [
-    "FlextTapOracleTestModels",
+    "TestsFlextTapOracleModels",
     "m",
 ]

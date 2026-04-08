@@ -1,4 +1,4 @@
-"""Module skeleton for FlextTapOracleTestConstants.
+"""Module skeleton for TestsFlextTapOracleConstants.
 
 Test constants for flext-tap-oracle.
 
@@ -15,7 +15,7 @@ from flext_tests import FlextTestsConstants
 from flext_tap_oracle import FlextTapOracleConstants
 
 
-class FlextTapOracleTestConstants(FlextTestsConstants, FlextTapOracleConstants):
+class TestsFlextTapOracleConstants(FlextTestsConstants, FlextTapOracleConstants):
     """Test constants for flext-tap-oracle."""
 
     class TapOracle(FlextTapOracleConstants.TapOracle):
@@ -47,5 +47,5 @@ class FlextTapOracleTestConstants(FlextTestsConstants, FlextTapOracleConstants):
                 INCREMENTAL = "INCREMENTAL"
 
 
-c = FlextTapOracleTestConstants
-__all__ = ["FlextTapOracleTestConstants", "c"]
+c = TestsFlextTapOracleConstants
+__all__ = ["TestsFlextTapOracleConstants", "c"]

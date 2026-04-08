@@ -14,24 +14,23 @@ if _t.TYPE_CHECKING:
 
     conftest = _tests_conftest
     import tests.constants as _tests_constants
-    from tests.conftest import pytest_configure, pytest_plugins
 
     constants = _tests_constants
     import tests.models as _tests_models
     from tests.constants import (
-        FlextTapOracleTestConstants,
-        FlextTapOracleTestConstants as c,
+        TestsFlextTapOracleConstants,
+        TestsFlextTapOracleConstants as c,
     )
 
     models = _tests_models
     import tests.protocols as _tests_protocols
-    from tests.models import FlextTapOracleTestModels, FlextTapOracleTestModels as m
+    from tests.models import TestsFlextTapOracleModels, TestsFlextTapOracleModels as m
 
     protocols = _tests_protocols
     import tests.test_enterprise_tap as _tests_test_enterprise_tap
     from tests.protocols import (
-        FlextTapOracleTestProtocols,
-        FlextTapOracleTestProtocols as p,
+        TestsFlextTapOracleProtocols,
+        TestsFlextTapOracleProtocols as p,
     )
 
     test_enterprise_tap = _tests_test_enterprise_tap
@@ -39,7 +38,7 @@ if _t.TYPE_CHECKING:
 
     typings = _tests_typings
     import tests.utilities as _tests_utilities
-    from tests.typings import FlextTapOracleTestTypes, FlextTapOracleTestTypes as t
+    from tests.typings import TestsFlextTapOracleTypes, TestsFlextTapOracleTypes as t
 
     utilities = _tests_utilities
     from flext_core.decorators import FlextDecorators as d
@@ -49,43 +48,41 @@ if _t.TYPE_CHECKING:
     from flext_core.result import FlextResult as r
     from flext_core.service import FlextService as s
     from tests.utilities import (
-        FlextTapOracleTestUtilities,
-        FlextTapOracleTestUtilities as u,
+        TestsFlextTapOracleUtilities,
+        TestsFlextTapOracleUtilities as u,
     )
 _LAZY_IMPORTS = {
-    "FlextTapOracleTestConstants": ("tests.constants", "FlextTapOracleTestConstants"),
-    "FlextTapOracleTestModels": ("tests.models", "FlextTapOracleTestModels"),
-    "FlextTapOracleTestProtocols": ("tests.protocols", "FlextTapOracleTestProtocols"),
-    "FlextTapOracleTestTypes": ("tests.typings", "FlextTapOracleTestTypes"),
-    "FlextTapOracleTestUtilities": ("tests.utilities", "FlextTapOracleTestUtilities"),
-    "c": ("tests.constants", "FlextTapOracleTestConstants"),
+    "TestsFlextTapOracleConstants": ("tests.constants", "TestsFlextTapOracleConstants"),
+    "TestsFlextTapOracleModels": ("tests.models", "TestsFlextTapOracleModels"),
+    "TestsFlextTapOracleProtocols": ("tests.protocols", "TestsFlextTapOracleProtocols"),
+    "TestsFlextTapOracleTypes": ("tests.typings", "TestsFlextTapOracleTypes"),
+    "TestsFlextTapOracleUtilities": ("tests.utilities", "TestsFlextTapOracleUtilities"),
+    "c": ("tests.constants", "TestsFlextTapOracleConstants"),
     "conftest": "tests.conftest",
     "constants": "tests.constants",
     "d": ("flext_core.decorators", "FlextDecorators"),
     "e": ("flext_core.exceptions", "FlextExceptions"),
     "h": ("flext_core.handlers", "FlextHandlers"),
-    "m": ("tests.models", "FlextTapOracleTestModels"),
+    "m": ("tests.models", "TestsFlextTapOracleModels"),
     "models": "tests.models",
-    "p": ("tests.protocols", "FlextTapOracleTestProtocols"),
+    "p": ("tests.protocols", "TestsFlextTapOracleProtocols"),
     "protocols": "tests.protocols",
-    "pytest_configure": ("tests.conftest", "pytest_configure"),
-    "pytest_plugins": ("tests.conftest", "pytest_plugins"),
     "r": ("flext_core.result", "FlextResult"),
     "s": ("flext_core.service", "FlextService"),
-    "t": ("tests.typings", "FlextTapOracleTestTypes"),
+    "t": ("tests.typings", "TestsFlextTapOracleTypes"),
     "test_enterprise_tap": "tests.test_enterprise_tap",
     "typings": "tests.typings",
-    "u": ("tests.utilities", "FlextTapOracleTestUtilities"),
+    "u": ("tests.utilities", "TestsFlextTapOracleUtilities"),
     "utilities": "tests.utilities",
     "x": ("flext_core.mixins", "FlextMixins"),
 }
 
 __all__ = [
-    "FlextTapOracleTestConstants",
-    "FlextTapOracleTestModels",
-    "FlextTapOracleTestProtocols",
-    "FlextTapOracleTestTypes",
-    "FlextTapOracleTestUtilities",
+    "TestsFlextTapOracleConstants",
+    "TestsFlextTapOracleModels",
+    "TestsFlextTapOracleProtocols",
+    "TestsFlextTapOracleTypes",
+    "TestsFlextTapOracleUtilities",
     "c",
     "conftest",
     "constants",
@@ -96,8 +93,6 @@ __all__ = [
     "models",
     "p",
     "protocols",
-    "pytest_configure",
-    "pytest_plugins",
     "r",
     "s",
     "t",

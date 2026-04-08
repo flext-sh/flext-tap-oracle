@@ -1,4 +1,4 @@
-"""Utilities for flext-tap-oracle tests - uses composition with FlextTestsUtilities.
+"""Utilities for flext-tap-oracle tests - uses composition with TestsFlextUtilities.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -15,19 +15,19 @@ from flext_tap_oracle import FlextTapOracleUtilities
 from tests import t
 
 
-class FlextTapOracleTestUtilities(FlextTestsUtilities, FlextTapOracleUtilities):
-    """Utilities for flext-tap-oracle tests - uses composition with FlextTestsUtilities.
+class TestsFlextTapOracleUtilities(FlextTestsUtilities, FlextTapOracleUtilities):
+    """Utilities for flext-tap-oracle tests - uses composition with TestsFlextUtilities.
 
-    Architecture: Uses composition (not inheritance) with FlextTestsUtilities and FlextTapOracleUtilities
+    Architecture: Uses composition (not inheritance) with TestsFlextUtilities and FlextTapOracleUtilities
     for flext-tap-oracle-specific utility definitions.
 
     Access patterns:
-    - FlextTapOracleTestUtilities.Tests.* = flext_tests test utilities (via composition)
-    - FlextTapOracleTestUtilities.TapOracle.* = flext-tap-oracle-specific test utilities
-    - FlextTapOracleTestUtilities.* = FlextTestsUtilities methods (via composition)
+    - TestsFlextTapOracleUtilities.Tests.* = flext_tests test utilities (via composition)
+    - TestsFlextTapOracleUtilities.TapOracle.* = flext-tap-oracle-specific test utilities
+    - TestsFlextTapOracleUtilities.* = TestsFlextUtilities methods (via composition)
 
     Rules:
-    - Use composition, not inheritance (FlextTestsUtilities deprecates subclassing)
+    - Use composition, not inheritance (TestsFlextUtilities deprecates subclassing)
     - flext-tap-oracle-specific utilities go in TapOracle namespace
     - Generic utilities accessed via Tests namespace
     """
@@ -106,5 +106,5 @@ class FlextTapOracleTestUtilities(FlextTestsUtilities, FlextTapOracleUtilities):
             return data
 
 
-u = FlextTapOracleTestUtilities
-__all__ = ["FlextTapOracleTestUtilities", "u"]
+u = TestsFlextTapOracleUtilities
+__all__ = ["TestsFlextTapOracleUtilities", "u"]

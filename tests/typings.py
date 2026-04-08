@@ -1,4 +1,4 @@
-"""Types for flext-tap-oracle tests - uses composition with FlextTestsTypes.
+"""Types for flext-tap-oracle tests - uses composition with TestsFlextTypes.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -16,19 +16,19 @@ from flext_core import FlextTypes
 from flext_tap_oracle import FlextTapOracleTypes
 
 
-class FlextTapOracleTestTypes(FlextTestsTypes, FlextTapOracleTypes):
-    """Types for flext-tap-oracle tests - uses composition with FlextTestsTypes.
+class TestsFlextTapOracleTypes(FlextTestsTypes, FlextTapOracleTypes):
+    """Types for flext-tap-oracle tests - uses composition with TestsFlextTypes.
 
-    Architecture: Uses composition (not inheritance) with FlextTestsTypes and FlextTapOracleTypes
+    Architecture: Uses composition (not inheritance) with TestsFlextTypes and FlextTapOracleTypes
     for flext-tap-oracle-specific type definitions.
 
     Access patterns:
-    - FlextTapOracleTestTypes.Tests.* = flext_tests test types (via composition)
-    - FlextTapOracleTestTypes.TapOracleTest.* = flext-tap-oracle-specific test types
-    - FlextTapOracleTestTypes.* = FlextTestsTypes types (via composition)
+    - TestsFlextTapOracleTypes.Tests.* = flext_tests test types (via composition)
+    - TestsFlextTapOracleTypes.TapOracleTest.* = flext-tap-oracle-specific test types
+    - TestsFlextTapOracleTypes.* = TestsFlextTypes types (via composition)
 
     Rules:
-    - Use composition, not inheritance (FlextTestsTypes deprecates subclassing)
+    - Use composition, not inheritance (TestsFlextTypes deprecates subclassing)
     - flext-tap-oracle-specific types go in TapOracleTest namespace
     - Generic types accessed via Tests namespace
     """
@@ -45,10 +45,12 @@ class FlextTapOracleTestTypes(FlextTestsTypes, FlextTapOracleTypes):
         type TestOraclePort = Literal[1521, 10521, 1522]
         type MockOracleRecord = Mapping[str, FlextTypes.Scalar]
         type MockOracleTable = Sequence[MockOracleRecord]
-        type TestScenario = t.ContainerMapping
-        type TestValidationResult = Mapping[str, bool | str | t.StrSequence]
+        type TestScenario = FlextTestsTypes.ContainerMapping
+        type TestValidationResult = Mapping[
+            str, bool | str | FlextTestsTypes.StrSequence
+        ]
         type TestPerformanceResult = Mapping[str, float | int | str]
 
 
-t = FlextTapOracleTestTypes
-__all__ = ["FlextTapOracleTestTypes", "t"]
+t = TestsFlextTapOracleTypes
+__all__ = ["TestsFlextTapOracleTypes", "t"]

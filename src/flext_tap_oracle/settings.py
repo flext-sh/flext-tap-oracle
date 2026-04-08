@@ -15,10 +15,8 @@ from typing import Annotated, ClassVar, Self
 from pydantic import Field, SecretStr
 from pydantic_settings import SettingsConfigDict
 
-from flext_core import FlextLogger, FlextSettings, r
+from flext_core import FlextSettings, r
 from flext_tap_oracle import c, t
-
-logger = FlextLogger(__name__)
 
 
 @FlextSettings.auto_register("tap-oracle")
@@ -145,8 +143,3 @@ class FlextTapOracleSettings(FlextSettings):
     ) -> r[bool]:
         """Validate Oracle tap configuration using FlextSettings patterns."""
         return config.validate_business_rules()
-
-
-__all__: t.StrSequence = [
-    "FlextTapOracleSettings",
-]

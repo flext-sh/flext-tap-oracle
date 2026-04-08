@@ -1,4 +1,4 @@
-"""Protocols for flext-tap-oracle tests - uses composition with FlextTestsProtocols.
+"""Protocols for flext-tap-oracle tests - uses composition with TestsFlextProtocols.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -16,19 +16,19 @@ from flext_tap_oracle import FlextTapOracleProtocols
 from tests import t
 
 
-class FlextTapOracleTestProtocols(FlextTestsProtocols, FlextTapOracleProtocols):
-    """Protocols for flext-tap-oracle tests - uses composition with FlextTestsProtocols.
+class TestsFlextTapOracleProtocols(FlextTestsProtocols, FlextTapOracleProtocols):
+    """Protocols for flext-tap-oracle tests - uses composition with TestsFlextProtocols.
 
-    Architecture: Uses composition (not inheritance) with FlextTestsProtocols and FlextTapOracleProtocols
+    Architecture: Uses composition (not inheritance) with TestsFlextProtocols and FlextTapOracleProtocols
     for flext-tap-oracle-specific protocol definitions.
 
     Access patterns:
-    - FlextTapOracleTestProtocols.Tests.* = flext_tests test protocols (via composition)
-    - FlextTapOracleTestProtocols.TapOracle.* = flext-tap-oracle-specific test protocols
-    - FlextTapOracleTestProtocols.* = FlextTestsProtocols protocols (via composition)
+    - TestsFlextTapOracleProtocols.Tests.* = flext_tests test protocols (via composition)
+    - TestsFlextTapOracleProtocols.TapOracle.* = flext-tap-oracle-specific test protocols
+    - TestsFlextTapOracleProtocols.* = TestsFlextProtocols protocols (via composition)
 
     Rules:
-    - Use composition, not inheritance (FlextTestsProtocols deprecates subclassing)
+    - Use composition, not inheritance (TestsFlextProtocols deprecates subclassing)
     - flext-tap-oracle-specific protocols go in TapOracle namespace
     - Generic protocols accessed via Tests namespace
     """
@@ -111,5 +111,5 @@ class FlextTapOracleTestProtocols(FlextTestsProtocols, FlextTapOracleProtocols):
                     ...
 
 
-p = FlextTapOracleTestProtocols
-__all__ = ["FlextTapOracleTestProtocols", "p"]
+p = TestsFlextTapOracleProtocols
+__all__ = ["TestsFlextTapOracleProtocols", "p"]

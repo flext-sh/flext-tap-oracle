@@ -908,8 +908,3 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
 # Short aliases
 m = FlextTapOracleModels
-
-__all__: t.StrSequence = [
-    "FlextTapOracleModels",
-    "m",
-]
