@@ -42,67 +42,52 @@ if _t.TYPE_CHECKING:
         FlextTapOracleUtilities as u,
     )
 _LAZY_IMPORTS = merge_lazy_imports(
-    ("flext_tap_oracle._utilities",),
+    ("._utilities",),
     {
-        "FlextTapOracleCli": ("flext_tap_oracle.tap", "FlextTapOracleCli"),
-        "FlextTapOracleConstants": (
-            "flext_tap_oracle.constants",
-            "FlextTapOracleConstants",
-        ),
-        "FlextTapOracleDiscoverCommand": (
-            "flext_tap_oracle.tap",
-            "FlextTapOracleDiscoverCommand",
-        ),
-        "FlextTapOracleModels": ("flext_tap_oracle.models", "FlextTapOracleModels"),
-        "FlextTapOracleProtocols": (
-            "flext_tap_oracle.protocols",
-            "FlextTapOracleProtocols",
-        ),
-        "FlextTapOracleService": ("flext_tap_oracle.api", "FlextTapOracleService"),
-        "FlextTapOracleSettings": (
-            "flext_tap_oracle.settings",
-            "FlextTapOracleSettings",
-        ),
-        "FlextTapOracleStreams": ("flext_tap_oracle.streams", "FlextTapOracleStreams"),
-        "FlextTapOracleSyncCommand": (
-            "flext_tap_oracle.tap",
-            "FlextTapOracleSyncCommand",
-        ),
-        "FlextTapOracleTypes": ("flext_tap_oracle.typings", "FlextTapOracleTypes"),
-        "FlextTapOracleUtilities": (
-            "flext_tap_oracle.utilities",
-            "FlextTapOracleUtilities",
-        ),
-        "__author__": ("flext_tap_oracle.__version__", "__author__"),
-        "__author_email__": ("flext_tap_oracle.__version__", "__author_email__"),
-        "__description__": ("flext_tap_oracle.__version__", "__description__"),
-        "__license__": ("flext_tap_oracle.__version__", "__license__"),
-        "__title__": ("flext_tap_oracle.__version__", "__title__"),
-        "__url__": ("flext_tap_oracle.__version__", "__url__"),
-        "__version__": ("flext_tap_oracle.__version__", "__version__"),
-        "__version_info__": ("flext_tap_oracle.__version__", "__version_info__"),
-        "c": ("flext_tap_oracle.constants", "FlextTapOracleConstants"),
-        "cli_api": ("flext_tap_oracle.tap", "cli_api"),
+        "FlextTapOracleCli": ".tap",
+        "FlextTapOracleConstants": ".constants",
+        "FlextTapOracleDiscoverCommand": ".tap",
+        "FlextTapOracleModels": ".models",
+        "FlextTapOracleProtocols": ".protocols",
+        "FlextTapOracleService": ".api",
+        "FlextTapOracleSettings": ".settings",
+        "FlextTapOracleStreams": ".streams",
+        "FlextTapOracleSyncCommand": ".tap",
+        "FlextTapOracleTypes": ".typings",
+        "FlextTapOracleUtilities": ".utilities",
+        "__author__": ".__version__",
+        "__author_email__": ".__version__",
+        "__description__": ".__version__",
+        "__license__": ".__version__",
+        "__title__": ".__version__",
+        "__url__": ".__version__",
+        "__version__": ".__version__",
+        "__version_info__": ".__version__",
+        "c": (".constants", "FlextTapOracleConstants"),
+        "cli_api": ".tap",
         "d": ("flext_core.decorators", "FlextDecorators"),
         "e": ("flext_core.exceptions", "FlextExceptions"),
         "h": ("flext_core.handlers", "FlextHandlers"),
-        "m": ("flext_tap_oracle.models", "FlextTapOracleModels"),
-        "p": ("flext_tap_oracle.protocols", "FlextTapOracleProtocols"),
+        "m": (".models", "FlextTapOracleModels"),
+        "p": (".protocols", "FlextTapOracleProtocols"),
         "r": ("flext_core.result", "FlextResult"),
-        "run_cli": ("flext_tap_oracle.tap", "run_cli"),
-        "s": ("flext_tap_oracle.api", "FlextTapOracleService"),
-        "t": ("flext_tap_oracle.typings", "FlextTapOracleTypes"),
-        "u": ("flext_tap_oracle.utilities", "FlextTapOracleUtilities"),
+        "run_cli": ".tap",
+        "s": (".api", "FlextTapOracleService"),
+        "t": (".typings", "FlextTapOracleTypes"),
+        "u": (".utilities", "FlextTapOracleUtilities"),
         "x": ("flext_core.mixins", "FlextMixins"),
     },
+    exclude_names=(
+        "cleanup_submodule_namespace",
+        "install_lazy_exports",
+        "lazy_getattr",
+        "logger",
+        "merge_lazy_imports",
+        "output",
+        "output_reporting",
+    ),
+    module_name=__name__,
 )
-_ = _LAZY_IMPORTS.pop("cleanup_submodule_namespace", None)
-_ = _LAZY_IMPORTS.pop("install_lazy_exports", None)
-_ = _LAZY_IMPORTS.pop("lazy_getattr", None)
-_ = _LAZY_IMPORTS.pop("logger", None)
-_ = _LAZY_IMPORTS.pop("merge_lazy_imports", None)
-_ = _LAZY_IMPORTS.pop("output", None)
-_ = _LAZY_IMPORTS.pop("output_reporting", None)
 
 __all__ = [
     "FlextTapOracleCli",

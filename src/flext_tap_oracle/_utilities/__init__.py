@@ -8,10 +8,7 @@ from __future__ import annotations
 from flext_core.lazy import install_lazy_exports
 
 _LAZY_IMPORTS = {
-    "FlextTapOracleUtilitiesClientMixin": (
-        "flext_tap_oracle._utilities.client",
-        "FlextTapOracleUtilitiesClientMixin",
-    ),
+    "FlextTapOracleUtilitiesClientMixin": ".client",
 }
 
 
