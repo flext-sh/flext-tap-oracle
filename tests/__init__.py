@@ -16,15 +16,6 @@ if _t.TYPE_CHECKING:
     from flext_core.mixins import FlextMixins as x
     from flext_core.result import FlextResult as r
     from flext_core.service import FlextService as s
-    from tests import (
-        conftest,
-        constants,
-        models,
-        protocols,
-        test_enterprise_tap,
-        typings,
-        utilities,
-    )
     from tests.constants import (
         TestsFlextTapOracleConstants,
         TestsFlextTapOracleConstants as c,
@@ -46,22 +37,15 @@ _LAZY_IMPORTS = {
     "TestsFlextTapOracleTypes": ("tests.typings", "TestsFlextTapOracleTypes"),
     "TestsFlextTapOracleUtilities": ("tests.utilities", "TestsFlextTapOracleUtilities"),
     "c": ("tests.constants", "TestsFlextTapOracleConstants"),
-    "conftest": "tests.conftest",
-    "constants": "tests.constants",
     "d": ("flext_core.decorators", "FlextDecorators"),
     "e": ("flext_core.exceptions", "FlextExceptions"),
     "h": ("flext_core.handlers", "FlextHandlers"),
     "m": ("tests.models", "TestsFlextTapOracleModels"),
-    "models": "tests.models",
     "p": ("tests.protocols", "TestsFlextTapOracleProtocols"),
-    "protocols": "tests.protocols",
     "r": ("flext_core.result", "FlextResult"),
     "s": ("flext_core.service", "FlextService"),
     "t": ("tests.typings", "TestsFlextTapOracleTypes"),
-    "test_enterprise_tap": "tests.test_enterprise_tap",
-    "typings": "tests.typings",
     "u": ("tests.utilities", "TestsFlextTapOracleUtilities"),
-    "utilities": "tests.utilities",
     "x": ("flext_core.mixins", "FlextMixins"),
 }
 
@@ -72,22 +56,15 @@ __all__ = [
     "TestsFlextTapOracleTypes",
     "TestsFlextTapOracleUtilities",
     "c",
-    "conftest",
-    "constants",
     "d",
     "e",
     "h",
     "m",
-    "models",
     "p",
-    "protocols",
     "r",
     "s",
     "t",
-    "test_enterprise_tap",
-    "typings",
     "u",
-    "utilities",
     "x",
 ]
 

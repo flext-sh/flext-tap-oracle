@@ -12,7 +12,6 @@ _LAZY_IMPORTS = {
         "flext_tap_oracle._utilities.client",
         "FlextTapOracleUtilitiesClientMixin",
     ),
-    "client": "flext_tap_oracle._utilities.client",
 }
 
 
