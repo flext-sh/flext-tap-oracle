@@ -15,7 +15,7 @@ if _t.TYPE_CHECKING:
 
     _utilities = _flext_tap_oracle__utilities
     import flext_tap_oracle.api as _flext_tap_oracle_api
-    from flext_tap_oracle._utilities import FlextTapOracleUtilitiesClientMixin, client
+    from flext_tap_oracle._utilities import FlextTapOracleUtilitiesClientMixin
 
     api = _flext_tap_oracle_api
     import flext_tap_oracle.constants as _flext_tap_oracle_constants
@@ -172,7 +172,6 @@ __all__ = [
     "api",
     "c",
     "cli_api",
-    "client",
     "constants",
     "d",
     "e",
