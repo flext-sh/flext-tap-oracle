@@ -15,7 +15,7 @@ from pathlib import Path
 
 from flext_core import r
 from flext_meltano import FlextMeltanoAbstractions
-from flext_tap_oracle import FlextTapOracleSettings, c, m, p, t
+from flext_tap_oracle import FlextTapOracleSettings, c, m, p, t, u
 
 logger = u.fetch_logger(__name__)
 cli_api = FlextMeltanoAbstractions()

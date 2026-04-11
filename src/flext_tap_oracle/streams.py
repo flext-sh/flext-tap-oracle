@@ -154,7 +154,7 @@ class FlextTapOracleStreams:
                     return {
                         "table_name": self.table_name,
                         "stream_name": self.name,
-                        "column_count": len(columns) if u.is_list_like(columns) else 0,
+                        "column_count": len(columns) if u.list_like(columns) else 0,
                         "oracle_schema": getattr(
                             table,
                             "schema_name",
@@ -177,7 +177,7 @@ class FlextTapOracleStreams:
         ) -> Iterable[Mapping[str, t.TapOracle.Summary.OracleValue]]:
             """Process results using flext-db-oracle table metadata."""
             columns = getattr(table_metadata, "columns", None)
-            if columns is None or not u.is_list_like(columns):
+            if columns is None or not u.list_like(columns):
                 msg = "Table metadata is missing column definitions"
                 raise RuntimeError(msg)
             column_names: t.StrSequence = [

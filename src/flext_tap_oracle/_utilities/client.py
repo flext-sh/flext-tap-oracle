@@ -13,7 +13,7 @@ from collections.abc import Sequence
 
 from flext_core import r
 from flext_db_oracle import FlextDbOracleApi, FlextDbOracleModels
-from flext_tap_oracle import FlextTapOracleSettings, c, t
+from flext_tap_oracle import FlextTapOracleSettings, c, t, u
 
 logger = u.fetch_logger(__name__)
 
