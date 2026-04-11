@@ -11,11 +11,11 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
-from flext_core import FlextLogger, r
+from flext_core import r
 from flext_db_oracle import FlextDbOracleApi, FlextDbOracleModels
 from flext_tap_oracle import FlextTapOracleSettings, c, t
 
-logger = FlextLogger(__name__)
+logger = u.fetch_logger(__name__)
 
 
 class FlextTapOracleUtilitiesClientMixin:

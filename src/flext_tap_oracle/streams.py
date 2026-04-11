@@ -9,7 +9,7 @@ from __future__ import annotations
 from collections.abc import Iterable, Mapping, MutableMapping, Sequence
 from datetime import datetime
 
-from flext_core import FlextLogger, r
+from flext_core import r
 from flext_db_oracle import FlextDbOracleApi
 from flext_tap_oracle import c, p, t, u
 
@@ -27,7 +27,7 @@ class FlextTapOracleStreams:
     All nested classes and methods follow SOLID principles and r patterns.
     """
 
-    logger = FlextLogger(__name__)
+    logger = u.fetch_logger(__name__)
 
     class OracleStream:
         """Oracle stream using MAXIMUM flext-db-oracle infrastructure.

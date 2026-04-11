@@ -13,11 +13,11 @@ import sys
 from collections.abc import Callable, Mapping
 from pathlib import Path
 
-from flext_core import FlextLogger, r
+from flext_core import r
 from flext_meltano import FlextMeltanoAbstractions
 from flext_tap_oracle import FlextTapOracleSettings, c, m, p, t
 
-logger = FlextLogger(__name__)
+logger = u.fetch_logger(__name__)
 cli_api = FlextMeltanoAbstractions()
 
 
@@ -30,7 +30,7 @@ class FlextTapOracleDiscoverCommand:
     def __init__(self, params: m.TapOracle.OracleTapDiscoverParams) -> None:
         """Initialize command with parameter t.NormalizedValue pattern."""
         self.params = params
-        self._logger = FlextLogger(__name__)
+        self._logger = u.fetch_logger(__name__)
 
     def execute(self) -> r[Mapping[str, t.GeneralValueType]]:
         """Execute Oracle tap discovery using modern patterns."""
@@ -84,7 +84,7 @@ class FlextTapOracleSyncCommand:
     def __init__(self, params: m.TapOracle.OracleTapSyncParams) -> None:
         """Initialize command with parameter t.NormalizedValue pattern."""
         self.params = params
-        self._logger = FlextLogger(__name__)
+        self._logger = u.fetch_logger(__name__)
 
     def execute(self) -> r[Mapping[str, t.GeneralValueType]]:
         """Execute Oracle tap sync using modern patterns."""
