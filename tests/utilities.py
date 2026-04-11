@@ -52,15 +52,15 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities, FlextTapOracleUtilities)
             **kwargs: t.Scalar,
         ) -> t.ContainerMapping:
             """Create test Oracle configuration."""
-            config: t.MutableContainerMapping = {
+            settings: t.MutableContainerMapping = {
                 "host": host,
                 "port": port,
                 "service_name": service_name,
                 "username": username,
                 "password": password,
             }
-            config.update(kwargs)
-            return config
+            settings.update(kwargs)
+            return settings
 
         @staticmethod
         def create_test_singer_stream(
@@ -81,11 +81,13 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities, FlextTapOracleUtilities)
 
         @staticmethod
         def validate_oracle_connection_config(
-            config: t.ContainerMapping,
+            settings: t.ContainerMapping,
         ) -> bool:
             """Validate Oracle connection configuration for testing."""
             required_fields = ["host", "port", "service_name", "username", "password"]
-            return all(field in config and config[field] for field in required_fields)
+            return all(
+                field in settings and settings[field] for field in required_fields
+            )
 
         @staticmethod
         def generate_mock_oracle_data(

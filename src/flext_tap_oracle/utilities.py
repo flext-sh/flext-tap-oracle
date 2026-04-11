@@ -115,12 +115,12 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
 
         @staticmethod
         def build_connection_string(
-            config: Mapping[str, t.GeneralValueType],
+            settings: Mapping[str, t.GeneralValueType],
         ) -> r[str]:
             """Build Oracle connection string from configuration."""
             try:
                 validation_result = (
-                    FlextTapOracleUtilities.TapOracle.validate_oracle_config(config)
+                    FlextTapOracleUtilities.TapOracle.validate_oracle_config(settings)
                 )
                 if validation_result.failure:
                     return r[str].fail(validation_result.error)
@@ -132,12 +132,12 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
 
         @staticmethod
         def test_oracle_connectivity(
-            config: Mapping[str, t.GeneralValueType],
+            settings: Mapping[str, t.GeneralValueType],
         ) -> r[Mapping[str, t.GeneralValueType]]:
             """Test Oracle connectivity with configuration."""
             try:
                 validation_result = (
-                    FlextTapOracleUtilities.TapOracle.validate_oracle_config(config)
+                    FlextTapOracleUtilities.TapOracle.validate_oracle_config(settings)
                 )
                 if validation_result.failure:
                     return r[t.GeneralValueMapping].fail(
@@ -145,9 +145,9 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                     )
                 connectivity_result = {
                     "status": "validated",
-                    "host": config["host"],
-                    "port": config["port"],
-                    "service_name": config["service_name"],
+                    "host": settings["host"],
+                    "port": settings["port"],
+                    "service_name": settings["service_name"],
                     "connection_test": "structural_validation_passed",
                 }
                 return r[t.GeneralValueMapping].ok(connectivity_result)
@@ -158,11 +158,13 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
 
         @staticmethod
         def validate_oracle_config(
-            config: Mapping[str, t.GeneralValueType],
+            settings: Mapping[str, t.GeneralValueType],
         ) -> r[Mapping[str, t.GeneralValueType]]:
             """Validate Oracle configuration parameters."""
             try:
-                validated_config: MutableMapping[str, t.GeneralValueType] = dict(config)
+                validated_config: MutableMapping[str, t.GeneralValueType] = dict(
+                    settings
+                )
                 required_fields = [
                     "host",
                     "port",
@@ -194,7 +196,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                 return r[t.GeneralValueMapping].ok(validated_config)
             except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
                 return r[t.GeneralValueMapping].fail(
-                    f"Oracle config validation failed: {e}",
+                    f"Oracle settings validation failed: {e}",
                 )
 
         @staticmethod

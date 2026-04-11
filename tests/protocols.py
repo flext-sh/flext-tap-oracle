@@ -90,7 +90,7 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols, FlextTapOracleProtocols)
 
                 def assert_oracle_connection_successful(
                     self,
-                    config: t.ContainerMapping,
+                    settings: t.ContainerMapping,
                 ) -> None:
                     """Assert Oracle connection was successful."""
                     ...

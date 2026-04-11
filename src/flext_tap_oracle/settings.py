@@ -139,7 +139,7 @@ class FlextTapOracleSettings(FlextSettings):
     @classmethod
     def validate_oracle_tap_configuration(
         cls,
-        config: Self,
+        settings: Self,
     ) -> r[bool]:
         """Validate Oracle tap configuration using FlextSettings patterns."""
-        return config.validate_business_rules()
+        return settings.validate_business_rules()

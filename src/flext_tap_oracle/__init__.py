@@ -13,7 +13,7 @@ from flext_core.lazy import (
 from flext_tap_oracle.__version__ import *
 
 if _t.TYPE_CHECKING:
-    from flext_meltano import d, e, h, r, s, x
+    from flext_db_oracle import d, e, h, r, s, x
     from flext_tap_oracle._utilities.client import FlextTapOracleUtilitiesClientMixin
     from flext_tap_oracle.api import FlextTapOracleService, tap_oracle
     from flext_tap_oracle.constants import FlextTapOracleConstants, c
@@ -73,7 +73,7 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "FlextTapOracleUtilities",
                 "u",
             ),
-            "flext_meltano": (
+            "flext_db_oracle": (
                 "d",
                 "e",
                 "h",

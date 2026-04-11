@@ -41,10 +41,10 @@ class FlextTapOracleDiscoverCommand:
                     "Configuration file is required for discovery",
                 )
             config_data: str = Path(self.params.config_file).read_text(encoding="utf-8")
-            config = FlextTapOracleSettings.model_validate_json(
+            settings = FlextTapOracleSettings.model_validate_json(
                 config_data,
             )
-            oracle_config = config.get_oracle_config()
+            oracle_config = settings.get_oracle_config()
             schema_name = str(oracle_config.get("schema_name", "USER"))
             self._logger.info("Discovering Oracle schema: %s", schema_name)
             streams: list[t.GeneralValueType] = []
@@ -95,10 +95,10 @@ class FlextTapOracleSyncCommand:
                     "Configuration file is required for sync",
                 )
             config_data: str = Path(self.params.config_file).read_text(encoding="utf-8")
-            config = FlextTapOracleSettings.model_validate_json(
+            settings = FlextTapOracleSettings.model_validate_json(
                 config_data,
             )
-            oracle_config = config.get_oracle_config()
+            oracle_config = settings.get_oracle_config()
             if self.params.catalog_file:
                 Path(self.params.catalog_file).read_text(encoding="utf-8")
                 self._logger.info(f"Loaded catalog from {self.params.catalog_file}")

@@ -56,7 +56,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
 
             def connect(
                 self,
-                config: Mapping[str, t.GeneralValueType],
+                settings: Mapping[str, t.GeneralValueType],
             ) -> FlextMeltanoProtocols.Result[t.GeneralValueType]:
                 """Connect to Oracle database with provided configuration."""
                 ...
@@ -67,7 +67,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
 
             def test_connection(
                 self,
-                config: Mapping[str, t.GeneralValueType],
+                settings: Mapping[str, t.GeneralValueType],
             ) -> FlextMeltanoProtocols.Result[bool]:
                 """Test Oracle database connection with validation."""
                 ...
@@ -81,7 +81,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
 
             def discover_schemas(
                 self,
-                config: Mapping[str, t.GeneralValueType],
+                settings: Mapping[str, t.GeneralValueType],
             ) -> FlextMeltanoProtocols.Result[Sequence[t.GeneralValueType]]:
                 """Discover accessible Oracle schemas."""
                 ...
@@ -119,7 +119,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
             def extract_table_data(
                 self,
                 table: str,
-                config: Mapping[str, t.GeneralValueType],
+                settings: Mapping[str, t.GeneralValueType],
             ) -> FlextMeltanoProtocols.Result[Sequence[t.GeneralValueType]]:
                 """Extract all data from Oracle table."""
                 ...
@@ -152,7 +152,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
 
             def generate_catalog(
                 self,
-                config: Mapping[str, t.GeneralValueType],
+                settings: Mapping[str, t.GeneralValueType],
             ) -> FlextMeltanoProtocols.Result[m.Meltano.SingerCatalog]:
                 """Generate Singer catalog from Oracle schema."""
                 ...
@@ -186,7 +186,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
 
             def validate_config(
                 self,
-                config: Mapping[str, t.GeneralValueType],
+                settings: Mapping[str, t.GeneralValueType],
             ) -> FlextMeltanoProtocols.Result[bool]:
                 """Validate tap configuration."""
                 ...

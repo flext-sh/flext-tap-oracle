@@ -531,17 +531,17 @@ def error_scenarios() -> Sequence[t.ContainerMapping]:
     ]
 
 
-def pytest_configure(config: pytest.Config) -> None:
+def pytest_configure(settings: pytest.Config) -> None:
     """Configure pytest markers."""
-    config.addinivalue_line("markers", "unit: Unit tests")
-    config.addinivalue_line("markers", "integration: Integration tests")
-    config.addinivalue_line("markers", "e2e: End-to-end tests")
-    config.addinivalue_line("markers", "oracle: Oracle database tests")
-    config.addinivalue_line("markers", "singer: Singer protocol tests")
-    config.addinivalue_line("markers", "discovery: Schema discovery tests")
-    config.addinivalue_line("markers", "extraction: Data extraction tests")
-    config.addinivalue_line("markers", "performance: Performance tests")
-    config.addinivalue_line("markers", "slow: Slow tests")
+    settings.addinivalue_line("markers", "unit: Unit tests")
+    settings.addinivalue_line("markers", "integration: Integration tests")
+    settings.addinivalue_line("markers", "e2e: End-to-end tests")
+    settings.addinivalue_line("markers", "oracle: Oracle database tests")
+    settings.addinivalue_line("markers", "singer: Singer protocol tests")
+    settings.addinivalue_line("markers", "discovery: Schema discovery tests")
+    settings.addinivalue_line("markers", "extraction: Data extraction tests")
+    settings.addinivalue_line("markers", "performance: Performance tests")
+    settings.addinivalue_line("markers", "slow: Slow tests")
 
 
 @pytest.fixture
@@ -549,9 +549,9 @@ def mock_oracle_tap() -> type:
     """Mock Oracle tap for testing."""
 
     class MockOracleTap:
-        def __init__(self, config: t.ContainerMapping) -> None:
+        def __init__(self, settings: t.ContainerMapping) -> None:
             """Initialize the instance."""
-            self.config = config
+            self.settings = settings
             self._catalog: Mapping[str, t.GeneralValueType] | None = None
             self.__state: t.ContainerMapping = {}
 
@@ -631,9 +631,9 @@ def mock_oracle_connection() -> type:
     """Mock Oracle connection for testing."""
 
     class MockOracleConnection:
-        def __init__(self, config: t.ContainerMapping) -> None:
+        def __init__(self, settings: t.ContainerMapping) -> None:
             """Initialize the instance."""
-            self.config = config
+            self.settings = settings
             self.connected = False
 
         def connect(self) -> bool:
