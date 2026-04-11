@@ -66,7 +66,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                     stream_result = FlextTapOracleUtilities.TapOracle.create_stream_info_from_oracle_table(
                         oracle_table,
                     )
-                    if stream_result.is_success:
+                    if stream_result.success:
                         stream_infos.append(stream_result.value)
                 discovery_result = m.TapOracle.OracleTapDiscoveryResult(
                     schema_name=schema_name,
@@ -122,7 +122,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                 validation_result = (
                     FlextTapOracleUtilities.TapOracle.validate_oracle_config(config)
                 )
-                if validation_result.is_failure:
+                if validation_result.failure:
                     return r[str].fail(validation_result.error)
                 validated_config = validation_result.value
                 connection_string = f"oracle://{validated_config['username']}:{validated_config['password']}@{validated_config['host']}:{validated_config['port']}/{validated_config['service_name']}"
@@ -139,7 +139,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                 validation_result = (
                     FlextTapOracleUtilities.TapOracle.validate_oracle_config(config)
                 )
-                if validation_result.is_failure:
+                if validation_result.failure:
                     return r[t.GeneralValueMapping].fail(
                         validation_result.error,
                     )

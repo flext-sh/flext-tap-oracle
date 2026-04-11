@@ -69,7 +69,7 @@ class FlextTapOracleStreams:
                 safe_table_name = self.table_name.replace('"', '""')
                 sql: str = f'SELECT COUNT(*) FROM "{safe_table_name}"'  # nosec B608 — table name validated via isalnum()
                 result: r[Sequence[t.Dict]] = self.oracle_api.query(sql)
-                if result.is_success and result.value:
+                if result.success and result.value:
                     result_rows: Sequence[t.Dict] = result.value
                     first_row: t.Dict = result_rows[0]
                     first_val = next(iter(first_row.root.values()), None)
@@ -102,7 +102,7 @@ class FlextTapOracleStreams:
                 _ = context
                 with self.oracle_api as api:
                     table_metadata_result = api.get_table_metadata(self.table_name)
-                    if table_metadata_result.is_failure:
+                    if table_metadata_result.failure:
                         msg = (
                             table_metadata_result.error
                             or "Table metadata is not available"
@@ -116,7 +116,7 @@ class FlextTapOracleStreams:
                     else:
                         sql = f'SELECT * FROM "{safe_table}"'  # nosec B608
                     query_result: r[Sequence[t.Dict]] = api.query(sql)
-                    if query_result.is_failure:
+                    if query_result.failure:
                         error_msg: str = query_result.error or "unknown query error"
                         raise RuntimeError(error_msg)
                     rows: Sequence[t.Dict] = query_result.value
@@ -148,7 +148,7 @@ class FlextTapOracleStreams:
                 table_metadata_result = self.oracle_api.get_table_metadata(
                     self.table_name,
                 )
-                if table_metadata_result.is_success:
+                if table_metadata_result.success:
                     table = table_metadata_result.value
                     columns = getattr(table, "columns", [])
                     return {

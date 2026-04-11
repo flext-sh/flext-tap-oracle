@@ -31,7 +31,7 @@ class FlextTapOracleUtilitiesClientMixin:
             target_schema = schema_name or "USER"
             logger.info("Discovering Oracle tables in schema: %s", target_schema)
             tables_result = oracle_api.get_tables(schema=target_schema)
-            if tables_result.is_failure:
+            if tables_result.failure:
                 error_msg = tables_result.error or "Table discovery failed"
                 logger.warning("Oracle table discovery failed: %s", error_msg)
                 return r[Sequence[FlextDbOracleModels.DbOracle.Table]].fail(error_msg)
@@ -64,7 +64,7 @@ class FlextTapOracleUtilitiesClientMixin:
         try:
             logger.info("Testing Oracle connection")
             test_result = oracle_api.test_connection()
-            if test_result.is_success:
+            if test_result.success:
                 logger.info("Oracle connection test successful")
                 return r[bool].ok(value=True)
 
@@ -139,7 +139,7 @@ class FlextTapOracleUtilitiesClientMixin:
                     oracle_api
                 )
             )
-            if connection_result.is_failure:
+            if connection_result.failure:
                 return r[bool].fail(
                     f"Connection test failed: {connection_result.error}"
                 )
@@ -149,7 +149,7 @@ class FlextTapOracleUtilitiesClientMixin:
                     oracle_api, schema_name
                 )
             )
-            if discovery_result.is_failure:
+            if discovery_result.failure:
                 return r[bool].fail(f"Table discovery failed: {discovery_result.error}")
 
             logger.info("Oracle tap initialization completed successfully")

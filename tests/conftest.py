@@ -155,7 +155,7 @@ def oracle_tap(
     config_result = r[FlextTapOracleSettings].ok(
         FlextTapOracleSettings.model_validate(oracle_tap_config),
     )
-    if config_result.is_success:
+    if config_result.success:
         return FlextTapOracleService(
             config_overrides=config_result.value.model_dump(),
         )
@@ -166,7 +166,7 @@ def oracle_tap(
             "password": str(oracle_tap_config.get("password", "test")),
         },
     )
-    if fallback_result.is_success:
+    if fallback_result.success:
         return FlextTapOracleService(
             config_overrides=fallback_result.value.model_dump(),
         )

@@ -152,7 +152,7 @@ class FlextTapOracleCli:
             params = params_factory(**dict(kwargs))
             command = command_factory(params)
             result = command.execute()
-            if result.is_failure:
+            if result.failure:
                 error_message = result.error or f"{operation_name} failed"
                 logger.error(f"{operation_name} failed: {error_message}")
                 return r[t.Cli.JsonValue].fail(error_message)
@@ -190,10 +190,10 @@ def run_cli() -> int:
     """Main CLI entry point using flext-meltano abstractions."""
     if "--discover" in sys.argv:
         result = FlextTapOracleCli.handle_discover_command()
-        return 0 if result.is_success else 1
+        return 0 if result.success else 1
     if "--sync" in sys.argv or len(sys.argv) <= 1:
         result = FlextTapOracleCli.handle_sync_command()
-        return 0 if result.is_success else 1
+        return 0 if result.success else 1
     logger.warning("Unknown command. Use --discover or --sync.")
     return 1
 
