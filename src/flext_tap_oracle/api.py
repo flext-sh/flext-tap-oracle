@@ -13,13 +13,20 @@ from __future__ import annotations
 from typing import Never, override
 
 from flext_meltano import FlextMeltanoTapServiceBase
-from flext_tap_oracle import t
+from flext_tap_oracle import FlextTapOracleSettings, t
 
 
 class FlextTapOracleService(FlextMeltanoTapServiceBase):
     """Orchestrator for tap-oracle. CLI dispatch, not Singer SDK."""
 
     tap_name: t.NonEmptyStr = "tap-oracle"
+
+    def __init__(
+        self,
+        settings: FlextTapOracleSettings | t.ContainerMapping | None = None,
+    ) -> None:
+        """Expose the canonical settings bootstrap on the concrete tap facade."""
+        super().__init__(settings=settings)
 
     @override
     def create_tap_instance(

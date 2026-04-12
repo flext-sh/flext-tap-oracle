@@ -157,7 +157,7 @@ def oracle_tap(
     )
     if config_result.success:
         return FlextTapOracleService(
-            config_overrides=config_result.value.model_dump(),
+            settings=config_result.value,
         )
     fallback_result = FlextTapOracleSettings.create_oracle_tap_config(
         oracle_params={
@@ -168,7 +168,7 @@ def oracle_tap(
     )
     if fallback_result.success:
         return FlextTapOracleService(
-            config_overrides=fallback_result.value.model_dump(),
+            settings=fallback_result.value,
         )
     error_msg = "Failed to create oracle tap service for testing"
     raise RuntimeError(error_msg)
@@ -531,17 +531,17 @@ def error_scenarios() -> Sequence[t.ContainerMapping]:
     ]
 
 
-def pytest_configure(settings: pytest.Config) -> None:
+def pytest_configure(config: pytest.Config) -> None:
     """Configure pytest markers."""
-    settings.addinivalue_line("markers", "unit: Unit tests")
-    settings.addinivalue_line("markers", "integration: Integration tests")
-    settings.addinivalue_line("markers", "e2e: End-to-end tests")
-    settings.addinivalue_line("markers", "oracle: Oracle database tests")
-    settings.addinivalue_line("markers", "singer: Singer protocol tests")
-    settings.addinivalue_line("markers", "discovery: Schema discovery tests")
-    settings.addinivalue_line("markers", "extraction: Data extraction tests")
-    settings.addinivalue_line("markers", "performance: Performance tests")
-    settings.addinivalue_line("markers", "slow: Slow tests")
+    config.addinivalue_line("markers", "unit: Unit tests")
+    config.addinivalue_line("markers", "integration: Integration tests")
+    config.addinivalue_line("markers", "e2e: End-to-end tests")
+    config.addinivalue_line("markers", "oracle: Oracle database tests")
+    config.addinivalue_line("markers", "singer: Singer protocol tests")
+    config.addinivalue_line("markers", "discovery: Schema discovery tests")
+    config.addinivalue_line("markers", "extraction: Data extraction tests")
+    config.addinivalue_line("markers", "performance: Performance tests")
+    config.addinivalue_line("markers", "slow: Slow tests")
 
 
 @pytest.fixture
