@@ -24,8 +24,6 @@ from flext_core import r
 from flext_tap_oracle import FlextTapOracleService, FlextTapOracleSettings
 from tests import t
 
-pytest_plugins = ["flext_tests.conftest_plugin"]
-
 
 @pytest.fixture
 def tap_oracle_settings() -> FlextTapOracleSettings:
