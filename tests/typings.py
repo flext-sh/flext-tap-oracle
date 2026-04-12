@@ -53,4 +53,4 @@ class TestsFlextTapOracleTypes(FlextTestsTypes, FlextTapOracleTypes):
 
 
 t = TestsFlextTapOracleTypes
-__all__ = ["TestsFlextTapOracleTypes", "t"]
+__all__: list[str] = ["TestsFlextTapOracleTypes", "t"]

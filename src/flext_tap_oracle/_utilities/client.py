@@ -159,4 +159,4 @@ class FlextTapOracleUtilitiesClientMixin:
             return r[bool].fail(f"Initialization failed: {e}")
 
 
-__all__ = ["FlextTapOracleUtilitiesClientMixin"]
+__all__: list[str] = ["FlextTapOracleUtilitiesClientMixin"]

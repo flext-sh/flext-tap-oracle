@@ -48,4 +48,4 @@ class TestsFlextTapOracleConstants(FlextTestsConstants, FlextTapOracleConstants)
 
 
 c = TestsFlextTapOracleConstants
-__all__ = ["TestsFlextTapOracleConstants", "c"]
+__all__: list[str] = ["TestsFlextTapOracleConstants", "c"]

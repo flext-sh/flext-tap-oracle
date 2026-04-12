@@ -330,4 +330,4 @@ class FlextTapOracleStreams:
             )
 
 
-__all__ = ["FlextTapOracleStreams"]
+__all__: list[str] = ["FlextTapOracleStreams"]

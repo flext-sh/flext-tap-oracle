@@ -112,4 +112,4 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols, FlextTapOracleProtocols)
 
 
 p = TestsFlextTapOracleProtocols
-__all__ = ["TestsFlextTapOracleProtocols", "p"]
+__all__: list[str] = ["TestsFlextTapOracleProtocols", "p"]

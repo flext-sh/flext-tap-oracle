@@ -233,4 +233,4 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
 
 
 p = FlextTapOracleProtocols
-__all__ = ["FlextTapOracleProtocols", "p"]
+__all__: list[str] = ["FlextTapOracleProtocols", "p"]

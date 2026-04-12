@@ -109,4 +109,4 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities, FlextTapOracleUtilities)
 
 
 u = TestsFlextTapOracleUtilities
-__all__ = ["TestsFlextTapOracleUtilities", "u"]
+__all__: list[str] = ["TestsFlextTapOracleUtilities", "u"]

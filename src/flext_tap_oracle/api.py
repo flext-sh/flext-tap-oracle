@@ -40,4 +40,4 @@ class FlextTapOracleService(FlextMeltanoTapServiceBase):
 
 tap_oracle = FlextTapOracleService
 
-__all__ = ["FlextTapOracleService", "tap_oracle"]
+__all__: list[str] = ["FlextTapOracleService", "tap_oracle"]

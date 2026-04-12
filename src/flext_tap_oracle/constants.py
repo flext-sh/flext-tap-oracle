@@ -65,4 +65,4 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
 
 
 c = FlextTapOracleConstants
-__all__ = ["FlextTapOracleConstants", "c"]
+__all__: list[str] = ["FlextTapOracleConstants", "c"]

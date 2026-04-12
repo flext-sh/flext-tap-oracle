@@ -50,4 +50,4 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
 
 t = FlextTapOracleTypes
 
-__all__ = ["FlextTapOracleTypes", "t"]
+__all__: list[str] = ["FlextTapOracleTypes", "t"]

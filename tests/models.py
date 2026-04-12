@@ -83,7 +83,7 @@ class TestsFlextTapOracleModels(FlextTestsModels, FlextTapOracleModels):
 
 m = TestsFlextTapOracleModels
 
-__all__ = [
+__all__: list[str] = [
     "TestsFlextTapOracleModels",
     "m",
 ]
