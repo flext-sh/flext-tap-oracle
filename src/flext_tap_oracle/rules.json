@@ -262,7 +262,7 @@
       "ROWID": "string",
       "UROWID": "string",
       "XMLType": "string",
-      "JSON": "t.NormalizedValue"
+      "JSON": "t.RecursiveContainer"
     },
     "type_conversion_rules": {
       "date_format": "YYYY-MM-DD",

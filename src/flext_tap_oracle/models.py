@@ -148,7 +148,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             @computed_field
             def stream_metadata_summary(self) -> t.TapOracle.Summary.SummaryData:
                 """Oracle stream metadata summary."""
-                estimated_volume: t.MutableContainerMapping = {}
+                estimated_volume: t.MutableRecursiveContainerMapping = {}
                 if self.estimated_rows is not None:
                     estimated_volume["rows"] = self.estimated_rows
                 if self.column_count is not None:

@@ -92,14 +92,14 @@ def _can_connect(host: str, port: int, timeout: float = 0.5) -> bool:
 
 
 def _is_str_object_dict(
-    value: t.NormalizedValue,
-) -> TypeIs[t.ContainerMapping]:
+    value: t.RecursiveContainer,
+) -> TypeIs[t.RecursiveContainerMapping]:
     return isinstance(value, dict)
 
 
 def _is_dict_list(
-    value: t.NormalizedValue,
-) -> TypeIs[Sequence[t.ContainerMapping]]:
+    value: t.RecursiveContainer,
+) -> TypeIs[Sequence[t.RecursiveContainerMapping]]:
     return isinstance(value, list)
 
 
@@ -132,7 +132,7 @@ def skip_e2e_if_no_oracle() -> None:
 
 
 @pytest.fixture
-def oracle_tap_config() -> t.ContainerMapping:
+def oracle_tap_config() -> t.RecursiveContainerMapping:
     """Oracle tap configuration for testing."""
     return {
         "host": "localhost",
@@ -149,7 +149,7 @@ def oracle_tap_config() -> t.ContainerMapping:
 
 @pytest.fixture
 def oracle_tap(
-    oracle_tap_config: t.ContainerMapping,
+    oracle_tap_config: t.RecursiveContainerMapping,
 ) -> FlextTapOracleService:
     """Oracle tap service instance for testing."""
     config_result = r[FlextTapOracleSettings].ok(
@@ -175,14 +175,14 @@ def oracle_tap(
 
 
 @pytest.fixture
-def singer_catalog() -> t.ContainerMapping:
+def singer_catalog() -> t.RecursiveContainerMapping:
     """Singer catalog for testing."""
     return {
         "streams": [
             {
                 "tap_stream_id": "employees",
                 "schema": {
-                    "type": "t.NormalizedValue",
+                    "type": "t.RecursiveContainer",
                     "properties": {
                         "id": {"type": "integer"},
                         "name": {"type": "string"},
@@ -215,7 +215,7 @@ def singer_catalog() -> t.ContainerMapping:
             {
                 "tap_stream_id": "departments",
                 "schema": {
-                    "type": "t.NormalizedValue",
+                    "type": "t.RecursiveContainer",
                     "properties": {
                         "id": {"type": "integer"},
                         "name": {"type": "string"},
@@ -239,7 +239,7 @@ def singer_catalog() -> t.ContainerMapping:
 
 
 @pytest.fixture
-def singer_state() -> t.ContainerMapping:
+def singer_state() -> t.RecursiveContainerMapping:
     """Singer state for testing."""
     return {
         "bookmarks": {
@@ -254,7 +254,7 @@ def singer_state() -> t.ContainerMapping:
 
 
 @pytest.fixture
-def sample_oracle_tables() -> Sequence[t.ContainerMapping]:
+def sample_oracle_tables() -> Sequence[t.RecursiveContainerMapping]:
     """Sample Oracle table definitions for testing."""
     return [
         {
@@ -334,7 +334,7 @@ def sample_oracle_tables() -> Sequence[t.ContainerMapping]:
 
 
 @pytest.fixture
-def sample_oracle_data() -> Mapping[str, Sequence[t.ContainerMapping]]:
+def sample_oracle_data() -> Mapping[str, Sequence[t.RecursiveContainerMapping]]:
     """Sample Oracle data for testing."""
     return {
         "employees": [
@@ -381,7 +381,7 @@ def sample_oracle_data() -> Mapping[str, Sequence[t.ContainerMapping]]:
 
 
 @pytest.fixture
-def stream_config() -> t.ContainerMapping:
+def stream_config() -> t.RecursiveContainerMapping:
     """Stream configuration for testing."""
     return {
         "selected": True,
@@ -394,7 +394,7 @@ def stream_config() -> t.ContainerMapping:
 
 
 @pytest.fixture
-def discovery_config() -> t.ContainerMapping:
+def discovery_config() -> t.RecursiveContainerMapping:
     """Discovery configuration for testing."""
     return {
         "include_views": False,
@@ -420,13 +420,13 @@ def oracle_queries() -> t.StrMapping:
 
 
 @pytest.fixture
-def singer_schema_message() -> t.ContainerMapping:
+def singer_schema_message() -> t.RecursiveContainerMapping:
     """Singer schema message for testing."""
     return {
         "type": "SCHEMA",
         "stream": "employees",
         "schema": {
-            "type": "t.NormalizedValue",
+            "type": "t.RecursiveContainer",
             "properties": {
                 "id": {"type": "integer"},
                 "name": {"type": "string"},
@@ -439,7 +439,7 @@ def singer_schema_message() -> t.ContainerMapping:
 
 
 @pytest.fixture
-def singer_record_messages() -> Sequence[t.ContainerMapping]:
+def singer_record_messages() -> Sequence[t.RecursiveContainerMapping]:
     """Singer record messages for testing."""
     return [
         {
@@ -468,7 +468,7 @@ def singer_record_messages() -> Sequence[t.ContainerMapping]:
 
 
 @pytest.fixture
-def singer_state_message() -> t.ContainerMapping:
+def singer_state_message() -> t.RecursiveContainerMapping:
     """Singer state message for testing."""
     return {
         "type": "STATE",
@@ -485,7 +485,7 @@ def singer_state_message() -> t.ContainerMapping:
 
 
 @pytest.fixture
-def performance_test_config() -> t.ContainerMapping:
+def performance_test_config() -> t.RecursiveContainerMapping:
     """Performance test configuration."""
     return {
         "large_table_rows": 100000,
@@ -497,7 +497,7 @@ def performance_test_config() -> t.ContainerMapping:
 
 
 @pytest.fixture
-def error_scenarios() -> Sequence[t.ContainerMapping]:
+def error_scenarios() -> Sequence[t.RecursiveContainerMapping]:
     """Error scenarios for testing."""
     return [
         {
@@ -549,20 +549,20 @@ def mock_oracle_tap() -> type:
     """Mock Oracle tap for testing."""
 
     class MockOracleTap:
-        def __init__(self, settings: t.ContainerMapping) -> None:
+        def __init__(self, settings: t.RecursiveContainerMapping) -> None:
             """Initialize the instance."""
             self.settings = settings
             self._catalog: Mapping[str, t.GeneralValueType] | None = None
-            self.__state: t.ContainerMapping = {}
+            self.__state: t.RecursiveContainerMapping = {}
 
-        def discover(self) -> t.ContainerMapping:
+        def discover(self) -> t.RecursiveContainerMapping:
             """Discover schema using mock data."""
             return {
                 "streams": [
                     {
                         "tap_stream_id": "employees",
                         "schema": {
-                            "type": "t.NormalizedValue",
+                            "type": "t.RecursiveContainer",
                             "properties": {
                                 "id": {"type": "integer"},
                                 "name": {"type": "string"},
@@ -575,9 +575,9 @@ def mock_oracle_tap() -> type:
 
         def sync(
             self,
-            catalog: Mapping[str, Sequence[t.ContainerMapping]],
-            _state: t.ContainerMapping,
-        ) -> Generator[t.ContainerMapping]:
+            catalog: Mapping[str, Sequence[t.RecursiveContainerMapping]],
+            _state: t.RecursiveContainerMapping,
+        ) -> Generator[t.RecursiveContainerMapping]:
             """Sync data using mock extraction."""
             if "streams" not in catalog:
                 return
@@ -586,11 +586,11 @@ def mock_oracle_tap() -> type:
                 metadata_raw = stream_raw.get("metadata")
                 if not _is_dict_list(metadata_raw) or not metadata_raw:
                     continue
-                first_metadata: t.ContainerMapping = metadata_raw[0]
+                first_metadata: t.RecursiveContainerMapping = metadata_raw[0]
                 metadata_map_raw = first_metadata.get("metadata")
                 if not _is_str_object_dict(metadata_map_raw):
                     continue
-                metadata_map: t.ContainerMapping = metadata_map_raw
+                metadata_map: t.RecursiveContainerMapping = metadata_map_raw
                 if not bool(metadata_map.get("selected")):
                     continue
                 stream_id_raw = stream_raw.get("tap_stream_id")
@@ -631,7 +631,7 @@ def mock_oracle_connection() -> type:
     """Mock Oracle connection for testing."""
 
     class MockOracleConnection:
-        def __init__(self, settings: t.ContainerMapping) -> None:
+        def __init__(self, settings: t.RecursiveContainerMapping) -> None:
             """Initialize the instance."""
             self.settings = settings
             self.connected = False
@@ -647,8 +647,8 @@ def mock_oracle_connection() -> type:
         def execute_query(
             self,
             query: str,
-            _parameters: t.ContainerMapping | None = None,
-        ) -> Sequence[t.ContainerMapping]:
+            _parameters: t.RecursiveContainerMapping | None = None,
+        ) -> Sequence[t.RecursiveContainerMapping]:
             """Execute query and return mock results using Strategy Pattern."""
             return self._get_query_strategy(query).execute()
 
@@ -660,7 +660,7 @@ def mock_oracle_connection() -> type:
                 return _ColumnsQueryStrategy()
             return _DefaultQueryStrategy()
 
-        def get_table_schema(self, table_name: str) -> t.ContainerMapping:
+        def get_table_schema(self, table_name: str) -> t.RecursiveContainerMapping:
             """Get table schema information."""
             return {
                 "table_name": table_name,
@@ -678,7 +678,7 @@ class _MockQueryStrategy(ABC):
     """Base class for mock query strategies - Strategy Pattern."""
 
     @abstractmethod
-    def execute(self) -> Sequence[t.ContainerMapping]:
+    def execute(self) -> Sequence[t.RecursiveContainerMapping]:
         """Execute mock query and return results."""
 
 
@@ -686,7 +686,7 @@ class _TablesQueryStrategy(_MockQueryStrategy):
     """Strategy for tables query - Single Responsibility."""
 
     @override
-    def execute(self) -> Sequence[t.ContainerMapping]:
+    def execute(self) -> Sequence[t.RecursiveContainerMapping]:
         """Return mock table data."""
         return [
             {"table_name": "EMPLOYEES", "owner": "TAP_SCHEMA", "table_type": "TABLE"},
@@ -698,7 +698,7 @@ class _ColumnsQueryStrategy(_MockQueryStrategy):
     """Strategy for columns query - Single Responsibility."""
 
     @override
-    def execute(self) -> Sequence[t.ContainerMapping]:
+    def execute(self) -> Sequence[t.RecursiveContainerMapping]:
         """Return mock column data."""
         return [
             {
@@ -722,6 +722,6 @@ class _DefaultQueryStrategy(_MockQueryStrategy):
     """Default strategy for generic queries - Single Responsibility."""
 
     @override
-    def execute(self) -> Sequence[t.ContainerMapping]:
+    def execute(self) -> Sequence[t.RecursiveContainerMapping]:
         """Return mock default data."""
         return [{"id": 1, "name": "Test Record"}]

@@ -318,7 +318,7 @@ class FlextTapOracleStreams:
             stream_name = f"{stream_prefix}_{table_name.lower()}"
             properties: Mapping[str, t.GeneralValueType] = {}
             schema: Mapping[str, t.GeneralValueType] = {
-                "type": "t.NormalizedValue",
+                "type": "t.RecursiveContainer",
                 "properties": properties,
             }
             return FlextTapOracleStreams.StreamFactory.create_oracle_stream(

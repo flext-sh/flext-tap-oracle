@@ -60,8 +60,8 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols, FlextTapOracleProtocols)
                 def execute_query(
                     self,
                     query: str,
-                    parameters: t.ContainerMapping | None = None,
-                ) -> Sequence[t.ContainerMapping]:
+                    parameters: t.RecursiveContainerMapping | None = None,
+                ) -> Sequence[t.RecursiveContainerMapping]:
                     """Execute query on mock database."""
                     ...
 
@@ -69,18 +69,18 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols, FlextTapOracleProtocols)
             class TestDataProvider(Protocol):
                 """Protocol for test data providers."""
 
-                def get_test_tables(self) -> Sequence[t.ContainerMapping]:
+                def get_test_tables(self) -> Sequence[t.RecursiveContainerMapping]:
                     """Get test table definitions."""
                     ...
 
                 def get_test_data(
                     self,
                     table_name: str,
-                ) -> Sequence[t.ContainerMapping]:
+                ) -> Sequence[t.RecursiveContainerMapping]:
                     """Get test data for a table."""
                     ...
 
-                def get_test_config(self) -> t.ContainerMapping:
+                def get_test_config(self) -> t.RecursiveContainerMapping:
                     """Get test configuration."""
                     ...
 
@@ -90,22 +90,22 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols, FlextTapOracleProtocols)
 
                 def assert_oracle_connection_successful(
                     self,
-                    settings: t.ContainerMapping,
+                    settings: t.RecursiveContainerMapping,
                 ) -> None:
                     """Assert Oracle connection was successful."""
                     ...
 
                 def assert_singer_stream_valid(
                     self,
-                    stream: t.ContainerMapping,
+                    stream: t.RecursiveContainerMapping,
                 ) -> None:
                     """Assert Singer stream is valid."""
                     ...
 
                 def assert_extraction_results_match(
                     self,
-                    expected: Sequence[t.ContainerMapping],
-                    actual: Sequence[t.ContainerMapping],
+                    expected: Sequence[t.RecursiveContainerMapping],
+                    actual: Sequence[t.RecursiveContainerMapping],
                 ) -> None:
                     """Assert extraction results match expected data."""
                     ...

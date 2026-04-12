@@ -227,9 +227,9 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
                 ...
 
         class Tap(Protocol):
-            """Structural protocol for Oracle tap t.NormalizedValue used in stream context."""
+            """Structural protocol for Oracle tap t.RecursiveContainer used in stream context."""
 
-            typed_config: t.NormalizedValue
+            typed_config: t.RecursiveContainer
 
 
 p = FlextTapOracleProtocols

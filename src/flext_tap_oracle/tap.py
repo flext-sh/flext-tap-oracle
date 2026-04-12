@@ -28,7 +28,7 @@ class FlextTapOracleDiscoverCommand:
     """
 
     def __init__(self, params: m.TapOracle.OracleTapDiscoverParams) -> None:
-        """Initialize command with parameter t.NormalizedValue pattern."""
+        """Initialize command with parameter t.RecursiveContainer pattern."""
         self.params = params
         self._logger = u.fetch_logger(__name__)
 
@@ -82,7 +82,7 @@ class FlextTapOracleSyncCommand:
     """Oracle tap sync command using flext-meltano patterns."""
 
     def __init__(self, params: m.TapOracle.OracleTapSyncParams) -> None:
-        """Initialize command with parameter t.NormalizedValue pattern."""
+        """Initialize command with parameter t.RecursiveContainer pattern."""
         self.params = params
         self._logger = u.fetch_logger(__name__)
 

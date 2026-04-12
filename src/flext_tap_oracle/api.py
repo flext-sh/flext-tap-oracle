@@ -23,7 +23,7 @@ class FlextTapOracleService(FlextMeltanoTapServiceBase):
 
     def __init__(
         self,
-        settings: FlextTapOracleSettings | t.ContainerMapping | None = None,
+        settings: FlextTapOracleSettings | t.RecursiveContainerMapping | None = None,
     ) -> None:
         """Expose the canonical settings bootstrap on the concrete tap facade."""
         super().__init__(settings=settings)
@@ -31,7 +31,7 @@ class FlextTapOracleService(FlextMeltanoTapServiceBase):
     @override
     def create_tap_instance(
         self,
-        settings: t.ContainerMapping | None = None,
+        settings: t.RecursiveContainerMapping | None = None,
     ) -> Never:
         """Not supported — use CLI dispatch via FlextTapOracleCli."""
         msg = "tap-oracle uses CLI dispatch, not singer_sdk.Tap"
