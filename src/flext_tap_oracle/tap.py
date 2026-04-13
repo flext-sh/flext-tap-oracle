@@ -13,9 +13,8 @@ import sys
 from collections.abc import Callable, Mapping
 from pathlib import Path
 
-from flext_core import p, r
 from flext_meltano import FlextMeltanoAbstractions
-from flext_tap_oracle import FlextTapOracleSettings, c, m, p, t, u
+from flext_tap_oracle import FlextTapOracleSettings, c, m, p, r, t, u
 
 logger = u.fetch_logger(__name__)
 cli_api = FlextMeltanoAbstractions()

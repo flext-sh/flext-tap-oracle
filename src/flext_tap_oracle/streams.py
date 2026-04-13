@@ -9,9 +9,8 @@ from __future__ import annotations
 from collections.abc import Iterable, Mapping, MutableMapping, Sequence
 from datetime import datetime
 
-from flext_core import p, r
 from flext_db_oracle import FlextDbOracleApi
-from flext_tap_oracle import c, p, t, u
+from flext_tap_oracle import c, p, r, t, u
 
 
 class FlextTapOracleStreams:

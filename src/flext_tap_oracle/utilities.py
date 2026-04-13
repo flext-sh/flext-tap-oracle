@@ -17,10 +17,9 @@ from typing import Literal
 
 from pydantic import ValidationError
 
-from flext_core import p, r
 from flext_db_oracle import FlextDbOracleModels, FlextDbOracleUtilities
 from flext_meltano import FlextMeltanoUtilities
-from flext_tap_oracle import FlextTapOracleUtilitiesClientMixin, c, e, m, t
+from flext_tap_oracle import FlextTapOracleUtilitiesClientMixin, c, e, m, p, r, t
 
 
 class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):

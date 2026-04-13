@@ -15,8 +15,8 @@ from typing import Annotated, ClassVar, Self
 from pydantic import Field, SecretStr
 from pydantic_settings import SettingsConfigDict
 
-from flext_core import FlextSettings, r
-from flext_tap_oracle import c, t
+from flext_core import FlextSettings
+from flext_tap_oracle import c, p, r, t
 
 
 @FlextSettings.auto_register("tap-oracle")

@@ -18,10 +18,9 @@ from pydantic import (
     model_validator,
 )
 
-from flext_core import p, r
 from flext_db_oracle import FlextDbOracleModels
 from flext_meltano import FlextMeltanoModels
-from flext_tap_oracle import c, t
+from flext_tap_oracle import c, p, r, t
 
 
 class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
