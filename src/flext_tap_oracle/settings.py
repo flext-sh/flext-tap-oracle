@@ -64,7 +64,7 @@ class FlextTapOracleSettings(FlextSettings):
         Field(default="production", description="Environment name"),
     ]
 
-    def validate_business_rules(self) -> r[bool]:
+    def validate_business_rules(self) -> p.Result[bool]:
         """Validate Oracle tap configuration business rules."""
         if not self.oracle_host:
             return r[bool].fail("Oracle host is required")
@@ -103,7 +103,7 @@ class FlextTapOracleSettings(FlextSettings):
         oracle_params: t.ConfigurationMapping,
         tap_params: t.ConfigurationMapping | None = None,
         meltano_params: t.ConfigurationMapping | None = None,
-    ) -> r[FlextTapOracleSettings]:
+    ) -> p.Result[FlextTapOracleSettings]:
         """Create Oracle tap configuration using grouped parameters.
 
         Args:
@@ -139,6 +139,6 @@ class FlextTapOracleSettings(FlextSettings):
     def validate_oracle_tap_configuration(
         cls,
         settings: Self,
-    ) -> r[bool]:
+    ) -> p.Result[bool]:
         """Validate Oracle tap configuration using FlextSettings patterns."""
         return settings.validate_business_rules()

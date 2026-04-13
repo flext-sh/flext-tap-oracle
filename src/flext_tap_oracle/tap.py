@@ -13,7 +13,7 @@ import sys
 from collections.abc import Callable, Mapping
 from pathlib import Path
 
-from flext_core import r
+from flext_core import p, r
 from flext_meltano import FlextMeltanoAbstractions
 from flext_tap_oracle import FlextTapOracleSettings, c, m, p, t, u
 
@@ -32,7 +32,7 @@ class FlextTapOracleDiscoverCommand:
         self.params = params
         self._logger = u.fetch_logger(__name__)
 
-    def execute(self) -> r[Mapping[str, t.GeneralValueType]]:
+    def execute(self) -> p.Result[Mapping[str, t.GeneralValueType]]:
         """Execute Oracle tap discovery using modern patterns."""
         self._logger.info("Starting Oracle database discovery")
         try:
@@ -69,7 +69,7 @@ class FlextTapOracleDiscoverCommand:
             logger.exception("Oracle discovery failed")
             return r[t.GeneralValueMapping].fail(f"Discovery error: {e}")
 
-    def validate_business_rules(self) -> r[bool]:
+    def validate_business_rules(self) -> p.Result[bool]:
         """Validate business rules for Oracle tap discovery."""
         if self.params.config_file and (not Path(self.params.config_file).exists()):
             return r[bool].fail(
@@ -86,7 +86,7 @@ class FlextTapOracleSyncCommand:
         self.params = params
         self._logger = u.fetch_logger(__name__)
 
-    def execute(self) -> r[Mapping[str, t.GeneralValueType]]:
+    def execute(self) -> p.Result[Mapping[str, t.GeneralValueType]]:
         """Execute Oracle tap sync using modern patterns."""
         self._logger.info("Starting Oracle data extraction")
         try:
@@ -123,7 +123,7 @@ class FlextTapOracleSyncCommand:
             logger.exception("Oracle sync failed")
             return r[t.GeneralValueMapping].fail(f"Sync error: {e}")
 
-    def validate_business_rules(self) -> r[bool]:
+    def validate_business_rules(self) -> p.Result[bool]:
         """Validate business rules for Oracle tap sync."""
         if self.params.config_file and (not Path(self.params.config_file).exists()):
             return r[bool].fail(
@@ -146,7 +146,7 @@ class FlextTapOracleCli:
         params_factory: Callable[..., TParams],
         command_factory: Callable[[TParams], p.TapOraclePrivate.CommandRunner],
         operation_name: str,
-    ) -> r[t.Cli.JsonValue]:
+    ) -> p.Result[t.Cli.JsonValue]:
         """Run a tap command with params factory and command factory."""
         try:
             params = params_factory(**dict(kwargs))
@@ -166,7 +166,7 @@ class FlextTapOracleCli:
     def handle_discover_command(
         *_args: t.Scalar,
         **kwargs: t.Scalar,
-    ) -> r[t.Cli.JsonValue]:
+    ) -> p.Result[t.Cli.JsonValue]:
         """Handle discover command using flext-meltano patterns."""
         return FlextTapOracleCli.run_tap_command(
             kwargs=kwargs,
@@ -176,7 +176,9 @@ class FlextTapOracleCli:
         )
 
     @staticmethod
-    def handle_sync_command(*_args: t.Scalar, **kwargs: t.Scalar) -> r[t.Cli.JsonValue]:
+    def handle_sync_command(
+        *_args: t.Scalar, **kwargs: t.Scalar
+    ) -> p.Result[t.Cli.JsonValue]:
         """Handle sync command using flext-meltano patterns."""
         return FlextTapOracleCli.run_tap_command(
             kwargs=kwargs,

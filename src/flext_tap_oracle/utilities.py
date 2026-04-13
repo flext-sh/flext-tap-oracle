@@ -17,7 +17,7 @@ from typing import Literal
 
 from pydantic import ValidationError
 
-from flext_core import r
+from flext_core import p, r
 from flext_db_oracle import FlextDbOracleModels, FlextDbOracleUtilities
 from flext_meltano import FlextMeltanoUtilities
 from flext_tap_oracle import FlextTapOracleUtilitiesClientMixin, c, e, m, t
@@ -33,7 +33,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
         def handle_oracle_exception(
             exception: Exception,
             operation: str = c.TapOracle.DEFAULT_OPERATION_NAME,
-        ) -> r[bool]:
+        ) -> p.Result[bool]:
             """Handle Oracle exceptions with proper error mapping."""
             try:
                 error_message = f"Oracle {operation} failed: {exception}"
@@ -53,7 +53,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
         def create_discovery_result(
             tables: Sequence[FlextDbOracleModels.DbOracle.Table],
             schema_name: str,
-        ) -> r[m.TapOracle.OracleTapDiscoveryResult]:
+        ) -> p.Result[m.TapOracle.OracleTapDiscoveryResult]:
             """Create discovery result from Oracle tables."""
             try:
                 stream_infos: MutableSequence[m.TapOracle.OracleTapStreamInfo] = []
@@ -89,7 +89,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
             oracle_table: FlextDbOracleModels.DbOracle.Table,
             stream_prefix: str = c.TapOracle.DEFAULT_STREAM_PREFIX,
             replication_method: Literal["FULL_TABLE", "INCREMENTAL"] = "FULL_TABLE",
-        ) -> r[m.TapOracle.OracleTapStreamInfo]:
+        ) -> p.Result[m.TapOracle.OracleTapStreamInfo]:
             """Create stream info from Oracle table metadata."""
             try:
                 stream_name = f"{stream_prefix}_{oracle_table.name.lower()}"
@@ -116,7 +116,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
         @staticmethod
         def build_connection_string(
             settings: Mapping[str, t.GeneralValueType],
-        ) -> r[str]:
+        ) -> p.Result[str]:
             """Build Oracle connection string from configuration."""
             try:
                 validation_result = (
@@ -133,7 +133,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
         @staticmethod
         def test_oracle_connectivity(
             settings: Mapping[str, t.GeneralValueType],
-        ) -> r[Mapping[str, t.GeneralValueType]]:
+        ) -> p.Result[Mapping[str, t.GeneralValueType]]:
             """Test Oracle connectivity with configuration."""
             try:
                 validation_result = (
@@ -159,7 +159,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
         @staticmethod
         def validate_oracle_config(
             settings: Mapping[str, t.GeneralValueType],
-        ) -> r[Mapping[str, t.GeneralValueType]]:
+        ) -> p.Result[Mapping[str, t.GeneralValueType]]:
             """Validate Oracle configuration parameters."""
             try:
                 validated_config: MutableMapping[str, t.GeneralValueType] = dict(
@@ -204,7 +204,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
             start_time: float,
             end_time: float,
             records_processed: int,
-        ) -> r[Mapping[str, t.GeneralValueType]]:
+        ) -> p.Result[Mapping[str, t.GeneralValueType]]:
             """Calculate extraction performance metrics."""
             try:
                 duration = end_time - start_time
@@ -234,7 +234,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
         def optimize_extraction_query(
             base_query: str,
             table_stats: Mapping[str, t.GeneralValueType],
-        ) -> r[str]:
+        ) -> p.Result[str]:
             """Optimize extraction query based on table statistics."""
             try:
                 optimized_query = base_query

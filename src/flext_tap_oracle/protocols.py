@@ -9,7 +9,6 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import Protocol, runtime_checkable
 
-from flext_core import r
 from flext_db_oracle import FlextDbOracleProtocols
 from flext_meltano import FlextMeltanoProtocols, m
 from flext_tap_oracle import t
@@ -222,7 +221,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
         class CommandRunner(Protocol):
             """Structural protocol for Oracle tap command execution."""
 
-            def execute(self) -> r[Mapping[str, t.GeneralValueType]]:
+            def execute(self) -> p.Result[Mapping[str, t.GeneralValueType]]:
                 """Execute the Oracle tap command and return results."""
                 ...
 

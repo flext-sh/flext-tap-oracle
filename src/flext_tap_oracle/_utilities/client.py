@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
-from flext_core import r
+from flext_core import p, r
 from flext_db_oracle import FlextDbOracleApi, FlextDbOracleModels
 from flext_tap_oracle import FlextTapOracleSettings, c, t, u
 
@@ -25,7 +25,7 @@ class FlextTapOracleUtilitiesClientMixin:
     def tap_oracle_client_discover_tables(
         oracle_api: FlextDbOracleApi,
         schema_name: str | None = None,
-    ) -> r[Sequence[FlextDbOracleModels.DbOracle.Table]]:
+    ) -> p.Result[Sequence[FlextDbOracleModels.DbOracle.Table]]:
         """Execute Oracle table discovery using Layer 2 flext-db-oracle API."""
         try:
             target_schema = schema_name or "USER"
@@ -59,7 +59,7 @@ class FlextTapOracleUtilitiesClientMixin:
     @staticmethod
     def tap_oracle_client_test_connection(
         oracle_api: FlextDbOracleApi,
-    ) -> r[bool]:
+    ) -> p.Result[bool]:
         """Execute Oracle connection test using Layer 2 flext-db-oracle API."""
         try:
             logger.info("Testing Oracle connection")
@@ -79,7 +79,7 @@ class FlextTapOracleUtilitiesClientMixin:
     def tap_oracle_client_filter_tables(
         tap_config: FlextTapOracleSettings,
         discovered_tables: Sequence[FlextDbOracleModels.DbOracle.Table],
-    ) -> r[t.StrSequence]:
+    ) -> p.Result[t.StrSequence]:
         """Execute table filtering based on tap configuration."""
         try:
             tap_configuration: t.ConfigurationMapping = tap_config.get_tap_config()
@@ -130,7 +130,7 @@ class FlextTapOracleUtilitiesClientMixin:
         oracle_api: FlextDbOracleApi,
         _tap_config: FlextTapOracleSettings,
         schema_name: str | None = None,
-    ) -> r[bool]:
+    ) -> p.Result[bool]:
         """Initialize Oracle tap by testing connection and discovering tables."""
         try:
             logger.info("Initializing Oracle tap service")
