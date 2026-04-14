@@ -193,7 +193,10 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             @model_validator(mode="after")
             def validate_replication_consistency(self) -> Self:
                 """Validate replication configuration consistency."""
-                if self.replication_method == "INCREMENTAL":
+                if (
+                    self.replication_method
+                    == c.TapOracle.Replication.Method.INCREMENTAL.value
+                ):
                     if not self.replication_key:
                         msg = "Incremental replication requires a replication_key"
                         raise ValueError(msg)
@@ -204,7 +207,11 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                         msg = f"Replication key too long: {len(self.replication_key)} > {max_key_length}"
                         raise ValueError(msg)
 
-                elif self.replication_method == "FULL_TABLE" and self.replication_key:
+                elif (
+                    self.replication_method
+                    == c.TapOracle.Replication.Method.FULL_TABLE.value
+                    and self.replication_key
+                ):
                     msg = "Full table replication should not have replication_key"
                     raise ValueError(msg)
 
