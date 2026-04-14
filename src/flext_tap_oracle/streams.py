@@ -10,7 +10,7 @@ from collections.abc import Iterable, Mapping, MutableMapping, Sequence
 from datetime import datetime
 
 from flext_db_oracle import FlextDbOracleApi
-from flext_tap_oracle import c, p, r, t, u
+from flext_tap_oracle import c, p, t, u
 
 
 class FlextTapOracleStreams:
@@ -67,7 +67,7 @@ class FlextTapOracleStreams:
                     return None
                 safe_table_name = self.table_name.replace('"', '""')
                 sql: str = f'SELECT COUNT(*) FROM "{safe_table_name}"'  # nosec B608 — table name validated via isalnum()
-                result: r[Sequence[t.Dict]] = self.oracle_api.query(sql)
+                result: p.Result[Sequence[t.Dict]] = self.oracle_api.query(sql)
                 if result.success and result.value:
                     result_rows: Sequence[t.Dict] = result.value
                     first_row: t.Dict = result_rows[0]
@@ -114,7 +114,7 @@ class FlextTapOracleStreams:
                         sql = f'SELECT * FROM "{schema_name}"."{safe_table}"'  # nosec B608
                     else:
                         sql = f'SELECT * FROM "{safe_table}"'  # nosec B608
-                    query_result: r[Sequence[t.Dict]] = api.query(sql)
+                    query_result: p.Result[Sequence[t.Dict]] = api.query(sql)
                     if query_result.failure:
                         error_msg: str = query_result.error or "unknown query error"
                         raise RuntimeError(error_msg)
