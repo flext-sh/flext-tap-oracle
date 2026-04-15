@@ -19,12 +19,12 @@ from pydantic import (
 )
 
 from flext_db_oracle import FlextDbOracleModels
-from flext_meltano import FlextMeltanoModels
+from flext_meltano import m
 from flext_tap_oracle import c, p, r, t
 
 
-class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
-    """Complete models for Oracle tap operations extending FlextMeltanoModels.
+class FlextTapOracleModels(m, FlextDbOracleModels):
+    """Complete models for Oracle tap operations extending m.
 
     Provides standardized models for all Oracle tap domain entities including:
     - Singer stream metadata and configuration
@@ -33,7 +33,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
     - Performance monitoring and metrics
     - Singer protocol compliance models
 
-    All nested classes inherit FlextMeltanoModels validation and patterns.
+    All nested classes inherit m validation and patterns.
     """
 
     class TapOracle:
@@ -89,7 +89,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 },
             }
 
-        class OracleTapStreamMetadata(FlextMeltanoModels.Entity):
+        class OracleTapStreamMetadata(m.Entity):
             """Oracle tap stream metadata with Singer protocol compliance.
 
             Extends Oracle table metadata with tap-specific information
@@ -217,7 +217,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
                 return self
 
-        class OracleTapDiscoveryConfig(FlextMeltanoModels.Entity):
+        class OracleTapDiscoveryConfig(m.Entity):
             """Configuration for Oracle tap discovery operations."""
 
             # Discovery scope
@@ -297,7 +297,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     },
                 }
 
-        class OracleTapExtractionConfig(FlextMeltanoModels.Entity):
+        class OracleTapExtractionConfig(m.Entity):
             """Configuration for Oracle tap extraction operations."""
 
             # Extraction parameters
@@ -365,7 +365,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     },
                 }
 
-        class _MetricsBase(FlextMeltanoModels.Entity):
+        class _MetricsBase(m.Entity):
             """Shared metrics fields for Oracle tap operations."""
 
             total_records: Annotated[
@@ -447,7 +447,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     },
                 }
 
-        class OracleTapStreamInfo(FlextMeltanoModels.Entity):
+        class OracleTapStreamInfo(m.Entity):
             """Oracle tap stream information - aggregates tap and Oracle metadata.
 
             This model combines Oracle table metadata with tap-specific stream configuration
@@ -555,7 +555,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 """Validate stream info business rules."""
                 return r[bool].ok(value=True)
 
-        class OracleTapDiscoveryResult(FlextMeltanoModels.Entity):
+        class OracleTapDiscoveryResult(m.Entity):
             """Result of Oracle table discovery operation.
 
             Aggregates discovery results with both raw Oracle metadata and
@@ -650,7 +650,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             def get_selected_streams(
                 self,
-            ) -> Sequence[m.TapOracle.OracleTapStreamInfo]:
+            ) -> Sequence[FlextTapOracleModels.TapOracle.OracleTapStreamInfo]:
                 """Get only selected streams."""
                 return [stream for stream in self.stream_info if stream.is_selected]
 
@@ -789,7 +789,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 records: int,
                 bytes_processed: int,
                 processing_time: float,
-            ) -> m.TapOracle.OracleTapExecutionStats:
+            ) -> FlextTapOracleModels.TapOracle.OracleTapExecutionStats:
                 """Return new instance with added statistics for a processed stream."""
                 updated = self.model_copy(
                     update={
@@ -805,7 +805,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             def mark_stream_error(
                 self,
                 stream_name: str,
-            ) -> m.TapOracle.OracleTapExecutionStats:
+            ) -> FlextTapOracleModels.TapOracle.OracleTapExecutionStats:
                 """Return new instance with marked stream error."""
                 new_failed_streams: MutableSequence[str] = (
                     [*self.failed_streams] if self.failed_streams else []
@@ -837,7 +837,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             def update_performance_metrics(
                 self,
-            ) -> m.TapOracle.OracleTapExecutionStats:
+            ) -> FlextTapOracleModels.TapOracle.OracleTapExecutionStats:
                 """Return new instance with updated calculated performance metrics."""
                 if self.duration_seconds > 0:
                     return self.model_copy(
@@ -854,7 +854,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 """Validate execution stats business rules."""
                 return r[bool].ok(value=True)
 
-        class OracleTapDiscoverParams(FlextMeltanoModels.Entity):
+        class OracleTapDiscoverParams(m.Entity):
             """Parameters for Oracle tap discover command."""
 
             config_file: Annotated[str | None, Field(default=None)]
@@ -874,7 +874,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 """Validate discover params business rules."""
                 return r[bool].ok(value=True)
 
-        class OracleTapSyncParams(FlextMeltanoModels.Entity):
+        class OracleTapSyncParams(m.Entity):
             """Parameters for Oracle tap sync command."""
 
             config_file: Annotated[str | None, Field(default=None)]
@@ -914,3 +914,5 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
 # Short aliases
 m = FlextTapOracleModels
+
+__all__: list[str] = ["FlextTapOracleModels", "m"]
