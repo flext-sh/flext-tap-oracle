@@ -13,11 +13,10 @@ from flext_core.lazy import (
 from flext_tap_oracle.__version__ import *
 
 if _t.TYPE_CHECKING:
-    from flext_db_oracle import d, e, h, r, s, x
+    from flext_meltano import d, e, h, m, r, s, u, x
     from flext_tap_oracle._utilities.client import FlextTapOracleUtilitiesClientMixin
     from flext_tap_oracle.api import FlextTapOracleService, tap_oracle
     from flext_tap_oracle.constants import FlextTapOracleConstants, c
-    from flext_tap_oracle.models import FlextTapOracleModels, m
     from flext_tap_oracle.protocols import FlextTapOracleProtocols, p
     from flext_tap_oracle.settings import FlextTapOracleSettings
     from flext_tap_oracle.streams import FlextTapOracleStreams
@@ -27,7 +26,6 @@ if _t.TYPE_CHECKING:
         FlextTapOracleSyncCommand,
     )
     from flext_tap_oracle.typings import FlextTapOracleTypes, t
-    from flext_tap_oracle.utilities import FlextTapOracleUtilities, u
 _LAZY_IMPORTS = merge_lazy_imports(
     ("._utilities",),
     build_lazy_import_map(
@@ -50,10 +48,6 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "FlextTapOracleConstants",
                 "c",
             ),
-            ".models": (
-                "FlextTapOracleModels",
-                "m",
-            ),
             ".protocols": (
                 "FlextTapOracleProtocols",
                 "p",
@@ -69,25 +63,19 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "FlextTapOracleTypes",
                 "t",
             ),
-            ".utilities": (
-                "FlextTapOracleUtilities",
-                "u",
-            ),
-            "flext_db_oracle": (
+            "flext_meltano": (
                 "d",
                 "e",
                 "h",
+                "m",
                 "r",
                 "s",
+                "u",
                 "x",
             ),
         },
     ),
     exclude_names=(
-        "FlextDispatcher",
-        "FlextLogger",
-        "FlextRegistry",
-        "FlextRuntime",
         "cleanup_submodule_namespace",
         "install_lazy_exports",
         "lazy_getattr",
@@ -106,14 +94,12 @@ __all__: list[str] = [
     "FlextTapOracleCli",
     "FlextTapOracleConstants",
     "FlextTapOracleDiscoverCommand",
-    "FlextTapOracleModels",
     "FlextTapOracleProtocols",
     "FlextTapOracleService",
     "FlextTapOracleSettings",
     "FlextTapOracleStreams",
     "FlextTapOracleSyncCommand",
     "FlextTapOracleTypes",
-    "FlextTapOracleUtilities",
     "FlextTapOracleUtilitiesClientMixin",
     "__author__",
     "__author_email__",
