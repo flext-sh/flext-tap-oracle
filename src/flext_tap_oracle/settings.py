@@ -12,57 +12,51 @@ from __future__ import annotations
 
 from typing import Annotated, ClassVar, Self
 
-from pydantic import Field, SecretStr
+from pydantic import SecretStr
 from pydantic_settings import SettingsConfigDict
 
 from flext_core import FlextSettings
-from flext_tap_oracle import c, p, r, t
+from flext_tap_oracle import c, m, p, r, t
 
 
 @FlextSettings.auto_register("tap-oracle")
 class FlextTapOracleSettings(FlextSettings):
     """Runtime settings for Oracle Singer tap operations."""
 
-    model_config: ClassVar[SettingsConfigDict] = SettingsConfigDict(
+    model_config: ClassVar[SettingsConfigDict] = m.SettingsConfigDict(
         env_prefix="FLEXT_TAP_ORACLE_", extra="ignore"
     )
 
     oracle_host: Annotated[
         t.NonEmptyStr,
-        Field(
-            default=c.DbOracle.OracleDefaults.DEFAULT_HOST,
+        m.Field(
             description="Oracle database host",
         ),
-    ]
+    ] = c.DbOracle.OracleDefaults.DEFAULT_HOST
     oracle_port: Annotated[
         t.PortNumber,
-        Field(
-            default=c.DbOracle.Connection.DEFAULT_PORT,
+        m.Field(
             description="Oracle database port",
         ),
-    ]
+    ] = c.DbOracle.Connection.DEFAULT_PORT
     oracle_service_name: Annotated[
         str,
-        Field(
-            default=c.DbOracle.Connection.DEFAULT_SERVICE_NAME,
+        m.Field(
             description="Oracle service name or SID",
         ),
+    ] = c.DbOracle.Connection.DEFAULT_SERVICE_NAME
+    oracle_user: Annotated[SecretStr, m.Field(description="Oracle database username")]
+    oracle_password: Annotated[
+        SecretStr, m.Field(description="Oracle database password")
     ]
-    oracle_user: Annotated[SecretStr, Field(description="Oracle database username")]
-    oracle_password: Annotated[SecretStr, Field(description="Oracle database password")]
     batch_size: Annotated[
-        t.BatchSize,
-        Field(default=1000, description="Batch size for data extraction"),
-    ]
+        t.BatchSize, m.Field(description="Batch size for data extraction")
+    ] = 1000
     stream_prefix: Annotated[
-        str,
-        Field(default="", description="Prefix for Singer stream names"),
-    ]
-    project_root: Annotated[str, Field(default=".", description="Meltano project root")]
-    environment: Annotated[
-        str,
-        Field(default="production", description="Environment name"),
-    ]
+        str, m.Field(description="Prefix for Singer stream names")
+    ] = ""
+    project_root: Annotated[str, m.Field(description="Meltano project root")] = "."
+    environment: Annotated[str, m.Field(description="Environment name")] = "production"
 
     def validate_business_rules(self) -> p.Result[bool]:
         """Validate Oracle tap configuration business rules."""

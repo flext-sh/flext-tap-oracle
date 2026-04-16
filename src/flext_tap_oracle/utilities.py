@@ -15,8 +15,6 @@ from collections.abc import Mapping, MutableMapping, MutableSequence, Sequence
 from datetime import UTC, datetime
 from typing import Literal
 
-from pydantic import ValidationError
-
 from flext_db_oracle import FlextDbOracleModels, FlextDbOracleUtilities
 from flext_meltano import FlextMeltanoUtilities
 from flext_tap_oracle import FlextTapOracleUtilitiesClientMixin, c, e, m, p, r, t
@@ -188,7 +186,7 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
                             f"Oracle port must be between 1 and {max_port}",
                         )
                     validated_config["port"] = port
-                except ValidationError:
+                except c.ValidationError:
                     return r[t.GeneralValueMapping].fail(
                         "Oracle port must be numeric",
                     )

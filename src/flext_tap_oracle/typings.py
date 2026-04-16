@@ -17,22 +17,20 @@ from __future__ import annotations
 from pydantic import TypeAdapter
 
 from flext_db_oracle import FlextDbOracleTypes
-from flext_meltano import FlextMeltanoTypes
+from flext_meltano import m, t
 
 
-class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
+class FlextTapOracleTypes(t, FlextDbOracleTypes):
     """MRO facade composing Meltano + DbOracle type namespaces.
 
     Access: ``t.Meltano.*`` (Singer protocol), ``t.DbOracle.*`` (Oracle domain),
     and all core ``t.*`` types via MRO inheritance.
     """
 
-    GENERAL_VALUE_MAP_ADAPTER: TypeAdapter[FlextMeltanoTypes.GeneralValueMapping] = (
-        TypeAdapter(FlextMeltanoTypes.GeneralValueMapping)
+    GENERAL_VALUE_MAP_ADAPTER: m.TypeAdapter[t.GeneralValueMapping] = TypeAdapter(
+        t.GeneralValueMapping
     )
-    INTEGER_ADAPTER: TypeAdapter[FlextMeltanoTypes.IntegerValue] = TypeAdapter(
-        FlextMeltanoTypes.IntegerValue
-    )
+    INTEGER_ADAPTER: m.TypeAdapter[t.IntegerValue] = TypeAdapter(t.IntegerValue)
 
     class TapOracle:
         """Tap Oracle namespace for type definitions.
