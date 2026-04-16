@@ -180,7 +180,7 @@ def singer_catalog() -> t.RecursiveContainerMapping:
             {
                 "tap_stream_id": "employees",
                 "schema": {
-                    "type": "t.RecursiveContainer",
+                    "type": "object",
                     "properties": {
                         "id": {"type": "integer"},
                         "name": {"type": "string"},
@@ -213,7 +213,7 @@ def singer_catalog() -> t.RecursiveContainerMapping:
             {
                 "tap_stream_id": "departments",
                 "schema": {
-                    "type": "t.RecursiveContainer",
+                    "type": "object",
                     "properties": {
                         "id": {"type": "integer"},
                         "name": {"type": "string"},
@@ -424,7 +424,7 @@ def singer_schema_message() -> t.RecursiveContainerMapping:
         "type": "SCHEMA",
         "stream": "employees",
         "schema": {
-            "type": "t.RecursiveContainer",
+            "type": "object",
             "properties": {
                 "id": {"type": "integer"},
                 "name": {"type": "string"},
@@ -560,7 +560,7 @@ def mock_oracle_tap() -> type:
                     {
                         "tap_stream_id": "employees",
                         "schema": {
-                            "type": "t.RecursiveContainer",
+                            "type": "object",
                             "properties": {
                                 "id": {"type": "integer"},
                                 "name": {"type": "string"},
