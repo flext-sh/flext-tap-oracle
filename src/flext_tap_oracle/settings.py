@@ -15,7 +15,7 @@ from typing import Annotated, ClassVar, Self
 from pydantic import SecretStr
 from pydantic_settings import SettingsConfigDict
 
-from flext_core import FlextSettings
+from flext_core import FlextSettings, u
 from flext_tap_oracle import c, m, p, r, t
 
 
@@ -29,34 +29,34 @@ class FlextTapOracleSettings(FlextSettings):
 
     oracle_host: Annotated[
         t.NonEmptyStr,
-        m.Field(
+        u.Field(
             description="Oracle database host",
         ),
     ] = c.DbOracle.OracleDefaults.DEFAULT_HOST
     oracle_port: Annotated[
         t.PortNumber,
-        m.Field(
+        u.Field(
             description="Oracle database port",
         ),
     ] = c.DbOracle.Connection.DEFAULT_PORT
     oracle_service_name: Annotated[
         str,
-        m.Field(
+        u.Field(
             description="Oracle service name or SID",
         ),
     ] = c.DbOracle.Connection.DEFAULT_SERVICE_NAME
-    oracle_user: Annotated[SecretStr, m.Field(description="Oracle database username")]
+    oracle_user: Annotated[SecretStr, u.Field(description="Oracle database username")]
     oracle_password: Annotated[
-        SecretStr, m.Field(description="Oracle database password")
+        SecretStr, u.Field(description="Oracle database password")
     ]
     batch_size: Annotated[
-        t.BatchSize, m.Field(description="Batch size for data extraction")
+        t.BatchSize, u.Field(description="Batch size for data extraction")
     ] = 1000
     stream_prefix: Annotated[
-        str, m.Field(description="Prefix for Singer stream names")
+        str, u.Field(description="Prefix for Singer stream names")
     ] = ""
-    project_root: Annotated[str, m.Field(description="Meltano project root")] = "."
-    environment: Annotated[str, m.Field(description="Environment name")] = "production"
+    project_root: Annotated[str, u.Field(description="Meltano project root")] = "."
+    environment: Annotated[str, u.Field(description="Environment name")] = "production"
 
     def validate_business_rules(self) -> p.Result[bool]:
         """Validate Oracle tap configuration business rules."""

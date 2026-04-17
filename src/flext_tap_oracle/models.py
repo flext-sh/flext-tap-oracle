@@ -11,11 +11,6 @@ from collections.abc import MutableSequence, Sequence
 from datetime import datetime
 from typing import Annotated, Literal, Self
 
-from pydantic import (
-    field_validator,
-    model_validator,
-)
-
 from flext_db_oracle import FlextDbOracleModels
 from flext_meltano import m
 from flext_tap_oracle import c, p, r, t, u
@@ -95,43 +90,43 @@ class FlextTapOracleModels(m, FlextDbOracleModels):
             """
 
             # Singer stream configuration
-            stream_name: Annotated[str, m.Field(..., description="Singer stream name")]
+            stream_name: Annotated[str, u.Field(..., description="Singer stream name")]
             replication_method: Annotated[
                 Literal["FULL_TABLE", "INCREMENTAL"],
-                m.Field(
+                u.Field(
                     description="Replication method for this stream",
                 ),
             ] = "FULL_TABLE"
             replication_key: Annotated[
                 str | None,
-                m.Field(
+                u.Field(
                     description="Column used for incremental replication",
                 ),
             ] = None
             is_selected: Annotated[
                 bool,
-                m.Field(
+                u.Field(
                     description="Whether stream is selected for extraction",
                 ),
             ] = True
 
             # Oracle-specific metadata
-            table_name: Annotated[str, m.Field(..., description="Oracle table name")]
+            table_name: Annotated[str, u.Field(..., description="Oracle table name")]
             schema_name: Annotated[
                 str | None,
-                m.Field(
+                u.Field(
                     description="Oracle schema name",
                 ),
             ] = None
             estimated_rows: Annotated[
                 int | None,
-                m.Field(
+                u.Field(
                     description="Estimated row count",
                 ),
             ] = None
             column_count: Annotated[
                 int | None,
-                m.Field(
+                u.Field(
                     description="Number of columns",
                 ),
             ] = None
@@ -157,7 +152,7 @@ class FlextTapOracleModels(m, FlextDbOracleModels):
                     "estimated_volume": estimated_volume,
                 }
 
-            @field_validator("stream_name")
+            @u.field_validator("stream_name")
             @classmethod
             def validate_stream_name(cls, v: str) -> str:
                 """Validate stream name follows Singer conventions."""
@@ -183,7 +178,7 @@ class FlextTapOracleModels(m, FlextDbOracleModels):
                 """Validate tap-specific business rules."""
                 return r[bool].ok(value=True)
 
-            @model_validator(mode="after")
+            @u.model_validator(mode="after")
             def validate_replication_consistency(self) -> Self:
                 """Validate replication configuration consistency."""
                 if (
@@ -216,39 +211,39 @@ class FlextTapOracleModels(m, FlextDbOracleModels):
             # Discovery scope
             schema_names: Annotated[
                 t.StrSequence,
-                m.Field(
+                u.Field(
                     description="Oracle schemas to discover",
                 ),
-            ] = m.Field(default_factory=list)
+            ] = u.Field(default_factory=list)
             table_patterns: Annotated[
                 t.StrSequence,
-                m.Field(
+                u.Field(
                     description="Table name patterns to include",
                 ),
-            ] = m.Field(default_factory=list)
+            ] = u.Field(default_factory=list)
             exclude_patterns: Annotated[
                 t.StrSequence,
-                m.Field(
+                u.Field(
                     description="Table name patterns to exclude",
                 ),
-            ] = m.Field(default_factory=list)
+            ] = u.Field(default_factory=list)
 
             # Discovery options
             include_views: Annotated[
                 bool,
-                m.Field(
+                u.Field(
                     description="Include Oracle views in discovery",
                 ),
             ] = False
             include_system_tables: Annotated[
                 bool,
-                m.Field(
+                u.Field(
                     description="Include system tables in discovery",
                 ),
             ] = False
             max_tables: Annotated[
                 t.PositiveInt,
-                m.Field(
+                u.Field(
                     description="Maximum number of tables to discover",
                 ),
             ] = c.DEFAULT_SIZE
@@ -256,13 +251,13 @@ class FlextTapOracleModels(m, FlextDbOracleModels):
             # Performance settings
             discovery_timeout: Annotated[
                 t.PositiveInt,
-                m.Field(
+                u.Field(
                     description="Discovery timeout in seconds",
                 ),
             ] = c.DEFAULT_TIMEOUT_SECONDS * 10
             parallel_discovery: Annotated[
                 bool,
-                m.Field(
+                u.Field(
                     description="Enable parallel discovery",
                 ),
             ] = True
@@ -292,13 +287,13 @@ class FlextTapOracleModels(m, FlextDbOracleModels):
             # Extraction parameters
             batch_size: Annotated[
                 t.PositiveInt,
-                m.Field(
+                u.Field(
                     description="Number of rows per batch",
                 ),
             ] = c.DEFAULT_SIZE * 10
             max_rows: Annotated[
                 t.PositiveInt | None,
-                m.Field(
+                u.Field(
                     description="Maximum rows to extract (None for unlimited)",
                 ),
             ] = None
@@ -306,11 +301,11 @@ class FlextTapOracleModels(m, FlextDbOracleModels):
             # Performance optimization
             parallel_streams: Annotated[
                 t.WorkerCount,
-                m.Field(description="Number of parallel extraction streams"),
+                u.Field(description="Number of parallel extraction streams"),
             ] = 1
             enable_query_hints: Annotated[
                 bool,
-                m.Field(
+                u.Field(
                     description="Enable Oracle query optimization hints",
                 ),
             ] = True
@@ -318,13 +313,13 @@ class FlextTapOracleModels(m, FlextDbOracleModels):
             # Incremental extraction
             incremental_column: Annotated[
                 str | None,
-                m.Field(
+                u.Field(
                     description="Column for incremental extraction",
                 ),
             ] = None
             incremental_bookmark: Annotated[
                 str | None,
-                m.Field(
+                u.Field(
                     description="Bookmark value for incremental extraction",
                 ),
             ] = None
@@ -354,25 +349,25 @@ class FlextTapOracleModels(m, FlextDbOracleModels):
             """Shared metrics fields for Oracle tap operations."""
 
             total_records: Annotated[
-                t.NonNegativeInt, m.Field(description="Total records extracted")
+                t.NonNegativeInt, u.Field(description="Total records extracted")
             ] = 0
             total_bytes: Annotated[
-                t.NonNegativeInt, m.Field(description="Total bytes processed")
+                t.NonNegativeInt, u.Field(description="Total bytes processed")
             ] = 0
             streams_processed: Annotated[
-                t.NonNegativeInt, m.Field(description="Number of streams processed")
+                t.NonNegativeInt, u.Field(description="Number of streams processed")
             ] = 0
             avg_records_per_second: Annotated[
-                t.NonNegativeFloat, m.Field(description="Average records per second")
+                t.NonNegativeFloat, u.Field(description="Average records per second")
             ] = 0.0
             avg_bytes_per_second: Annotated[
-                t.NonNegativeFloat, m.Field(description="Average bytes per second")
+                t.NonNegativeFloat, u.Field(description="Average bytes per second")
             ] = 0.0
             oracle_connection_time: Annotated[
-                t.NonNegativeFloat, m.Field(description="Oracle connection time")
+                t.NonNegativeFloat, u.Field(description="Oracle connection time")
             ] = 0.0
             oracle_query_time: Annotated[
-                t.NonNegativeFloat, m.Field(description="Total Oracle query time")
+                t.NonNegativeFloat, u.Field(description="Total Oracle query time")
             ] = 0.0
 
         class OracleTapPerformanceMetrics(_MetricsBase):
@@ -381,14 +376,14 @@ class FlextTapOracleModels(m, FlextDbOracleModels):
             # Extraction metrics
             extraction_id: Annotated[
                 str,
-                m.Field(description="Unique extraction identifier"),
+                u.Field(description="Unique extraction identifier"),
             ]
             start_time: Annotated[
-                str, m.Field(description="Extraction start timestamp")
+                str, u.Field(description="Extraction start timestamp")
             ]
             end_time: Annotated[
                 str | None,
-                m.Field(
+                u.Field(
                     description="Extraction end timestamp",
                 ),
             ] = None
@@ -435,33 +430,33 @@ class FlextTapOracleModels(m, FlextDbOracleModels):
             # Stream identity
             stream_name: Annotated[
                 t.NonEmptyStr,
-                m.Field(..., description="Singer stream name"),
+                u.Field(..., description="Singer stream name"),
             ]
             table_name: Annotated[
                 t.NonEmptyStr,
-                m.Field(..., description="Oracle table name"),
+                u.Field(..., description="Oracle table name"),
             ]
             schema_name: Annotated[
                 str | None,
-                m.Field(None, description="Oracle schema name"),
+                u.Field(None, description="Oracle schema name"),
             ]
 
             # Stream configuration
             is_selected: Annotated[
                 bool,
-                m.Field(
+                u.Field(
                     description="Whether stream is selected for extraction",
                 ),
             ] = True
             replication_method: Annotated[
                 Literal["FULL_TABLE", "INCREMENTAL"],
-                m.Field(
+                u.Field(
                     description="Replication method for this stream",
                 ),
             ] = "FULL_TABLE"
             replication_key: Annotated[
                 str | None,
-                m.Field(
+                u.Field(
                     None,
                     description="Column used for incremental replication",
                 ),
@@ -470,15 +465,15 @@ class FlextTapOracleModels(m, FlextDbOracleModels):
             # Runtime information (populated at runtime)
             estimated_rows: Annotated[
                 int | None,
-                m.Field(None, description="Estimated row count"),
+                u.Field(None, description="Estimated row count"),
             ]
             column_count: Annotated[
                 int | None,
-                m.Field(None, description="Number of columns"),
+                u.Field(None, description="Number of columns"),
             ]
             last_extracted: Annotated[
                 str | None,
-                m.Field(
+                u.Field(
                     None,
                     description="Last extraction timestamp",
                 ),
@@ -542,40 +537,40 @@ class FlextTapOracleModels(m, FlextDbOracleModels):
             # Discovery metadata
             schema_name: Annotated[
                 t.NonEmptyStr,
-                m.Field(
+                u.Field(
                     ...,
                     description="Oracle schema that was discovered",
                 ),
             ]
             discovery_timestamp: Annotated[
                 str,
-                m.Field(
+                u.Field(
                     ...,
                     description="When discovery was performed",
                 ),
             ]
             total_tables: Annotated[
                 t.NonNegativeInt,
-                m.Field(..., description="Total number of tables discovered"),
+                u.Field(..., description="Total number of tables discovered"),
             ]
 
             # Raw Oracle metadata
             oracle_tables: Annotated[
                 Sequence[FlextDbOracleModels.DbOracle.Table],
-                m.Field(
+                u.Field(
                     description="Raw Oracle table metadata from flext-db-oracle",
                 ),
-            ] = m.Field(
+            ] = u.Field(
                 default_factory=lambda: list[FlextDbOracleModels.DbOracle.Table](),
             )
 
             # Processed stream information
             stream_info: Annotated[
                 Sequence[FlextTapOracleModels.TapOracle.OracleTapStreamInfo],
-                m.Field(
+                u.Field(
                     description="Processed stream information for tap use",
                 ),
-            ] = m.Field(
+            ] = u.Field(
                 default_factory=lambda: list[
                     FlextTapOracleModels.TapOracle.OracleTapStreamInfo
                 ](),
@@ -584,16 +579,16 @@ class FlextTapOracleModels(m, FlextDbOracleModels):
             # Filtering results
             filtered_tables: Annotated[
                 t.StrSequence,
-                m.Field(
+                u.Field(
                     description="Table names after applying filters",
                 ),
-            ] = m.Field(default_factory=list)
+            ] = u.Field(default_factory=list)
             excluded_tables: Annotated[
                 t.StrSequence,
-                m.Field(
+                u.Field(
                     description="Table names that were excluded",
                 ),
-            ] = m.Field(default_factory=list)
+            ] = u.Field(default_factory=list)
 
             @u.computed_field()
             @property
@@ -669,21 +664,21 @@ class FlextTapOracleModels(m, FlextDbOracleModels):
             # Execution metadata
             execution_id: Annotated[
                 t.NonEmptyStr,
-                m.Field(..., description="Unique execution identifier"),
+                u.Field(..., description="Unique execution identifier"),
             ]
             start_timestamp: Annotated[
                 str,
-                m.Field(..., description="Execution start time"),
+                u.Field(..., description="Execution start time"),
             ]
             end_timestamp: Annotated[
                 str | None,
-                m.Field(None, description="Execution end time"),
+                u.Field(None, description="Execution end time"),
             ]
 
             # Execution-specific metrics
             duration_seconds: Annotated[
                 t.NonNegativeFloat,
-                m.Field(
+                u.Field(
                     description="Total execution duration",
                 ),
             ] = 0.0
@@ -691,21 +686,21 @@ class FlextTapOracleModels(m, FlextDbOracleModels):
             # Error tracking
             errors_encountered: Annotated[
                 t.NonNegativeInt,
-                m.Field(
+                u.Field(
                     description="Number of errors encountered",
                 ),
             ] = 0
             failed_streams: Annotated[
                 t.StrSequence,
-                m.Field(
+                u.Field(
                     description="Names of failed streams",
                 ),
-            ] = m.Field(default_factory=list)
+            ] = u.Field(default_factory=list)
 
             # Oracle-specific execution metrics
             oracle_result_processing_time: Annotated[
                 t.NonNegativeFloat,
-                m.Field(
+                u.Field(
                     description="Result processing time",
                 ),
             ] = 0.0
@@ -833,8 +828,8 @@ class FlextTapOracleModels(m, FlextDbOracleModels):
         class OracleTapDiscoverParams(m.Entity):
             """Parameters for Oracle tap discover command."""
 
-            config_file: Annotated[str | None, m.Field(default=None)]
-            output_file: Annotated[str | None, m.Field(default=None)]
+            config_file: Annotated[str | None, u.Field(default=None)]
+            output_file: Annotated[str | None, u.Field(default=None)]
 
             @classmethod
             def from_click_args(cls, **kwargs: t.Scalar) -> Self:
@@ -853,9 +848,9 @@ class FlextTapOracleModels(m, FlextDbOracleModels):
         class OracleTapSyncParams(m.Entity):
             """Parameters for Oracle tap sync command."""
 
-            config_file: Annotated[str | None, m.Field(default=None)]
-            catalog_file: Annotated[str | None, m.Field(default=None)]
-            state_file: Annotated[str | None, m.Field(default=None)]
+            config_file: Annotated[str | None, u.Field(default=None)]
+            catalog_file: Annotated[str | None, u.Field(default=None)]
+            state_file: Annotated[str | None, u.Field(default=None)]
 
             @classmethod
             def from_click_args(cls, **kwargs: t.Scalar) -> Self:
