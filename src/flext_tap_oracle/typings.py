@@ -14,8 +14,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from pydantic import TypeAdapter
-
 from flext_db_oracle import FlextDbOracleTypes
 from flext_meltano import m, t
 
@@ -27,10 +25,10 @@ class FlextTapOracleTypes(t, FlextDbOracleTypes):
     and all core ``t.*`` types via MRO inheritance.
     """
 
-    GENERAL_VALUE_MAP_ADAPTER: m.TypeAdapter[t.GeneralValueMapping] = TypeAdapter(
+    GENERAL_VALUE_MAP_ADAPTER: m.TypeAdapter[t.GeneralValueMapping] = m.TypeAdapter(
         t.GeneralValueMapping
     )
-    INTEGER_ADAPTER: m.TypeAdapter[t.IntegerValue] = TypeAdapter(t.IntegerValue)
+    INTEGER_ADAPTER: m.TypeAdapter[t.IntegerValue] = m.TypeAdapter(t.IntegerValue)
 
     class TapOracle:
         """Tap Oracle namespace for type definitions.
