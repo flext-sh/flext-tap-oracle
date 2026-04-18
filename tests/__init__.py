@@ -19,6 +19,7 @@ if _t.TYPE_CHECKING:
     from tests.models import TestsFlextTapOracleModels, m
     from tests.protocols import TestsFlextTapOracleProtocols, p
     from tests.typings import TestsFlextTapOracleTypes, t
+    from tests.unit.test_enterprise_tap import TestFlextOracleTapSettingsAndHelpers
     from tests.utilities import TestsFlextTapOracleUtilities, u
 _LAZY_IMPORTS = merge_lazy_imports(
     (".unit",),
@@ -40,6 +41,7 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "TestsFlextTapOracleTypes",
                 "t",
             ),
+            ".unit.test_enterprise_tap": ("TestFlextOracleTapSettingsAndHelpers",),
             ".utilities": (
                 "TestsFlextTapOracleUtilities",
                 "u",
@@ -77,6 +79,7 @@ _LAZY_IMPORTS = merge_lazy_imports(
 install_lazy_exports(__name__, globals(), _LAZY_IMPORTS)
 
 __all__: list[str] = [
+    "TestFlextOracleTapSettingsAndHelpers",
     "TestsFlextTapOracleConstants",
     "TestsFlextTapOracleModels",
     "TestsFlextTapOracleProtocols",
