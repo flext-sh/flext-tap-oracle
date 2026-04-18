@@ -40,7 +40,7 @@ class FlextTapOracleTypes(t, FlextDbOracleTypes):
         class Summary:
             """Summary and reporting complex types."""
 
-            type SummaryData = FlextDbOracleTypes.ContainerMapping
+            type SummaryData = FlextDbOracleTypes.RecursiveContainerMapping
             type OracleValue = FlextDbOracleTypes.ValueOrModel | None
 
 
