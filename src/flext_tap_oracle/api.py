@@ -10,8 +10,9 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import Never, override
+from typing import Annotated, Never, override
 
+from flext_core import u
 from flext_meltano import FlextMeltanoTapServiceBase
 from flext_tap_oracle import FlextTapOracleSettings, t
 
@@ -19,7 +20,10 @@ from flext_tap_oracle import FlextTapOracleSettings, t
 class FlextTapOracleService(FlextMeltanoTapServiceBase):
     """Orchestrator for tap-oracle. CLI dispatch, not Singer SDK."""
 
-    tap_name: t.NonEmptyStr = "tap-oracle"
+    tap_name: Annotated[
+        t.NonEmptyStr,
+        u.Field(description="Canonical Singer tap identifier."),
+    ] = "tap-oracle"
 
     def __init__(
         self,

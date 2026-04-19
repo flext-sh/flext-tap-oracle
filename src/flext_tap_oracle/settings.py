@@ -12,9 +12,6 @@ from __future__ import annotations
 
 from typing import Annotated, ClassVar, Self
 
-from pydantic import SecretStr
-from pydantic_settings import SettingsConfigDict
-
 from flext_core import FlextSettings, u
 from flext_tap_oracle import c, m, p, r, t
 
@@ -23,7 +20,7 @@ from flext_tap_oracle import c, m, p, r, t
 class FlextTapOracleSettings(FlextSettings):
     """Runtime settings for Oracle Singer tap operations."""
 
-    model_config: ClassVar[SettingsConfigDict] = m.SettingsConfigDict(
+    model_config: ClassVar[m.SettingsConfigDict] = m.SettingsConfigDict(
         env_prefix="FLEXT_TAP_ORACLE_", extra="ignore"
     )
 
@@ -45,9 +42,9 @@ class FlextTapOracleSettings(FlextSettings):
             description="Oracle service name or SID",
         ),
     ] = c.DbOracle.Connection.DEFAULT_SERVICE_NAME
-    oracle_user: Annotated[SecretStr, u.Field(description="Oracle database username")]
+    oracle_user: Annotated[t.SecretStr, u.Field(description="Oracle database username")]
     oracle_password: Annotated[
-        SecretStr, u.Field(description="Oracle database password")
+        t.SecretStr, u.Field(description="Oracle database password")
     ]
     batch_size: Annotated[
         t.BatchSize, u.Field(description="Batch size for data extraction")
@@ -67,9 +64,9 @@ class FlextTapOracleSettings(FlextSettings):
         return r[bool].ok(True)
 
     @staticmethod
-    def _resolve_secret(value: SecretStr | str) -> str:
+    def _resolve_secret(value: t.SecretStr | str) -> str:
         """Resolve a SecretStr to its plain value."""
-        if isinstance(value, SecretStr):
+        if isinstance(value, t.SecretStr):
             return value.get_secret_value()
         return value
 

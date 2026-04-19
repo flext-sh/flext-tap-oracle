@@ -20,9 +20,8 @@ from typing import TypeIs, override
 import pytest
 from flext_tests import tk
 
-from flext_core import r
 from flext_tap_oracle import FlextTapOracleService, FlextTapOracleSettings
-from tests import t
+from tests import r, t
 
 
 @pytest.fixture
