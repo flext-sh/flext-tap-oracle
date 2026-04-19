@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 
 from flext_tests import FlextTestsUtilities
 
@@ -50,7 +50,7 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities, FlextTapOracleUtilities)
             username: str = "test",
             password: str = "test",
             **kwargs: t.Scalar,
-        ) -> t.RecursiveContainerMapping:
+        ) -> Mapping[str, t.Container]:
             """Create test Oracle configuration."""
             settings: t.MutableRecursiveContainerMapping = {
                 "host": host,
@@ -68,7 +68,7 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities, FlextTapOracleUtilities)
             table_name: str,
             replication_method: str = "FULL_TABLE",
             **kwargs: t.Scalar,
-        ) -> t.RecursiveContainerMapping:
+        ) -> Mapping[str, t.Container]:
             """Create test Singer stream configuration."""
             stream: t.MutableRecursiveContainerMapping = {
                 "stream_name": stream_name,
@@ -81,7 +81,7 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities, FlextTapOracleUtilities)
 
         @staticmethod
         def validate_oracle_connection_config(
-            settings: t.RecursiveContainerMapping,
+            settings: Mapping[str, t.Container],
         ) -> bool:
             """Validate Oracle connection configuration for testing."""
             required_fields = ["host", "port", "service_name", "username", "password"]
@@ -94,9 +94,9 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities, FlextTapOracleUtilities)
             table_name: str,
             row_count: int = 10,
             **kwargs: t.Scalar,
-        ) -> Sequence[t.RecursiveContainerMapping]:
+        ) -> Sequence[Mapping[str, t.Container]]:
             """Generate mock Oracle data for testing."""
-            data: list[t.RecursiveContainerMapping] = []
+            data: list[Mapping[str, t.Container]] = []
             for i in range(row_count):
                 row: t.MutableRecursiveContainerMapping = {
                     "id": i + 1,

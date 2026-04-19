@@ -67,10 +67,10 @@ class FlextTapOracleStreams:
                     return None
                 safe_table_name = self.table_name.replace('"', '""')
                 sql: str = f'SELECT COUNT(*) FROM "{safe_table_name}"'  # nosec B608 — table name validated via isalnum()
-                result: p.Result[Sequence[t.Dict]] = self.oracle_api.query(sql)
+                result: p.Result[Sequence[m.Dict]] = self.oracle_api.query(sql)
                 if result.success and result.value:
-                    result_rows: Sequence[t.Dict] = result.value
-                    first_row: t.Dict = result_rows[0]
+                    result_rows: Sequence[m.Dict] = result.value
+                    first_row: m.Dict = result_rows[0]
                     first_val = next(iter(first_row.root.values()), None)
                     if isinstance(first_val, t.NUMERIC_TYPES) and not isinstance(
                         first_val,
@@ -114,11 +114,11 @@ class FlextTapOracleStreams:
                         sql = f'SELECT * FROM "{schema_name}"."{safe_table}"'  # nosec B608
                     else:
                         sql = f'SELECT * FROM "{safe_table}"'  # nosec B608
-                    query_result: p.Result[Sequence[t.Dict]] = api.query(sql)
+                    query_result: p.Result[Sequence[m.Dict]] = api.query(sql)
                     if query_result.failure:
                         error_msg: str = query_result.error or "unknown query error"
                         raise RuntimeError(error_msg)
-                    rows: Sequence[t.Dict] = query_result.value
+                    rows: Sequence[m.Dict] = query_result.value
                     yield from self._process_results_with_table_metadata(
                         rows,
                         table_metadata_result.value,
@@ -171,7 +171,7 @@ class FlextTapOracleStreams:
 
         def _process_results_with_table_metadata(
             self,
-            query_data: Sequence[t.Dict],
+            query_data: Sequence[m.Dict],
             table_metadata: t.TapOracle.Summary.OracleValue,
         ) -> Iterable[Mapping[str, t.TapOracle.Summary.OracleValue]]:
             """Process results using flext-db-oracle table metadata."""

@@ -228,9 +228,9 @@ class FlextTapOracleProtocols(m, FlextDbOracleProtocols):
 
         @runtime_checkable
         class Tap(Protocol):
-            """Structural protocol for Oracle tap t.RecursiveContainer used in stream context."""
+            """Structural protocol for Oracle tap t.Container used in stream context."""
 
-            typed_config: t.RecursiveContainer
+            typed_config: t.Container
 
 
 p = FlextTapOracleProtocols
