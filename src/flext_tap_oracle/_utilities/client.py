@@ -30,7 +30,7 @@ class FlextTapOracleUtilitiesClientMixin:
         try:
             target_schema = schema_name or "USER"
             logger.info("Discovering Oracle tables in schema: %s", target_schema)
-            tables_result = oracle_api.get_tables(schema=target_schema)
+            tables_result = oracle_api.fetch_tables(schema=target_schema)
             if tables_result.failure:
                 error_msg = tables_result.error or "Table discovery failed"
                 logger.warning("Oracle table discovery failed: %s", error_msg)

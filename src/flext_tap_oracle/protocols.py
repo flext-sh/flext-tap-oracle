@@ -218,6 +218,7 @@ class FlextTapOracleProtocols(m, FlextDbOracleProtocols):
     class TapOraclePrivate:
         """Private structural protocols for internal flext-tap-oracle use."""
 
+        @runtime_checkable
         class CommandRunner(Protocol):
             """Structural protocol for Oracle tap command execution."""
 
@@ -225,6 +226,7 @@ class FlextTapOracleProtocols(m, FlextDbOracleProtocols):
                 """Execute the Oracle tap command and return results."""
                 ...
 
+        @runtime_checkable
         class Tap(Protocol):
             """Structural protocol for Oracle tap t.RecursiveContainer used in stream context."""
 

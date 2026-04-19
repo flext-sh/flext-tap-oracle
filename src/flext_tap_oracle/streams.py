@@ -100,7 +100,7 @@ class FlextTapOracleStreams:
             try:
                 _ = context
                 with self.oracle_api as api:
-                    table_metadata_result = api.get_table_metadata(self.table_name)
+                    table_metadata_result = api.fetch_table_metadata(self.table_name)
                     if table_metadata_result.failure:
                         msg = (
                             table_metadata_result.error
@@ -144,7 +144,7 @@ class FlextTapOracleStreams:
         def get_table_info(self) -> Mapping[str, t.GeneralValueType | None]:
             """Get Oracle table information using flext-db-oracle metadata."""
             try:
-                table_metadata_result = self.oracle_api.get_table_metadata(
+                table_metadata_result = self.oracle_api.fetch_table_metadata(
                     self.table_name,
                 )
                 if table_metadata_result.success:
