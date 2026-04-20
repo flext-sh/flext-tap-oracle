@@ -55,7 +55,7 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities, FlextTapOracleUtilities)
             **kwargs: t.Scalar,
         ) -> Mapping[str, t.Container]:
             """Create test Oracle configuration."""
-            settings: t.MutableRecursiveContainerMapping = {
+            settings: t.MutableFlatContainerMapping = {
                 "host": host,
                 "port": port,
                 "service_name": service_name,
@@ -73,7 +73,7 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities, FlextTapOracleUtilities)
             **kwargs: t.Scalar,
         ) -> Mapping[str, t.Container]:
             """Create test Singer stream configuration."""
-            stream: t.MutableRecursiveContainerMapping = {
+            stream: t.MutableFlatContainerMapping = {
                 "stream_name": stream_name,
                 "table_name": table_name,
                 "replication_method": replication_method,
@@ -101,7 +101,7 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities, FlextTapOracleUtilities)
             """Generate mock Oracle data for testing."""
             data: list[Mapping[str, t.Container]] = []
             for i in range(row_count):
-                row: t.MutableRecursiveContainerMapping = {
+                row: t.MutableFlatContainerMapping = {
                     "id": i + 1,
                     "name": f"Test Record {i + 1}",
                     "table_name": table_name,

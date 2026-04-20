@@ -138,7 +138,7 @@ class FlextTapOracleModels(m, FlextDbOracleModels):
             @property
             def stream_metadata_summary(self) -> t.TapOracle.Summary.SummaryData:
                 """Oracle stream metadata summary."""
-                estimated_volume: t.MutableRecursiveContainerMapping = {}
+                estimated_volume: t.MutableFlatContainerMapping = {}
                 if self.estimated_rows is not None:
                     estimated_volume["rows"] = self.estimated_rows
                 if self.column_count is not None:
