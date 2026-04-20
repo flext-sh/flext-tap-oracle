@@ -14,7 +14,11 @@ from __future__ import annotations
 import os
 import socket
 from abc import ABC, abstractmethod
-from collections.abc import Generator, Mapping, Sequence
+from collections.abc import (
+    Generator,
+    Mapping,
+    Sequence,
+)
 from typing import TypeIs, override
 
 import pytest
