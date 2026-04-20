@@ -17,6 +17,7 @@ from collections.abc import (
 from pathlib import Path
 
 from flext_meltano import FlextMeltanoAbstractions
+
 from flext_tap_oracle import FlextTapOracleSettings, c, m, p, r, t, u
 
 logger = u.fetch_logger(__name__)

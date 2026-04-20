@@ -15,6 +15,7 @@ from collections.abc import (
 
 from flext_db_oracle import FlextDbOracleApi, FlextDbOracleModels
 from flext_meltano import p, r, t, u
+
 from flext_tap_oracle import FlextTapOracleSettings, c
 
 logger = u.fetch_logger(__name__)

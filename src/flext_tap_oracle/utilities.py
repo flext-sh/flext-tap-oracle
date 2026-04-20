@@ -22,6 +22,7 @@ from typing import Literal
 
 from flext_db_oracle import FlextDbOracleModels, FlextDbOracleUtilities
 from flext_meltano import FlextMeltanoUtilities
+
 from flext_tap_oracle import FlextTapOracleUtilitiesClientMixin, c, e, m, p, r, t
 
 

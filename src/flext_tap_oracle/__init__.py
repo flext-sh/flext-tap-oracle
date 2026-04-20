@@ -10,10 +10,12 @@ from flext_core.lazy import (
     install_lazy_exports,
     merge_lazy_imports,
 )
+
 from flext_tap_oracle.__version__ import *
 
 if _t.TYPE_CHECKING:
     from flext_db_oracle import d, e, h, r, s, x
+
     from flext_tap_oracle._utilities.client import FlextTapOracleUtilitiesClientMixin
     from flext_tap_oracle.api import FlextTapOracleService, tap_oracle
     from flext_tap_oracle.constants import FlextTapOracleConstants, c

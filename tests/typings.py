@@ -13,9 +13,9 @@ from collections.abc import (
 )
 from typing import Literal
 
+from flext_core import FlextTypes
 from flext_tests import FlextTestsTypes
 
-from flext_core import FlextTypes
 from flext_tap_oracle import FlextTapOracleTypes
 
 

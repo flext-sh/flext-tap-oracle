@@ -16,6 +16,7 @@ from typing import Annotated, Literal, Self
 
 from flext_db_oracle import FlextDbOracleModels
 from flext_meltano import m
+
 from flext_tap_oracle import c, p, r, t, u
 
 
