@@ -30,7 +30,7 @@ class FlextTapOracleTypes(t, FlextDbOracleTypes):
     )
     INTEGER_ADAPTER: m.TypeAdapter[int] = m.TypeAdapter(int)
     type GeneralValueType = t.Cli.JsonValue
-    type GeneralValueMapping = t.Cli.JsonMapping
+    type Container = t.Cli.JsonMapping
 
     class TapOracle:
         """Tap Oracle namespace for type definitions.

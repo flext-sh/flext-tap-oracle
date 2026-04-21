@@ -40,7 +40,7 @@ class FlextTapOracleDiscoverCommand:
         self._logger.info("Starting Oracle database discovery")
         try:
             if not self.params.config_file:
-                return r[t.GeneralValueMapping].fail(
+                return r[t.Container].fail(
                     "Configuration file is required for discovery",
                 )
             config_data: str = Path(self.params.config_file).read_text(encoding="utf-8")
@@ -67,10 +67,10 @@ class FlextTapOracleDiscoverCommand:
                 )
                 self._logger.info("Catalog written to %s", output_path)
             self._logger.info("Oracle schema discovery completed")
-            return r[t.GeneralValueMapping].ok(catalog_dict)
+            return r[t.Container].ok(catalog_dict)
         except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
             logger.exception("Oracle discovery failed")
-            return r[t.GeneralValueMapping].fail(f"Discovery error: {e}")
+            return r[t.Container].fail(f"Discovery error: {e}")
 
     def validate_business_rules(self) -> p.Result[bool]:
         """Validate business rules for Oracle tap discovery."""
@@ -94,7 +94,7 @@ class FlextTapOracleSyncCommand:
         self._logger.info("Starting Oracle data extraction")
         try:
             if not self.params.config_file:
-                return r[t.GeneralValueMapping].fail(
+                return r[t.Container].fail(
                     "Configuration file is required for sync",
                 )
             config_data: str = Path(self.params.config_file).read_text(encoding="utf-8")
@@ -121,10 +121,10 @@ class FlextTapOracleSyncCommand:
                 schema_name,
                 record_count,
             )
-            return r[t.GeneralValueMapping].ok(result_data)
+            return r[t.Container].ok(result_data)
         except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
             logger.exception("Oracle sync failed")
-            return r[t.GeneralValueMapping].fail(f"Sync error: {e}")
+            return r[t.Container].fail(f"Sync error: {e}")
 
     def validate_business_rules(self) -> p.Result[bool]:
         """Validate business rules for Oracle tap sync."""

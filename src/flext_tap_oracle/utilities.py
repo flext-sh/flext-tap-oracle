@@ -143,7 +143,7 @@ class FlextTapOracleUtilities(u, FlextDbOracleUtilities):
                     FlextTapOracleUtilities.TapOracle.validate_oracle_config(settings)
                 )
                 if validation_result.failure:
-                    return r[t.GeneralValueMapping].fail(
+                    return r[t.Container].fail(
                         validation_result.error,
                     )
                 connectivity_result = {
@@ -153,9 +153,9 @@ class FlextTapOracleUtilities(u, FlextDbOracleUtilities):
                     "service_name": settings["service_name"],
                     "connection_test": "structural_validation_passed",
                 }
-                return r[t.GeneralValueMapping].ok(connectivity_result)
+                return r[t.Container].ok(connectivity_result)
             except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
-                return r[t.GeneralValueMapping].fail(
+                return r[t.Container].fail(
                     f"Oracle connectivity test failed: {e}",
                 )
 
@@ -177,28 +177,28 @@ class FlextTapOracleUtilities(u, FlextDbOracleUtilities):
                 ]
                 for field in required_fields:
                     if field not in validated_config:
-                        return r[t.GeneralValueMapping].fail(
+                        return r[t.Container].fail(
                             f"Missing required Oracle field: {field}",
                         )
                     if not validated_config[field]:
-                        return r[t.GeneralValueMapping].fail(
+                        return r[t.Container].fail(
                             f"Empty Oracle field: {field}",
                         )
                 max_port = c.TapOracle.MAX_PORT_NUMBER
                 try:
                     port = t.INTEGER_ADAPTER.validate_python(validated_config["port"])
                     if port <= 0 or port > max_port:
-                        return r[t.GeneralValueMapping].fail(
+                        return r[t.Container].fail(
                             f"Oracle port must be between 1 and {max_port}",
                         )
                     validated_config["port"] = port
                 except c.ValidationError:
-                    return r[t.GeneralValueMapping].fail(
+                    return r[t.Container].fail(
                         "Oracle port must be numeric",
                     )
-                return r[t.GeneralValueMapping].ok(validated_config)
+                return r[t.Container].ok(validated_config)
             except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
-                return r[t.GeneralValueMapping].fail(
+                return r[t.Container].fail(
                     f"Oracle settings validation failed: {e}",
                 )
 
@@ -227,9 +227,9 @@ class FlextTapOracleUtilities(u, FlextDbOracleUtilities):
                     "records_per_second": round(records_per_second, 2),
                     "performance_rating": performance_rating,
                 }
-                return r[t.GeneralValueMapping].ok(metrics)
+                return r[t.Container].ok(metrics)
             except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
-                return r[t.GeneralValueMapping].fail(
+                return r[t.Container].fail(
                     f"Metrics calculation failed: {e}",
                 )
 
