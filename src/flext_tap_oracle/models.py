@@ -144,7 +144,7 @@ class FlextTapOracleModels(m, FlextDbOracleModels):
                     estimated_volume["rows"] = self.estimated_rows
                 if self.column_count is not None:
                     estimated_volume["columns"] = self.column_count
-                return {
+                return t.Cli.JSON_MAPPING_ADAPTER.validate_python({
                     "stream_name": self.stream_name,
                     "table_reference": f"{self.schema_name}.{self.table_name}"
                     if self.schema_name
@@ -154,7 +154,7 @@ class FlextTapOracleModels(m, FlextDbOracleModels):
                     "replication_column": self.replication_key,
                     "selected_for_extraction": self.is_selected,
                     "estimated_volume": estimated_volume,
-                }
+                })
 
             @u.field_validator("stream_name")
             @classmethod
@@ -643,7 +643,7 @@ class FlextTapOracleModels(m, FlextDbOracleModels):
 
             def to_singer_catalog(self) -> t.TapOracle.Summary.SummaryData:
                 """Convert to Singer catalog format."""
-                return {
+                return t.Cli.JSON_MAPPING_ADAPTER.validate_python({
                     "streams": [
                         stream.to_singer_stream_info() for stream in self.stream_info
                     ],
@@ -652,7 +652,7 @@ class FlextTapOracleModels(m, FlextDbOracleModels):
                         "discovery_timestamp": self.discovery_timestamp,
                         "total_tables": self.total_tables,
                     },
-                }
+                })
 
             def validate_business_rules(self) -> p.Result[bool]:
                 """Validate discovery result business rules."""

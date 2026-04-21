@@ -21,12 +21,12 @@ from datetime import UTC, datetime
 from typing import Literal
 
 from flext_db_oracle import FlextDbOracleModels, FlextDbOracleUtilities
-from flext_meltano import FlextMeltanoUtilities
+from flext_meltano import u
 
 from flext_tap_oracle import FlextTapOracleUtilitiesClientMixin, c, e, m, p, r, t
 
 
-class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
+class FlextTapOracleUtilities(u, FlextDbOracleUtilities):
     """Unified Oracle tap utilities class extending u classes."""
 
     class TapOracle(FlextTapOracleUtilitiesClientMixin):

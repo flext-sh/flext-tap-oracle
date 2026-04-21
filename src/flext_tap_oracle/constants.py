@@ -11,10 +11,10 @@ from enum import StrEnum, unique
 from typing import Final
 
 from flext_db_oracle import FlextDbOracleConstants
-from flext_meltano import FlextMeltanoConstants
+from flext_meltano import c
 
 
-class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
+class FlextTapOracleConstants(c, FlextDbOracleConstants):
     """Oracle tap extraction-specific constants following FLEXT unified pattern.
 
     Inherits from FlextMeltanoConstants for universal constants, defines only

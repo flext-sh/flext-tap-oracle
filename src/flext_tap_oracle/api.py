@@ -10,9 +10,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import (
-    Mapping,
-)
 from typing import Annotated, Never, override
 
 from flext_core import u
@@ -31,7 +28,7 @@ class FlextTapOracleService(FlextMeltanoTapServiceBase):
 
     def __init__(
         self,
-        settings: FlextTapOracleSettings | Mapping[str, t.Container] | None = None,
+        settings: FlextTapOracleSettings | t.Cli.JsonMapping | None = None,
     ) -> None:
         """Expose the canonical settings bootstrap on the concrete tap facade."""
         super().__init__(settings=settings)
@@ -39,7 +36,7 @@ class FlextTapOracleService(FlextMeltanoTapServiceBase):
     @override
     def create_tap_instance(
         self,
-        settings: Mapping[str, t.Container] | None = None,
+        settings: t.Cli.JsonMapping | None = None,
     ) -> Never:
         """Not supported — use CLI dispatch via FlextTapOracleCli."""
         msg = "tap-oracle uses CLI dispatch, not singer_sdk.Tap"

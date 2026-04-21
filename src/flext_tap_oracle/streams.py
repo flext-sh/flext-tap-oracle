@@ -178,11 +178,11 @@ class FlextTapOracleStreams:
         def _process_results_with_table_metadata(
             self,
             query_data: Sequence[m.Dict],
-            table_metadata: t.TapOracle.Summary.OracleValue,
-        ) -> Iterable[Mapping[str, t.TapOracle.Summary.OracleValue]]:
+            table_metadata: m.DbOracle.TableMetadata,
+        ) -> Iterable[t.Cli.JsonMapping]:
             """Process results using flext-db-oracle table metadata."""
-            columns = getattr(table_metadata, "columns", None)
-            if columns is None or not u.list_like(columns):
+            columns = table_metadata.columns
+            if not columns:
                 msg = "Table metadata is missing column definitions"
                 raise RuntimeError(msg)
             column_names: t.StrSequence = [
@@ -193,7 +193,7 @@ class FlextTapOracleStreams:
                 raise RuntimeError(msg)
             for row_data in query_data:
                 try:
-                    record: Mapping[str, t.TapOracle.Summary.OracleValue] = dict(
+                    record = t.Cli.JSON_MAPPING_ADAPTER.validate_python(
                         row_data.root,
                     )
                     missing_columns = [
@@ -217,14 +217,12 @@ class FlextTapOracleStreams:
 
         def _transform_oracle_types(
             self,
-            record: Mapping[str, t.TapOracle.Summary.OracleValue],
-            column_metadata: Sequence[t.TapOracle.Summary.OracleValue],
-        ) -> Mapping[str, t.TapOracle.Summary.OracleValue]:
+            record: t.Cli.JsonMapping,
+            column_metadata: Sequence[m.DbOracle.ColumnMetadata],
+        ) -> t.Cli.JsonMapping:
             """Transform Oracle data types using flext-db-oracle type knowledge."""
-            transformed_record: MutableMapping[
-                str, t.TapOracle.Summary.OracleValue
-            ] = {}
-            meta_lookup: MutableMapping[str, t.TapOracle.Summary.OracleValue] = {}
+            transformed_record: MutableMapping[str, t.Cli.JsonValue] = {}
+            meta_lookup: MutableMapping[str, m.DbOracle.ColumnMetadata] = {}
             for col_meta_value in column_metadata:
                 col_name = getattr(col_meta_value, "name", None) or getattr(
                     col_meta_value,
@@ -261,7 +259,7 @@ class FlextTapOracleStreams:
                     transformed_record[column_name] = str(value)
                 else:
                     transformed_record[column_name] = value
-            return transformed_record
+            return t.Cli.JSON_MAPPING_ADAPTER.validate_python(transformed_record)
 
     class StreamFactory:
         """Factory class for creating Oracle streams with complete configuration."""
@@ -321,11 +319,11 @@ class FlextTapOracleStreams:
                 else c.TapOracle.DEFAULT_OPERATION_NAME
             )
             stream_name = f"{stream_prefix}_{table_name.lower()}"
-            properties: Mapping[str, t.GeneralValueType] = {}
-            schema: Mapping[str, t.GeneralValueType] = {
+            properties: t.Cli.JsonMapping = {}
+            schema = t.Cli.JSON_MAPPING_ADAPTER.validate_python({
                 "type": "object",
                 "properties": properties,
-            }
+            })
             return FlextTapOracleStreams.StreamFactory.create_oracle_stream(
                 tap=tap,
                 name=stream_name,
