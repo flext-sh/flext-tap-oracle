@@ -8,7 +8,6 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from collections.abc import (
-    Mapping,
     Sequence,
 )
 
@@ -52,10 +51,10 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities, FlextTapOracleUtilities)
             service_name: str = "XE",
             username: str = "test",
             password: str = "test",
-            **kwargs: t.Scalar,
-        ) -> Mapping[str, t.Container]:
+            **kwargs: t.Cli.JsonValue,
+        ) -> t.Cli.JsonMapping:
             """Create test Oracle configuration."""
-            settings: t.MutableFlatContainerMapping = {
+            settings: dict[str, t.Cli.JsonValue] = {
                 "host": host,
                 "port": port,
                 "service_name": service_name,
@@ -70,10 +69,10 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities, FlextTapOracleUtilities)
             stream_name: str,
             table_name: str,
             replication_method: str = "FULL_TABLE",
-            **kwargs: t.Scalar,
-        ) -> Mapping[str, t.Container]:
+            **kwargs: t.Cli.JsonValue,
+        ) -> t.Cli.JsonMapping:
             """Create test Singer stream configuration."""
-            stream: t.MutableFlatContainerMapping = {
+            stream: dict[str, t.Cli.JsonValue] = {
                 "stream_name": stream_name,
                 "table_name": table_name,
                 "replication_method": replication_method,
@@ -84,7 +83,7 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities, FlextTapOracleUtilities)
 
         @staticmethod
         def validate_oracle_connection_config(
-            settings: Mapping[str, t.Container],
+            settings: t.Cli.JsonMapping,
         ) -> bool:
             """Validate Oracle connection configuration for testing."""
             required_fields = ["host", "port", "service_name", "username", "password"]
@@ -96,12 +95,12 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities, FlextTapOracleUtilities)
         def generate_mock_oracle_data(
             table_name: str,
             row_count: int = 10,
-            **kwargs: t.Scalar,
-        ) -> Sequence[Mapping[str, t.Container]]:
+            **kwargs: t.Cli.JsonValue,
+        ) -> Sequence[t.Cli.JsonMapping]:
             """Generate mock Oracle data for testing."""
-            data: list[Mapping[str, t.Container]] = []
+            data: list[t.Cli.JsonMapping] = []
             for i in range(row_count):
-                row: t.MutableFlatContainerMapping = {
+                row: dict[str, t.Cli.JsonValue] = {
                     "id": i + 1,
                     "name": f"Test Record {i + 1}",
                     "table_name": table_name,
