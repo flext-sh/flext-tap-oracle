@@ -1,0 +1,16 @@
+tests/conftest.py
+  h_9db9d35f50cf33 22,95-98,130,147,150,155,219,234,314,361,374,400,419,448,465,477,529,532-533,535,555-557,559-560,562,564,568,611,627-628,640,658,666,678,702
+tests/utilities.py
+  h_9db9d35f50cf33 55,73,99
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "9e15a4e68790f539c17f60802d416c9a70655bfe",
+  "prompts": {},
+  "humans": {
+    "h_9db9d35f50cf33": {
+      "author": "FLEXT Bot"
+    }
+  }
+}
