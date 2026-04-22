@@ -152,20 +152,7 @@ omit = [ "*/dependency_injector/providers.pyx" ]
 
 # [MANAGED] deptry
 [tool.deptry]
-known_first_party = [
-  "fastapi",
-  "flext-core",
-  "flext-db-oracle",
-  "flext-meltano",
-  "flext-observability",
-  "flext_tap_oracle",
-  "prometheus-client",
-  "pydantic",
-  "pydantic-core",
-  "setuptools",
-  "singer-sdk",
-  "uvicorn",
-]
+known_first_party = [ "flext_tap_oracle" ]
 pep621_dev_dependency_groups = [ "dev" ]
 
 [tool.hatch.metadata]
@@ -487,20 +474,7 @@ select = [ "ALL" ]
 [tool.ruff.lint.isort]
 combine-as-imports = true
 force-single-line = false
-known-first-party = [
-  "fastapi",
-  "flext-core",
-  "flext-db-oracle",
-  "flext-meltano",
-  "flext-observability",
-  "flext_tap_oracle",
-  "prometheus-client",
-  "pydantic",
-  "pydantic-core",
-  "setuptools",
-  "singer-sdk",
-  "uvicorn",
-]
+known-first-party = [ "flext_tap_oracle" ]
 split-on-trailing-comma = true
 
 [tool.ruff.lint.per-file-ignores]
