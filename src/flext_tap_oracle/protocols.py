@@ -13,12 +13,12 @@ from collections.abc import (
 from typing import Protocol, runtime_checkable
 
 from flext_db_oracle import FlextDbOracleProtocols
-from flext_meltano import m
+from flext_meltano import FlextMeltanoProtocols, m
 
 from flext_tap_oracle.typings import t
 
 
-class FlextTapOracleProtocols(m, FlextDbOracleProtocols):
+class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
     """Singer Tap Oracle protocols extending Oracle and Meltano protocols.
 
     Extends both FlextDbOracleProtocols and m via multiple inheritance
