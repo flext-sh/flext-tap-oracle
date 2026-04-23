@@ -33,11 +33,11 @@ class FlextTapOracleDiscoverCommand:
     def __init__(self, params: m.TapOracle.OracleTapDiscoverParams) -> None:
         """Initialize command with parameter object pattern."""
         self.params = params
-        self._logger = u.fetch_logger(__name__)
+        self.logger = u.fetch_logger(__name__)
 
     def execute(self) -> p.Result[Mapping[str, t.GeneralValueType]]:
         """Execute Oracle tap discovery using modern patterns."""
-        self._logger.info("Starting Oracle database discovery")
+        self.logger.info("Starting Oracle database discovery")
         try:
             if not self.params.config_file:
                 return r[Mapping[str, t.GeneralValueType]].fail(
@@ -49,7 +49,7 @@ class FlextTapOracleDiscoverCommand:
             )
             oracle_config = settings.get_oracle_config()
             schema_name = str(oracle_config.get("schema_name", "USER"))
-            self._logger.info("Discovering Oracle schema: %s", schema_name)
+            self.logger.info("Discovering Oracle schema: %s", schema_name)
             streams: list[t.GeneralValueType] = []
             catalog_dict: Mapping[str, t.GeneralValueType] = {
                 "streams": streams,
@@ -65,8 +65,8 @@ class FlextTapOracleDiscoverCommand:
                     ),
                     encoding="utf-8",
                 )
-                self._logger.info(f"Catalog written to {output_path}")
-            self._logger.info("Oracle schema discovery completed")
+                self.logger.info(f"Catalog written to {output_path}")
+            self.logger.info("Oracle schema discovery completed")
             return r[Mapping[str, t.GeneralValueType]].ok(catalog_dict)
         except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
             logger.exception("Oracle discovery failed")
@@ -87,11 +87,11 @@ class FlextTapOracleSyncCommand:
     def __init__(self, params: m.TapOracle.OracleTapSyncParams) -> None:
         """Initialize command with parameter object pattern."""
         self.params = params
-        self._logger = u.fetch_logger(__name__)
+        self.logger = u.fetch_logger(__name__)
 
     def execute(self) -> p.Result[Mapping[str, t.GeneralValueType]]:
         """Execute Oracle tap sync using modern patterns."""
-        self._logger.info("Starting Oracle data extraction")
+        self.logger.info("Starting Oracle data extraction")
         try:
             if not self.params.config_file:
                 return r[Mapping[str, t.GeneralValueType]].fail(
@@ -104,11 +104,11 @@ class FlextTapOracleSyncCommand:
             oracle_config = settings.get_oracle_config()
             if self.params.catalog_file:
                 Path(self.params.catalog_file).read_text(encoding="utf-8")
-                self._logger.info(f"Loaded catalog from {self.params.catalog_file}")
+                self.logger.info(f"Loaded catalog from {self.params.catalog_file}")
             if self.params.state_file:
                 Path(self.params.state_file).read_text(encoding="utf-8")
-                self._logger.info(f"Loaded state from {self.params.state_file}")
-            self._logger.info("Preparing extraction from Oracle database...")
+                self.logger.info(f"Loaded state from {self.params.state_file}")
+            self.logger.info("Preparing extraction from Oracle database...")
             schema_name = str(oracle_config.get("schema_name", "USER"))
             record_count = c.TapOracle.INITIAL_RECORD_COUNT
             result_data: Mapping[str, t.GeneralValueType] = {
@@ -116,7 +116,7 @@ class FlextTapOracleSyncCommand:
                 "schema_name": schema_name,
                 "status": "completed",
             }
-            self._logger.info(
+            self.logger.info(
                 "Sync completed for schema %s; records extracted: %s",
                 schema_name,
                 record_count,
@@ -167,7 +167,7 @@ class FlextTapOracleCli:
 
     @staticmethod
     def handle_discover_command(
-        *_args: t.Scalar,
+        *args: t.Scalar,
         **kwargs: t.Scalar,
     ) -> p.Result[t.JsonValue]:
         """Handle discover command using flext-meltano patterns."""
@@ -180,7 +180,7 @@ class FlextTapOracleCli:
 
     @staticmethod
     def handle_sync_command(
-        *_args: t.Scalar, **kwargs: t.Scalar
+        *args: t.Scalar, **kwargs: t.Scalar
     ) -> p.Result[t.JsonValue]:
         """Handle sync command using flext-meltano patterns."""
         return FlextTapOracleCli.run_tap_command(

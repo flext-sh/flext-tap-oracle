@@ -179,7 +179,7 @@ __pypackages__/
 *.state
 *.state.json
 state.json
-*_state.json
+*state.json
 catalog.json
 *.catalog.json
 properties.json

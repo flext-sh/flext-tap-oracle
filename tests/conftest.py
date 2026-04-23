@@ -553,7 +553,7 @@ def mock_oracle_tap() -> type:
         def sync(
             self,
             catalog: t.JsonMapping,
-            _state: t.JsonMapping,
+            state: t.JsonMapping,
         ) -> Generator[t.JsonMapping]:
             """Sync data using mock extraction."""
             streams_raw = catalog.get("streams")
