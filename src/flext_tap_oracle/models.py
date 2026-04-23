@@ -16,14 +16,14 @@ from typing import Annotated, Literal, Self
 
 from flext_core import u
 from flext_db_oracle import FlextDbOracleModels
-from flext_meltano import m, r
+from flext_meltano import FlextMeltanoModels, m, r
 
 from flext_tap_oracle.constants import c
 from flext_tap_oracle.protocols import p
 from flext_tap_oracle.typings import t
 
 
-class FlextTapOracleModels(m, FlextDbOracleModels):
+class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
     """Complete models for Oracle tap operations extending m.
 
     Provides standardized models for all Oracle tap domain entities including:
