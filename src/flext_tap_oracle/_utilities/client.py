@@ -12,11 +12,15 @@ from __future__ import annotations
 from collections.abc import (
     Sequence,
 )
+from typing import TYPE_CHECKING
 
 from flext_db_oracle import FlextDbOracleApi, FlextDbOracleModels
 from flext_meltano import p, r, t, u
 
-from flext_tap_oracle import FlextTapOracleSettings, c
+from flext_tap_oracle import c
+
+if TYPE_CHECKING:
+    from flext_tap_oracle.settings import FlextTapOracleSettings
 
 logger = u.fetch_logger(__name__)
 
