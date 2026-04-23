@@ -40,7 +40,7 @@ class FlextTapOracleDiscoverCommand:
         self._logger.info("Starting Oracle database discovery")
         try:
             if not self.params.config_file:
-                return r[t.Container].fail(
+                return r[t.JsonValue].fail(
                     "Configuration file is required for discovery",
                 )
             config_data: str = Path(self.params.config_file).read_text(encoding="utf-8")
@@ -67,10 +67,10 @@ class FlextTapOracleDiscoverCommand:
                 )
                 self._logger.info("Catalog written to %s", output_path)
             self._logger.info("Oracle schema discovery completed")
-            return r[t.Container].ok(catalog_dict)
+            return r[t.JsonValue].ok(catalog_dict)
         except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
             logger.exception("Oracle discovery failed")
-            return r[t.Container].fail(f"Discovery error: {e}")
+            return r[t.JsonValue].fail(f"Discovery error: {e}")
 
     def validate_business_rules(self) -> p.Result[bool]:
         """Validate business rules for Oracle tap discovery."""
@@ -94,7 +94,7 @@ class FlextTapOracleSyncCommand:
         self._logger.info("Starting Oracle data extraction")
         try:
             if not self.params.config_file:
-                return r[t.Container].fail(
+                return r[t.JsonValue].fail(
                     "Configuration file is required for sync",
                 )
             config_data: str = Path(self.params.config_file).read_text(encoding="utf-8")
@@ -121,10 +121,10 @@ class FlextTapOracleSyncCommand:
                 schema_name,
                 record_count,
             )
-            return r[t.Container].ok(result_data)
+            return r[t.JsonValue].ok(result_data)
         except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
             logger.exception("Oracle sync failed")
-            return r[t.Container].fail(f"Sync error: {e}")
+            return r[t.JsonValue].fail(f"Sync error: {e}")
 
     def validate_business_rules(self) -> p.Result[bool]:
         """Validate business rules for Oracle tap sync."""
@@ -149,7 +149,7 @@ class FlextTapOracleCli:
         params_factory: Callable[..., TParams],
         command_factory: Callable[[TParams], p.TapOraclePrivate.CommandRunner],
         operation_name: str,
-    ) -> p.Result[t.Cli.JsonValue]:
+    ) -> p.Result[t.JsonValue]:
         """Run a tap command with params factory and command factory."""
         try:
             params = params_factory(**dict(kwargs))
@@ -158,18 +158,18 @@ class FlextTapOracleCli:
             if result.failure:
                 error_message = result.error or f"{operation_name} failed"
                 logger.error(f"{operation_name} failed: {error_message}")
-                return r[t.Cli.JsonValue].fail(error_message)
-            return r[t.Cli.JsonValue].ok(value=True)
+                return r[t.JsonValue].fail(error_message)
+            return r[t.JsonValue].ok(value=True)
         except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
             error_message = f"{operation_name} error: {e}"
             logger.exception(error_message)
-            return r[t.Cli.JsonValue].fail(error_message)
+            return r[t.JsonValue].fail(error_message)
 
     @staticmethod
     def handle_discover_command(
         *_args: t.Scalar,
         **kwargs: t.Scalar,
-    ) -> p.Result[t.Cli.JsonValue]:
+    ) -> p.Result[t.JsonValue]:
         """Handle discover command using flext-meltano patterns."""
         return FlextTapOracleCli.run_tap_command(
             kwargs=kwargs,
@@ -181,7 +181,7 @@ class FlextTapOracleCli:
     @staticmethod
     def handle_sync_command(
         *_args: t.Scalar, **kwargs: t.Scalar
-    ) -> p.Result[t.Cli.JsonValue]:
+    ) -> p.Result[t.JsonValue]:
         """Handle sync command using flext-meltano patterns."""
         return FlextTapOracleCli.run_tap_command(
             kwargs=kwargs,

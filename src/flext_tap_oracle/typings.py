@@ -25,12 +25,12 @@ class FlextTapOracleTypes(t, FlextDbOracleTypes):
     and all core ``t.*`` types via MRO inheritance.
     """
 
-    GENERAL_VALUE_MAP_ADAPTER: m.TypeAdapter[t.Cli.JsonMapping] = m.TypeAdapter(
-        t.Cli.JsonMapping
+    GENERAL_VALUE_MAP_ADAPTER: m.TypeAdapter[t.JsonMapping] = m.TypeAdapter(
+        t.JsonMapping
     )
     INTEGER_ADAPTER: m.TypeAdapter[int] = m.TypeAdapter(int)
-    type GeneralValueType = t.Cli.JsonValue
-    type Container = t.Cli.JsonMapping
+    type GeneralValueType = t.JsonValue
+    type Container = t.JsonMapping
 
     class TapOracle:
         """Tap Oracle namespace for type definitions.
@@ -42,8 +42,8 @@ class FlextTapOracleTypes(t, FlextDbOracleTypes):
         class Summary:
             """Summary and reporting complex types."""
 
-            type SummaryData = t.Cli.JsonMapping
-            type OracleValue = t.Cli.JsonValue | None
+            type SummaryData = t.JsonMapping
+            type OracleValue = t.JsonValue | None
 
 
 t = FlextTapOracleTypes

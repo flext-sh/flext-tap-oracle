@@ -93,8 +93,8 @@ def _can_connect(host: str, port: int, timeout: float = 0.5) -> bool:
 
 
 def _is_json_mapping_sequence(
-    value: t.Cli.JsonValue | None,
-) -> TypeGuard[list[t.Cli.JsonMapping]]:
+    value: t.JsonValue | None,
+) -> TypeGuard[list[t.JsonMapping]]:
     return isinstance(value, list) and all(isinstance(item, dict) for item in value)
 
 
@@ -127,7 +127,7 @@ def skip_e2e_if_no_oracle() -> None:
 
 
 @pytest.fixture
-def oracle_tap_config() -> t.Cli.JsonMapping:
+def oracle_tap_config() -> t.JsonMapping:
     """Oracle tap configuration for testing."""
     return {
         "host": "localhost",
@@ -144,7 +144,7 @@ def oracle_tap_config() -> t.Cli.JsonMapping:
 
 @pytest.fixture
 def oracle_tap(
-    oracle_tap_config: t.Cli.JsonMapping,
+    oracle_tap_config: t.JsonMapping,
 ) -> FlextTapOracleService:
     """Oracle tap service instance for testing."""
     settings = FlextTapOracleSettings.model_validate(oracle_tap_config)
@@ -152,7 +152,7 @@ def oracle_tap(
 
 
 @pytest.fixture
-def singer_catalog() -> t.Cli.JsonMapping:
+def singer_catalog() -> t.JsonMapping:
     """Singer catalog for testing."""
     return {
         "streams": [
@@ -216,7 +216,7 @@ def singer_catalog() -> t.Cli.JsonMapping:
 
 
 @pytest.fixture
-def singer_state() -> t.Cli.JsonMapping:
+def singer_state() -> t.JsonMapping:
     """Singer state for testing."""
     return {
         "bookmarks": {
@@ -231,7 +231,7 @@ def singer_state() -> t.Cli.JsonMapping:
 
 
 @pytest.fixture
-def sample_oracle_tables() -> Sequence[t.Cli.JsonMapping]:
+def sample_oracle_tables() -> Sequence[t.JsonMapping]:
     """Sample Oracle table definitions for testing."""
     return [
         {
@@ -311,7 +311,7 @@ def sample_oracle_tables() -> Sequence[t.Cli.JsonMapping]:
 
 
 @pytest.fixture
-def sample_oracle_data() -> Mapping[str, Sequence[t.Cli.JsonMapping]]:
+def sample_oracle_data() -> Mapping[str, Sequence[t.JsonMapping]]:
     """Sample Oracle data for testing."""
     return {
         "employees": [
@@ -358,7 +358,7 @@ def sample_oracle_data() -> Mapping[str, Sequence[t.Cli.JsonMapping]]:
 
 
 @pytest.fixture
-def stream_config() -> t.Cli.JsonMapping:
+def stream_config() -> t.JsonMapping:
     """Stream configuration for testing."""
     return {
         "selected": True,
@@ -371,7 +371,7 @@ def stream_config() -> t.Cli.JsonMapping:
 
 
 @pytest.fixture
-def discovery_config() -> t.Cli.JsonMapping:
+def discovery_config() -> t.JsonMapping:
     """Discovery configuration for testing."""
     return {
         "include_views": False,
@@ -397,7 +397,7 @@ def oracle_queries() -> t.StrMapping:
 
 
 @pytest.fixture
-def singer_schema_message() -> t.Cli.JsonMapping:
+def singer_schema_message() -> t.JsonMapping:
     """Singer schema message for testing."""
     return {
         "type": "SCHEMA",
@@ -416,7 +416,7 @@ def singer_schema_message() -> t.Cli.JsonMapping:
 
 
 @pytest.fixture
-def singer_record_messages() -> Sequence[t.Cli.JsonMapping]:
+def singer_record_messages() -> Sequence[t.JsonMapping]:
     """Singer record messages for testing."""
     return [
         {
@@ -445,7 +445,7 @@ def singer_record_messages() -> Sequence[t.Cli.JsonMapping]:
 
 
 @pytest.fixture
-def singer_state_message() -> t.Cli.JsonMapping:
+def singer_state_message() -> t.JsonMapping:
     """Singer state message for testing."""
     return {
         "type": "STATE",
@@ -462,7 +462,7 @@ def singer_state_message() -> t.Cli.JsonMapping:
 
 
 @pytest.fixture
-def performance_test_config() -> t.Cli.JsonMapping:
+def performance_test_config() -> t.JsonMapping:
     """Performance test configuration."""
     return {
         "large_table_rows": 100000,
@@ -474,7 +474,7 @@ def performance_test_config() -> t.Cli.JsonMapping:
 
 
 @pytest.fixture
-def error_scenarios() -> Sequence[t.Cli.JsonMapping]:
+def error_scenarios() -> Sequence[t.JsonMapping]:
     """Error scenarios for testing."""
     return [
         {
@@ -526,13 +526,13 @@ def mock_oracle_tap() -> type:
     """Mock Oracle tap for testing."""
 
     class MockOracleTap:
-        def __init__(self, settings: t.Cli.JsonMapping) -> None:
+        def __init__(self, settings: t.JsonMapping) -> None:
             """Initialize the instance."""
             self.settings = settings
-            self._catalog: t.Cli.JsonMapping | None = None
-            self.__state: t.Cli.JsonMapping = {}
+            self._catalog: t.JsonMapping | None = None
+            self.__state: t.JsonMapping = {}
 
-        def discover(self) -> t.Cli.JsonMapping:
+        def discover(self) -> t.JsonMapping:
             """Discover schema using mock data."""
             return {
                 "streams": [
@@ -552,9 +552,9 @@ def mock_oracle_tap() -> type:
 
         def sync(
             self,
-            catalog: t.Cli.JsonMapping,
-            _state: t.Cli.JsonMapping,
-        ) -> Generator[t.Cli.JsonMapping]:
+            catalog: t.JsonMapping,
+            _state: t.JsonMapping,
+        ) -> Generator[t.JsonMapping]:
             """Sync data using mock extraction."""
             streams_raw = catalog.get("streams")
             if not _is_json_mapping_sequence(streams_raw):
@@ -608,7 +608,7 @@ def mock_oracle_connection() -> type:
     """Mock Oracle connection for testing."""
 
     class MockOracleConnection:
-        def __init__(self, settings: t.Cli.JsonMapping) -> None:
+        def __init__(self, settings: t.JsonMapping) -> None:
             """Initialize the instance."""
             self.settings = settings
             self.connected = False
@@ -624,8 +624,8 @@ def mock_oracle_connection() -> type:
         def execute_query(
             self,
             query: str,
-            _parameters: t.Cli.JsonMapping | None = None,
-        ) -> Sequence[t.Cli.JsonMapping]:
+            _parameters: t.JsonMapping | None = None,
+        ) -> Sequence[t.JsonMapping]:
             """Execute query and return mock results using Strategy Pattern."""
             return self._get_query_strategy(query).execute()
 
@@ -637,7 +637,7 @@ def mock_oracle_connection() -> type:
                 return _ColumnsQueryStrategy()
             return _DefaultQueryStrategy()
 
-        def get_table_schema(self, table_name: str) -> t.Cli.JsonMapping:
+        def get_table_schema(self, table_name: str) -> t.JsonMapping:
             """Get table schema information."""
             return {
                 "table_name": table_name,
@@ -655,7 +655,7 @@ class _MockQueryStrategy(ABC):
     """Base class for mock query strategies - Strategy Pattern."""
 
     @abstractmethod
-    def execute(self) -> Sequence[t.Cli.JsonMapping]:
+    def execute(self) -> Sequence[t.JsonMapping]:
         """Execute mock query and return results."""
 
 
@@ -663,7 +663,7 @@ class _TablesQueryStrategy(_MockQueryStrategy):
     """Strategy for tables query - Single Responsibility."""
 
     @override
-    def execute(self) -> Sequence[t.Cli.JsonMapping]:
+    def execute(self) -> Sequence[t.JsonMapping]:
         """Return mock table data."""
         return [
             {"table_name": "EMPLOYEES", "owner": "TAP_SCHEMA", "table_type": "TABLE"},
@@ -675,7 +675,7 @@ class _ColumnsQueryStrategy(_MockQueryStrategy):
     """Strategy for columns query - Single Responsibility."""
 
     @override
-    def execute(self) -> Sequence[t.Cli.JsonMapping]:
+    def execute(self) -> Sequence[t.JsonMapping]:
         """Return mock column data."""
         return [
             {
@@ -699,6 +699,6 @@ class _DefaultQueryStrategy(_MockQueryStrategy):
     """Default strategy for generic queries - Single Responsibility."""
 
     @override
-    def execute(self) -> Sequence[t.Cli.JsonMapping]:
+    def execute(self) -> Sequence[t.JsonMapping]:
         """Return mock default data."""
         return [{"id": 1, "name": "Test Record"}]

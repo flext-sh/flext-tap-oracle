@@ -179,7 +179,7 @@ class FlextTapOracleStreams:
             self,
             query_data: Sequence[m.Dict],
             table_metadata: m.DbOracle.TableMetadata,
-        ) -> Iterable[t.Cli.JsonMapping]:
+        ) -> Iterable[t.JsonMapping]:
             """Process results using flext-db-oracle table metadata."""
             columns = table_metadata.columns
             if not columns:
@@ -217,11 +217,11 @@ class FlextTapOracleStreams:
 
         def _transform_oracle_types(
             self,
-            record: t.Cli.JsonMapping,
+            record: t.JsonMapping,
             column_metadata: Sequence[m.DbOracle.ColumnMetadata],
-        ) -> t.Cli.JsonMapping:
+        ) -> t.JsonMapping:
             """Transform Oracle data types using flext-db-oracle type knowledge."""
-            transformed_record: MutableMapping[str, t.Cli.JsonValue] = {}
+            transformed_record: MutableMapping[str, t.JsonValue] = {}
             meta_lookup: MutableMapping[str, m.DbOracle.ColumnMetadata] = {}
             for col_meta_value in column_metadata:
                 col_name = getattr(col_meta_value, "name", None) or getattr(
@@ -319,7 +319,7 @@ class FlextTapOracleStreams:
                 else c.TapOracle.DEFAULT_OPERATION_NAME
             )
             stream_name = f"{stream_prefix}_{table_name.lower()}"
-            properties: t.Cli.JsonMapping = {}
+            properties: t.JsonMapping = {}
             schema = t.Cli.JSON_MAPPING_ADAPTER.validate_python({
                 "type": "object",
                 "properties": properties,

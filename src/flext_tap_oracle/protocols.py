@@ -232,9 +232,9 @@ class FlextTapOracleProtocols(m, FlextDbOracleProtocols):
 
         @runtime_checkable
         class Tap(Protocol):
-            """Structural protocol for Oracle tap t.Container used in stream context."""
+            """Structural protocol for Oracle tap t.JsonValue used in stream context."""
 
-            typed_config: t.Container
+            typed_config: t.JsonValue
 
 
 p = FlextTapOracleProtocols
