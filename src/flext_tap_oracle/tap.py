@@ -167,7 +167,6 @@ class FlextTapOracleCli:
 
     @staticmethod
     def handle_discover_command(
-        *args: t.Scalar,
         **kwargs: t.Scalar,
     ) -> p.Result[t.JsonValue]:
         """Handle discover command using flext-meltano patterns."""
@@ -179,9 +178,7 @@ class FlextTapOracleCli:
         )
 
     @staticmethod
-    def handle_sync_command(
-        *args: t.Scalar, **kwargs: t.Scalar
-    ) -> p.Result[t.JsonValue]:
+    def handle_sync_command(**kwargs: t.Scalar) -> p.Result[t.JsonValue]:
         """Handle sync command using flext-meltano patterns."""
         return FlextTapOracleCli.run_tap_command(
             kwargs=kwargs,

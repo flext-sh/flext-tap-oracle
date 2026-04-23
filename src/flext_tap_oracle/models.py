@@ -14,10 +14,13 @@ from collections.abc import (
 from datetime import datetime
 from typing import Annotated, Literal, Self
 
+from flext_core import u
 from flext_db_oracle import FlextDbOracleModels
-from flext_meltano import m
+from flext_meltano import m, r
 
-from flext_tap_oracle import c, p, r, t, u
+from flext_tap_oracle.constants import c
+from flext_tap_oracle.protocols import p
+from flext_tap_oracle.typings import t
 
 
 class FlextTapOracleModels(m, FlextDbOracleModels):
