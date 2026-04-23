@@ -40,7 +40,7 @@ class FlextTapOracleDiscoverCommand:
         self._logger.info("Starting Oracle database discovery")
         try:
             if not self.params.config_file:
-                return r[t.JsonValue].fail(
+                return r[Mapping[str, t.GeneralValueType]].fail(
                     "Configuration file is required for discovery",
                 )
             config_data: str = Path(self.params.config_file).read_text(encoding="utf-8")
@@ -65,12 +65,12 @@ class FlextTapOracleDiscoverCommand:
                     ),
                     encoding="utf-8",
                 )
-                self._logger.info("Catalog written to %s", output_path)
+                self._logger.info(f"Catalog written to {output_path}")
             self._logger.info("Oracle schema discovery completed")
-            return r[t.JsonValue].ok(catalog_dict)
+            return r[Mapping[str, t.GeneralValueType]].ok(catalog_dict)
         except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
             logger.exception("Oracle discovery failed")
-            return r[t.JsonValue].fail(f"Discovery error: {e}")
+            return r[Mapping[str, t.GeneralValueType]].fail(f"Discovery error: {e}")
 
     def validate_business_rules(self) -> p.Result[bool]:
         """Validate business rules for Oracle tap discovery."""
@@ -94,7 +94,7 @@ class FlextTapOracleSyncCommand:
         self._logger.info("Starting Oracle data extraction")
         try:
             if not self.params.config_file:
-                return r[t.JsonValue].fail(
+                return r[Mapping[str, t.GeneralValueType]].fail(
                     "Configuration file is required for sync",
                 )
             config_data: str = Path(self.params.config_file).read_text(encoding="utf-8")
@@ -121,10 +121,10 @@ class FlextTapOracleSyncCommand:
                 schema_name,
                 record_count,
             )
-            return r[t.JsonValue].ok(result_data)
+            return r[Mapping[str, t.GeneralValueType]].ok(result_data)
         except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
             logger.exception("Oracle sync failed")
-            return r[t.JsonValue].fail(f"Sync error: {e}")
+            return r[Mapping[str, t.GeneralValueType]].fail(f"Sync error: {e}")
 
     def validate_business_rules(self) -> p.Result[bool]:
         """Validate business rules for Oracle tap sync."""

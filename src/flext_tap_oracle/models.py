@@ -874,20 +874,7 @@ class FlextTapOracleModels(m, FlextDbOracleModels):
                 """Validate sync params business rules."""
                 return r[bool].ok(value=True)
 
-        # =====================================================
-        #
-        # The following functions have been moved to FlextTapOracleUtilities:
-        # - create_stream_info_from_oracle_table -> FlextTapOracleUtilities.StreamManagement.create_stream_info_from_oracle_table
-        # - create_discovery_result -> FlextTapOracleUtilities.StreamManagement.create_discovery_result
-        #
-        # Use the utilities pattern instead of standalone functions.
 
-
-# =====================================================
-# MAIN EXPORTS
-# =====================================================
-
-# Short aliases
 m = FlextTapOracleModels
 
 __all__: list[str] = ["FlextTapOracleModels", "m"]
