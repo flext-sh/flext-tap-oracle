@@ -1,0 +1,40 @@
+src/flext_tap_oracle/streams.py
+  h_9db9d35f50cf33 182,220,222,322
+src/flext_tap_oracle/protocols.py
+  h_9db9d35f50cf33 235,237
+src/flext_tap_oracle/tap.py
+  h_9db9d35f50cf33 43,70,73,97,124,127,152,161-162,166,172,184
+docs/guides/development.md
+  h_9db9d35f50cf33 84,137,154,193,196,202,295,353,356,405
+src/flext_tap_oracle/rules.json
+  h_9db9d35f50cf33 265
+src/flext_tap_oracle/typings.py
+  h_9db9d35f50cf33 28-29,33,45
+tests/utilities.py
+  h_9db9d35f50cf33 55,73,86,99,101
+src/flext_tap_oracle/api.py
+  h_9db9d35f50cf33 31,39
+tests/typings.py
+  h_9db9d35f50cf33 51
+docs/guides/testing.md
+  h_9db9d35f50cf33 528
+src/flext_tap_oracle/utilities.py
+  h_9db9d35f50cf33 146,156,158,180,184,191,196,199,201,230,232
+tests/protocols.py
+  h_9db9d35f50cf33 66,110
+docs/guides/troubleshooting.md
+  h_9db9d35f50cf33 52,61-63,141,155,675,678
+tests/conftest.py
+  h_9db9d35f50cf33 97,130,147,155,219,234,314,361,374,400,419,448,465,477,529,532-533,535,555-557,611,627-628,640,658,666,678,702
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "4b38572c37722717491fc4248b26c388409b1074",
+  "prompts": {},
+  "humans": {
+    "h_9db9d35f50cf33": {
+      "author": "FLEXT Bot"
+    }
+  }
+}
