@@ -46,7 +46,7 @@ class FlextTapOracleStreams:
 
         def __init__(
             self,
-            tap: p.TapOraclePrivate.Tap,
+            tap: p.TapOracle.TapOraclePrivate.Tap,
             name: str,
             table_name: str,
             schema: Mapping[str, t.JsonValue],
@@ -266,7 +266,7 @@ class FlextTapOracleStreams:
 
         @staticmethod
         def create_oracle_stream(
-            tap: p.TapOraclePrivate.Tap,
+            tap: p.TapOracle.TapOraclePrivate.Tap,
             name: str,
             table_name: str,
             schema: Mapping[str, t.JsonValue],
@@ -295,7 +295,7 @@ class FlextTapOracleStreams:
 
         @staticmethod
         def create_oracle_stream_from_table(
-            tap: p.TapOraclePrivate.Tap,
+            tap: p.TapOracle.TapOraclePrivate.Tap,
             table_metadata: t.TapOracle.OracleValue,
             oracle_api: FlextDbOracleApi,
             stream_prefix: str = c.TapOracle.DEFAULT_STREAM_PREFIX,

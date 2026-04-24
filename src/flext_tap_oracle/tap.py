@@ -58,7 +58,7 @@ class FlextTapOracleDiscoverCommand:
             if self.params.output_file:
                 output_path = Path(self.params.output_file)
                 output_path.write_text(
-                    t.GENERAL_VALUE_MAP_ADAPTER.dump_json(
+                    t.TapOracle.GENERAL_VALUE_MAP_ADAPTER.dump_json(
                         catalog_dict, indent=2
                     ).decode(
                         "utf-8",
@@ -147,7 +147,9 @@ class FlextTapOracleCli:
         *,
         kwargs: t.ConfigurationMapping,
         params_factory: Callable[..., TParams],
-        command_factory: Callable[[TParams], p.TapOraclePrivate.CommandRunner],
+        command_factory: Callable[
+            [TParams], p.TapOracle.TapOraclePrivate.CommandRunner
+        ],
         operation_name: str,
     ) -> p.Result[t.JsonValue]:
         """Run a tap command with params factory and command factory."""
