@@ -49,7 +49,7 @@ class FlextTapOracleStreams:
             tap: p.TapOraclePrivate.Tap,
             name: str,
             table_name: str,
-            schema: Mapping[str, t.GeneralValueType],
+            schema: Mapping[str, t.JsonValue],
             oracle_api: FlextDbOracleApi,
         ) -> None:
             """Initialize Oracle stream with maximum flext-db-oracle integration."""
@@ -100,8 +100,8 @@ class FlextTapOracleStreams:
 
         def get_records(
             self,
-            context: Mapping[str, t.TapOracle.Summary.OracleValue] | None = None,
-        ) -> Iterable[Mapping[str, t.TapOracle.Summary.OracleValue]]:
+            context: Mapping[str, t.TapOracle.OracleValue] | None = None,
+        ) -> Iterable[Mapping[str, t.TapOracle.OracleValue]]:
             """Get records from Oracle table using flext-db-oracle exclusively - NO direct SQLAlchemy."""
             try:
                 _ = context
@@ -137,7 +137,7 @@ class FlextTapOracleStreams:
                 msg = f"Failed to get records: {e}"
                 raise RuntimeError(msg) from e
 
-        def get_stream_metadata(self) -> Mapping[str, t.GeneralValueType | None]:
+        def get_stream_metadata(self) -> Mapping[str, t.JsonValue | None]:
             """Get complete stream metadata."""
             return {
                 "name": self.name,
@@ -147,7 +147,7 @@ class FlextTapOracleStreams:
                 "estimated_rows": self.estimate_row_count(),
             }
 
-        def get_table_info(self) -> Mapping[str, t.GeneralValueType | None]:
+        def get_table_info(self) -> Mapping[str, t.JsonValue | None]:
             """Get Oracle table information using flext-db-oracle metadata."""
             try:
                 table_metadata_result = self.oracle_api.fetch_table_metadata(
@@ -269,7 +269,7 @@ class FlextTapOracleStreams:
             tap: p.TapOraclePrivate.Tap,
             name: str,
             table_name: str,
-            schema: Mapping[str, t.GeneralValueType],
+            schema: Mapping[str, t.JsonValue],
             oracle_api: FlextDbOracleApi,
         ) -> FlextTapOracleStreams.OracleStream:
             """Create Oracle stream.
@@ -296,7 +296,7 @@ class FlextTapOracleStreams:
         @staticmethod
         def create_oracle_stream_from_table(
             tap: p.TapOraclePrivate.Tap,
-            table_metadata: t.TapOracle.Summary.OracleValue,
+            table_metadata: t.TapOracle.OracleValue,
             oracle_api: FlextDbOracleApi,
             stream_prefix: str = c.TapOracle.DEFAULT_STREAM_PREFIX,
         ) -> FlextTapOracleStreams.OracleStream:
