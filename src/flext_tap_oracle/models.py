@@ -167,8 +167,6 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     msg = "Stream name cannot be empty"
                     raise ValueError(msg)
 
-                # Enhanced validation with proper limits
-                # c.TapOracle.MAX_IDENTIFIER_LENGTH = c.TapOracle.MAX_IDENTIFIER_LENGTH
                 if len(v) > c.TapOracle.MAX_IDENTIFIER_LENGTH:
                     msg = f"Stream name too long: {len(v)} > {c.TapOracle.MAX_IDENTIFIER_LENGTH} characters"
                     raise ValueError(msg)
