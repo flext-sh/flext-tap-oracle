@@ -43,7 +43,9 @@ class FlextTapOracleDiscoverCommand:
                 return r[Mapping[str, t.JsonValue]].fail(
                     "Configuration file is required for discovery",
                 )
-            config_data: str = Path(self.params.config_file).read_text(encoding="utf-8")
+            config_data: str = Path(self.params.config_file).read_text(
+                encoding=c.DEFAULT_ENCODING
+            )
             settings = FlextTapOracleSettings.model_validate_json(
                 config_data,
             )
@@ -61,9 +63,9 @@ class FlextTapOracleDiscoverCommand:
                     t.GENERAL_VALUE_MAP_ADAPTER.dump_json(
                         catalog_dict, indent=2
                     ).decode(
-                        "utf-8",
+                        c.DEFAULT_ENCODING,
                     ),
-                    encoding="utf-8",
+                    encoding=c.DEFAULT_ENCODING,
                 )
                 self.logger.info(f"Catalog written to {output_path}")
             self.logger.info("Oracle schema discovery completed")
@@ -97,16 +99,18 @@ class FlextTapOracleSyncCommand:
                 return r[Mapping[str, t.JsonValue]].fail(
                     "Configuration file is required for sync",
                 )
-            config_data: str = Path(self.params.config_file).read_text(encoding="utf-8")
+            config_data: str = Path(self.params.config_file).read_text(
+                encoding=c.DEFAULT_ENCODING
+            )
             settings = FlextTapOracleSettings.model_validate_json(
                 config_data,
             )
             oracle_config = settings.get_oracle_config()
             if self.params.catalog_file:
-                Path(self.params.catalog_file).read_text(encoding="utf-8")
+                Path(self.params.catalog_file).read_text(encoding=c.DEFAULT_ENCODING)
                 self.logger.info(f"Loaded catalog from {self.params.catalog_file}")
             if self.params.state_file:
-                Path(self.params.state_file).read_text(encoding="utf-8")
+                Path(self.params.state_file).read_text(encoding=c.DEFAULT_ENCODING)
                 self.logger.info(f"Loaded state from {self.params.state_file}")
             self.logger.info("Preparing extraction from Oracle database...")
             schema_name = str(oracle_config.get("schema_name", "USER"))
