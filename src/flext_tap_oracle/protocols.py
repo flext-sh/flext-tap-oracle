@@ -219,9 +219,6 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
                 """Track Oracle table extraction progress."""
                 ...
 
-    class TapOraclePrivate:
-        """Private structural protocols for internal flext-tap-oracle use."""
-
         @runtime_checkable
         class CommandRunner(Protocol):
             """Structural protocol for Oracle tap command execution."""
@@ -232,7 +229,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
 
         @runtime_checkable
         class Tap(Protocol):
-            """Structural protocol for Oracle tap t.JsonValue used in stream context."""
+            """Structural protocol for Oracle tap value used in stream context."""
 
             typed_config: t.JsonValue
 
