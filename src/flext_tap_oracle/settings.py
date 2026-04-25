@@ -14,7 +14,7 @@ from typing import Annotated, ClassVar, Self
 
 from flext_core import FlextSettings, u
 
-from flext_tap_oracle import c, m, p, r, t
+from flext_tap_oracle import c, e, m, p, r, t
 
 
 @FlextSettings.auto_register("tap-oracle")
@@ -59,9 +59,9 @@ class FlextTapOracleSettings(FlextSettings):
     def validate_business_rules(self) -> p.Result[bool]:
         """Validate Oracle tap configuration business rules."""
         if not self.oracle_host:
-            return r[bool].fail("Oracle host is required")
+            return e.fail_validation("oracle_host", error="is required")
         if not self.oracle_service_name:
-            return r[bool].fail("Oracle service name is required")
+            return e.fail_validation("oracle_service_name", error="is required")
         return r[bool].ok(True)
 
     @staticmethod

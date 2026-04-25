@@ -14,7 +14,7 @@ from collections.abc import (
 )
 
 from flext_db_oracle import FlextDbOracleApi, FlextDbOracleModels
-from flext_meltano import p, r, t, u
+from flext_meltano import e, p, r, t, u
 
 from flext_tap_oracle.constants import c
 from flext_tap_oracle.settings import FlextTapOracleSettings
@@ -54,10 +54,10 @@ class FlextTapOracleUtilitiesClientMixin:
                 "Discovered %d Oracle tables in schema %s", len(tables), target_schema
             )
             return r[Sequence[FlextDbOracleModels.DbOracle.Table]].ok(tables)
-        except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
+        except c.Meltano.SINGER_SAFE_EXCEPTIONS as exc:
             logger.exception("Oracle table discovery error")
             return r[Sequence[FlextDbOracleModels.DbOracle.Table]].fail(
-                f"Table discovery error in schema {schema_name}: {e}"
+                f"Table discovery error in schema {schema_name}: {exc}"
             )
 
     @staticmethod
@@ -75,9 +75,9 @@ class FlextTapOracleUtilitiesClientMixin:
             error_msg = test_result.error or "Connection test failed"
             logger.error("Oracle connection test failed: %s", error_msg)
             return r[bool].fail(error_msg)
-        except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
+        except c.Meltano.SINGER_SAFE_EXCEPTIONS as exc:
             logger.exception("Oracle connection test error")
-            return r[bool].fail(f"Connection test error: {e}")
+            return r[bool].fail(f"Connection test error: {exc}")
 
     @staticmethod
     def tap_oracle_client_filter_tables(
@@ -99,7 +99,7 @@ class FlextTapOracleUtilitiesClientMixin:
                 return r[t.StrSequence].ok(tables_filter_list)
 
             if not discovered_tables:
-                return r[t.StrSequence].fail("No Oracle tables discovered")
+                return e.fail_not_found("oracle_tables", "discovered")
 
             table_names: t.StrSequence = [table.name for table in discovered_tables]
             exclude_tables_raw: t.Scalar | t.ScalarList | None = tap_configuration.get(
@@ -125,9 +125,9 @@ class FlextTapOracleUtilitiesClientMixin:
                 "No table exclusions configured, using all %d tables", len(table_names)
             )
             return r[t.StrSequence].ok(table_names)
-        except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
+        except c.Meltano.SINGER_SAFE_EXCEPTIONS as exc:
             logger.exception("Table filtering error")
-            return r[t.StrSequence].fail(f"Table filtering error: {e}")
+            return r[t.StrSequence].fail(f"Table filtering error: {exc}")
 
     @staticmethod
     def tap_oracle_client_initialize_tap(
@@ -158,9 +158,9 @@ class FlextTapOracleUtilitiesClientMixin:
 
             logger.info("Oracle tap initialization completed successfully")
             return r[bool].ok(value=True)
-        except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
+        except c.Meltano.SINGER_SAFE_EXCEPTIONS as exc:
             logger.exception("Oracle tap initialization failed")
-            return r[bool].fail(f"Initialization failed: {e}")
+            return r[bool].fail(f"Initialization failed: {exc}")
 
 
 __all__: list[str] = ["FlextTapOracleUtilitiesClientMixin"]

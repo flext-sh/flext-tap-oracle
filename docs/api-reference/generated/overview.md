@@ -7,9 +7,9 @@
 - Description: FLEXT Tap Oracle - Modern Singer Tap for Oracle Database
 - Project class: `integration`
 - Keywords: `database`, `enterprise`, `etl`, `flext`, `integration`, `oracle`, `singer`, `tap`
-- Main facades: `FlextTapOracleProtocols`, `FlextTapOracleService`, `FlextTapOracleSyncCommand`, `FlextTapOracleConstants`, `FlextTapOracleSettings`, `FlextTapOracleUtilities`, `FlextTapOracleCli`, `FlextTapOracleStreams` (+4 more)
+- Main facades: `FlextTapOracleCli`, `FlextTapOracleUtilitiesClientMixin`, `FlextTapOracleModels`, `FlextTapOracleStreams`, `FlextTapOracleUtilities`, `FlextTapOracleProtocols`, `FlextTapOracleSettings`, `FlextTapOracleConstants` (+4 more)
 - Alias exports: `c`, `d`, `e`, `h`, `m`, `p`, `r`, `s`, `t`, `u`, `x`
-- Public symbol exports: `FlextTapOracleProtocols`, `FlextTapOracleService`, `FlextTapOracleSyncCommand`, `FlextTapOracleConstants`, `FlextTapOracleSettings`, `tap_oracle`, `FlextTapOracleUtilities`, `FlextTapOracleCli`, `FlextTapOracleStreams`, `FlextTapOracleUtilitiesClientMixin` (+3 more)
+- Public symbol exports: `FlextTapOracleCli`, `FlextTapOracleUtilitiesClientMixin`, `FlextTapOracleModels`, `FlextTapOracleStreams`, `FlextTapOracleUtilities`, `tap_oracle`, `FlextTapOracleProtocols`, `FlextTapOracleSettings`, `FlextTapOracleConstants`, `FlextTapOracleTypes` (+3 more)
 - Exported module shortcuts: _none_
 - Generated module pages: `10`
 

@@ -19,7 +19,7 @@ This section is generated from public exports and real docstrings.
 
 ## Surface Summary
 
-- Primary facades: `FlextTapOracleProtocols`, `FlextTapOracleService`, `FlextTapOracleSyncCommand`, `FlextTapOracleConstants`, `FlextTapOracleSettings`, `FlextTapOracleUtilities` (+6 more)
+- Primary facades: `FlextTapOracleCli`, `FlextTapOracleUtilitiesClientMixin`, `FlextTapOracleModels`, `FlextTapOracleStreams`, `FlextTapOracleUtilities`, `FlextTapOracleProtocols` (+6 more)
 - Generated module pages: `10`
 
 - [Back to project docs](../index.md)
