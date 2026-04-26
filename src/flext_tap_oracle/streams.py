@@ -15,7 +15,6 @@ from collections.abc import (
 from datetime import datetime
 
 from flext_db_oracle import FlextDbOracleApi
-
 from flext_tap_oracle import c, m, p, t, u
 
 

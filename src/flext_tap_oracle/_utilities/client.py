@@ -15,7 +15,6 @@ from collections.abc import (
 
 from flext_db_oracle import FlextDbOracleApi, FlextDbOracleModels
 from flext_meltano import e, p, r, t, u
-
 from flext_tap_oracle.constants import c
 from flext_tap_oracle.settings import FlextTapOracleSettings
 
