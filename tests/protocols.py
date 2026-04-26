@@ -35,13 +35,14 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols, FlextTapOracleProtocols)
     - Generic protocols accessed via Tests namespace
     """
 
-    class TapOracle(FlextTapOracleProtocols.TapOracle):
-        """Tap Oracle test protocols - domain-specific for Oracle tap testing.
+    class TapOracle:
+        """Tap Oracle test protocols — domain-specific for Oracle tap testing.
 
-        Contains test protocols specific to Oracle tap functionality including:
-        - Mock service protocols for testing
-        - Test data provider protocols
-        - Test assertion protocols
+        Hosts test-only protocols (``Tests.MockOracleConnection``,
+        ``Tests.TestDataProvider``, ``Tests.TestAssertion``). The parent
+        ``FlextTapOracleProtocols.TapOracle`` namespace was deleted as dead
+        code (no workspace consumers); these test-only entries now live
+        directly under the test facade.
         """
 
         class Tests:
