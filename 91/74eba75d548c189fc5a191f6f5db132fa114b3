@@ -1,0 +1,16 @@
+src/flext_tap_oracle/constants.py
+  h_9db9d35f50cf33 68
+src/flext_tap_oracle/settings.py
+  h_9db9d35f50cf33 38,44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "9174eba75d548c189fc5a191f6f5db132fa114b3",
+  "prompts": {},
+  "humans": {
+    "h_9db9d35f50cf33": {
+      "author": "FLEXT Bot"
+    }
+  }
+}
