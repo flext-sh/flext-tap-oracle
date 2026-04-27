@@ -24,6 +24,7 @@ from typing import TypeGuard, override
 import pytest
 from flext_tests import tk
 
+from flext_meltano import c as meltano_c
 from flext_tap_oracle import FlextTapOracleService, FlextTapOracleSettings
 from tests import t
 
@@ -136,7 +137,7 @@ def oracle_tap_config() -> t.JsonMapping:
         "username": "tap_user",
         "password": "tap_pass",
         "service_name": "XEPDB1",
-        "default_replication_method": "INCREMENTAL",
+        "default_replication_method": meltano_c.Meltano.SingerReplicationMethod.INCREMENTAL.value,
         "filter_schemas": ["TAP_SCHEMA"],
         "batch_config": {"encoding": {"format": "jsonl", "compression": "gzip"}},
     }
@@ -175,7 +176,7 @@ def singer_catalog() -> t.JsonMapping:
                         "metadata": {
                             "inclusion": "available",
                             "table-key-properties": ["id"],
-                            "forced-replication-method": "INCREMENTAL",
+                            "forced-replication-method": meltano_c.Meltano.SingerReplicationMethod.INCREMENTAL.value,
                             "replication-key": "hire_date",
                         },
                     },
@@ -206,7 +207,7 @@ def singer_catalog() -> t.JsonMapping:
                         "metadata": {
                             "inclusion": "available",
                             "table-key-properties": ["id"],
-                            "forced-replication-method": "FULL_TABLE",
+                            "forced-replication-method": meltano_c.Meltano.SingerReplicationMethod.FULL_TABLE.value,
                         },
                     },
                 ],
@@ -362,7 +363,7 @@ def stream_config() -> t.JsonMapping:
     """Stream configuration for testing."""
     return {
         "selected": True,
-        "replication_method": "INCREMENTAL",
+        "replication_method": meltano_c.Meltano.SingerReplicationMethod.INCREMENTAL.value,
         "replication_key": "hire_date",
         "key_properties": ["id"],
         "batch_size": 1000,
