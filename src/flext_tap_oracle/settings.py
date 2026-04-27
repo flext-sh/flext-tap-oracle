@@ -29,19 +29,19 @@ class FlextTapOracleSettings(FlextSettings):
         u.Field(
             description="Oracle database host",
         ),
-    ] = c.DbOracle.OracleDefaults.DEFAULT_HOST
+    ] = c.DbOracle.DEFAULT_HOST
     oracle_port: Annotated[
         t.PortNumber,
         u.Field(
             description="Oracle database port",
         ),
-    ] = c.DbOracle.Connection.DEFAULT_PORT
+    ] = c.DbOracle.DEFAULT_PORT
     oracle_service_name: Annotated[
         str,
         u.Field(
             description="Oracle service name or SID",
         ),
-    ] = c.DbOracle.Connection.DEFAULT_SERVICE_NAME
+    ] = c.DbOracle.DEFAULT_SERVICE_NAME
     oracle_user: Annotated[t.SecretStr, u.Field(description="Oracle database username")]
     oracle_password: Annotated[
         t.SecretStr, u.Field(description="Oracle database password")

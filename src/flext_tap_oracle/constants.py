@@ -65,4 +65,4 @@ class FlextTapOracleConstants(c, FlextDbOracleConstants):
 
 
 c = FlextTapOracleConstants
-__all__: list[str] = ["FlextTapOracleConstants", "c"]
+__all__: tuple[str, ...] = ("FlextTapOracleConstants", "c")
