@@ -27,7 +27,7 @@ class FlextTapOracleService(FlextMeltanoTapServiceBase):
 
     def __init__(
         self,
-        settings: FlextTapOracleSettings | t.JsonMapping | None = None,
+        settings: FlextTapOracleSettings | None = None,
     ) -> None:
         """Expose the canonical settings bootstrap on the concrete tap facade."""
         super().__init__(settings=settings)
