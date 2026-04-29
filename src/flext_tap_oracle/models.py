@@ -214,19 +214,19 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Discovery scope
             schema_names: Annotated[
-                t.StrSequence,
+                MutableSequence[str],
                 u.Field(
                     description="Oracle schemas to discover",
                 ),
             ] = u.Field(default_factory=list)
             table_patterns: Annotated[
-                t.StrSequence,
+                MutableSequence[str],
                 u.Field(
                     description="Table name patterns to include",
                 ),
             ] = u.Field(default_factory=list)
             exclude_patterns: Annotated[
-                t.StrSequence,
+                MutableSequence[str],
                 u.Field(
                     description="Table name patterns to exclude",
                 ),
@@ -582,13 +582,13 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Filtering results
             filtered_tables: Annotated[
-                t.StrSequence,
+                MutableSequence[str],
                 u.Field(
                     description="Table names after applying filters",
                 ),
             ] = u.Field(default_factory=list)
             excluded_tables: Annotated[
-                t.StrSequence,
+                MutableSequence[str],
                 u.Field(
                     description="Table names that were excluded",
                 ),
@@ -625,13 +625,13 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     },
                 }
 
-            def get_selected_streams(
+            def resolve_selected_streams(
                 self,
             ) -> Sequence[FlextTapOracleModels.TapOracle.OracleTapStreamInfo]:
                 """Get only selected streams."""
                 return [stream for stream in self.stream_info if stream.is_selected]
 
-            def get_table_by_name(
+            def resolve_table_by_name(
                 self,
                 table_name: str,
             ) -> FlextDbOracleModels.DbOracle.Table | None:
@@ -695,7 +695,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 ),
             ] = 0
             failed_streams: Annotated[
-                t.StrSequence,
+                MutableSequence[str],
                 u.Field(
                     description="Names of failed streams",
                 ),
@@ -832,8 +832,14 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
         class OracleTapDiscoverParams(m.Entity):
             """Parameters for Oracle tap discover command."""
 
-            config_file: Annotated[str | None, u.Field(default=None)]
-            output_file: Annotated[str | None, u.Field(default=None)]
+            config_file: Annotated[
+                str | None,
+                u.Field(description="Path to configuration file", default=None),
+            ]
+            output_file: Annotated[
+                str | None,
+                u.Field(description="Path to output file", default=None),
+            ]
 
             @classmethod
             def from_click_args(cls, **kwargs: t.Scalar) -> Self:
@@ -852,9 +858,18 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
         class OracleTapSyncParams(m.Entity):
             """Parameters for Oracle tap sync command."""
 
-            config_file: Annotated[str | None, u.Field(default=None)]
-            catalog_file: Annotated[str | None, u.Field(default=None)]
-            state_file: Annotated[str | None, u.Field(default=None)]
+            config_file: Annotated[
+                str | None,
+                u.Field(description="Path to configuration file", default=None),
+            ]
+            catalog_file: Annotated[
+                str | None,
+                u.Field(description="Path to catalog file", default=None),
+            ]
+            state_file: Annotated[
+                str | None,
+                u.Field(description="Path to state file", default=None),
+            ]
 
             @classmethod
             def from_click_args(cls, **kwargs: t.Scalar) -> Self:

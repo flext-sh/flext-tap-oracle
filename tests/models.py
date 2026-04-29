@@ -7,9 +7,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from typing import Annotated
+
 from flext_tests import FlextTestsModels
 
 from flext_tap_oracle import FlextTapOracleModels
+from tests import u
 
 
 class TestsFlextTapOracleModels(FlextTestsModels, FlextTapOracleModels):
@@ -45,11 +48,15 @@ class TestsFlextTapOracleModels(FlextTestsModels, FlextTapOracleModels):
             class TestOracleConnection(FlextTapOracleModels.Entity):
                 """Test model for Oracle database connections."""
 
-                host: str
-                port: int
-                service_name: str
-                username: str
-                password: str
+                host: Annotated[str, u.Field(description="Oracle database hostname")]
+                port: Annotated[int, u.Field(description="Oracle database port")]
+                service_name: Annotated[str, u.Field(description="Oracle service name")]
+                username: Annotated[
+                    str, u.Field(description="Oracle database username")
+                ]
+                password: Annotated[
+                    str, u.Field(description="Oracle database password")
+                ]
 
                 @property
                 def connection_string(self) -> str:
@@ -59,26 +66,55 @@ class TestsFlextTapOracleModels(FlextTestsModels, FlextTapOracleModels):
             class TestSingerStream(FlextTapOracleModels.Entity):
                 """Test model for Singer streams."""
 
-                stream_name: str
-                table_name: str
-                replication_method: str
-                is_selected: bool = True
+                stream_name: Annotated[
+                    str, u.Field(description="Name of the Singer stream")
+                ]
+                table_name: Annotated[
+                    str, u.Field(description="Name of the source table")
+                ]
+                replication_method: Annotated[
+                    str,
+                    u.Field(description="Replication method for the stream"),
+                ]
+                is_selected: Annotated[
+                    bool, u.Field(description="Whether the stream is selected")
+                ] = True
 
             class TestOracleTable(FlextTapOracleModels.Entity):
                 """Test model for Oracle tables."""
 
-                table_name: str
-                schema_name: str
-                column_count: int
-                row_count: int | None = None
+                table_name: Annotated[
+                    str, u.Field(description="Name of the Oracle table")
+                ]
+                schema_name: Annotated[
+                    str, u.Field(description="Schema containing the table")
+                ]
+                column_count: Annotated[
+                    int, u.Field(description="Number of columns in the table")
+                ]
+                row_count: Annotated[
+                    int | None,
+                    u.Field(description="Number of rows in the table"),
+                ] = None
 
             class TestExtractionConfig(FlextTapOracleModels.Entity):
                 """Test model for extraction configurations."""
 
-                batch_size: int
-                parallel_streams: int
-                timeout_seconds: int
-                max_rows: int | None = None
+                batch_size: Annotated[
+                    int, u.Field(description="Number of rows per batch")
+                ]
+                parallel_streams: Annotated[
+                    int,
+                    u.Field(description="Number of parallel streams for extraction"),
+                ]
+                timeout_seconds: Annotated[
+                    int,
+                    u.Field(description="Query timeout in seconds"),
+                ]
+                max_rows: Annotated[
+                    int | None,
+                    u.Field(description="Maximum number of rows to extract"),
+                ] = None
 
 
 m = TestsFlextTapOracleModels
