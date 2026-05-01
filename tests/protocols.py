@@ -7,9 +7,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import (
-    Sequence,
-)
 from typing import Protocol, runtime_checkable
 
 from flext_tests import FlextTestsProtocols
@@ -64,7 +61,7 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols, FlextTapOracleProtocols)
                     self,
                     query: str,
                     parameters: t.JsonMapping | None = None,
-                ) -> Sequence[t.JsonMapping]:
+                ) -> t.SequenceOf[t.JsonMapping]:
                     """Execute query on mock database."""
                     ...
 
@@ -72,14 +69,14 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols, FlextTapOracleProtocols)
             class TestDataProvider(Protocol):
                 """Protocol for test data providers."""
 
-                def get_test_tables(self) -> Sequence[t.JsonMapping]:
+                def get_test_tables(self) -> t.SequenceOf[t.JsonMapping]:
                     """Get test table definitions."""
                     ...
 
                 def get_test_data(
                     self,
                     table_name: str,
-                ) -> Sequence[t.JsonMapping]:
+                ) -> t.SequenceOf[t.JsonMapping]:
                     """Get test data for a table."""
                     ...
 
@@ -107,8 +104,8 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols, FlextTapOracleProtocols)
 
                 def assert_extraction_results_match(
                     self,
-                    expected: Sequence[t.JsonMapping],
-                    actual: Sequence[t.JsonMapping],
+                    expected: t.SequenceOf[t.JsonMapping],
+                    actual: t.SequenceOf[t.JsonMapping],
                 ) -> None:
                     """Assert extraction results match expected data."""
                     ...

@@ -48,7 +48,7 @@ class FlextTapOracleStreams:
             tap: p.TapOracle.Tap,
             name: str,
             table_name: str,
-            schema: Mapping[str, t.JsonValue],
+            schema: t.MappingKV[str, t.JsonValue],
             oracle_api: FlextDbOracleApi,
         ) -> None:
             """Initialize Oracle stream with maximum flext-db-oracle integration."""
@@ -74,7 +74,7 @@ class FlextTapOracleStreams:
                 sql: str = f'SELECT COUNT(*) FROM "{safe_table_name}"'  # nosec B608 — table name validated via isalnum()
                 result: p.Result[Sequence[m.Dict]] = self.oracle_api.query(sql)
                 if result.success and result.value:
-                    result_rows: Sequence[m.Dict] = result.value
+                    result_rows: t.SequenceOf[m.Dict] = result.value
                     first_row: m.Dict = result_rows[0]
                     first_val = next(iter(first_row.root.values()), None)
                     if isinstance(first_val, t.NUMERIC_TYPES) and not isinstance(
@@ -99,7 +99,7 @@ class FlextTapOracleStreams:
 
         def get_records(
             self,
-            context: Mapping[str, t.TapOracle.OracleValue] | None = None,
+            context: t.MappingKV[str, t.TapOracle.OracleValue] | None = None,
         ) -> Iterable[Mapping[str, t.TapOracle.OracleValue]]:
             """Get records from Oracle table using flext-db-oracle exclusively - NO direct SQLAlchemy."""
             try:
@@ -123,7 +123,7 @@ class FlextTapOracleStreams:
                     if query_result.failure:
                         error_msg: str = query_result.error or "unknown query error"
                         raise RuntimeError(error_msg)
-                    rows: Sequence[m.Dict] = query_result.value
+                    rows: t.SequenceOf[m.Dict] = query_result.value
                     yield from self._process_results_with_table_metadata(
                         rows,
                         table_metadata_result.value,
@@ -136,7 +136,7 @@ class FlextTapOracleStreams:
                 msg = f"Failed to get records: {e}"
                 raise RuntimeError(msg) from e
 
-        def get_stream_metadata(self) -> Mapping[str, t.JsonValue | None]:
+        def get_stream_metadata(self) -> t.MappingKV[str, t.JsonValue | None]:
             """Get complete stream metadata."""
             return {
                 "name": self.name,
@@ -146,7 +146,7 @@ class FlextTapOracleStreams:
                 "estimated_rows": self.estimate_row_count(),
             }
 
-        def get_table_info(self) -> Mapping[str, t.JsonValue | None]:
+        def get_table_info(self) -> t.MappingKV[str, t.JsonValue | None]:
             """Get Oracle table information using flext-db-oracle metadata."""
             try:
                 table_metadata_result = self.oracle_api.fetch_table_metadata(
@@ -176,7 +176,7 @@ class FlextTapOracleStreams:
 
         def _process_results_with_table_metadata(
             self,
-            query_data: Sequence[m.Dict],
+            query_data: t.SequenceOf[m.Dict],
             table_metadata: m.DbOracle.TableMetadata,
         ) -> Iterable[t.JsonMapping]:
             """Process results using flext-db-oracle table metadata."""
@@ -217,7 +217,7 @@ class FlextTapOracleStreams:
         def _transform_oracle_types(
             self,
             record: t.JsonMapping,
-            column_metadata: Sequence[m.DbOracle.ColumnMetadata],
+            column_metadata: t.SequenceOf[m.DbOracle.ColumnMetadata],
         ) -> t.JsonMapping:
             """Transform Oracle data types using flext-db-oracle type knowledge."""
             transformed_record: MutableMapping[str, t.JsonValue] = {}
@@ -268,7 +268,7 @@ class FlextTapOracleStreams:
             tap: p.TapOracle.Tap,
             name: str,
             table_name: str,
-            schema: Mapping[str, t.JsonValue],
+            schema: t.MappingKV[str, t.JsonValue],
             oracle_api: FlextDbOracleApi,
         ) -> FlextTapOracleStreams.OracleStream:
             """Create Oracle stream.

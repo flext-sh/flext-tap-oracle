@@ -40,7 +40,7 @@ class FlextTapOracleUtilitiesClientMixin:
                 return r[Sequence[FlextDbOracleModels.DbOracle.Table]].fail(error_msg)
 
             table_names = tables_result.value or []
-            tables: Sequence[FlextDbOracleModels.DbOracle.Table] = [
+            tables: t.SequenceOf[FlextDbOracleModels.DbOracle.Table] = [
                 FlextDbOracleModels.DbOracle.Table(
                     name=name,
                     owner=target_schema,
@@ -81,7 +81,7 @@ class FlextTapOracleUtilitiesClientMixin:
     @staticmethod
     def tap_oracle_client_filter_tables(
         tap_config: FlextTapOracleSettings,
-        discovered_tables: Sequence[FlextDbOracleModels.DbOracle.Table],
+        discovered_tables: t.SequenceOf[FlextDbOracleModels.DbOracle.Table],
     ) -> p.Result[t.StrSequence]:
         """Execute table filtering based on tap configuration."""
         try:

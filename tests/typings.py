@@ -7,10 +7,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import (
-    Mapping,
-    Sequence,
-)
 from typing import Literal
 
 from flext_tests import FlextTestsTypes
@@ -46,13 +42,13 @@ class TestsFlextTapOracleTypes(FlextTestsTypes, FlextTapOracleTypes):
         """
 
         type TestOraclePort = Literal[1521, 10521, 1522]
-        type MockOracleRecord = Mapping[str, FlextTypes.Scalar]
-        type MockOracleTable = Sequence[MockOracleRecord]
+        type MockOracleRecord = t.MappingKV[str, FlextTypes.Scalar]
+        type MockOracleTable = t.SequenceOf[MockOracleRecord]
         type TestScenario = FlextTestsTypes.JsonMapping
-        type TestValidationResult = Mapping[
+        type TestValidationResult = t.MappingKV[
             str, bool | str | FlextTestsTypes.StrSequence
         ]
-        type TestPerformanceResult = Mapping[str, float | int | str]
+        type TestPerformanceResult = t.MappingKV[str, float | int | str]
 
 
 t = TestsFlextTapOracleTypes

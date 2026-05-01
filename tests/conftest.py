@@ -16,8 +16,6 @@ import socket
 from abc import ABC, abstractmethod
 from collections.abc import (
     Generator,
-    Mapping,
-    Sequence,
 )
 from pathlib import Path
 from typing import TypeGuard, override
@@ -248,7 +246,7 @@ def singer_state() -> t.JsonMapping:
 
 
 @pytest.fixture
-def sample_oracle_tables() -> Sequence[t.JsonMapping]:
+def sample_oracle_tables() -> t.SequenceOf[t.JsonMapping]:
     """Sample Oracle table definitions for testing."""
     return [
         {
@@ -328,7 +326,7 @@ def sample_oracle_tables() -> Sequence[t.JsonMapping]:
 
 
 @pytest.fixture
-def sample_oracle_data() -> Mapping[str, Sequence[t.JsonMapping]]:
+def sample_oracle_data() -> t.MappingKV[str, t.SequenceOf[t.JsonMapping]]:
     """Sample Oracle data for testing."""
     return {
         "employees": [
@@ -433,7 +431,7 @@ def singer_schema_message() -> t.JsonMapping:
 
 
 @pytest.fixture
-def singer_record_messages() -> Sequence[t.JsonMapping]:
+def singer_record_messages() -> t.SequenceOf[t.JsonMapping]:
     """Singer record messages for testing."""
     return [
         {
@@ -491,7 +489,7 @@ def performance_test_config() -> t.JsonMapping:
 
 
 @pytest.fixture
-def error_scenarios() -> Sequence[t.JsonMapping]:
+def error_scenarios() -> t.SequenceOf[t.JsonMapping]:
     """Error scenarios for testing."""
     return [
         {
@@ -642,7 +640,7 @@ def mock_oracle_connection() -> type:
             self,
             query: str,
             _parameters: t.JsonMapping | None = None,
-        ) -> Sequence[t.JsonMapping]:
+        ) -> t.SequenceOf[t.JsonMapping]:
             """Execute query and return mock results using Strategy Pattern."""
             return self._get_query_strategy(query).execute()
 
@@ -672,7 +670,7 @@ class _MockQueryStrategy(ABC):
     """Base class for mock query strategies - Strategy Pattern."""
 
     @abstractmethod
-    def execute(self) -> Sequence[t.JsonMapping]:
+    def execute(self) -> t.SequenceOf[t.JsonMapping]:
         """Execute mock query and return results."""
 
 
@@ -680,7 +678,7 @@ class _TablesQueryStrategy(_MockQueryStrategy):
     """Strategy for tables query - Single Responsibility."""
 
     @override
-    def execute(self) -> Sequence[t.JsonMapping]:
+    def execute(self) -> t.SequenceOf[t.JsonMapping]:
         """Return mock table data."""
         return [
             {"table_name": "EMPLOYEES", "owner": "TAP_SCHEMA", "table_type": "TABLE"},
@@ -692,7 +690,7 @@ class _ColumnsQueryStrategy(_MockQueryStrategy):
     """Strategy for columns query - Single Responsibility."""
 
     @override
-    def execute(self) -> Sequence[t.JsonMapping]:
+    def execute(self) -> t.SequenceOf[t.JsonMapping]:
         """Return mock column data."""
         return [
             {
@@ -716,6 +714,6 @@ class _DefaultQueryStrategy(_MockQueryStrategy):
     """Default strategy for generic queries - Single Responsibility."""
 
     @override
-    def execute(self) -> Sequence[t.JsonMapping]:
+    def execute(self) -> t.SequenceOf[t.JsonMapping]:
         """Return mock default data."""
         return [{"id": 1, "name": "Test Record"}]

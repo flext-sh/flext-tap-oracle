@@ -9,7 +9,6 @@ from __future__ import annotations
 
 from collections.abc import (
     MutableSequence,
-    Sequence,
 )
 from datetime import datetime
 from typing import Annotated, Literal, Self
@@ -560,7 +559,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Raw Oracle metadata
             oracle_tables: Annotated[
-                Sequence[FlextDbOracleModels.DbOracle.Table],
+                t.SequenceOf[FlextDbOracleModels.DbOracle.Table],
                 u.Field(
                     description="Raw Oracle table metadata from flext-db-oracle",
                 ),
@@ -570,7 +569,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Processed stream information
             stream_info: Annotated[
-                Sequence[FlextTapOracleModels.TapOracle.OracleTapStreamInfo],
+                t.SequenceOf[FlextTapOracleModels.TapOracle.OracleTapStreamInfo],
                 u.Field(
                     description="Processed stream information for tap use",
                 ),
@@ -627,7 +626,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             def resolve_selected_streams(
                 self,
-            ) -> Sequence[FlextTapOracleModels.TapOracle.OracleTapStreamInfo]:
+            ) -> t.SequenceOf[FlextTapOracleModels.TapOracle.OracleTapStreamInfo]:
                 """Get only selected streams."""
                 return [stream for stream in self.stream_info if stream.is_selected]
 

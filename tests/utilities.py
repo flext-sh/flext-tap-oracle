@@ -7,10 +7,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import (
-    Sequence,
-)
-
 from flext_tests import FlextTestsUtilities
 
 from flext_tap_oracle import FlextTapOracleUtilities
@@ -96,7 +92,7 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities, FlextTapOracleUtilities)
             table_name: str,
             row_count: int = 10,
             **kwargs: t.JsonValue,
-        ) -> Sequence[t.JsonMapping]:
+        ) -> t.SequenceOf[t.JsonMapping]:
             """Generate mock Oracle data for testing."""
             data: list[t.JsonMapping] = []
             for i in range(row_count):

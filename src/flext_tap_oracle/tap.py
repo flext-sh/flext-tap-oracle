@@ -52,7 +52,7 @@ class FlextTapOracleDiscoverCommand:
             schema_name = str(oracle_config.get("schema_name", "USER"))
             self.logger.info("Discovering Oracle schema: %s", schema_name)
             streams: list[t.JsonValue] = []
-            catalog_dict: Mapping[str, t.JsonValue] = {
+            catalog_dict: t.MappingKV[str, t.JsonValue] = {
                 "streams": streams,
                 "schema_name": schema_name,
             }
@@ -114,7 +114,7 @@ class FlextTapOracleSyncCommand:
             self.logger.info("Preparing extraction from Oracle database...")
             schema_name = str(oracle_config.get("schema_name", "USER"))
             record_count = c.TapOracle.INITIAL_RECORD_COUNT
-            result_data: Mapping[str, t.JsonValue] = {
+            result_data: t.MappingKV[str, t.JsonValue] = {
                 "records_extracted": record_count,
                 "schema_name": schema_name,
                 "status": "completed",
