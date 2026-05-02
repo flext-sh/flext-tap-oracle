@@ -76,7 +76,9 @@ class FlextTapOracleDiscoverCommand:
     def validate_business_rules(self) -> p.Result[bool]:
         """Validate business rules for Oracle tap discovery."""
         if self.params.config_file and (not Path(self.params.config_file).exists()):
-            return e.fail_not_found("Configuration file", self.params.config_file, result_type=r[bool])
+            return e.fail_not_found(
+                "Configuration file", self.params.config_file, result_type=r[bool]
+            )
         return r[bool].ok(value=True)
 
 
@@ -130,11 +132,17 @@ class FlextTapOracleSyncCommand:
     def validate_business_rules(self) -> p.Result[bool]:
         """Validate business rules for Oracle tap sync."""
         if self.params.config_file and (not Path(self.params.config_file).exists()):
-            return e.fail_not_found("Configuration file", self.params.config_file, result_type=r[bool])
+            return e.fail_not_found(
+                "Configuration file", self.params.config_file, result_type=r[bool]
+            )
         if self.params.catalog_file and (not Path(self.params.catalog_file).exists()):
-            return e.fail_not_found("Catalog file", self.params.catalog_file, result_type=r[bool])
+            return e.fail_not_found(
+                "Catalog file", self.params.catalog_file, result_type=r[bool]
+            )
         if self.params.state_file and (not Path(self.params.state_file).exists()):
-            return e.fail_not_found("State file", self.params.state_file, result_type=r[bool])
+            return e.fail_not_found(
+                "State file", self.params.state_file, result_type=r[bool]
+            )
         return r[bool].ok(value=True)
 
 
