@@ -143,9 +143,7 @@ class FlextTapOracleUtilitiesClientMixin:
                 )
             )
             if connection_result.failure:
-                return r[bool].fail(
-                    f"Connection test failed: {connection_result.error}"
-                )
+                return r[bool].fail_op("Connection test", connection_result.error)
 
             discovery_result = (
                 FlextTapOracleUtilitiesClientMixin.tap_oracle_client_discover_tables(
@@ -153,13 +151,13 @@ class FlextTapOracleUtilitiesClientMixin:
                 )
             )
             if discovery_result.failure:
-                return r[bool].fail(f"Table discovery failed: {discovery_result.error}")
+                return r[bool].fail_op("Table discovery", discovery_result.error)
 
             logger.info("Oracle tap initialization completed successfully")
             return r[bool].ok(value=True)
         except c.Meltano.SINGER_SAFE_EXCEPTIONS as exc:
             logger.exception("Oracle tap initialization failed")
-            return r[bool].fail(f"Initialization failed: {exc}")
+            return r[bool].fail_op("Initialization", exc)
 
 
 __all__: list[str] = ["FlextTapOracleUtilitiesClientMixin"]
