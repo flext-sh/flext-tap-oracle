@@ -17,7 +17,7 @@ from collections.abc import (
 from pathlib import Path
 
 from flext_meltano import FlextMeltanoAbstractions
-from flext_tap_oracle import FlextTapOracleSettings, c, m, p, r, t, u
+from flext_tap_oracle import FlextTapOracleSettings, c, e, m, p, r, t, u
 
 logger = u.fetch_logger(__name__)
 cli_api = FlextMeltanoAbstractions()
@@ -76,9 +76,7 @@ class FlextTapOracleDiscoverCommand:
     def validate_business_rules(self) -> p.Result[bool]:
         """Validate business rules for Oracle tap discovery."""
         if self.params.config_file and (not Path(self.params.config_file).exists()):
-            return r[bool].fail(
-                f"Configuration file not found: {self.params.config_file}",
-            )
+            return e.fail_not_found("Configuration file", self.params.config_file, result_type=r[bool])
         return r[bool].ok(value=True)
 
 
@@ -132,13 +130,11 @@ class FlextTapOracleSyncCommand:
     def validate_business_rules(self) -> p.Result[bool]:
         """Validate business rules for Oracle tap sync."""
         if self.params.config_file and (not Path(self.params.config_file).exists()):
-            return r[bool].fail(
-                f"Configuration file not found: {self.params.config_file}",
-            )
+            return e.fail_not_found("Configuration file", self.params.config_file, result_type=r[bool])
         if self.params.catalog_file and (not Path(self.params.catalog_file).exists()):
-            return r[bool].fail(f"Catalog file not found: {self.params.catalog_file}")
+            return e.fail_not_found("Catalog file", self.params.catalog_file, result_type=r[bool])
         if self.params.state_file and (not Path(self.params.state_file).exists()):
-            return r[bool].fail(f"State file not found: {self.params.state_file}")
+            return e.fail_not_found("State file", self.params.state_file, result_type=r[bool])
         return r[bool].ok(value=True)
 
 
