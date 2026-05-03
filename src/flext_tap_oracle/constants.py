@@ -35,11 +35,6 @@ class FlextTapOracleConstants(c, FlextDbOracleConstants):
         DEFAULT_STREAM_PREFIX: Final[str] = "oracle"
         DEFAULT_OPERATION_NAME: Final[str] = "unknown"
 
-        class SingerTypes:
-            """Singer protocol type mappings for Oracle data types."""
-
-            DEFAULT_TYPE: Final[str] = "string"
-
         INITIAL_RECORD_COUNT: Final[int] = 0
 
         class Replication:
