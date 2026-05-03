@@ -27,10 +27,6 @@ class FlextTapOracleConstants(c, FlextDbOracleConstants):
         """Tap Oracle  namespace for cross-project access."""
 
         MAX_PORT_NUMBER = 65535
-        LARGE_TABLE_THRESHOLD = 100000
-        EXCELLENT_PERFORMANCE_THRESHOLD = 1000
-        GOOD_PERFORMANCE_THRESHOLD = 500
-        MODERATE_PERFORMANCE_THRESHOLD = 100
         MAX_IDENTIFIER_LENGTH: Final[int] = 255
         DEFAULT_STREAM_PREFIX: Final[str] = "oracle"
         DEFAULT_OPERATION_NAME: Final[str] = "unknown"
