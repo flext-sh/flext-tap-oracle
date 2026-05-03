@@ -10,7 +10,7 @@ from __future__ import annotations
 from collections.abc import (
     MutableSequence,
 )
-from typing import Annotated, Literal, Self
+from typing import Annotated, Self
 
 from flext_core import u
 from flext_db_oracle import FlextDbOracleModels
@@ -109,113 +109,6 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             oracle_query_time: Annotated[
                 t.NonNegativeFloat, u.Field(description="Total Oracle query time")
             ] = 0.0
-
-        class OracleTapStreamInfo(m.Entity):
-            """Oracle tap stream information - aggregates tap and Oracle metadata.
-
-            This model combines Oracle table metadata with tap-specific stream configuration
-            to provide a complete view of stream information for the tap.
-            """
-
-            # Stream identity
-            stream_name: Annotated[
-                t.NonEmptyStr,
-                u.Field(..., description="Singer stream name"),
-            ]
-            table_name: Annotated[
-                t.NonEmptyStr,
-                u.Field(..., description="Oracle table name"),
-            ]
-            schema_name: Annotated[
-                str | None,
-                u.Field(None, description="Oracle schema name"),
-            ]
-
-            # Stream configuration
-            is_selected: Annotated[
-                bool,
-                u.Field(
-                    description="Whether stream is selected for extraction",
-                ),
-            ] = True
-            replication_method: Annotated[
-                Literal["FULL_TABLE", "INCREMENTAL"],
-                u.Field(
-                    description="Replication method for this stream",
-                ),
-            ] = "FULL_TABLE"
-            replication_key: Annotated[
-                str | None,
-                u.Field(
-                    None,
-                    description="Column used for incremental replication",
-                ),
-            ]
-
-            # Runtime information (populated at runtime)
-            estimated_rows: Annotated[
-                int | None,
-                u.Field(None, description="Estimated row count"),
-            ]
-            column_count: Annotated[
-                int | None,
-                u.Field(None, description="Number of columns"),
-            ]
-            last_extracted: Annotated[
-                str | None,
-                u.Field(
-                    None,
-                    description="Last extraction timestamp",
-                ),
-            ]
-
-            @u.computed_field()
-            @property
-            def stream_info_summary(self) -> t.TapOracle.SummaryData:
-                """Oracle stream information summary."""
-                return {
-                    "stream_identity": {
-                        "name": self.stream_name,
-                        "table": self.table_name,
-                        "schema": self.schema_name,
-                        "full_reference": f"{self.schema_name}.{self.table_name}"
-                        if self.schema_name
-                        else self.table_name,
-                    },
-                    "extraction_config": {
-                        "selected": self.is_selected,
-                        "replication_method": self.replication_method,
-                        "replication_key": self.replication_key,
-                        "is_incremental": self.replication_method == "INCREMENTAL",
-                    },
-                    "table_metadata": {
-                        "estimated_rows": self.estimated_rows,
-                        "column_count": self.column_count,
-                        "last_extracted": self.last_extracted,
-                    },
-                }
-
-            def to_singer_stream_info(self) -> t.TapOracle.SummaryData:
-                """Convert to Singer stream information format."""
-                return {
-                    "tap_stream_id": self.stream_name,
-                    "table_name": self.table_name,
-                    "schema": self.schema_name,
-                    "metadata": {
-                        "replication-method": self.replication_method,
-                        "replication-key": self.replication_key,
-                        "selected": self.is_selected,
-                    },
-                    "stats": {
-                        "estimated_rows": self.estimated_rows,
-                        "column_count": self.column_count,
-                        "last_extracted": self.last_extracted,
-                    },
-                }
-
-            def validate_business_rules(self) -> p.Result[bool]:
-                """Validate stream info business rules."""
-                return r[bool].ok(value=True)
 
         class OracleTapExecutionStats(_MetricsBase):
             """Oracle tap execution statistics and metrics.
