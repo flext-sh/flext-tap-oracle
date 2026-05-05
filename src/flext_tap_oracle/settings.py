@@ -12,12 +12,11 @@ from __future__ import annotations
 
 from typing import Annotated, ClassVar, Self
 
-from flext_core import FlextSettings, u
+from flext_core import FlextSettingsBase, u
 from flext_tap_oracle import c, e, m, p, r, t
 
 
-@FlextSettings.auto_register("tap-oracle")
-class FlextTapOracleSettings(FlextSettings):
+class FlextTapOracleSettings(FlextSettingsBase):
     """Runtime settings for Oracle Singer tap operations."""
 
     model_config: ClassVar[m.SettingsConfigDict] = m.SettingsConfigDict(
