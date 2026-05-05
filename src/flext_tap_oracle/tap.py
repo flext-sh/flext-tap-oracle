@@ -16,11 +16,9 @@ from collections.abc import (
 )
 from pathlib import Path
 
-from flext_meltano import FlextMeltanoAbstractions
 from flext_tap_oracle import FlextTapOracleSettings, c, e, m, p, r, t, u
 
 logger = u.fetch_logger(__name__)
-cli_api = FlextMeltanoAbstractions()
 
 
 class FlextTapOracleDiscoverCommand:
