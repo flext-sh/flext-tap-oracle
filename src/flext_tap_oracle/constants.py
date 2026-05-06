@@ -11,7 +11,7 @@ from enum import StrEnum, unique
 from typing import Final
 
 from flext_db_oracle import FlextDbOracleConstants
-from flext_meltano import c
+from flext_meltano import c, t
 
 
 class FlextTapOracleConstants(c, FlextDbOracleConstants):
@@ -56,4 +56,4 @@ class FlextTapOracleConstants(c, FlextDbOracleConstants):
 
 
 c = FlextTapOracleConstants
-__all__: tuple[str, ...] = ("FlextTapOracleConstants", "c")
+__all__: t.StrSequence = ("FlextTapOracleConstants", "c")
