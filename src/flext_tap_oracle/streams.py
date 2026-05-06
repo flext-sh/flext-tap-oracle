@@ -48,7 +48,7 @@ class FlextTapOracleStreams:
             tap: p.TapOracle.Tap,
             name: str,
             table_name: str,
-            schema: t.MappingKV[str, t.JsonValue],
+            schema: t.JsonMapping,
             oracle_api: FlextDbOracleApi,
         ) -> None:
             """Initialize Oracle stream with maximum flext-db-oracle integration."""
@@ -220,7 +220,7 @@ class FlextTapOracleStreams:
             column_metadata: t.SequenceOf[m.DbOracle.ColumnMetadata],
         ) -> t.JsonMapping:
             """Transform Oracle data types using flext-db-oracle type knowledge."""
-            transformed_record: MutableMapping[str, t.JsonValue] = {}
+            transformed_record: t.MutableJsonMapping = {}
             meta_lookup: MutableMapping[str, m.DbOracle.ColumnMetadata] = {}
             for col_meta_value in column_metadata:
                 col_name = getattr(col_meta_value, "name", None) or getattr(
@@ -268,7 +268,7 @@ class FlextTapOracleStreams:
             tap: p.TapOracle.Tap,
             name: str,
             table_name: str,
-            schema: t.MappingKV[str, t.JsonValue],
+            schema: t.JsonMapping,
             oracle_api: FlextDbOracleApi,
         ) -> FlextTapOracleStreams.OracleStream:
             """Create Oracle stream.

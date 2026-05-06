@@ -11,7 +11,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping
 from typing import Protocol, runtime_checkable
 
 from flext_db_oracle import FlextDbOracleProtocols
@@ -29,7 +28,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
         class CommandRunner(Protocol):
             """Structural protocol for Oracle tap command execution."""
 
-            def execute(self) -> meltano_p.Result[Mapping[str, t.JsonValue]]:
+            def execute(self) -> meltano_p.Result[t.JsonMapping]:
                 """Execute the Oracle tap command and return results."""
                 ...
 
