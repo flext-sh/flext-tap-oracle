@@ -1,0 +1,33 @@
+src/flext_tap_oracle/tap.py
+  s_552d8e4891a938::t_2be0d7f022fe99 52,114
+  h_5cf852cc46bf92 34,39,68,71,90,95,124,127
+src/flext_tap_oracle/protocols.py
+  h_5cf852cc46bf92 31
+src/flext_tap_oracle/streams.py
+  h_5cf852cc46bf92 223
+  s_552d8e4891a938::t_2be0d7f022fe99 51,271
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "39a2075b29dc4108f8eeb50ef0f16b80bb454f79",
+  "prompts": {},
+  "humans": {
+    "h_5cf852cc46bf92": {
+      "author": "FLEXT Bot <team@flext.sh>"
+    },
+    "h_9db9d35f50cf33": {
+      "author": "FLEXT Bot"
+    }
+  },
+  "sessions": {
+    "s_552d8e4891a938": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "35c0040b-2ae9-466e-90aa-7721509e1e19",
+        "model": "unknown"
+      },
+      "human_author": "FLEXT Bot <team@flext.sh>"
+    }
+  }
+}
