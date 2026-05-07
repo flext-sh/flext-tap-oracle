@@ -83,50 +83,16 @@ class FlextTapOracleUtilitiesClientMixin:
         tap_config: FlextTapOracleSettings,
         discovered_tables: t.SequenceOf[FlextDbOracleModels.DbOracle.Table],
     ) -> p.Result[t.StrSequence]:
-        """Execute table filtering based on tap configuration."""
-        try:
-            tap_configuration: t.ConfigurationMapping = tap_config.get_tap_config()
-            tables_filter: t.Scalar | t.ScalarList | None = tap_configuration.get(
-                "tables_filter"
-            )
+        """Return discovered Oracle table names.
 
-            if isinstance(tables_filter, list) and tables_filter:
-                tables_filter_list: t.StrSequence = list(map(str, tables_filter))
-                logger.info(
-                    "Using configured table filter: %s", ", ".join(tables_filter_list)
-                )
-                return r[t.StrSequence].ok(tables_filter_list)
-
-            if not discovered_tables:
-                return e.fail_not_found("oracle_tables", "discovered")
-
-            table_names: t.StrSequence = [table.name for table in discovered_tables]
-            exclude_tables_raw: t.Scalar | t.ScalarList | None = tap_configuration.get(
-                "exclude_tables"
-            )
-            exclude_tables: t.StrSequence = []
-
-            if isinstance(exclude_tables_raw, list):
-                exclude_tables = list(map(str, exclude_tables_raw))
-
-            if exclude_tables:
-                filtered_tables = [
-                    table for table in table_names if table not in exclude_tables
-                ]
-                logger.info(
-                    "Applied exclusion filter: %d tables excluded, %d remaining",
-                    len(exclude_tables),
-                    len(filtered_tables),
-                )
-                return r[t.StrSequence].ok(filtered_tables)
-
-            logger.info(
-                "No table exclusions configured, using all %d tables", len(table_names)
-            )
-            return r[t.StrSequence].ok(table_names)
-        except c.Meltano.SINGER_SAFE_EXCEPTIONS as exc:
-            logger.exception("Table filtering error")
-            return r[t.StrSequence].fail(f"Table filtering error: {exc}")
+        FlextTapOracleSettings exposes no ``tables_filter`` / ``exclude_tables``
+        fields, so the previous filter branches were unreachable — kept signature
+        for stable API.
+        """
+        _ = tap_config
+        if not discovered_tables:
+            return e.fail_not_found("oracle_tables", "discovered")
+        return r[t.StrSequence].ok([table.name for table in discovered_tables])
 
     @staticmethod
     def tap_oracle_client_initialize_tap(

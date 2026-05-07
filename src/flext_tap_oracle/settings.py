@@ -79,15 +79,6 @@ class FlextTapOracleSettings(FlextSettingsBase):
             "password": self._resolve_secret(self.oracle_password),
         }
 
-    def get_tap_config(self) -> t.ConfigurationMapping:
-        """Get tap-specific configuration settings."""
-        return {
-            "batch_size": self.batch_size,
-            "stream_prefix": self.stream_prefix,
-            "project_root": self.project_root,
-            "environment": self.environment,
-        }
-
     @staticmethod
     def create_oracle_tap_config(
         oracle_params: t.ConfigurationMapping,

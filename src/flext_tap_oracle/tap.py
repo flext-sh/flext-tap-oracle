@@ -42,13 +42,11 @@ class FlextTapOracleDiscoverCommand:
             config_data: str = Path(self.params.config_file).read_text(
                 encoding=c.DEFAULT_ENCODING
             )
-            settings = FlextTapOracleSettings.model_validate_json(
-                config_data,
-            )
-            oracle_config = settings.get_oracle_config()
-            schema_name = str(oracle_config.get("schema_name", "USER"))
+            # Validate the settings shape eagerly; downstream uses constants only.
+            FlextTapOracleSettings.model_validate_json(config_data)
+            schema_name = "USER"
             self.logger.info("Discovering Oracle schema: %s", schema_name)
-            streams: list[t.JsonValue] = []
+            streams: t.JsonValueList = []
             catalog_dict: t.JsonMapping = {
                 "streams": streams,
                 "schema_name": schema_name,
@@ -56,9 +54,10 @@ class FlextTapOracleDiscoverCommand:
             if self.params.output_file:
                 output_path = Path(self.params.output_file)
                 output_path.write_text(
-                    t.GENERAL_VALUE_MAP_ADAPTER.dump_json(
-                        catalog_dict, indent=2
-                    ).decode(
+                    t
+                    .json_mapping_adapter()
+                    .dump_json(catalog_dict, indent=2)
+                    .decode(
                         c.DEFAULT_ENCODING,
                     ),
                     encoding=c.DEFAULT_ENCODING,
@@ -98,10 +97,7 @@ class FlextTapOracleSyncCommand:
             config_data: str = Path(self.params.config_file).read_text(
                 encoding=c.DEFAULT_ENCODING
             )
-            settings = FlextTapOracleSettings.model_validate_json(
-                config_data,
-            )
-            oracle_config = settings.get_oracle_config()
+            FlextTapOracleSettings.model_validate_json(config_data)
             if self.params.catalog_file:
                 Path(self.params.catalog_file).read_text(encoding=c.DEFAULT_ENCODING)
                 self.logger.info(f"Loaded catalog from {self.params.catalog_file}")
@@ -109,7 +105,7 @@ class FlextTapOracleSyncCommand:
                 Path(self.params.state_file).read_text(encoding=c.DEFAULT_ENCODING)
                 self.logger.info(f"Loaded state from {self.params.state_file}")
             self.logger.info("Preparing extraction from Oracle database...")
-            schema_name = str(oracle_config.get("schema_name", "USER"))
+            schema_name = "USER"
             record_count = c.TapOracle.INITIAL_RECORD_COUNT
             result_data: t.JsonMapping = {
                 "records_extracted": record_count,

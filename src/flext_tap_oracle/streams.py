@@ -53,7 +53,7 @@ class FlextTapOracleStreams:
         ) -> None:
             """Initialize Oracle stream with maximum flext-db-oracle integration."""
             self.name = name
-            self.schema = dict(schema)
+            self.schema = t.json_dict_adapter().validate_python(schema)
             self.table_name: str = table_name
             self.oracle_api: FlextDbOracleApi = oracle_api
             _ = tap
