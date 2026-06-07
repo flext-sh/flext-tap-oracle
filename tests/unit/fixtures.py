@@ -10,7 +10,9 @@ from pathlib import Path
 import pytest
 from flext_tests import reset_settings as _shared_reset_settings
 
+from flext_tap_oracle import FlextTapOracleSettings
 from tests import c, tk, u
+from tests.settings import TestsFlextTapOracleSettings
 
 reset_settings = _shared_reset_settings
 
@@ -92,9 +94,28 @@ def oracle_shared_container_environment(
 
 
 @pytest.fixture(autouse=True)
-def set_test_environment(reset_settings: None) -> Generator[None]:
-    """Set test environment variables."""
+def reset_tap_oracle_settings(reset_settings: None) -> Generator[None]:
+    """Reset the concrete tap settings singletons around every test.
+
+    The shared ``reset_settings`` fixture only clears the root + test base
+    singletons. Tests that trigger ``model_validate`` failures (e.g. missing
+    credentials) leave a half-initialised ``FlextTapOracleSettings`` singleton
+    behind, so it must be reset here to prevent cross-test pollution.
+    """
     _ = reset_settings
+    FlextTapOracleSettings.reset_for_testing()
+    TestsFlextTapOracleSettings.reset_for_testing()
+    try:
+        yield
+    finally:
+        FlextTapOracleSettings.reset_for_testing()
+        TestsFlextTapOracleSettings.reset_for_testing()
+
+
+@pytest.fixture(autouse=True)
+def set_test_environment(reset_tap_oracle_settings: None) -> Generator[None]:
+    """Set test environment variables."""
+    _ = reset_tap_oracle_settings
     with u.Tests.env_vars_context({
         c.TapOracle.Tests.FLEXT_ENV_NAME: c.TapOracle.Tests.TEST_ENV_VALUE,
         c.TapOracle.Tests.FLEXT_LOG_LEVEL_ENV: c.TapOracle.Tests.DEBUG_LOG_LEVEL,
