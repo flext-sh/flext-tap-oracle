@@ -39,9 +39,10 @@ class FlextTapOracleDiscoverCommand:
                 return r[t.JsonMapping].fail(
                     "Configuration file is required for discovery",
                 )
-            config_data: str = Path(self.params.config_file).read_text(
-                encoding=c.DEFAULT_ENCODING
-            )
+            config_read = u.Cli.files_read_text(Path(self.params.config_file))
+            if config_read.failure:
+                return r[t.JsonMapping].fail(f"Discovery error: {config_read.error}")
+            config_data: str = config_read.value
             # Validate the settings shape eagerly; downstream uses constants only.
             FlextTapOracleSettings.model_validate_json(config_data)
             schema_name = "USER"
@@ -53,15 +54,15 @@ class FlextTapOracleDiscoverCommand:
             }
             if self.params.output_file:
                 output_path = Path(self.params.output_file)
-                output_path.write_text(
-                    t
-                    .json_mapping_adapter()
-                    .dump_json(catalog_dict, indent=2)
-                    .decode(
-                        c.DEFAULT_ENCODING,
-                    ),
-                    encoding=c.DEFAULT_ENCODING,
+                catalog_write = u.Cli.json_write(
+                    output_path,
+                    catalog_dict,
+                    options=m.Cli.JsonWriteOptions(indent=2),
                 )
+                if catalog_write.failure:
+                    return r[t.JsonMapping].fail(
+                        f"Catalog write error: {catalog_write.error}"
+                    )
                 self.logger.info(f"Catalog written to {output_path}")
             self.logger.info("Oracle schema discovery completed")
             return r[t.JsonMapping].ok(catalog_dict)
@@ -94,15 +95,20 @@ class FlextTapOracleSyncCommand:
                 return r[t.JsonMapping].fail(
                     "Configuration file is required for sync",
                 )
-            config_data: str = Path(self.params.config_file).read_text(
-                encoding=c.DEFAULT_ENCODING
-            )
+            config_read = u.Cli.files_read_text(Path(self.params.config_file))
+            if config_read.failure:
+                return r[t.JsonMapping].fail(f"Sync error: {config_read.error}")
+            config_data: str = config_read.value
             FlextTapOracleSettings.model_validate_json(config_data)
             if self.params.catalog_file:
-                Path(self.params.catalog_file).read_text(encoding=c.DEFAULT_ENCODING)
+                catalog_read = u.Cli.files_read_text(Path(self.params.catalog_file))
+                if catalog_read.failure:
+                    return r[t.JsonMapping].fail(f"Sync error: {catalog_read.error}")
                 self.logger.info(f"Loaded catalog from {self.params.catalog_file}")
             if self.params.state_file:
-                Path(self.params.state_file).read_text(encoding=c.DEFAULT_ENCODING)
+                state_read = u.Cli.files_read_text(Path(self.params.state_file))
+                if state_read.failure:
+                    return r[t.JsonMapping].fail(f"Sync error: {state_read.error}")
                 self.logger.info(f"Loaded state from {self.params.state_file}")
             self.logger.info("Preparing extraction from Oracle database...")
             schema_name = "USER"
