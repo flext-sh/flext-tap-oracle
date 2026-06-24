@@ -2,7 +2,7 @@
 
 # flext-tap-oracle Documentation
 
-- Version: `unknown`
+- Version: `0.12.0-dev`
 - Project class: `integration`
 - Package: `flext_tap_oracle`
 - Description: FLEXT Tap Oracle - Modern Singer Tap for Oracle Database
