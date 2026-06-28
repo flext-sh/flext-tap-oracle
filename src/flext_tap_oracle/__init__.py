@@ -22,21 +22,43 @@ from flext_tap_oracle.__version__ import (
 )
 
 if _t.TYPE_CHECKING:
-    from flext_meltano import d, e, h, r, s, x
-    from flext_tap_oracle._utilities.client import FlextTapOracleUtilitiesClientMixin
-    from flext_tap_oracle.api import FlextTapOracleService, tap_oracle
-    from flext_tap_oracle.constants import FlextTapOracleConstants, c
-    from flext_tap_oracle.models import FlextTapOracleModels, m
-    from flext_tap_oracle.protocols import FlextTapOracleProtocols, p
-    from flext_tap_oracle.settings import FlextTapOracleSettings
-    from flext_tap_oracle.streams import FlextTapOracleStreams
-    from flext_tap_oracle.tap import (
-        FlextTapOracleCli,
-        FlextTapOracleDiscoverCommand,
-        FlextTapOracleSyncCommand,
+    from flext_meltano import d as d, e as e, h as h, r as r, s as s, x as x
+    from flext_tap_oracle._utilities.client import (
+        FlextTapOracleUtilitiesClientMixin as FlextTapOracleUtilitiesClientMixin,
     )
-    from flext_tap_oracle.typings import FlextTapOracleTypes, t
-    from flext_tap_oracle.utilities import FlextTapOracleUtilities, u
+    from flext_tap_oracle.api import (
+        FlextTapOracleService as FlextTapOracleService,
+        tap_oracle as tap_oracle,
+    )
+    from flext_tap_oracle.constants import (
+        FlextTapOracleConstants as FlextTapOracleConstants,
+        c as c,
+    )
+    from flext_tap_oracle.models import (
+        FlextTapOracleModels as FlextTapOracleModels,
+        m as m,
+    )
+    from flext_tap_oracle.protocols import (
+        FlextTapOracleProtocols as FlextTapOracleProtocols,
+        p as p,
+    )
+    from flext_tap_oracle.settings import (
+        FlextTapOracleSettings as FlextTapOracleSettings,
+    )
+    from flext_tap_oracle.streams import FlextTapOracleStreams as FlextTapOracleStreams
+    from flext_tap_oracle.tap import (
+        FlextTapOracleCli as FlextTapOracleCli,
+        FlextTapOracleDiscoverCommand as FlextTapOracleDiscoverCommand,
+        FlextTapOracleSyncCommand as FlextTapOracleSyncCommand,
+    )
+    from flext_tap_oracle.typings import (
+        FlextTapOracleTypes as FlextTapOracleTypes,
+        t as t,
+    )
+    from flext_tap_oracle.utilities import (
+        FlextTapOracleUtilities as FlextTapOracleUtilities,
+        u as u,
+    )
 _LAZY_IMPORTS = merge_lazy_imports(
     ("._utilities",),
     build_lazy_import_map(
@@ -134,7 +156,6 @@ __all__: list[str] = [
     "FlextTapOracleSyncCommand",
     "FlextTapOracleTypes",
     "FlextTapOracleUtilities",
-    "FlextTapOracleUtilitiesClientMixin",
     "__author__",
     "__author_email__",
     "__description__",

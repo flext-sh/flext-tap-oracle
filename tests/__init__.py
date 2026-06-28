@@ -12,16 +12,36 @@ from flext_core.lazy import (
 )
 
 if _t.TYPE_CHECKING:
-    from flext_tests import td, tf, tk, tm, tv
+    from flext_tests import td as td, tf as tf, tk as tk, tv as tv
 
-    from flext_tap_oracle import d, e, h, r, x
-    from tests.base import TestsFlextTapOracleServiceBase, s
-    from tests.constants import TestsFlextTapOracleConstants, c
-    from tests.models import TestsFlextTapOracleModels, m
-    from tests.protocols import TestsFlextTapOracleProtocols, p
-    from tests.settings import TestsFlextTapOracleSettings
-    from tests.typings import TestsFlextTapOracleTypes, t
-    from tests.utilities import TestsFlextTapOracleUtilities, u
+    from flext_tap_oracle import d as d, e as e, h as h, r as r, x as x
+    from tests.base import (
+        TestsFlextTapOracleServiceBase as TestsFlextTapOracleServiceBase,
+        s as s,
+    )
+    from tests.constants import (
+        TestsFlextTapOracleConstants as TestsFlextTapOracleConstants,
+        c as c,
+    )
+    from tests.models import (
+        TestsFlextTapOracleModels as TestsFlextTapOracleModels,
+        m as m,
+    )
+    from tests.protocols import (
+        TestsFlextTapOracleProtocols as TestsFlextTapOracleProtocols,
+        p as p,
+    )
+    from tests.settings import (
+        TestsFlextTapOracleSettings as TestsFlextTapOracleSettings,
+    )
+    from tests.typings import (
+        TestsFlextTapOracleTypes as TestsFlextTapOracleTypes,
+        t as t,
+    )
+    from tests.utilities import (
+        TestsFlextTapOracleUtilities as TestsFlextTapOracleUtilities,
+        u as u,
+    )
 _LAZY_IMPORTS = merge_lazy_imports(
     (".unit",),
     build_lazy_import_map(
@@ -62,7 +82,6 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "td",
                 "tf",
                 "tk",
-                "tm",
                 "tv",
             ),
         },
@@ -112,7 +131,6 @@ __all__: list[str] = [
     "td",
     "tf",
     "tk",
-    "tm",
     "tv",
     "u",
     "x",
