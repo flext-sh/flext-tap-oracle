@@ -10,7 +10,7 @@ from __future__ import annotations
 from flext_tests import FlextTestsUtilities
 
 from flext_tap_oracle import FlextTapOracleUtilities
-from tests import t
+from tests.typings import t
 
 
 class TestsFlextTapOracleUtilities(FlextTestsUtilities, FlextTapOracleUtilities):

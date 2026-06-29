@@ -8,11 +8,12 @@ from collections.abc import Generator
 from pathlib import Path
 
 import pytest
-from flext_tests import reset_settings as _shared_reset_settings
+from flext_tests import reset_settings as _shared_reset_settings, tk
 
 from flext_tap_oracle import FlextTapOracleSettings
-from tests import c, tk, u
+from tests.constants import c
 from tests.settings import TestsFlextTapOracleSettings
+from tests.utilities import u
 
 reset_settings = _shared_reset_settings
 

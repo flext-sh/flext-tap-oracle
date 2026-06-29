@@ -12,7 +12,7 @@ from typing import Protocol, runtime_checkable
 from flext_tests import FlextTestsProtocols
 
 from flext_tap_oracle import FlextTapOracleProtocols
-from tests import t
+from tests.typings import t
 
 
 class TestsFlextTapOracleProtocols(FlextTestsProtocols, FlextTapOracleProtocols):
