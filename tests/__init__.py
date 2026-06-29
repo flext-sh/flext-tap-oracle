@@ -3,45 +3,12 @@
 
 from __future__ import annotations
 
-import typing as _t
-
 from flext_core.lazy import (
     build_lazy_import_map,
     install_lazy_exports,
     merge_lazy_imports,
 )
 
-if _t.TYPE_CHECKING:
-    from flext_tests import td as td, tf as tf, tk as tk, tm as tm, tv as tv
-
-    from flext_tap_oracle import d as d, e as e, h as h, r as r, x as x
-    from tests.base import (
-        TestsFlextTapOracleServiceBase as TestsFlextTapOracleServiceBase,
-        s as s,
-    )
-    from tests.constants import (
-        TestsFlextTapOracleConstants as TestsFlextTapOracleConstants,
-        c as c,
-    )
-    from tests.models import (
-        TestsFlextTapOracleModels as TestsFlextTapOracleModels,
-        m as m,
-    )
-    from tests.protocols import (
-        TestsFlextTapOracleProtocols as TestsFlextTapOracleProtocols,
-        p as p,
-    )
-    from tests.settings import (
-        TestsFlextTapOracleSettings as TestsFlextTapOracleSettings,
-    )
-    from tests.typings import (
-        TestsFlextTapOracleTypes as TestsFlextTapOracleTypes,
-        t as t,
-    )
-    from tests.utilities import (
-        TestsFlextTapOracleUtilities as TestsFlextTapOracleUtilities,
-        u as u,
-    )
 _LAZY_IMPORTS = merge_lazy_imports(
     (".unit",),
     build_lazy_import_map(
@@ -50,6 +17,7 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "TestsFlextTapOracleServiceBase",
                 "s",
             ),
+            ".conftest": ("conftest",),
             ".constants": (
                 "TestsFlextTapOracleConstants",
                 "c",
@@ -67,23 +35,22 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "TestsFlextTapOracleTypes",
                 "t",
             ),
+            ".unit": ("unit",),
             ".utilities": (
                 "TestsFlextTapOracleUtilities",
                 "u",
             ),
-            "flext_tap_oracle": (
+            "flext_tests": (
                 "d",
                 "e",
                 "h",
                 "r",
-                "x",
-            ),
-            "flext_tests": (
                 "td",
                 "tf",
                 "tk",
                 "tm",
                 "tv",
+                "x",
             ),
         },
     ),
@@ -110,30 +77,9 @@ _LAZY_IMPORTS = merge_lazy_imports(
 )
 
 
-install_lazy_exports(__name__, globals(), _LAZY_IMPORTS)
-
-__all__: list[str] = [
-    "TestsFlextTapOracleConstants",
-    "TestsFlextTapOracleModels",
-    "TestsFlextTapOracleProtocols",
-    "TestsFlextTapOracleServiceBase",
-    "TestsFlextTapOracleSettings",
-    "TestsFlextTapOracleTypes",
-    "TestsFlextTapOracleUtilities",
-    "c",
-    "d",
-    "e",
-    "h",
-    "m",
-    "p",
-    "r",
-    "s",
-    "t",
-    "td",
-    "tf",
-    "tk",
-    "tm",
-    "tv",
-    "u",
-    "x",
-]
+install_lazy_exports(
+    __name__,
+    globals(),
+    _LAZY_IMPORTS,
+    publish_all=False,
+)
