@@ -218,14 +218,16 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 processing_time: float,
             ) -> FlextTapOracleModels.TapOracle.OracleTapExecutionStats:
                 """Return new instance with added statistics for a processed stream."""
-                updated = self.model_copy(
-                    update={
-                        "streams_processed": self.streams_processed + 1,
-                        "total_records": self.total_records + records,
-                        "total_bytes": self.total_bytes + bytes_processed,
-                        "oracle_result_processing_time": self.oracle_result_processing_time
-                        + processing_time,
-                    },
+                updated: FlextTapOracleModels.TapOracle.OracleTapExecutionStats = (
+                    self.model_copy(
+                        update={
+                            "streams_processed": self.streams_processed + 1,
+                            "total_records": self.total_records + records,
+                            "total_bytes": self.total_bytes + bytes_processed,
+                            "oracle_result_processing_time": self.oracle_result_processing_time
+                            + processing_time,
+                        },
+                    )
                 )
                 return updated.update_performance_metrics()
 
@@ -239,12 +241,15 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 )
                 if stream_name not in new_failed_streams:
                     new_failed_streams.append(stream_name)
-                return self.model_copy(
-                    update={
-                        "errors_encountered": self.errors_encountered + 1,
-                        "failed_streams": new_failed_streams,
-                    },
+                updated: FlextTapOracleModels.TapOracle.OracleTapExecutionStats = (
+                    self.model_copy(
+                        update={
+                            "errors_encountered": self.errors_encountered + 1,
+                            "failed_streams": new_failed_streams,
+                        },
+                    )
                 )
+                return updated
 
             def to_summary(self) -> t.TapOracle.SummaryData:
                 """Create execution summary."""
@@ -267,14 +272,17 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             ) -> FlextTapOracleModels.TapOracle.OracleTapExecutionStats:
                 """Return new instance with updated calculated performance metrics."""
                 if self.duration_seconds > 0:
-                    return self.model_copy(
-                        update={
-                            "avg_records_per_second": self.total_records
-                            / self.duration_seconds,
-                            "avg_bytes_per_second": self.total_bytes
-                            / self.duration_seconds,
-                        },
+                    updated: FlextTapOracleModels.TapOracle.OracleTapExecutionStats = (
+                        self.model_copy(
+                            update={
+                                "avg_records_per_second": self.total_records
+                                / self.duration_seconds,
+                                "avg_bytes_per_second": self.total_bytes
+                                / self.duration_seconds,
+                            },
+                        )
                     )
+                    return updated
                 return self
 
             def validate_business_rules(self) -> p.Result[bool]:
