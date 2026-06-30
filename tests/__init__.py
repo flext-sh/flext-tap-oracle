@@ -3,12 +3,55 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from flext_core.lazy import (
     build_lazy_import_map,
     install_lazy_exports,
     merge_lazy_imports,
 )
 
+if TYPE_CHECKING:
+    from flext_tests import (
+        d as d,
+        e as e,
+        h as h,
+        r as r,
+        td as td,
+        tf as tf,
+        tk as tk,
+        tm as tm,
+        tv as tv,
+        x as x,
+    )
+
+    from tests.base import (
+        TestsFlextTapOracleServiceBase as TestsFlextTapOracleServiceBase,
+        s as s,
+    )
+    from tests.constants import (
+        TestsFlextTapOracleConstants as TestsFlextTapOracleConstants,
+        c as c,
+    )
+    from tests.models import (
+        TestsFlextTapOracleModels as TestsFlextTapOracleModels,
+        m as m,
+    )
+    from tests.protocols import (
+        TestsFlextTapOracleProtocols as TestsFlextTapOracleProtocols,
+        p as p,
+    )
+    from tests.settings import (
+        TestsFlextTapOracleSettings as TestsFlextTapOracleSettings,
+    )
+    from tests.typings import (
+        TestsFlextTapOracleTypes as TestsFlextTapOracleTypes,
+        t as t,
+    )
+    from tests.utilities import (
+        TestsFlextTapOracleUtilities as TestsFlextTapOracleUtilities,
+        u as u,
+    )
 _LAZY_IMPORTS = merge_lazy_imports(
     (".unit",),
     build_lazy_import_map(
