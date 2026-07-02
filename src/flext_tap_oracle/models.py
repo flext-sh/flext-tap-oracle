@@ -218,16 +218,14 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 processing_time: float,
             ) -> FlextTapOracleModels.TapOracle.OracleTapExecutionStats:
                 """Return new instance with added statistics for a processed stream."""
-                updated: FlextTapOracleModels.TapOracle.OracleTapExecutionStats = (
-                    self.model_copy(
-                        update={
-                            "streams_processed": self.streams_processed + 1,
-                            "total_records": self.total_records + records,
-                            "total_bytes": self.total_bytes + bytes_processed,
-                            "oracle_result_processing_time": self.oracle_result_processing_time
-                            + processing_time,
-                        },
-                    )
+                updated: FlextTapOracleModels.TapOracle.OracleTapExecutionStats = self.model_copy(
+                    update={
+                        "streams_processed": self.streams_processed + 1,
+                        "total_records": self.total_records + records,
+                        "total_bytes": self.total_bytes + bytes_processed,
+                        "oracle_result_processing_time": self.oracle_result_processing_time
+                        + processing_time,
+                    },
                 )
                 return updated.update_performance_metrics()
 
