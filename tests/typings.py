@@ -1,4 +1,4 @@
-"""Types for flext-tap-oracle tests - uses composition with FlextTestsTypes.
+"""Types for flext-tap-oracle tests - uses composition with TestsFlextTypes.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -11,27 +11,28 @@ from typing import Literal
 
 from flext_tests import FlextTestsTypes
 
-from flext_tap_oracle import t
+from flext_core import FlextTypes
+from flext_tap_oracle import FlextTapOracleTypes
 
 
-class TestsFlextTapOracleTypes(FlextTestsTypes):
-    """Types for flext-tap-oracle tests - uses composition with FlextTestsTypes.
+class TestsFlextTapOracleTypes(FlextTestsTypes, FlextTapOracleTypes):
+    """Types for flext-tap-oracle tests - uses composition with TestsFlextTypes.
 
-    Architecture: Uses composition (not inheritance) with FlextTestsTypes and FlextTapOracleTypes
+    Architecture: Uses composition (not inheritance) with TestsFlextTypes and FlextTapOracleTypes
     for flext-tap-oracle-specific type definitions.
 
     Access patterns:
     - TestsFlextTapOracleTypes.Tests.* = flext_tests test types (via composition)
-    - TestsFlextTapOracleTypes.TapOracle.* = flext-tap-oracle-specific test types
-    - TestsFlextTapOracleTypes.* = FlextTestsTypes types (via composition)
+    - TestsFlextTapOracleTypes.TapOracleTest.* = flext-tap-oracle-specific test types
+    - TestsFlextTapOracleTypes.* = TestsFlextTypes types (via composition)
 
     Rules:
-    - Use composition, not inheritance (FlextTestsTypes deprecates subclassing)
-    - flext-tap-oracle-specific types go in TapOracle namespace
+    - Use composition, not inheritance (TestsFlextTypes deprecates subclassing)
+    - flext-tap-oracle-specific types go in TapOracleTest namespace
     - Generic types accessed via Tests namespace
     """
 
-    class TapOracle:
+    class TapOracleTest:
         """Tap Oracle test types - domain-specific for Oracle tap testing.
 
         Contains test types specific to Oracle tap functionality including:
@@ -40,16 +41,15 @@ class TestsFlextTapOracleTypes(FlextTestsTypes):
         - Test scenario types
         """
 
-        type TestOracleHost = Literal["localhost", "test-host"]
         type TestOraclePort = Literal[1521, 10521, 1522]
-        type TestServiceName = Literal["XE", "ORCL", "TESTDB"]
-        type TestReplicationMethod = Literal["FULL_TABLE", "INCREMENTAL"]
-        type MockOracleRecord = dict[str, t.Scalar]
-        type MockOracleTable = list[MockOracleRecord]
-        type TestScenario = dict[str, object]
-        type TestValidationResult = dict[str, bool | str | list[str]]
-        type TestPerformanceResult = dict[str, float | int | str]
+        type MockOracleRecord = t.MappingKV[str, FlextTypes.Scalar]
+        type MockOracleTable = t.SequenceOf[MockOracleRecord]
+        type TestScenario = FlextTestsTypes.JsonMapping
+        type TestValidationResult = t.MappingKV[
+            str, bool | str | FlextTestsTypes.StrSequence
+        ]
+        type TestPerformanceResult = t.MappingKV[str, float | int | str]
 
 
-tt = TestsFlextTapOracleTypes
-__all__ = ["TestsFlextTapOracleTypes", "tt"]
+t = TestsFlextTapOracleTypes
+__all__: list[str] = ["TestsFlextTapOracleTypes", "t"]

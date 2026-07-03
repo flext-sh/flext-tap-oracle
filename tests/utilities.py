@@ -1,4 +1,4 @@
-"""Utilities for flext-tap-oracle tests - uses composition with FlextTestsUtilities.
+"""Utilities for flext-tap-oracle tests - uses composition with TestsFlextUtilities.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -7,30 +7,30 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_core import t
 from flext_tests import FlextTestsUtilities
 
+from flext_tap_oracle import FlextTapOracleUtilities
+from tests.typings import t
 
-class TestsFlextTapOracleUtilities(FlextTestsUtilities):
-    """Utilities for flext-tap-oracle tests - uses composition with FlextTestsUtilities.
 
-    Architecture: Uses composition (not inheritance) with FlextTestsUtilities and FlextTapOracleUtilities
+class TestsFlextTapOracleUtilities(FlextTestsUtilities, FlextTapOracleUtilities):
+    """Utilities for flext-tap-oracle tests - uses composition with TestsFlextUtilities.
+
+    Architecture: Uses composition (not inheritance) with TestsFlextUtilities and FlextTapOracleUtilities
     for flext-tap-oracle-specific utility definitions.
 
     Access patterns:
     - TestsFlextTapOracleUtilities.Tests.* = flext_tests test utilities (via composition)
     - TestsFlextTapOracleUtilities.TapOracle.* = flext-tap-oracle-specific test utilities
-    - TestsFlextTapOracleUtilities.* = FlextTestsUtilities methods (via composition)
+    - TestsFlextTapOracleUtilities.* = TestsFlextUtilities methods (via composition)
 
     Rules:
-    - Use composition, not inheritance (FlextTestsUtilities deprecates subclassing)
+    - Use composition, not inheritance (TestsFlextUtilities deprecates subclassing)
     - flext-tap-oracle-specific utilities go in TapOracle namespace
     - Generic utilities accessed via Tests namespace
     """
 
-    Tests = FlextTestsUtilities.Tests
-
-    class TapOracle:
+    class TapOracle(FlextTapOracleUtilities.TapOracle):
         """Tap Oracle test utilities - domain-specific for Oracle tap testing.
 
         Contains test utilities specific to Oracle tap functionality including:
@@ -47,28 +47,28 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities):
             service_name: str = "XE",
             username: str = "test",
             password: str = "test",
-            **kwargs: t.Scalar,
-        ) -> dict[str, object]:
+            **kwargs: t.JsonValue,
+        ) -> t.JsonMapping:
             """Create test Oracle configuration."""
-            config: dict[str, object] = {
+            settings: dict[str, t.JsonValue] = {
                 "host": host,
                 "port": port,
                 "service_name": service_name,
                 "username": username,
                 "password": password,
             }
-            config.update(kwargs)
-            return config
+            settings.update(kwargs)
+            return settings
 
         @staticmethod
         def create_test_singer_stream(
             stream_name: str,
             table_name: str,
             replication_method: str = "FULL_TABLE",
-            **kwargs: t.Scalar,
-        ) -> dict[str, object]:
+            **kwargs: t.JsonValue,
+        ) -> t.JsonMapping:
             """Create test Singer stream configuration."""
-            stream: dict[str, object] = {
+            stream: dict[str, t.JsonValue] = {
                 "stream_name": stream_name,
                 "table_name": table_name,
                 "replication_method": replication_method,
@@ -79,20 +79,24 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities):
 
         @staticmethod
         def validate_oracle_connection_config(
-            config: dict[str, object],
+            settings: t.JsonMapping,
         ) -> bool:
             """Validate Oracle connection configuration for testing."""
             required_fields = ["host", "port", "service_name", "username", "password"]
-            return all(field in config and config[field] for field in required_fields)
+            return all(
+                field in settings and settings[field] for field in required_fields
+            )
 
         @staticmethod
         def generate_mock_oracle_data(
-            table_name: str, row_count: int = 10, **kwargs: t.Scalar
-        ) -> list[dict[str, object]]:
+            table_name: str,
+            row_count: int = 10,
+            **kwargs: t.JsonValue,
+        ) -> t.SequenceOf[t.JsonMapping]:
             """Generate mock Oracle data for testing."""
-            data: list[dict[str, object]] = []
+            data: list[t.JsonMapping] = []
             for i in range(row_count):
-                row: dict[str, object] = {
+                row: dict[str, t.JsonValue] = {
                     "id": i + 1,
                     "name": f"Test Record {i + 1}",
                     "table_name": table_name,
@@ -103,4 +107,4 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities):
 
 
 u = TestsFlextTapOracleUtilities
-__all__ = ["TestsFlextTapOracleUtilities", "u"]
+__all__: list[str] = ["TestsFlextTapOracleUtilities", "u"]

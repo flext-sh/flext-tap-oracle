@@ -1,7 +1,7 @@
-"""FLEXT Tap Oracle - Modern CLI using flext-cli foundation patterns.
+"""FLEXT Tap Oracle - Singer Tap using flext-meltano abstractions.
 
-Singer Tap interface with modern Click CLI integration using flext-cli patterns
-with zero boilerplate and maximum integration with FLEXT ecosystem.
+Singer Tap interface using flext-meltano patterns with zero boilerplate
+and maximum integration with FLEXT ecosystem.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT.
@@ -9,247 +9,213 @@ SPDX-License-Identifier: MIT.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+import sys
+from collections.abc import (
+    Callable,
+)
 from pathlib import Path
-from typing import Annotated, Self
 
-from flext_cli import FlextCli, FlextCliCommands
-from flext_core import FlextLogger, r, t
-from pydantic import BaseModel, Field, TypeAdapter
+from flext_tap_oracle import FlextTapOracleSettings, c, e, m, p, r, t, u
 
-from flext_tap_oracle.constants import c
-from flext_tap_oracle.settings import FlextTapOracleSettings
-
-logger = FlextLogger(__name__)
-cli_api = FlextCli()
+logger = u.fetch_logger(__name__)
 
 
-class OracleTapDiscoverParams(BaseModel):
-    """Parameters for tap discover command."""
-
-    config_file: Annotated[str | None, Field(default=None)]
-    output_file: Annotated[str | None, Field(default=None)]
-
-    @classmethod
-    def from_click_args(cls, **kwargs: t.Scalar) -> Self:
-        """Create discover params from Click command arguments."""
-        config_file_value: t.Scalar | None = kwargs.get("config_file")
-        output_file_value: t.Scalar | None = kwargs.get("output_file")
-        return cls(
-            config_file=str(config_file_value) if config_file_value else None,
-            output_file=str(output_file_value) if output_file_value else None,
-        )
-
-
-class OracleTapSyncParams(BaseModel):
-    """Parameters for tap sync command."""
-
-    config_file: Annotated[str | None, Field(default=None)]
-    catalog_file: Annotated[str | None, Field(default=None)]
-    state_file: Annotated[str | None, Field(default=None)]
-
-    @classmethod
-    def from_click_args(cls, **kwargs: t.Scalar) -> Self:
-        """Create sync params from Click command arguments."""
-        config_file_value: t.Scalar | None = kwargs.get("config_file")
-        catalog_file_value: t.Scalar | None = kwargs.get("catalog_file")
-        state_file_value: t.Scalar | None = kwargs.get("state_file")
-        return cls(
-            config_file=str(config_file_value) if config_file_value else None,
-            catalog_file=str(catalog_file_value) if catalog_file_value else None,
-            state_file=str(state_file_value) if state_file_value else None,
-        )
-
-
-class OracleTapDiscoverCommand:
-    """Oracle tap discovery command using modern flext-cli patterns.
+class FlextTapOracleDiscoverCommand:
+    """Oracle tap discovery command using flext-meltano patterns.
 
     Provides discovery of Oracle database schema and Singer catalog generation.
     """
 
-    def __init__(self, params: OracleTapDiscoverParams) -> None:
+    def __init__(self, params: m.TapOracle.OracleTapDiscoverParams) -> None:
         """Initialize command with parameter object pattern."""
         self.params = params
-        self._logger = FlextLogger(__name__)
+        self.logger = u.fetch_logger(__name__)
 
-    def execute(self) -> r[Mapping[str, t.GeneralValueType]]:
+    def execute(self) -> p.Result[t.JsonMapping]:
         """Execute Oracle tap discovery using modern patterns."""
-        self._logger.info("Starting Oracle database discovery")
+        self.logger.info("Starting Oracle database discovery")
         try:
             if not self.params.config_file:
-                return r[Mapping[str, t.GeneralValueType]].fail(
-                    "Configuration file is required for discovery"
+                return r[t.JsonMapping].fail(
+                    "Configuration file is required for discovery",
                 )
-            config_data: str = Path(self.params.config_file).read_text(encoding="utf-8")
-            config: FlextTapOracleSettings = FlextTapOracleSettings.model_validate_json(
-                config_data
-            )
-            oracle_config = config.get_oracle_config()
-            schema_name = str(oracle_config.get("schema_name", "USER"))
-            self._logger.info("Discovering Oracle schema: %s", schema_name)
-            catalog_dict: dict[str, t.GeneralValueType] = {
-                "streams": [],
+            config_read = u.Cli.files_read_text(Path(self.params.config_file))
+            if config_read.failure:
+                return r[t.JsonMapping].fail(f"Discovery error: {config_read.error}")
+            config_data: str = config_read.value
+            # Validate the settings shape eagerly; downstream uses constants only.
+            FlextTapOracleSettings.model_validate_json(config_data)
+            schema_name = "USER"
+            self.logger.info("Discovering Oracle schema: %s", schema_name)
+            streams: t.JsonValueList = []
+            catalog_dict: t.JsonMapping = {
+                "streams": streams,
                 "schema_name": schema_name,
             }
             if self.params.output_file:
                 output_path = Path(self.params.output_file)
-                output_path.write_text(
-                    TypeAdapter(dict[str, t.GeneralValueType])
-                    .dump_json(catalog_dict, indent=2)
-                    .decode("utf-8"),
-                    encoding="utf-8",
+                catalog_write = u.Cli.json_write(
+                    output_path,
+                    catalog_dict,
+                    options=m.Cli.JsonWriteOptions(indent=2),
                 )
-                self._logger.info("Catalog written to %s", output_path)
-            self._logger.info("Oracle schema discovery completed")
-            return r[Mapping[str, t.GeneralValueType]].ok(catalog_dict)
-        except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+                if catalog_write.failure:
+                    return r[t.JsonMapping].fail(
+                        f"Catalog write error: {catalog_write.error}"
+                    )
+                self.logger.info(f"Catalog written to {output_path}")
+            self.logger.info("Oracle schema discovery completed")
+            return r[t.JsonMapping].ok(catalog_dict)
+        except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
             logger.exception("Oracle discovery failed")
-            return r[Mapping[str, t.GeneralValueType]].fail(f"Discovery error: {e}")
+            return r[t.JsonMapping].fail(f"Discovery error: {e}")
 
-    def validate_business_rules(self) -> r[bool]:
+    def validate_business_rules(self) -> p.Result[bool]:
         """Validate business rules for Oracle tap discovery."""
         if self.params.config_file and (not Path(self.params.config_file).exists()):
-            return r[bool].fail(
-                f"Configuration file not found: {self.params.config_file}"
+            return e.fail_not_found(
+                "Configuration file", self.params.config_file, result_type=r[bool]
             )
         return r[bool].ok(value=True)
 
 
-class OracleTapSyncCommand:
-    """Oracle tap sync command using modern flext-cli patterns."""
+class FlextTapOracleSyncCommand:
+    """Oracle tap sync command using flext-meltano patterns."""
 
-    def __init__(self, params: OracleTapSyncParams) -> None:
+    def __init__(self, params: m.TapOracle.OracleTapSyncParams) -> None:
         """Initialize command with parameter object pattern."""
         self.params = params
-        self._logger = FlextLogger(__name__)
+        self.logger = u.fetch_logger(__name__)
 
-    def execute(self) -> r[Mapping[str, t.GeneralValueType]]:
+    def execute(self) -> p.Result[t.JsonMapping]:
         """Execute Oracle tap sync using modern patterns."""
-        self._logger.info("Starting Oracle data extraction")
+        self.logger.info("Starting Oracle data extraction")
         try:
             if not self.params.config_file:
-                return r[Mapping[str, t.GeneralValueType]].fail(
-                    "Configuration file is required for sync"
+                return r[t.JsonMapping].fail(
+                    "Configuration file is required for sync",
                 )
-            config_data: str = Path(self.params.config_file).read_text(encoding="utf-8")
-            config: FlextTapOracleSettings = FlextTapOracleSettings.model_validate_json(
-                config_data
-            )
-            oracle_config = config.get_oracle_config()
+            config_read = u.Cli.files_read_text(Path(self.params.config_file))
+            if config_read.failure:
+                return r[t.JsonMapping].fail(f"Sync error: {config_read.error}")
+            config_data: str = config_read.value
+            FlextTapOracleSettings.model_validate_json(config_data)
             if self.params.catalog_file:
-                Path(self.params.catalog_file).read_text(encoding="utf-8")
-                self._logger.info("Loaded catalog from %s", self.params.catalog_file)
+                catalog_read = u.Cli.files_read_text(Path(self.params.catalog_file))
+                if catalog_read.failure:
+                    return r[t.JsonMapping].fail(f"Sync error: {catalog_read.error}")
+                self.logger.info(f"Loaded catalog from {self.params.catalog_file}")
             if self.params.state_file:
-                Path(self.params.state_file).read_text(encoding="utf-8")
-                self._logger.info("Loaded state from %s", self.params.state_file)
-            self._logger.info("Preparing extraction from Oracle database...")
-            schema_name = str(oracle_config.get("schema_name", "USER"))
+                state_read = u.Cli.files_read_text(Path(self.params.state_file))
+                if state_read.failure:
+                    return r[t.JsonMapping].fail(f"Sync error: {state_read.error}")
+                self.logger.info(f"Loaded state from {self.params.state_file}")
+            self.logger.info("Preparing extraction from Oracle database...")
+            schema_name = "USER"
             record_count = c.TapOracle.INITIAL_RECORD_COUNT
-            result_data: dict[str, t.GeneralValueType] = {
+            result_data: t.JsonMapping = {
                 "records_extracted": record_count,
                 "schema_name": schema_name,
                 "status": "completed",
             }
-            self._logger.info(
+            self.logger.info(
                 "Sync completed for schema %s; records extracted: %s",
                 schema_name,
                 record_count,
             )
-            return r[Mapping[str, t.GeneralValueType]].ok(result_data)
-        except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
+            return r[t.JsonMapping].ok(result_data)
+        except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
             logger.exception("Oracle sync failed")
-            return r[Mapping[str, t.GeneralValueType]].fail(f"Sync error: {e}")
+            return r[t.JsonMapping].fail(f"Sync error: {e}")
 
-    def validate_business_rules(self) -> r[bool]:
+    def validate_business_rules(self) -> p.Result[bool]:
         """Validate business rules for Oracle tap sync."""
         if self.params.config_file and (not Path(self.params.config_file).exists()):
-            return r[bool].fail(
-                f"Configuration file not found: {self.params.config_file}"
+            return e.fail_not_found(
+                "Configuration file", self.params.config_file, result_type=r[bool]
             )
         if self.params.catalog_file and (not Path(self.params.catalog_file).exists()):
-            return r[bool].fail(f"Catalog file not found: {self.params.catalog_file}")
+            return e.fail_not_found(
+                "Catalog file", self.params.catalog_file, result_type=r[bool]
+            )
         if self.params.state_file and (not Path(self.params.state_file).exists()):
-            return r[bool].fail(f"State file not found: {self.params.state_file}")
+            return e.fail_not_found(
+                "State file", self.params.state_file, result_type=r[bool]
+            )
         return r[bool].ok(value=True)
 
 
-def create_tap_oracle_cli() -> r[FlextCliCommands]:
-    """Create FLEXT Tap Oracle CLI using flext-cli foundation - NO click imports."""
-    try:
-        cli_main = FlextCliCommands(
-            name="tap-oracle",
-            description="FLEXT Tap Oracle - Modern Singer Tap for Oracle Database",
+class FlextTapOracleCli:
+    """Facade for Oracle tap CLI operations using flext-meltano abstractions."""
+
+    @staticmethod
+    def run_tap_command[TParams](
+        *,
+        kwargs: t.ConfigurationMapping,
+        params_factory: Callable[..., TParams],
+        command_factory: Callable[[TParams], p.TapOracle.CommandRunner],
+        operation_name: str,
+    ) -> p.Result[t.JsonValue]:
+        """Run a tap command with params factory and command factory."""
+        try:
+            params = params_factory(**dict(kwargs))
+            command = command_factory(params)
+            result = command.execute()
+            if result.failure:
+                error_message = result.error or f"{operation_name} failed"
+                logger.error(f"{operation_name} failed: {error_message}")
+                return r[t.JsonValue].fail(error_message)
+            return r[t.JsonValue].ok(value=True)
+        except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
+            error_message = f"{operation_name} error: {e}"
+            logger.exception(error_message)
+            return r[t.JsonValue].fail(error_message)
+
+    @staticmethod
+    def handle_discover_command(
+        **kwargs: t.Scalar,
+    ) -> p.Result[t.JsonValue]:
+        """Handle discover command using flext-meltano patterns."""
+        return FlextTapOracleCli.run_tap_command(
+            kwargs=kwargs,
+            params_factory=m.TapOracle.OracleTapDiscoverParams.from_click_args,
+            command_factory=lambda params: FlextTapOracleDiscoverCommand(params=params),
+            operation_name="Discovery",
         )
-        discover_result = cli_main.register_command("discover", handle_discover_command)
-        if discover_result.is_failure:
-            return r[FlextCliCommands].fail(
-                f"Discover command registration failed: {discover_result.error}"
-            )
-        sync_result = cli_main.register_command("sync", handle_sync_command)
-        if sync_result.is_failure:
-            return r[FlextCliCommands].fail(
-                f"Sync command registration failed: {sync_result.error}"
-            )
-        return r[FlextCliCommands].ok(cli_main)
-    except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-        return r[FlextCliCommands].fail(f"CLI creation failed: {e}")
+
+    @staticmethod
+    def handle_sync_command(**kwargs: t.Scalar) -> p.Result[t.JsonValue]:
+        """Handle sync command using flext-meltano patterns."""
+        return FlextTapOracleCli.run_tap_command(
+            kwargs=kwargs,
+            params_factory=m.TapOracle.OracleTapSyncParams.from_click_args,
+            command_factory=lambda params: FlextTapOracleSyncCommand(params=params),
+            operation_name="Sync",
+        )
 
 
-def handle_discover_command(*_args: t.Scalar, **kwargs: t.Scalar) -> r:
-    """Handle discover command using flext-cli patterns - NO click decorators."""
-    try:
-        params = OracleTapDiscoverParams.from_click_args(**kwargs)
-        command = OracleTapDiscoverCommand(params=params)
-        result = command.execute()
-        if result.is_failure:
-            error_message = result.error or "Discovery failed"
-            cli_api.print(f"Discovery failed: {error_message}", style="red")
-            return r[bool].fail(error_message)
-        return r[bool].ok(True)
-    except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-        error_message = f"Discovery error: {e}"
-        cli_api.print(error_message, style="red")
-        return r[bool].fail(error_message)
-
-
-def handle_sync_command(*_args: t.Scalar, **kwargs: t.Scalar) -> r:
-    """Handle sync command using flext-cli patterns - NO click decorators."""
-    try:
-        params = OracleTapSyncParams.from_click_args(**kwargs)
-        command = OracleTapSyncCommand(params=params)
-        result = command.execute()
-        if result.is_failure:
-            error_message = result.error or "Sync failed"
-            cli_api.print(f"Sync failed: {error_message}", style="red")
-            return r[bool].fail(error_message)
-        return r[bool].ok(True)
-    except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-        error_message = f"Sync error: {e}"
-        cli_api.print(error_message, style="red")
-        return r[bool].fail(error_message)
-
-
-def cli() -> int:
-    """Main CLI entry point using flext-cli foundation."""
-    cli_result = create_tap_oracle_cli()
-    if cli_result.is_failure:
-        logger.error("CLI creation failed: %s", cli_result.error or "unknown")
-        return 1
-    cli_main = cli_result.value
-    cli_main.execute()
-    return 0
+def run_cli() -> int:
+    """Main CLI entry point using flext-meltano abstractions."""
+    if "--discover" in sys.argv:
+        result = FlextTapOracleCli.handle_discover_command()
+        return 0 if result.success else 1
+    if "--sync" in sys.argv or len(sys.argv) <= 1:
+        result = FlextTapOracleCli.handle_sync_command()
+        return 0 if result.success else 1
+    logger.warning("Unknown command. Use --discover or --sync.")
+    return 1
 
 
 def main() -> None:
-    """Provide CLI entry point using flext-cli patterns."""
+    """Provide CLI entry point using flext-meltano patterns."""
     try:
-        exit_code = cli()
+        exit_code = run_cli()
         raise SystemExit(exit_code)
     except KeyboardInterrupt:
-        cli_api.print("Operation cancelled by user", style="yellow")
+        logger.warning("Operation cancelled by user")
         raise SystemExit(0) from None
-    except (ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-        cli_api.print(f"Unexpected error: {e}", style="red")
+    except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
+        logger.exception("Unexpected error")
         raise SystemExit(1) from e
 
 

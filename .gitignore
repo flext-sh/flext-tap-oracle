@@ -34,7 +34,7 @@
 !.tool-versions
 !.gitignore
 !.gitattributes
-!.pre-commit-config.yaml
+!.pre-commit-settings.yaml
 
 # Environment templates (NOT .env - keep secrets out!)
 !.env.example
@@ -179,7 +179,7 @@ __pypackages__/
 *.state
 *.state.json
 state.json
-*_state.json
+*state.json
 catalog.json
 *.catalog.json
 properties.json
@@ -293,7 +293,7 @@ cache/
 secrets/
 wallet/
 *.conf.bak
-*.config.bak
+*.settings.bak
 *.toml.bak
 docs/_build/
 docs/build/
@@ -327,11 +327,11 @@ internal.invalid.md
 !pyproject.toml
 !Makefile
 !README.md
-!.pre-commit-config.yaml
+!.pre-commit-settings.yaml
 !.env.example
-!config.json.example
+!settings.json.example
 !meltano.yml
-!singer-config.json.example
+!singer-settings.json.example
 !tnsnames.ora.example
 !sqlnet.ora.example
 .cursor/
@@ -525,7 +525,14 @@ staging/
 .claude/
 .github/*.rej
 
+
+
+
+!base.mk
+
 # --- workspace-sync: required ignores (auto-managed) ---
+.direnv/
 .reports/
 .venv/
 __pycache__/
+base.mk
