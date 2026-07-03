@@ -25,30 +25,30 @@ if TYPE_CHECKING:
         x as x,
     )
 
-    from tests.base import (
+    from flext_tap_oracle.tests.base import (
         TestsFlextTapOracleServiceBase as TestsFlextTapOracleServiceBase,
         s as s,
     )
-    from tests.constants import (
+    from flext_tap_oracle.tests.constants import (
         TestsFlextTapOracleConstants as TestsFlextTapOracleConstants,
         c as c,
     )
-    from tests.models import (
+    from flext_tap_oracle.tests.models import (
         TestsFlextTapOracleModels as TestsFlextTapOracleModels,
         m as m,
     )
-    from tests.protocols import (
+    from flext_tap_oracle.tests.protocols import (
         TestsFlextTapOracleProtocols as TestsFlextTapOracleProtocols,
         p as p,
     )
-    from tests.settings import (
+    from flext_tap_oracle.tests.settings import (
         TestsFlextTapOracleSettings as TestsFlextTapOracleSettings,
     )
-    from tests.typings import (
+    from flext_tap_oracle.tests.typings import (
         TestsFlextTapOracleTypes as TestsFlextTapOracleTypes,
         t as t,
     )
-    from tests.utilities import (
+    from flext_tap_oracle.tests.utilities import (
         TestsFlextTapOracleUtilities as TestsFlextTapOracleUtilities,
         u as u,
     )
