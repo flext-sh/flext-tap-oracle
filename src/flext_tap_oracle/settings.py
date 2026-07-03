@@ -1,5 +1,6 @@
 """FLEXT Tap Oracle Configuration - Enhanced FlextSettings Implementation.
 
+from flext_tap_oracle.utilities import u
 Single unified configuration class for Oracle Singer tap operations following
 FLEXT 1.0.0 patterns with enhanced singleton, SecretStr, and Pydantic 2.11+ features.
 
@@ -12,8 +13,8 @@ from __future__ import annotations
 
 from typing import Annotated, ClassVar, Self
 
-from flext_core import FlextSettingsBase, u
-from flext_tap_oracle import c, e, m, p, r, t
+from flext_core import FlextSettingsBase
+from flext_tap_oracle import c, e, m, p, r, t, u
 
 
 class FlextTapOracleSettings(FlextSettingsBase):

@@ -1,5 +1,6 @@
 """Models for flext-tap-oracle.
 
+from flext_tap_oracle.utilities import u
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
 
@@ -12,9 +13,8 @@ from collections.abc import (
 )
 from typing import Annotated, Self
 
-from flext_core import u
 from flext_db_oracle import FlextDbOracleModels
-from flext_meltano import FlextMeltanoModels, m, r
+from flext_meltano import FlextMeltanoModels, m, r, u
 from flext_tap_oracle.protocols import p
 from flext_tap_oracle.typings import t
 

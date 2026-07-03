@@ -1,5 +1,6 @@
 """FLEXT service orchestrator for tap-oracle.
 
+from flext_tap_oracle.utilities import u
 Thin facade — all infrastructure from ``FlextMeltanoTapServiceBase`` via MRO.
 The tap uses FlextMeltanoAbstractions (CLI dispatch), not singer_sdk.Tap.
 ``create_tap_instance`` returns ``r[T].fail()`` — use CLI dispatch instead.
@@ -12,11 +13,10 @@ from __future__ import annotations
 
 from typing import Annotated, Never, override
 
-from flext_core import u
 from flext_meltano.services.consumer_bases.tap_service_base import (
     FlextMeltanoTapServiceBase,
 )
-from flext_tap_oracle import FlextTapOracleSettings, t
+from flext_tap_oracle import FlextTapOracleSettings, t, u
 
 
 class FlextTapOracleService(FlextMeltanoTapServiceBase):
