@@ -97,7 +97,8 @@ class FlextTapOracleSettings(FlextSettingsBase):
             r containing validated Oracle tap configuration
 
         """
-        try:
+
+        def _run_create_oracle_tap_config() -> p.Result[FlextTapOracleSettings]:
             tap_config: t.MutableScalarMapping = dict(tap_params) if tap_params else {}
             meltano_config: t.MutableScalarMapping = (
                 dict(meltano_params) if meltano_params else {}
@@ -112,6 +113,9 @@ class FlextTapOracleSettings(FlextSettingsBase):
             config_data = {**oracle_params, **tap_config, **meltano_config}
             config_instance = FlextTapOracleSettings.model_validate(config_data)
             return r[FlextTapOracleSettings].ok(config_instance)
+
+        try:
+            return _run_create_oracle_tap_config()
         except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
             return r[FlextTapOracleSettings].fail_op(
                 "Oracle tap configuration creation", e

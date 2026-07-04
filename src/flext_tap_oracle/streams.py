@@ -60,7 +60,8 @@ class FlextTapOracleStreams:
 
         def estimate_row_count(self) -> int | None:
             """Estimate table row count using Oracle system views."""
-            try:
+
+            def _run_estimate_row_count() -> int | None:
                 cleaned_name = (
                     self.table_name.replace("_", "").replace("$", "").replace("#", "")
                 )
@@ -88,6 +89,9 @@ class FlextTapOracleStreams:
                         case _:
                             return None
                 return None
+
+            try:
+                return _run_estimate_row_count()
             except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
                 err_msg = str(e)
                 FlextTapOracleStreams.logger.warning(

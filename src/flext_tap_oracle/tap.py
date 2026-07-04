@@ -34,7 +34,8 @@ class FlextTapOracleDiscoverCommand:
     def execute(self) -> p.Result[t.JsonMapping]:
         """Execute Oracle tap discovery using modern patterns."""
         self.logger.info("Starting Oracle database discovery")
-        try:
+
+        def _run_execute() -> p.Result[t.JsonMapping]:
             if not self.params.config_file:
                 return r[t.JsonMapping].fail(
                     "Configuration file is required for discovery",
@@ -66,6 +67,9 @@ class FlextTapOracleDiscoverCommand:
                 self.logger.info(f"Catalog written to {output_path}")
             self.logger.info("Oracle schema discovery completed")
             return r[t.JsonMapping].ok(catalog_dict)
+
+        try:
+            return _run_execute()
         except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
             logger.exception("Oracle discovery failed")
             return r[t.JsonMapping].fail(f"Discovery error: {e}")
@@ -90,7 +94,8 @@ class FlextTapOracleSyncCommand:
     def execute(self) -> p.Result[t.JsonMapping]:
         """Execute Oracle tap sync using modern patterns."""
         self.logger.info("Starting Oracle data extraction")
-        try:
+
+        def _run_execute() -> p.Result[t.JsonMapping]:
             if not self.params.config_file:
                 return r[t.JsonMapping].fail(
                     "Configuration file is required for sync",
@@ -124,6 +129,9 @@ class FlextTapOracleSyncCommand:
                 record_count,
             )
             return r[t.JsonMapping].ok(result_data)
+
+        try:
+            return _run_execute()
         except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
             logger.exception("Oracle sync failed")
             return r[t.JsonMapping].fail(f"Sync error: {e}")
@@ -157,7 +165,8 @@ class FlextTapOracleCli:
         operation_name: str,
     ) -> p.Result[t.JsonValue]:
         """Run a tap command with params factory and command factory."""
-        try:
+
+        def _run_run_tap_command() -> p.Result[t.JsonValue]:
             params = params_factory(**dict(kwargs))
             command = command_factory(params)
             result = command.execute()
@@ -166,6 +175,9 @@ class FlextTapOracleCli:
                 logger.error(f"{operation_name} failed: {error_message}")
                 return r[t.JsonValue].fail(error_message)
             return r[t.JsonValue].ok(value=True)
+
+        try:
+            return _run_run_tap_command()
         except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
             error_message = f"{operation_name} error: {e}"
             logger.exception(error_message)
