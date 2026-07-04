@@ -59,7 +59,7 @@ def shared_oracle_container(docker_control: tk) -> Generator[str]:
         yield c.TapOracle.Tests.SHARED_CONTAINER_NAME
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="session")
 def oracle_shared_container_environment(
     shared_oracle_container: str,
 ) -> Generator[None]:
