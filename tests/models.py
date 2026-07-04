@@ -60,7 +60,7 @@ class TestsFlextTapOracleModels(FlextTestsModels, FlextTapOracleModels):
 
                 @property
                 def connection_string(self) -> str:
-                    """Get Oracle connection string."""
+                    """The Oracle connection string."""
                     return f"oracle://{self.username}:***@{self.host}:{self.port}/{self.service_name}"
 
             class TestSingerStream(FlextTapOracleModels.Entity):
