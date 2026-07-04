@@ -38,7 +38,7 @@ FLEXT_TAP_ORACLE_LAZY_IMPORTS_PART_01 = build_lazy_import_map(
             "FlextTapOracleUtilities",
             "u",
         ),
-        "flext_core": (
+        "flext_meltano": (
             "d",
             "e",
             "h",
