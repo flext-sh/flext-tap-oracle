@@ -94,7 +94,7 @@ def oracle_shared_container_environment(
         yield
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def reset_tap_oracle_settings(reset_settings: None) -> Generator[None]:
     """Reset the concrete tap settings singletons around every test.
 
@@ -113,7 +113,7 @@ def reset_tap_oracle_settings(reset_settings: None) -> Generator[None]:
         TestsFlextTapOracleSettings.reset_for_testing()
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def set_test_environment(reset_tap_oracle_settings: None) -> Generator[None]:
     """Set test environment variables."""
     _ = reset_tap_oracle_settings
@@ -130,7 +130,7 @@ def set_test_environment(reset_tap_oracle_settings: None) -> Generator[None]:
         yield
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def skip_e2e_if_no_oracle() -> None:
     """Skip E2E tests gracefully when Oracle is not available locally."""
     fspath = os.environ.get("PYTEST_CURRENT_TEST", "")
