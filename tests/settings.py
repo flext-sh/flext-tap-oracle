@@ -20,10 +20,12 @@ class TestsFlextTapOracleSettings(FlextTapOracleSettings, FlextTestsSettings):
     """
 
     oracle_user: Annotated[
-        t.SecretStr, u.Field(description="Oracle database username")
+        t.SecretStr,
+        u.Field(description="Oracle database username"),
     ] = t.SecretStr(c.TapOracle.Tests.UNIT_ORACLE_USER)
     oracle_password: Annotated[
-        t.SecretStr, u.Field(description="Oracle database password")
+        t.SecretStr,
+        u.Field(description="Oracle database password"),
     ] = t.SecretStr(c.TapOracle.Tests.UNIT_ORACLE_PASSWORD)
 
 

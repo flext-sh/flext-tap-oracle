@@ -7,12 +7,14 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 from flext_tests import FlextTestsProtocols
 
 from flext_tap_oracle import FlextTapOracleProtocols
-from tests.typings import t
+
+if TYPE_CHECKING:
+    from tests.typings import t
 
 
 class TestsFlextTapOracleProtocols(FlextTestsProtocols, FlextTapOracleProtocols):

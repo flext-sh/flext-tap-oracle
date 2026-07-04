@@ -23,8 +23,6 @@ class FlextTapOracleUtilities(u, FlextDbOracleUtilities, FlextUtilitiesGuardsTyp
     class TapOracle(FlextTapOracleUtilitiesClientMixin):
         """Tap Oracle namespace for cross-project access."""
 
-        pass
-
 
 u = FlextTapOracleUtilities
 

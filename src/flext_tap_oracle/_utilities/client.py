@@ -12,11 +12,14 @@ from __future__ import annotations
 from collections.abc import (
     Sequence,
 )
+from typing import TYPE_CHECKING
 
 from flext_db_oracle import FlextDbOracleApi, FlextDbOracleModels
 from flext_meltano import e, p, r, t, u
 from flext_tap_oracle.constants import c
-from flext_tap_oracle.settings import FlextTapOracleSettings
+
+if TYPE_CHECKING:
+    from flext_tap_oracle.settings import FlextTapOracleSettings
 
 logger = u.fetch_logger(__name__)
 
@@ -53,7 +56,9 @@ class FlextTapOracleUtilitiesClientMixin:
             ]
 
             logger.info(
-                "Discovered %d Oracle tables in schema %s", len(tables), target_schema
+                "Discovered %d Oracle tables in schema %s",
+                len(tables),
+                target_schema,
             )
             return r[Sequence[FlextDbOracleModels.DbOracle.Table]].ok(tables)
 
@@ -62,7 +67,7 @@ class FlextTapOracleUtilitiesClientMixin:
         except c.Meltano.SINGER_SAFE_EXCEPTIONS as exc:
             logger.exception("Oracle table discovery error")
             return r[Sequence[FlextDbOracleModels.DbOracle.Table]].fail(
-                f"Table discovery error in schema {schema_name}: {exc}"
+                f"Table discovery error in schema {schema_name}: {exc}",
             )
 
     @staticmethod
@@ -116,7 +121,7 @@ class FlextTapOracleUtilitiesClientMixin:
             logger.info("Initializing Oracle tap service")
             connection_result = (
                 FlextTapOracleUtilitiesClientMixin.tap_oracle_client_test_connection(
-                    oracle_api
+                    oracle_api,
                 )
             )
             if connection_result.failure:
@@ -124,7 +129,8 @@ class FlextTapOracleUtilitiesClientMixin:
 
             discovery_result = (
                 FlextTapOracleUtilitiesClientMixin.tap_oracle_client_discover_tables(
-                    oracle_api, schema_name
+                    oracle_api,
+                    schema_name,
                 )
             )
             if discovery_result.failure:

@@ -52,10 +52,12 @@ class TestsFlextTapOracleModels(FlextTestsModels, FlextTapOracleModels):
                 port: Annotated[int, u.Field(description="Oracle database port")]
                 service_name: Annotated[str, u.Field(description="Oracle service name")]
                 username: Annotated[
-                    str, u.Field(description="Oracle database username")
+                    str,
+                    u.Field(description="Oracle database username"),
                 ]
                 password: Annotated[
-                    str, u.Field(description="Oracle database password")
+                    str,
+                    u.Field(description="Oracle database password"),
                 ]
 
                 @property
@@ -67,30 +69,36 @@ class TestsFlextTapOracleModels(FlextTestsModels, FlextTapOracleModels):
                 """Test model for Singer streams."""
 
                 stream_name: Annotated[
-                    str, u.Field(description="Name of the Singer stream")
+                    str,
+                    u.Field(description="Name of the Singer stream"),
                 ]
                 table_name: Annotated[
-                    str, u.Field(description="Name of the source table")
+                    str,
+                    u.Field(description="Name of the source table"),
                 ]
                 replication_method: Annotated[
                     str,
                     u.Field(description="Replication method for the stream"),
                 ]
                 is_selected: Annotated[
-                    bool, u.Field(description="Whether the stream is selected")
+                    bool,
+                    u.Field(description="Whether the stream is selected"),
                 ] = True
 
             class TestOracleTable(FlextTapOracleModels.Entity):
                 """Test model for Oracle tables."""
 
                 table_name: Annotated[
-                    str, u.Field(description="Name of the Oracle table")
+                    str,
+                    u.Field(description="Name of the Oracle table"),
                 ]
                 schema_name: Annotated[
-                    str, u.Field(description="Schema containing the table")
+                    str,
+                    u.Field(description="Schema containing the table"),
                 ]
                 column_count: Annotated[
-                    int, u.Field(description="Number of columns in the table")
+                    int,
+                    u.Field(description="Number of columns in the table"),
                 ]
                 row_count: Annotated[
                     int | None,
@@ -101,7 +109,8 @@ class TestsFlextTapOracleModels(FlextTestsModels, FlextTapOracleModels):
                 """Test model for extraction configurations."""
 
                 batch_size: Annotated[
-                    int, u.Field(description="Number of rows per batch")
+                    int,
+                    u.Field(description="Number of rows per batch"),
                 ]
                 parallel_streams: Annotated[
                     int,

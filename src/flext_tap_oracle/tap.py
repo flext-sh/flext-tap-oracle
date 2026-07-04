@@ -10,12 +10,15 @@ SPDX-License-Identifier: MIT.
 from __future__ import annotations
 
 import sys
-from collections.abc import (
-    Callable,
-)
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_tap_oracle import FlextTapOracleSettings, c, e, m, p, r, t, u
+
+if TYPE_CHECKING:
+    from collections.abc import (
+        Callable,
+    )
 
 logger = u.fetch_logger(__name__)
 
@@ -62,9 +65,9 @@ class FlextTapOracleDiscoverCommand:
                 )
                 if catalog_write.failure:
                     return r[t.JsonMapping].fail(
-                        f"Catalog write error: {catalog_write.error}"
+                        f"Catalog write error: {catalog_write.error}",
                     )
-                self.logger.info(f"Catalog written to {output_path}")
+                self.logger.info("Catalog written to %s", output_path)
             self.logger.info("Oracle schema discovery completed")
             return r[t.JsonMapping].ok(catalog_dict)
 
@@ -78,7 +81,9 @@ class FlextTapOracleDiscoverCommand:
         """Validate business rules for Oracle tap discovery."""
         if self.params.config_file and (not Path(self.params.config_file).exists()):
             return e.fail_not_found(
-                "Configuration file", self.params.config_file, result_type=r[bool]
+                "Configuration file",
+                self.params.config_file,
+                result_type=r[bool],
             )
         return r[bool].ok(value=True)
 
@@ -140,15 +145,21 @@ class FlextTapOracleSyncCommand:
         """Validate business rules for Oracle tap sync."""
         if self.params.config_file and (not Path(self.params.config_file).exists()):
             return e.fail_not_found(
-                "Configuration file", self.params.config_file, result_type=r[bool]
+                "Configuration file",
+                self.params.config_file,
+                result_type=r[bool],
             )
         if self.params.catalog_file and (not Path(self.params.catalog_file).exists()):
             return e.fail_not_found(
-                "Catalog file", self.params.catalog_file, result_type=r[bool]
+                "Catalog file",
+                self.params.catalog_file,
+                result_type=r[bool],
             )
         if self.params.state_file and (not Path(self.params.state_file).exists()):
             return e.fail_not_found(
-                "State file", self.params.state_file, result_type=r[bool]
+                "State file",
+                self.params.state_file,
+                result_type=r[bool],
             )
         return r[bool].ok(value=True)
 
@@ -172,7 +183,7 @@ class FlextTapOracleCli:
             result = command.execute()
             if result.failure:
                 error_message = result.error or f"{operation_name} failed"
-                logger.error(f"{operation_name} failed: {error_message}")
+                logger.error("%s failed: %s", operation_name, error_message)
                 return r[t.JsonValue].fail(error_message)
             return r[t.JsonValue].ok(value=True)
 

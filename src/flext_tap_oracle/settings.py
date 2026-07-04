@@ -22,7 +22,8 @@ class FlextTapOracleSettings(FlextSettingsBase):
     """Runtime settings for Oracle Singer tap operations."""
 
     model_config: ClassVar[m.SettingsConfigDict] = m.SettingsConfigDict(
-        env_prefix="FLEXT_TAP_ORACLE_", extra="ignore"
+        env_prefix="FLEXT_TAP_ORACLE_",
+        extra="ignore",
     )
 
     oracle_host: Annotated[
@@ -45,13 +46,16 @@ class FlextTapOracleSettings(FlextSettingsBase):
     ] = c.DbOracle.DEFAULT_SERVICE_NAME
     oracle_user: Annotated[t.SecretStr, u.Field(description="Oracle database username")]
     oracle_password: Annotated[
-        t.SecretStr, u.Field(description="Oracle database password")
+        t.SecretStr,
+        u.Field(description="Oracle database password"),
     ]
     batch_size: Annotated[
-        t.BatchSize, u.Field(description="Batch size for data extraction")
+        t.BatchSize,
+        u.Field(description="Batch size for data extraction"),
     ] = 1000
     stream_prefix: Annotated[
-        str, u.Field(description="Prefix for Singer stream names")
+        str,
+        u.Field(description="Prefix for Singer stream names"),
     ] = ""
     project_root: Annotated[str, u.Field(description="Meltano project root")] = "."
     environment: Annotated[str, u.Field(description="Environment name")] = "production"
@@ -119,7 +123,8 @@ class FlextTapOracleSettings(FlextSettingsBase):
             return _run_create_oracle_tap_config()
         except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
             return r[FlextTapOracleSettings].fail_op(
-                "Oracle tap configuration creation", e
+                "Oracle tap configuration creation",
+                e,
             )
 
     @classmethod

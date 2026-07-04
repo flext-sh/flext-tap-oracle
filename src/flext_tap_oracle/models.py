@@ -8,15 +8,18 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import (
-    MutableSequence,
-)
-from typing import Annotated, Self
+from typing import TYPE_CHECKING, Annotated, Self
 
 from flext_db_oracle import FlextDbOracleModels
 from flext_meltano import FlextMeltanoModels, m, r, u
-from flext_tap_oracle.protocols import p
-from flext_tap_oracle.typings import t
+
+if TYPE_CHECKING:
+    from collections.abc import (
+        MutableSequence,
+    )
+
+    from flext_tap_oracle.protocols import p
+    from flext_tap_oracle.typings import t
 
 
 class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
@@ -89,25 +92,32 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             """Shared metrics fields for Oracle tap operations."""
 
             total_records: Annotated[
-                t.NonNegativeInt, u.Field(description="Total records extracted")
+                t.NonNegativeInt,
+                u.Field(description="Total records extracted"),
             ] = 0
             total_bytes: Annotated[
-                t.NonNegativeInt, u.Field(description="Total bytes processed")
+                t.NonNegativeInt,
+                u.Field(description="Total bytes processed"),
             ] = 0
             streams_processed: Annotated[
-                t.NonNegativeInt, u.Field(description="Number of streams processed")
+                t.NonNegativeInt,
+                u.Field(description="Number of streams processed"),
             ] = 0
             avg_records_per_second: Annotated[
-                t.NonNegativeFloat, u.Field(description="Average records per second")
+                t.NonNegativeFloat,
+                u.Field(description="Average records per second"),
             ] = 0.0
             avg_bytes_per_second: Annotated[
-                t.NonNegativeFloat, u.Field(description="Average bytes per second")
+                t.NonNegativeFloat,
+                u.Field(description="Average bytes per second"),
             ] = 0.0
             oracle_connection_time: Annotated[
-                t.NonNegativeFloat, u.Field(description="Oracle connection time")
+                t.NonNegativeFloat,
+                u.Field(description="Oracle connection time"),
             ] = 0.0
             oracle_query_time: Annotated[
-                t.NonNegativeFloat, u.Field(description="Total Oracle query time")
+                t.NonNegativeFloat,
+                u.Field(description="Total Oracle query time"),
             ] = 0.0
 
         class OracleTapExecutionStats(_MetricsBase):
