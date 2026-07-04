@@ -14,7 +14,8 @@ from __future__ import annotations
 from typing import Annotated, ClassVar, Self
 
 from flext_core import FlextSettingsBase
-from flext_tap_oracle import c, e, m, p, r, t, u
+from flext_meltano import e, m, p, r, t, u
+from flext_tap_oracle import c
 
 
 class FlextTapOracleSettings(FlextSettingsBase):

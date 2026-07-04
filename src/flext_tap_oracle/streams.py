@@ -107,31 +107,7 @@ class FlextTapOracleStreams:
         ) -> Iterable[Mapping[str, t.TapOracle.OracleValue]]:
             """Get records from Oracle table using flext-db-oracle exclusively - NO direct SQLAlchemy."""
             try:
-                _ = context
-                with self.oracle_api as api:
-                    table_metadata_result = api.fetch_table_metadata(self.table_name)
-                    if table_metadata_result.failure:
-                        msg = (
-                            table_metadata_result.error
-                            or "Table metadata is not available"
-                        )
-                        raise RuntimeError(msg)
-                    schema_name: str | None = None
-                    safe_table = self.table_name.replace('"', '""')
-                    sql: str
-                    if schema_name:
-                        sql = f'SELECT * FROM "{schema_name}"."{safe_table}"'  # nosec B608
-                    else:
-                        sql = f'SELECT * FROM "{safe_table}"'  # nosec B608
-                    query_result: p.Result[Sequence[m.Dict]] = api.query(sql)
-                    if query_result.failure:
-                        error_msg: str = query_result.error or "unknown query error"
-                        raise RuntimeError(error_msg)
-                    rows: t.SequenceOf[m.Dict] = query_result.value
-                    yield from self._process_results_with_table_metadata(
-                        rows,
-                        table_metadata_result.value,
-                    )
+                rows, table_metadata = self._fetch_rows_with_table_metadata(context)
             except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
                 FlextTapOracleStreams.logger.exception(
                     "Error getting records from %s",
@@ -139,6 +115,28 @@ class FlextTapOracleStreams:
                 )
                 msg = f"Failed to get records: {e}"
                 raise RuntimeError(msg) from e
+            yield from self._process_results_with_table_metadata(rows, table_metadata)
+
+        def _fetch_rows_with_table_metadata(
+            self,
+            context: t.MappingKV[str, t.TapOracle.OracleValue] | None,
+        ) -> tuple[t.SequenceOf[m.Dict], m.DbOracle.TableMetadata]:
+            """Fetch Oracle rows and table metadata for this stream."""
+            _ = context
+            with self.oracle_api as api:
+                table_metadata_result = api.fetch_table_metadata(self.table_name)
+                if table_metadata_result.failure:
+                    msg = (
+                        table_metadata_result.error or "Table metadata is not available"
+                    )
+                    raise RuntimeError(msg)
+                safe_table = self.table_name.replace('"', '""')
+                sql = f'SELECT * FROM "{safe_table}"'  # nosec B608
+                query_result: p.Result[Sequence[m.Dict]] = api.query(sql)
+                if query_result.failure:
+                    error_msg: str = query_result.error or "unknown query error"
+                    raise RuntimeError(error_msg)
+                return query_result.value, table_metadata_result.value
 
         def get_stream_metadata(self) -> t.MappingKV[str, t.JsonValue | None]:
             """Get complete stream metadata."""
@@ -196,27 +194,26 @@ class FlextTapOracleStreams:
                 raise RuntimeError(msg)
             for row_data in query_data:
                 try:
-                    record = t.Cli.JSON_MAPPING_ADAPTER.validate_python(
-                        row_data.root,
-                    )
-                    missing_columns = [
-                        column_name
-                        for column_name in column_names
-                        if column_name not in record
-                    ]
-                    if missing_columns:
-                        msg = (
-                            f"Oracle row is missing expected columns: {missing_columns}"
-                        )
-                        raise RuntimeError(msg)
-                    record = self._transform_oracle_types(
-                        record,
-                        columns,
-                    )
-                    yield record
+                    yield self._process_result_row(row_data, column_names, columns)
                 except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
                     msg = f"Failed to process Oracle record: {e}"
                     raise RuntimeError(msg) from e
+
+        def _process_result_row(
+            self,
+            row_data: m.Dict,
+            column_names: t.StrSequence,
+            columns: t.SequenceOf[m.DbOracle.ColumnMetadata],
+        ) -> t.JsonMapping:
+            """Validate and transform one Oracle row."""
+            record = t.Cli.JSON_MAPPING_ADAPTER.validate_python(row_data.root)
+            missing_columns = [
+                column_name for column_name in column_names if column_name not in record
+            ]
+            if missing_columns:
+                msg = f"Oracle row is missing expected columns: {missing_columns}"
+                raise RuntimeError(msg)
+            return self._transform_oracle_types(record, columns)
 
         def _transform_oracle_types(
             self,
