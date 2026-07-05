@@ -72,7 +72,8 @@ class FlextTapOracleSettings(FlextSettingsBase):
     def _resolve_secret(value: t.SecretStr | str) -> str:
         """Resolve a SecretStr to its plain value."""
         if isinstance(value, t.SecretStr):
-            return value.get_secret_value()
+            secret_value: str = value.get_secret_value()
+            return secret_value
         return value
 
     def get_oracle_config(self) -> t.ConfigurationMapping:
