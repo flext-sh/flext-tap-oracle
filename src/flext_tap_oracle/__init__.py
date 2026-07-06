@@ -19,7 +19,7 @@ from flext_tap_oracle.__version__ import (
 
 if TYPE_CHECKING:
     from flext_db_oracle import d, e, h, r, s, x
-    from flext_tap_oracle.api import FlextTapOracleService
+    from flext_tap_oracle.api import FlextTapOracleService, tap_oracle
     from flext_tap_oracle.constants import FlextTapOracleConstants, c
     from flext_tap_oracle.models import FlextTapOracleModels, m
     from flext_tap_oracle.protocols import FlextTapOracleProtocols, p
