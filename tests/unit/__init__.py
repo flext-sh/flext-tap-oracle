@@ -8,6 +8,7 @@ from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 _LAZY_IMPORTS = build_lazy_import_map(
     {
         ".fixtures": ("fixtures",),
+        ".test_enterprise_tap": ("TestsFlextTapOracleEnterpriseTap",),
         "flext_tests": (
             "c",
             "d",

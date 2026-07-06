@@ -48,6 +48,9 @@ if TYPE_CHECKING:
         TestsFlextTapOracleTypes as TestsFlextTapOracleTypes,
         t as t,
     )
+    from tests.unit.test_enterprise_tap import (
+        TestsFlextTapOracleEnterpriseTap as TestsFlextTapOracleEnterpriseTap,
+    )
     from tests.utilities import (
         TestsFlextTapOracleUtilities as TestsFlextTapOracleUtilities,
         u as u,
@@ -79,6 +82,7 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "t",
             ),
             ".unit": ("unit",),
+            ".unit.test_enterprise_tap": ("TestsFlextTapOracleEnterpriseTap",),
             ".utilities": (
                 "TestsFlextTapOracleUtilities",
                 "u",

@@ -13,12 +13,11 @@ from __future__ import annotations
 
 from typing import Annotated, ClassVar, Self
 
-from flext_core import FlextSettingsBase
-from flext_meltano import e, m, p, r, t, u
+from flext_meltano import FlextMeltanoSettings, e, m, p, r, t, u
 from flext_tap_oracle import c
 
 
-class FlextTapOracleSettings(FlextSettingsBase):
+class FlextTapOracleSettings(FlextMeltanoSettings):
     """Runtime settings for Oracle Singer tap operations."""
 
     model_config: ClassVar[m.SettingsConfigDict] = m.SettingsConfigDict(
@@ -57,8 +56,6 @@ class FlextTapOracleSettings(FlextSettingsBase):
         str,
         u.Field(description="Prefix for Singer stream names"),
     ] = ""
-    project_root: Annotated[str, u.Field(description="Meltano project root")] = "."
-    environment: Annotated[str, u.Field(description="Environment name")] = "production"
 
     def validate_business_rules(self) -> p.Result[bool]:
         """Validate Oracle tap configuration business rules."""
