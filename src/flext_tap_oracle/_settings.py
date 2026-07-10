@@ -43,11 +43,11 @@ class FlextTapOracleSettings(FlextMeltanoSettings):
             description="Oracle service name or SID",
         ),
     ] = c.DbOracle.DEFAULT_SERVICE_NAME
-    oracle_user: Annotated[t.SecretStr, u.Field(description="Oracle database username")]
+    oracle_user: Annotated[t.SecretStr, u.Field(description="Oracle database username")] = t.SecretStr("")
     oracle_password: Annotated[
         t.SecretStr,
         u.Field(description="Oracle database password"),
-    ]
+    ] = t.SecretStr("")
     batch_size: Annotated[
         t.BatchSize,
         u.Field(description="Batch size for data extraction"),
@@ -132,3 +132,7 @@ class FlextTapOracleSettings(FlextMeltanoSettings):
     ) -> p.Result[bool]:
         """Validate Oracle tap configuration using FlextSettings patterns."""
         return settings.validate_business_rules()
+
+
+settings: FlextTapOracleSettings = FlextTapOracleSettings.fetch_global()
+"""Pre-instantiated project settings singleton — ``from flext_tap_oracle import settings``."""

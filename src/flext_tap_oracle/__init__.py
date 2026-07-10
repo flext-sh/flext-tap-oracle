@@ -35,9 +35,6 @@ if TYPE_CHECKING:
         FlextTapOracleProtocols as FlextTapOracleProtocols,
         p as p,
     )
-    from flext_tap_oracle.settings import (
-        FlextTapOracleSettings as FlextTapOracleSettings,
-    )
     from flext_tap_oracle.tap import (
         FlextTapOracleCli as FlextTapOracleCli,
         FlextTapOracleDiscoverCommand as FlextTapOracleDiscoverCommand,
@@ -53,6 +50,7 @@ if TYPE_CHECKING:
     )
 _LAZY_IMPORTS = build_lazy_import_map(
     {
+        "._settings": ("FlextTapOracleSettings", "settings"),
         ".api": (
             "FlextTapOracleService",
             "tap_oracle",
@@ -69,7 +67,6 @@ _LAZY_IMPORTS = build_lazy_import_map(
             "FlextTapOracleProtocols",
             "p",
         ),
-        ".settings": ("FlextTapOracleSettings",),
         ".tap": (
             "FlextTapOracleCli",
             "FlextTapOracleDiscoverCommand",
@@ -96,13 +93,14 @@ _LAZY_IMPORTS = build_lazy_import_map(
 
 
 __all__: tuple[str, ...] = (
+    "FlextTapOracleSettings",
+    "settings",
     "FlextTapOracleCli",
     "FlextTapOracleConstants",
     "FlextTapOracleDiscoverCommand",
     "FlextTapOracleModels",
     "FlextTapOracleProtocols",
     "FlextTapOracleService",
-    "FlextTapOracleSettings",
     "FlextTapOracleSyncCommand",
     "FlextTapOracleTypes",
     "FlextTapOracleUtilities",
