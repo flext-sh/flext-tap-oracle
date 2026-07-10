@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from flext_tests.settings import FlextTestsSettings
+from flext_tests import FlextTestsSettings
 
 from flext_core import u
 from flext_tap_oracle import FlextTapOracleSettings, t
