@@ -1,138 +1,53 @@
-"""FLEXT Tap Oracle Configuration - Enhanced FlextSettings Implementation.
+"""FLEXT Tap Oracle settings — namespaced under ``settings.TapOracle``.
 
-from flext_tap_oracle.utilities import u
-Single unified configuration class for Oracle Singer tap operations following
-FLEXT 1.0.0 patterns with enhanced singleton, SecretStr, and Pydantic 2.11+ features.
+Universal fields via MRO; project fields in the ``TapOracle`` group with simple
+scalar types (env-settable). Oracle connection objects are built by consumers
+from these scalars, not stored as complex settings fields.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
-
 """
 
 from __future__ import annotations
 
-from typing import Annotated, ClassVar, Self
+from typing import TYPE_CHECKING, Annotated
 
-from flext_meltano import FlextMeltanoSettings, e, m, p, r, t, u
-from flext_tap_oracle import c
+from pydantic import BaseModel, Field
+from pydantic_settings import SettingsConfigDict
+
+from flext_meltano import FlextMeltanoSettings
 
 
 class FlextTapOracleSettings(FlextMeltanoSettings):
-    """Runtime settings for Oracle Singer tap operations."""
+    """Oracle Singer tap settings; fields under ``settings.TapOracle.*``."""
 
-    model_config: ClassVar[m.SettingsConfigDict] = m.SettingsConfigDict(
+    model_config = SettingsConfigDict(
         env_prefix="FLEXT_TAP_ORACLE_",
+        env_nested_delimiter="__",
         extra="ignore",
     )
 
-    oracle_host: Annotated[
-        t.NonEmptyStr,
-        u.Field(
-            description="Oracle database host",
-        ),
-    ] = c.DbOracle.DEFAULT_HOST
-    oracle_port: Annotated[
-        t.PortNumber,
-        u.Field(
-            description="Oracle database port",
-        ),
-    ] = c.DbOracle.DEFAULT_PORT
-    oracle_service_name: Annotated[
-        str,
-        u.Field(
-            description="Oracle service name or SID",
-        ),
-    ] = c.DbOracle.DEFAULT_SERVICE_NAME
-    oracle_user: Annotated[t.SecretStr, u.Field(description="Oracle database username")] = t.SecretStr("")
-    oracle_password: Annotated[
-        t.SecretStr,
-        u.Field(description="Oracle database password"),
-    ] = t.SecretStr("")
-    batch_size: Annotated[
-        t.BatchSize,
-        u.Field(description="Batch size for data extraction"),
-    ] = 1000
-    stream_prefix: Annotated[
-        str,
-        u.Field(description="Prefix for Singer stream names"),
-    ] = ""
+    class _TapOracle(BaseModel):
+        """Namespaced Oracle tap settings."""
 
-    def validate_business_rules(self) -> p.Result[bool]:
-        """Validate Oracle tap configuration business rules."""
-        if not self.oracle_host:
-            return e.fail_validation("oracle_host", error="is required")
-        if not self.oracle_service_name:
-            return e.fail_validation("oracle_service_name", error="is required")
-        return r[bool].ok(True)
+        oracle_host: Annotated[str, Field(default="localhost", description="Oracle host")]
+        oracle_port: Annotated[int, Field(default=1521, ge=1, le=65535, description="Oracle port")]
+        oracle_service_name: Annotated[str, Field(default="XEPDB1", description="Oracle service/SID")]
+        oracle_user: Annotated[str, Field(default="", description="Oracle username")]
+        oracle_password: Annotated[str, Field(default="", description="Oracle password")]
+        batch_size: Annotated[int, Field(default=1000, ge=1, description="Extraction batch size")]
+        stream_prefix: Annotated[str, Field(default="", description="Singer stream name prefix")]
 
-    @staticmethod
-    def _resolve_secret(value: t.SecretStr | str) -> str:
-        """Resolve a SecretStr to its plain value."""
-        if isinstance(value, t.SecretStr):
-            secret_value: str = value.get_secret_value()
-            return secret_value
-        return value
-
-    def get_oracle_config(self) -> t.ConfigurationMapping:
-        """Get Oracle database connection configuration."""
-        return {
-            "host": self.oracle_host,
-            "port": self.oracle_port,
-            "service_name": self.oracle_service_name,
-            "user": self._resolve_secret(self.oracle_user),
-            "password": self._resolve_secret(self.oracle_password),
-        }
-
-    @staticmethod
-    def create_oracle_tap_config(
-        oracle_params: t.ConfigurationMapping,
-        tap_params: t.ConfigurationMapping | None = None,
-        meltano_params: t.ConfigurationMapping | None = None,
-    ) -> p.Result[FlextTapOracleSettings]:
-        """Create Oracle tap configuration using grouped parameters.
-
-        Args:
-            oracle_params: Oracle database connection parameters
-            tap_params: Optional tap-specific parameters
-            meltano_params: Optional Meltano parameters
-
-        Returns:
-            r containing validated Oracle tap configuration
-
-        """
-
-        def _run_create_oracle_tap_config() -> p.Result[FlextTapOracleSettings]:
-            tap_config: t.MutableScalarMapping = dict(tap_params) if tap_params else {}
-            meltano_config: t.MutableScalarMapping = (
-                dict(meltano_params) if meltano_params else {}
-            )
-            tap_config.setdefault("batch_size", 1000)
-            tap_config.setdefault(
-                "stream_prefix",
-                c.TapOracle.DEFAULT_STREAM_PREFIX,
-            )
-            meltano_config.setdefault("project_root", ".")
-            meltano_config.setdefault("environment", "production")
-            config_data = {**oracle_params, **tap_config, **meltano_config}
-            config_instance = FlextTapOracleSettings.model_validate(config_data)
-            return r[FlextTapOracleSettings].ok(config_instance)
-
-        try:
-            return _run_create_oracle_tap_config()
-        except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
-            return r[FlextTapOracleSettings].fail_op(
-                "Oracle tap configuration creation",
-                e,
-            )
-
-    @classmethod
-    def validate_oracle_tap_configuration(
-        cls,
-        settings: Self,
-    ) -> p.Result[bool]:
-        """Validate Oracle tap configuration using FlextSettings patterns."""
-        return settings.validate_business_rules()
+    if TYPE_CHECKING:
+        TapOracle: _TapOracle
+    else:
+        TapOracle: _TapOracle = Field(
+            default_factory=_TapOracle,
+            description="Namespaced Oracle tap settings.",
+        )
 
 
 settings: FlextTapOracleSettings = FlextTapOracleSettings.fetch_global()
 """Pre-instantiated project settings singleton — ``from flext_tap_oracle import settings``."""
+
+__all__: list[str] = ["FlextTapOracleSettings", "settings"]

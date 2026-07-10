@@ -93,14 +93,13 @@ _LAZY_IMPORTS = build_lazy_import_map(
 
 
 __all__: tuple[str, ...] = (
-    "FlextTapOracleSettings",
-    "settings",
     "FlextTapOracleCli",
     "FlextTapOracleConstants",
     "FlextTapOracleDiscoverCommand",
     "FlextTapOracleModels",
     "FlextTapOracleProtocols",
     "FlextTapOracleService",
+    "FlextTapOracleSettings",
     "FlextTapOracleSyncCommand",
     "FlextTapOracleTypes",
     "FlextTapOracleUtilities",
@@ -120,6 +119,7 @@ __all__: tuple[str, ...] = (
     "p",
     "r",
     "s",
+    "settings",
     "t",
     "tap_oracle",
     "u",
