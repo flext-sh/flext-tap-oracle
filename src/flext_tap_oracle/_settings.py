@@ -30,13 +30,25 @@ class FlextTapOracleSettings(FlextMeltanoSettings):
     class _TapOracle(BaseModel):
         """Namespaced Oracle tap settings."""
 
-        oracle_host: Annotated[str, Field(default="localhost", description="Oracle host")]
-        oracle_port: Annotated[int, Field(default=1521, ge=1, le=65535, description="Oracle port")]
-        oracle_service_name: Annotated[str, Field(default="XEPDB1", description="Oracle service/SID")]
+        oracle_host: Annotated[
+            str, Field(default="localhost", description="Oracle host")
+        ]
+        oracle_port: Annotated[
+            int, Field(default=1521, ge=1, le=65535, description="Oracle port")
+        ]
+        oracle_service_name: Annotated[
+            str, Field(default="XEPDB1", description="Oracle service/SID")
+        ]
         oracle_user: Annotated[str, Field(default="", description="Oracle username")]
-        oracle_password: Annotated[str, Field(default="", description="Oracle password")]
-        batch_size: Annotated[int, Field(default=1000, ge=1, description="Extraction batch size")]
-        stream_prefix: Annotated[str, Field(default="", description="Singer stream name prefix")]
+        oracle_password: Annotated[
+            str, Field(default="", description="Oracle password")
+        ]
+        batch_size: Annotated[
+            int, Field(default=1000, ge=1, description="Extraction batch size")
+        ]
+        stream_prefix: Annotated[
+            str, Field(default="", description="Singer stream name prefix")
+        ]
 
     if TYPE_CHECKING:
         TapOracle: _TapOracle
