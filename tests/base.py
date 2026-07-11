@@ -13,11 +13,8 @@ from tests.settings import TestsFlextTapOracleSettings
 class TestsFlextTapOracleServiceBase(tests_s):
     """Tap Oracle test service base with source and test settings namespaces."""
 
-    @classmethod
-    @override
-    def fetch_settings(cls) -> TestsFlextTapOracleSettings:
-        """Return the typed Tap Oracle+Tests settings singleton."""
-
+    # NOTE (multi-agent): flext-tests owns fetch_settings; this project
+    # declares only its more-specific bootstrap settings type.
     @classmethod
     @override
     def _runtime_bootstrap_options(cls) -> m.RuntimeBootstrapOptions:

@@ -171,21 +171,23 @@ def skip_e2e_if_no_oracle() -> None:
 
 
 @pytest.fixture
-def tap_oracle_settings_overrides() -> dict[str, str | int]:
-    """Canonical test overrides for tap settings fixtures."""
+def tap_oracle_settings_overrides() -> dict[str, dict[str, str | int]]:
+    """Canonical nested test overrides for the ``TapOracle`` settings namespace."""
     return {
-        "oracle_host": c.TapOracle.Tests.UNIT_ORACLE_HOST,
-        "oracle_port": c.TapOracle.Tests.UNIT_ORACLE_PORT,
-        "oracle_service_name": c.TapOracle.Tests.UNIT_ORACLE_SERVICE_NAME,
-        "oracle_user": c.TapOracle.Tests.UNIT_ORACLE_USER,
-        "oracle_password": c.TapOracle.Tests.UNIT_ORACLE_PASSWORD,
-        "batch_size": c.TapOracle.Tests.UNIT_BATCH_SIZE,
+        "TapOracle": {
+            "oracle_host": c.TapOracle.Tests.UNIT_ORACLE_HOST,
+            "oracle_port": c.TapOracle.Tests.UNIT_ORACLE_PORT,
+            "oracle_service_name": c.TapOracle.Tests.UNIT_ORACLE_SERVICE_NAME,
+            "oracle_user": c.TapOracle.Tests.UNIT_ORACLE_USER,
+            "oracle_password": c.TapOracle.Tests.UNIT_ORACLE_PASSWORD,
+            "batch_size": c.TapOracle.Tests.UNIT_BATCH_SIZE,
+        },
     }
 
 
 @pytest.fixture
 def tap_oracle_create_params() -> dict[str, str | int]:
-    """Canonical create_oracle_tap_config params for tests."""
+    """Canonical ``TapOracle`` namespace payload for model-validate tests."""
     return {
         "oracle_host": c.TapOracle.Tests.CREATE_CONFIG_HOST,
         "oracle_port": c.TapOracle.Tests.CREATE_CONFIG_PORT,
