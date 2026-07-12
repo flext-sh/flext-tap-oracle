@@ -10,14 +10,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Annotated, Self
 
 from flext_db_oracle import FlextDbOracleModels
-from flext_meltano import FlextMeltanoModels, m, r, u
+from flext_meltano import FlextMeltanoModels, m, u
 
 if TYPE_CHECKING:
     from collections.abc import (
         MutableSequence,
     )
 
-    from flext_tap_oracle.protocols import p
     from flext_tap_oracle.typings import t
 
 
@@ -242,10 +241,6 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     return updated
                 return self
 
-            def validate_business_rules(self) -> p.Result[bool]:
-                """Validate execution stats business rules."""
-                return r[bool].ok(value=True)
-
         class OracleTapDiscoverParams(m.Entity):
             """Parameters for Oracle tap discover command."""
 
@@ -267,10 +262,6 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     config_file=str(config_file_value) if config_file_value else None,
                     output_file=str(output_file_value) if output_file_value else None,
                 )
-
-            def validate_business_rules(self) -> p.Result[bool]:
-                """Validate discover params business rules."""
-                return r[bool].ok(value=True)
 
         class OracleTapSyncParams(m.Entity):
             """Parameters for Oracle tap sync command."""
@@ -301,10 +292,6 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     else None,
                     state_file=str(state_file_value) if state_file_value else None,
                 )
-
-            def validate_business_rules(self) -> p.Result[bool]:
-                """Validate sync params business rules."""
-                return r[bool].ok(value=True)
 
 
 m = FlextTapOracleModels
