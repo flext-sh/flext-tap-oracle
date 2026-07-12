@@ -32,7 +32,7 @@ def docker_control() -> tk:
 
 @pytest.fixture(scope="session")
 def shared_oracle_container(docker_control: tk) -> Generator[str]:
-    """Managed Oracle container using tk with auto-start."""
+    """Manage the Oracle container using tk with auto-start."""
     ensure_result = docker_control.execute()
     if ensure_result.failure:
         pytest.skip(
@@ -66,7 +66,7 @@ def shared_oracle_container(docker_control: tk) -> Generator[str]:
 def oracle_shared_container_environment(
     shared_oracle_container: str,
 ) -> Generator[None]:
-    """Setup Oracle environment variables for shared container."""
+    """Set up Oracle environment variables for shared container."""
     _ = shared_oracle_container
     oracle_env_names: tuple[tuple[str, str], ...] = (
         (
