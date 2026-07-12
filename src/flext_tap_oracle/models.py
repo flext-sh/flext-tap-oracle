@@ -1,6 +1,5 @@
 """Models for flext-tap-oracle.
 
-from flext_tap_oracle.utilities import u
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
 
@@ -37,56 +36,6 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
     class TapOracle:
         """Tap Oracle  namespace for cross-project access."""
-
-        # Oracle Tap Domain - namespace metadata as static methods on plain class
-
-        @staticmethod
-        def get_active_model_names() -> t.StrSequence:
-            """List of active Oracle tap model names."""
-            return [
-                "OracleTapStreamMetadata",
-                "OracleTapDiscoveryConfig",
-                "OracleTapExtractionConfig",
-                "OracleTapPerformanceMetrics",
-                "OracleTapStreamInfo",
-                "OracleTapDiscoveryResult",
-                "OracleTapExecutionStats",
-                "OracleConnection",
-                "OracleQuery",
-                "OracleRecord",
-            ]
-
-        @staticmethod
-        def get_system_summary() -> t.TapOracle.SummaryData:
-            """Complete Singer Oracle tap system summary with database extraction capabilities."""
-            return {
-                "total_models": len(
-                    FlextTapOracleModels.TapOracle.get_active_model_names(),
-                ),
-                "tap_type": "singer_oracle_database_extractor",
-                "extraction_features": [
-                    "oracle_table_discovery",
-                    "incremental_replication",
-                    "full_table_extraction",
-                    "schema_introspection",
-                    "performance_monitoring",
-                    "connection_pooling",
-                ],
-                "singer_compliance": {
-                    "protocol_version": "singer_v1",
-                    "stream_discovery": True,
-                    "catalog_generation": True,
-                    "state_management": True,
-                    "incremental_bookmarking": True,
-                },
-                "oracle_capabilities": {
-                    "connection_pooling": True,
-                    "query_optimization": True,
-                    "batch_processing": True,
-                    "type_mapping": True,
-                    "schema_discovery": True,
-                },
-            }
 
         class _MetricsBase(m.Entity):
             """Shared metrics fields for Oracle tap operations."""
