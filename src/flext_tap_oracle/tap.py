@@ -218,7 +218,7 @@ class FlextTapOracleCli:
 
 
 def run_cli() -> int:
-    """Main CLI entry point using flext-meltano abstractions."""
+    """Run main CLI entry point using flext-meltano abstractions."""
     if "--discover" in sys.argv:
         result = FlextTapOracleCli.handle_discover_command()
         return 0 if result.success else 1
