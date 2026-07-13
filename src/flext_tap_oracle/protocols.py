@@ -17,7 +17,7 @@ from flext_db_oracle import FlextDbOracleProtocols
 from flext_meltano import FlextMeltanoProtocols, p as meltano_p
 
 if TYPE_CHECKING:
-    from flext_tap_oracle.typings import t
+    from flext_tap_oracle import t
 
 
 class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):

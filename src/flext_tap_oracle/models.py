@@ -17,7 +17,7 @@ if TYPE_CHECKING:
         MutableSequence,
     )
 
-    from flext_tap_oracle.typings import t
+    from flext_tap_oracle import t
 
 
 class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):

@@ -12,7 +12,7 @@ from typing import Annotated
 from flext_tests import FlextTestsModels
 
 from flext_tap_oracle import FlextTapOracleModels
-from tests.utilities import u
+from tests import u
 
 
 class TestsFlextTapOracleModels(FlextTestsModels, FlextTapOracleModels):

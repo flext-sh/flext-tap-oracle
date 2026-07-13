@@ -14,7 +14,7 @@ from flext_tests import FlextTestsProtocols
 from flext_tap_oracle import FlextTapOracleProtocols
 
 if TYPE_CHECKING:
-    from tests.typings import t
+    from tests import t
 
 
 class TestsFlextTapOracleProtocols(FlextTestsProtocols, FlextTapOracleProtocols):

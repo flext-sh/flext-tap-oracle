@@ -11,9 +11,8 @@ import pytest
 from flext_tests import reset_settings as _shared_reset_settings, tk
 
 from flext_tap_oracle import FlextTapOracleSettings
-from tests.constants import c
+from tests import c, u
 from tests.settings import TestsFlextTapOracleSettings
-from tests.utilities import u
 
 if TYPE_CHECKING:
     from collections.abc import Generator
