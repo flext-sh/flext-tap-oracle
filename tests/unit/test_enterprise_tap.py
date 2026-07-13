@@ -41,9 +41,7 @@ class TestsFlextTapOracleEnterpriseTap:
         oracle = config.TapOracle
         assert oracle.oracle_host == c.TapOracle.Tests.UNIT_ORACLE_HOST
         assert oracle.oracle_port == c.TapOracle.Tests.UNIT_ORACLE_PORT
-        assert (
-            oracle.oracle_service_name == c.TapOracle.Tests.UNIT_ORACLE_SERVICE_NAME
-        )
+        assert oracle.oracle_service_name == c.TapOracle.Tests.UNIT_ORACLE_SERVICE_NAME
         assert oracle.oracle_user == c.TapOracle.Tests.UNIT_ORACLE_USER
         assert oracle.oracle_password == c.TapOracle.Tests.UNIT_ORACLE_PASSWORD
 
