@@ -6,20 +6,16 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import (
+    Iterable,
+    Mapping,
+    MutableMapping,
+    Sequence,
+)
 from datetime import datetime
-from typing import TYPE_CHECKING
 
+from flext_db_oracle import FlextDbOracleApi
 from flext_tap_oracle import c, m, p, t, u
-
-if TYPE_CHECKING:
-    from collections.abc import (
-        Iterable,
-        Mapping,
-        MutableMapping,
-        Sequence,
-    )
-
-    from flext_db_oracle import FlextDbOracleApi
 
 
 class FlextTapOracleStreams:

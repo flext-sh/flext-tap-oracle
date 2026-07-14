@@ -10,15 +10,12 @@ SPDX-License-Identifier: MIT.
 from __future__ import annotations
 
 import sys
+from collections.abc import (
+    Callable,
+)
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 from flext_tap_oracle import FlextTapOracleSettings, c, e, m, p, r, t, u
-
-if TYPE_CHECKING:
-    from collections.abc import (
-        Callable,
-    )
 
 logger = u.fetch_logger(__name__)
 
