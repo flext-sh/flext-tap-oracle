@@ -8,9 +8,7 @@ import pytest
 from pydantic import ValidationError
 
 from flext_tap_oracle import FlextTapOracleSettings
-from tests.constants import c
-from tests.models import m
-from tests.utilities import u
+from tests import c, m, u
 
 
 class TestsFlextTapOracleEnterpriseTap:
