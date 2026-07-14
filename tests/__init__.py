@@ -39,7 +39,7 @@ if TYPE_CHECKING:
     )
     from tests.protocols import (
         TestsFlextTapOracleProtocols as TestsFlextTapOracleProtocols,
-        p as p,
+        p,
     )
     from tests.settings import (
         TestsFlextTapOracleSettings as TestsFlextTapOracleSettings,
@@ -53,7 +53,7 @@ if TYPE_CHECKING:
     )
     from tests.utilities import (
         TestsFlextTapOracleUtilities as TestsFlextTapOracleUtilities,
-        u as u,
+        u,
     )
 _LAZY_IMPORTS = merge_lazy_imports(
     (".unit",),

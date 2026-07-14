@@ -37,7 +37,7 @@ if TYPE_CHECKING:
     )
     from flext_tap_oracle.protocols import (
         FlextTapOracleProtocols as FlextTapOracleProtocols,
-        p as p,
+        p,
     )
     from flext_tap_oracle.tap import (
         FlextTapOracleCli as FlextTapOracleCli,
@@ -50,7 +50,7 @@ if TYPE_CHECKING:
     )
     from flext_tap_oracle.utilities import (
         FlextTapOracleUtilities as FlextTapOracleUtilities,
-        u as u,
+        u,
     )
 _LAZY_IMPORTS = build_lazy_import_map(
     {
