@@ -76,7 +76,7 @@ class FlextTapOracleStreams:
                 result: p.Result[Sequence[p.Dict]] = self.oracle_api.query(sql)
                 if result.success and result.value:
                     result_rows: t.SequenceOf[p.Dict] = result.value
-                    first_row: m.Dict = result_rows[0]
+                    first_row: p.Dict = result_rows[0]
                     first_val = next(iter(first_row.root.values()), None)
                     if isinstance(first_val, t.NUMERIC_TYPES) and not isinstance(
                         first_val,
@@ -179,7 +179,7 @@ class FlextTapOracleStreams:
         def _process_results_with_table_metadata(
             self,
             query_data: t.SequenceOf[p.Dict],
-            table_metadata: m.DbOracle.TableMetadata,
+            table_metadata: p.DbOracle.TableMetadata,
         ) -> Iterable[t.JsonMapping]:
             """Process results using flext-db-oracle table metadata."""
             columns = table_metadata.columns
@@ -201,7 +201,7 @@ class FlextTapOracleStreams:
 
         def _process_result_row(
             self,
-            row_data: m.Dict,
+            row_data: p.Dict,
             column_names: t.StrSequence,
             columns: t.SequenceOf[p.DbOracle.ColumnMetadata],
         ) -> t.JsonMapping:

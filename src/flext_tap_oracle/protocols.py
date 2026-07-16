@@ -15,7 +15,7 @@ from typing import Protocol, runtime_checkable
 
 from flext_db_oracle import FlextDbOracleProtocols
 from flext_meltano import FlextMeltanoProtocols, p as meltano_p
-from flext_tap_oracle import t
+from flext_tap_oracle import p, t
 
 
 class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
