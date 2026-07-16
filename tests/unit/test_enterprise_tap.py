@@ -99,7 +99,7 @@ class TestsFlextTapOracleEnterpriseTap:
         config = FlextTapOracleSettings.fetch_global(
             overrides=tap_oracle_settings_overrides,
         )
-        discovered_tables: Sequence[m.DbOracle.Table] = [
+        discovered_tables: Sequence[p.DbOracle.Table] = [
             m.DbOracle.Table(
                 name="USERS", owner="TESTDB", domain_events=[], columns=[]
             ),

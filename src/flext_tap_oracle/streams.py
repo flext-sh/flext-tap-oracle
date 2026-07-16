@@ -73,9 +73,9 @@ class FlextTapOracleStreams:
                     return None
                 safe_table_name = self.table_name.replace('"', '""')
                 sql: str = f'SELECT COUNT(*) FROM "{safe_table_name}"'  # nosec B608 — table name validated via isalnum()
-                result: p.Result[Sequence[m.Dict]] = self.oracle_api.query(sql)
+                result: p.Result[Sequence[p.Dict]] = self.oracle_api.query(sql)
                 if result.success and result.value:
-                    result_rows: t.SequenceOf[m.Dict] = result.value
+                    result_rows: t.SequenceOf[p.Dict] = result.value
                     first_row: m.Dict = result_rows[0]
                     first_val = next(iter(first_row.root.values()), None)
                     if isinstance(first_val, t.NUMERIC_TYPES) and not isinstance(
@@ -120,7 +120,7 @@ class FlextTapOracleStreams:
         def _fetch_rows_with_table_metadata(
             self,
             context: t.MappingKV[str, t.TapOracle.OracleValue] | None,
-        ) -> tuple[t.SequenceOf[m.Dict], m.DbOracle.TableMetadata]:
+        ) -> tuple[t.SequenceOf[p.Dict], m.DbOracle.TableMetadata]:
             """Fetch Oracle rows and table metadata for this stream."""
             _ = context
             with self.oracle_api as api:
@@ -132,7 +132,7 @@ class FlextTapOracleStreams:
                     raise RuntimeError(msg)
                 safe_table = self.table_name.replace('"', '""')
                 sql = f'SELECT * FROM "{safe_table}"'  # nosec B608
-                query_result: p.Result[Sequence[m.Dict]] = api.query(sql)
+                query_result: p.Result[Sequence[p.Dict]] = api.query(sql)
                 if query_result.failure:
                     error_msg: str = query_result.error or "unknown query error"
                     raise RuntimeError(error_msg)
@@ -178,7 +178,7 @@ class FlextTapOracleStreams:
 
         def _process_results_with_table_metadata(
             self,
-            query_data: t.SequenceOf[m.Dict],
+            query_data: t.SequenceOf[p.Dict],
             table_metadata: m.DbOracle.TableMetadata,
         ) -> Iterable[t.JsonMapping]:
             """Process results using flext-db-oracle table metadata."""
@@ -203,7 +203,7 @@ class FlextTapOracleStreams:
             self,
             row_data: m.Dict,
             column_names: t.StrSequence,
-            columns: t.SequenceOf[m.DbOracle.ColumnMetadata],
+            columns: t.SequenceOf[p.DbOracle.ColumnMetadata],
         ) -> t.JsonMapping:
             """Validate and transform one Oracle row."""
             record = t.Cli.JSON_MAPPING_ADAPTER.validate_python(row_data.root)
@@ -218,7 +218,7 @@ class FlextTapOracleStreams:
         def _transform_oracle_types(
             self,
             record: t.JsonMapping,
-            column_metadata: t.SequenceOf[m.DbOracle.ColumnMetadata],
+            column_metadata: t.SequenceOf[p.DbOracle.ColumnMetadata],
         ) -> t.JsonMapping:
             """Transform Oracle data types using flext-db-oracle type knowledge."""
             transformed_record: t.MutableJsonMapping = {}
