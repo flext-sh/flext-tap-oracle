@@ -1,8 +1,10 @@
-"""FlextTapOracleConfig — frozen config singleton for flext-tap-oracle (ADR-005 §7).
+"""FlextTapOracleConfig — frozen, validated config singleton for flext-tap-oracle.
 
-Model-less: business rules live in ``config/*.yaml`` under the ``TapOracle:`` key and
-are exposed through the open ``config.TapOracle`` namespace (``extra="allow"``), with
-no per-domain model. Access is ``config.TapOracle.<domain>[<key>...]``.
+Every ``config/*.yaml`` file is auto-discovered and deep-merged at first
+``fetch_global`` call (model-less, ``extra=allow`` at the FlextMeltanoConfig base).
+The flat YAML is then validated into the pure-Pydantic ``_models.config``
+shapes and exposed as typed domain objects under ``config.TapOracle`` — never a
+model-less dict subscript.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -10,21 +12,28 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from pydantic import BaseModel, ConfigDict
+from functools import cached_property
+from pathlib import Path
+from typing import ClassVar
 
 from flext_meltano import FlextMeltanoConfig
-
-
-class _TapOracleNamespace(BaseModel):
-    """Open, frozen namespace exposing every ``config/*.yaml`` domain model-less."""
-
-    model_config = ConfigDict(extra="allow", frozen=True)
+from flext_tap_oracle._models.config import FlextTapOracleConfigModels
 
 
 class FlextTapOracleConfig(FlextMeltanoConfig):
-    """TapOracle config auto-loaded model-less from ``config/*.yaml``."""
+    """Tap-oracle config auto-loaded from ``config/*.yaml`` and validated via models."""
 
-    TapOracle: _TapOracleNamespace = _TapOracleNamespace()
+    CONFIG_DIR: ClassVar[str] = str(
+        Path(__file__).resolve().parents[2] / "config",
+    )
+
+    @cached_property
+    def TapOracle(self) -> FlextTapOracleConfigModels.TapOracle:  # noqa: N802
+        """Validated ``TapOracle`` business-rule config namespace."""
+        root = FlextTapOracleConfigModels.Root.model_validate(
+            dict(self.model_extra or {}),
+        )
+        return root.TapOracle
 
 
 config: FlextTapOracleConfig = FlextTapOracleConfig.fetch_global()

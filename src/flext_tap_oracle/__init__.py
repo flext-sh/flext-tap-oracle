@@ -20,6 +20,7 @@ from flext_tap_oracle.__version__ import (
 if TYPE_CHECKING:
     from flext_db_oracle import d, e, h, r, s, x
 
+    from ._config import FlextTapOracleConfig, config
     from ._settings import FlextTapOracleSettings, settings
     from .api import FlextTapOracleService, tap_oracle
     from .constants import FlextTapOracleConstants, FlextTapOracleConstants as c
@@ -50,6 +51,8 @@ if TYPE_CHECKING:
         r,
         s,
         x,
+        config,
+        FlextTapOracleConfig,
         FlextTapOracleSettings,
         settings,
         FlextTapOracleService,
@@ -61,6 +64,10 @@ if TYPE_CHECKING:
 
 
 _LAZY_MODULES: dict[str, tuple[str, ...]] = {
+    "._config": (
+        "FlextTapOracleConfig",
+        "config",
+    ),
     "._settings": (
         "FlextTapOracleSettings",
         "settings",
@@ -116,6 +123,7 @@ _LAZY_IMPORTS = build_lazy_import_map(
 
 _DIRECT_IMPORTS: tuple[str, ...] = (
     "FlextTapOracleCli",
+    "FlextTapOracleConfig",
     "FlextTapOracleConstants",
     "FlextTapOracleDiscoverCommand",
     "FlextTapOracleModels",
@@ -152,6 +160,7 @@ _DIRECT_IMPORTS: tuple[str, ...] = (
 
 __all__: tuple[str, ...] = (
     "FlextTapOracleCli",
+    "FlextTapOracleConfig",
     "FlextTapOracleConstants",
     "FlextTapOracleDiscoverCommand",
     "FlextTapOracleModels",
@@ -170,6 +179,7 @@ __all__: tuple[str, ...] = (
     "__version__",
     "__version_info__",
     "c",
+    "config",
     "d",
     "e",
     "h",
