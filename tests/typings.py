@@ -12,27 +12,27 @@ from typing import Literal
 from flext_tests import FlextTestsTypes
 
 from flext_core import FlextTypes
-from flext_tap_oracle import FlextTapOracleTypes
+from flext_tap_oracle import t
 
 
-class TestsFlextTapOracleTypes(FlextTestsTypes, FlextTapOracleTypes):
+class TestsFlextTapOracleTypes(FlextTestsTypes, t):
     """Types for flext-tap-oracle tests - uses composition with TestsFlextTypes.
 
-    Architecture: Uses composition (not inheritance) with TestsFlextTypes and FlextTapOracleTypes
+    Architecture: Uses composition (not inheritance) with TestsFlextTypes and t
     for flext-tap-oracle-specific type definitions.
 
     Access patterns:
     - TestsFlextTapOracleTypes.Tests.* = flext_tests test types (via composition)
-    - TestsFlextTapOracleTypes.TapOracleTest.* = flext-tap-oracle-specific test types
+    - TestsFlextTapOracleTypes.Test.* = flext-tap-oracle-specific test types
     - TestsFlextTapOracleTypes.* = TestsFlextTypes types (via composition)
 
     Rules:
     - Use composition, not inheritance (TestsFlextTypes deprecates subclassing)
-    - flext-tap-oracle-specific types go in TapOracleTest namespace
+    - flext-tap-oracle-specific types go in Test namespace
     - Generic types accessed via Tests namespace
     """
 
-    class TapOracleTest:
+    class Test(FlextTestsTypes.Test):
         """Tap Oracle test types - domain-specific for Oracle tap testing.
 
         Contains test types specific to Oracle tap functionality including:

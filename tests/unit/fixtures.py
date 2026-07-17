@@ -21,7 +21,7 @@ reset_settings = _shared_reset_settings
 def docker_control() -> tk:
     """Provide Docker control instance for tests."""
     return tk.shared(
-        c.TapOracle.Tests.SHARED_CONTAINER_NAME,
+        c.Test.SHARED_CONTAINER_NAME,
         workspace_root=Path(__file__).resolve().parents[2],
     )
 
@@ -33,29 +33,26 @@ def shared_oracle_container(docker_control: tk) -> Generator[str]:
     if ensure_result.failure:
         pytest.skip(
             ensure_result.error
-            or (
-                "Oracle container "
-                f"{c.TapOracle.Tests.SHARED_CONTAINER_NAME} is unavailable"
-            ),
+            or (f"Oracle container {c.Test.SHARED_CONTAINER_NAME} is unavailable"),
         )
     resolved_port = next(
         (
             int(host_port)
             for container_port, host_port in ensure_result.value.ports.items()
-            if container_port.startswith(c.TapOracle.Tests.SHARED_CONTAINER_PORT_PREFIX)
+            if container_port.startswith(c.Test.SHARED_CONTAINER_PORT_PREFIX)
             and host_port.isdigit()
         ),
-        c.TapOracle.Tests.SHARED_CONTAINER_DEFAULT_PORT,
+        c.Test.SHARED_CONTAINER_DEFAULT_PORT,
     )
     with u.Tests.env_vars_context({
-        c.TapOracle.Tests.SHARED_ORACLE_HOST_ENV: c.TapOracle.Tests.SHARED_CONTAINER_HOST,
-        c.TapOracle.Tests.SHARED_ORACLE_PORT_ENV: str(resolved_port),
-        c.TapOracle.Tests.SHARED_ORACLE_USER_ENV: c.TapOracle.Tests.SHARED_CONTAINER_USER,
-        c.TapOracle.Tests.SHARED_ORACLE_PASSWORD_ENV: c.TapOracle.Tests.SHARED_CONTAINER_PASSWORD,
-        c.TapOracle.Tests.SHARED_ORACLE_SERVICE_ENV: c.TapOracle.Tests.SHARED_CONTAINER_SERVICE_NAME,
-        c.TapOracle.Tests.SHARED_ORACLE_SCHEMA_ENV: c.TapOracle.Tests.SHARED_CONTAINER_SCHEMA_NAME,
+        c.Test.SHARED_ORACLE_HOST_ENV: c.Test.SHARED_CONTAINER_HOST,
+        c.Test.SHARED_ORACLE_PORT_ENV: str(resolved_port),
+        c.Test.SHARED_ORACLE_USER_ENV: c.Test.SHARED_CONTAINER_USER,
+        c.Test.SHARED_ORACLE_PASSWORD_ENV: c.Test.SHARED_CONTAINER_PASSWORD,
+        c.Test.SHARED_ORACLE_SERVICE_ENV: c.Test.SHARED_CONTAINER_SERVICE_NAME,
+        c.Test.SHARED_ORACLE_SCHEMA_ENV: c.Test.SHARED_CONTAINER_SCHEMA_NAME,
     }):
-        yield c.TapOracle.Tests.SHARED_CONTAINER_NAME
+        yield c.Test.SHARED_CONTAINER_NAME
 
 
 @pytest.fixture(scope="session")
@@ -66,24 +63,24 @@ def oracle_shared_container_environment(
     _ = shared_oracle_container
     oracle_env_names: tuple[tuple[str, str], ...] = (
         (
-            c.TapOracle.Tests.ORACLE_HOST_ENV,
-            c.TapOracle.Tests.SHARED_ORACLE_HOST_ENV,
+            c.Test.ORACLE_HOST_ENV,
+            c.Test.SHARED_ORACLE_HOST_ENV,
         ),
         (
-            c.TapOracle.Tests.ORACLE_PORT_ENV,
-            c.TapOracle.Tests.SHARED_ORACLE_PORT_ENV,
+            c.Test.ORACLE_PORT_ENV,
+            c.Test.SHARED_ORACLE_PORT_ENV,
         ),
         (
-            c.TapOracle.Tests.ORACLE_USERNAME_ENV,
-            c.TapOracle.Tests.SHARED_ORACLE_USER_ENV,
+            c.Test.ORACLE_USERNAME_ENV,
+            c.Test.SHARED_ORACLE_USER_ENV,
         ),
         (
-            c.TapOracle.Tests.ORACLE_PASSWORD_ENV,
-            c.TapOracle.Tests.SHARED_ORACLE_PASSWORD_ENV,
+            c.Test.ORACLE_PASSWORD_ENV,
+            c.Test.SHARED_ORACLE_PASSWORD_ENV,
         ),
         (
-            c.TapOracle.Tests.ORACLE_SERVICE_NAME_ENV,
-            c.TapOracle.Tests.SHARED_ORACLE_SERVICE_ENV,
+            c.Test.ORACLE_SERVICE_NAME_ENV,
+            c.Test.SHARED_ORACLE_SERVICE_ENV,
         ),
     )
     with u.Tests.env_vars_context({
@@ -117,14 +114,12 @@ def set_test_environment(reset_tap_oracle_settings: None) -> Generator[None]:
     """Set test environment variables."""
     _ = reset_tap_oracle_settings
     with u.Tests.env_vars_context({
-        c.TapOracle.Tests.FLEXT_ENV_NAME: c.TapOracle.Tests.TEST_ENV_VALUE,
-        c.TapOracle.Tests.FLEXT_LOG_LEVEL_ENV: c.TapOracle.Tests.DEBUG_LOG_LEVEL,
-        c.TapOracle.Tests.SINGER_LOG_LEVEL_ENV: c.TapOracle.Tests.DEBUG_LOG_LEVEL,
-        c.TapOracle.Tests.TEST_MODE_ENV: c.TapOracle.Tests.TRUE_VALUE,
-        c.TapOracle.Tests.SHARED_ORACLE_USER_ENV: c.TapOracle.Tests.UNIT_ORACLE_USER,
-        c.TapOracle.Tests.SHARED_ORACLE_PASSWORD_ENV: (
-            c.TapOracle.Tests.UNIT_ORACLE_PASSWORD
-        ),
+        c.Test.FLEXT_ENV_NAME: c.Test.TEST_ENV_VALUE,
+        c.Test.FLEXT_LOG_LEVEL_ENV: c.Test.DEBUG_LOG_LEVEL,
+        c.Test.SINGER_LOG_LEVEL_ENV: c.Test.DEBUG_LOG_LEVEL,
+        c.Test.TEST_MODE_ENV: c.Test.TRUE_VALUE,
+        c.Test.SHARED_ORACLE_USER_ENV: c.Test.UNIT_ORACLE_USER,
+        c.Test.SHARED_ORACLE_PASSWORD_ENV: (c.Test.UNIT_ORACLE_PASSWORD),
     }):
         yield
 
@@ -136,27 +131,27 @@ def skip_e2e_if_no_oracle() -> None:
     if "/e2e/" not in fspath and "\\e2e\\" not in fspath:
         return
     host = os.environ.get(
-        c.TapOracle.Tests.ORACLE_HOST_ENV,
+        c.Test.ORACLE_HOST_ENV,
         os.environ.get(
-            c.TapOracle.Tests.SHARED_ORACLE_HOST_ENV,
-            c.TapOracle.Tests.SHARED_CONTAINER_HOST,
+            c.Test.SHARED_ORACLE_HOST_ENV,
+            c.Test.SHARED_CONTAINER_HOST,
         ),
     )
     port_str = os.environ.get(
-        c.TapOracle.Tests.ORACLE_PORT_ENV,
+        c.Test.ORACLE_PORT_ENV,
         os.environ.get(
-            c.TapOracle.Tests.SHARED_ORACLE_PORT_ENV,
-            str(c.TapOracle.Tests.UNIT_ORACLE_PORT),
+            c.Test.SHARED_ORACLE_PORT_ENV,
+            str(c.Test.UNIT_ORACLE_PORT),
         ),
     )
     try:
         port = int(port_str)
     except ValueError:
-        port = c.TapOracle.Tests.UNIT_ORACLE_PORT
+        port = c.Test.UNIT_ORACLE_PORT
     try:
         with socket.create_connection(
             (host, port),
-            timeout=c.TapOracle.Tests.SOCKET_TIMEOUT_SECONDS,
+            timeout=c.Test.SOCKET_TIMEOUT_SECONDS,
         ):
             return
     except OSError:
@@ -171,12 +166,12 @@ def tap_oracle_settings_overrides() -> dict[str, dict[str, str | int]]:
     """Canonical nested test overrides for the ``TapOracle`` settings namespace."""
     return {
         "TapOracle": {
-            "oracle_host": c.TapOracle.Tests.UNIT_ORACLE_HOST,
-            "oracle_port": c.TapOracle.Tests.UNIT_ORACLE_PORT,
-            "oracle_service_name": c.TapOracle.Tests.UNIT_ORACLE_SERVICE_NAME,
-            "oracle_user": c.TapOracle.Tests.UNIT_ORACLE_USER,
-            "oracle_password": c.TapOracle.Tests.UNIT_ORACLE_PASSWORD,
-            "batch_size": c.TapOracle.Tests.UNIT_BATCH_SIZE,
+            "oracle_host": c.Test.UNIT_ORACLE_HOST,
+            "oracle_port": c.Test.UNIT_ORACLE_PORT,
+            "oracle_service_name": c.Test.UNIT_ORACLE_SERVICE_NAME,
+            "oracle_user": c.Test.UNIT_ORACLE_USER,
+            "oracle_password": c.Test.UNIT_ORACLE_PASSWORD,
+            "batch_size": c.Test.UNIT_BATCH_SIZE,
         },
     }
 
@@ -185,9 +180,9 @@ def tap_oracle_settings_overrides() -> dict[str, dict[str, str | int]]:
 def tap_oracle_create_params() -> dict[str, str | int]:
     """Canonical ``TapOracle`` namespace payload for model-validate tests."""
     return {
-        "oracle_host": c.TapOracle.Tests.CREATE_CONFIG_HOST,
-        "oracle_port": c.TapOracle.Tests.CREATE_CONFIG_PORT,
-        "oracle_service_name": c.TapOracle.Tests.CREATE_CONFIG_SERVICE_NAME,
-        "oracle_user": c.TapOracle.Tests.CREATE_CONFIG_USER,
-        "oracle_password": c.TapOracle.Tests.CREATE_CONFIG_PASSWORD,
+        "oracle_host": c.Test.CREATE_CONFIG_HOST,
+        "oracle_port": c.Test.CREATE_CONFIG_PORT,
+        "oracle_service_name": c.Test.CREATE_CONFIG_SERVICE_NAME,
+        "oracle_user": c.Test.CREATE_CONFIG_USER,
+        "oracle_password": c.Test.CREATE_CONFIG_PASSWORD,
     }

@@ -21,13 +21,10 @@ class TestsFlextTapOracleEnterpriseTap:
         config = FlextTapOracleSettings.fetch_global(
             overrides=tap_oracle_settings_overrides,
         )
-        assert config.TapOracle.oracle_host == c.TapOracle.Tests.UNIT_ORACLE_HOST
-        assert config.TapOracle.oracle_port == c.TapOracle.Tests.UNIT_ORACLE_PORT
-        assert (
-            config.TapOracle.oracle_service_name
-            == c.TapOracle.Tests.UNIT_ORACLE_SERVICE_NAME
-        )
-        assert config.TapOracle.batch_size == c.TapOracle.Tests.UNIT_BATCH_SIZE
+        assert config.TapOracle.oracle_host == c.Test.UNIT_ORACLE_HOST
+        assert config.TapOracle.oracle_port == c.Test.UNIT_ORACLE_PORT
+        assert config.TapOracle.oracle_service_name == c.Test.UNIT_ORACLE_SERVICE_NAME
+        assert config.TapOracle.batch_size == c.Test.UNIT_BATCH_SIZE
 
     def test_oracle_namespace_exposes_full_connection_contract(
         self,
@@ -37,11 +34,11 @@ class TestsFlextTapOracleEnterpriseTap:
             overrides=tap_oracle_settings_overrides,
         )
         oracle = config.TapOracle
-        assert oracle.oracle_host == c.TapOracle.Tests.UNIT_ORACLE_HOST
-        assert oracle.oracle_port == c.TapOracle.Tests.UNIT_ORACLE_PORT
-        assert oracle.oracle_service_name == c.TapOracle.Tests.UNIT_ORACLE_SERVICE_NAME
-        assert oracle.oracle_user == c.TapOracle.Tests.UNIT_ORACLE_USER
-        assert oracle.oracle_password == c.TapOracle.Tests.UNIT_ORACLE_PASSWORD
+        assert oracle.oracle_host == c.Test.UNIT_ORACLE_HOST
+        assert oracle.oracle_port == c.Test.UNIT_ORACLE_PORT
+        assert oracle.oracle_service_name == c.Test.UNIT_ORACLE_SERVICE_NAME
+        assert oracle.oracle_user == c.Test.UNIT_ORACLE_USER
+        assert oracle.oracle_password == c.Test.UNIT_ORACLE_PASSWORD
 
     def test_oracle_credentials_are_plaintext_scalars(
         self,
@@ -68,12 +65,9 @@ class TestsFlextTapOracleEnterpriseTap:
         config = FlextTapOracleSettings.model_validate(
             {"TapOracle": tap_oracle_create_params},
         )
-        assert config.TapOracle.oracle_host == c.TapOracle.Tests.CREATE_CONFIG_HOST
-        assert config.TapOracle.oracle_port == c.TapOracle.Tests.CREATE_CONFIG_PORT
-        assert (
-            config.TapOracle.oracle_service_name
-            == c.TapOracle.Tests.CREATE_CONFIG_SERVICE_NAME
-        )
+        assert config.TapOracle.oracle_host == c.Test.CREATE_CONFIG_HOST
+        assert config.TapOracle.oracle_port == c.Test.CREATE_CONFIG_PORT
+        assert config.TapOracle.oracle_service_name == c.Test.CREATE_CONFIG_SERVICE_NAME
 
     def test_model_validate_applies_default_batch_and_prefix(
         self,

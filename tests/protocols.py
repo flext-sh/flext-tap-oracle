@@ -11,14 +11,14 @@ from typing import Protocol, runtime_checkable
 
 from flext_tests import FlextTestsProtocols
 
-from flext_tap_oracle import FlextTapOracleProtocols
-from tests import p, t
+from flext_tap_oracle import p
+from tests import t
 
 
-class TestsFlextTapOracleProtocols(FlextTestsProtocols, FlextTapOracleProtocols):
+class TestsFlextTapOracleProtocols(FlextTestsProtocols, p):
     """Protocols for flext-tap-oracle tests - uses composition with TestsFlextProtocols.
 
-    Architecture: Uses composition (not inheritance) with TestsFlextProtocols and FlextTapOracleProtocols
+    Architecture: Uses composition (not inheritance) with TestsFlextProtocols and p
     for flext-tap-oracle-specific protocol definitions.
 
     Access patterns:
@@ -32,84 +32,75 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols, FlextTapOracleProtocols)
     - Generic protocols accessed via Tests namespace
     """
 
-    class TapOracle:
-        """Tap Oracle test protocols — domain-specific for Oracle tap testing.
+    class Tests(FlextTestsProtocols.Test):
+        """Internal tests declarations."""
 
-        Hosts test-only protocols (``Tests.MockOracleConnection``,
-        ``Tests.TestDataProvider``, ``Tests.TestAssertion``). The parent
-        ``FlextTapOracleProtocols.TapOracle`` namespace was deleted as dead
-        code (no workspace consumers); these test-only entries now live
-        directly under the test facade.
-        """
+        @runtime_checkable
+        class MockOracleConnection(Protocol):
+            """Protocol for mock Oracle connections in tests."""
 
-        class Tests:
-            """Internal tests declarations."""
+            def connect(self) -> bool:
+                """Connect to mock Oracle database."""
+                ...
 
-            @runtime_checkable
-            class MockOracleConnection(Protocol):
-                """Protocol for mock Oracle connections in tests."""
+            def disconnect(self) -> bool:
+                """Disconnect from mock Oracle database."""
+                ...
 
-                def connect(self) -> bool:
-                    """Connect to mock Oracle database."""
-                    ...
+            def execute_query(
+                self,
+                query: str,
+                parameters: t.JsonMapping | None = None,
+            ) -> t.SequenceOf[t.JsonMapping]:
+                """Execute query on mock database."""
+                ...
 
-                def disconnect(self) -> bool:
-                    """Disconnect from mock Oracle database."""
-                    ...
+        @runtime_checkable
+        class TestDataProvider(Protocol):
+            """Protocol for test data providers."""
 
-                def execute_query(
-                    self,
-                    query: str,
-                    parameters: t.JsonMapping | None = None,
-                ) -> t.SequenceOf[t.JsonMapping]:
-                    """Execute query on mock database."""
-                    ...
+            def get_test_tables(self) -> t.SequenceOf[t.JsonMapping]:
+                """Get test table definitions."""
+                ...
 
-            @runtime_checkable
-            class TestDataProvider(Protocol):
-                """Protocol for test data providers."""
+            def get_test_data(
+                self,
+                table_name: str,
+            ) -> t.SequenceOf[t.JsonMapping]:
+                """Get test data for a table."""
+                ...
 
-                def get_test_tables(self) -> t.SequenceOf[t.JsonMapping]:
-                    """Get test table definitions."""
-                    ...
+            def get_test_config(self) -> t.JsonMapping:
+                """Get test configuration."""
+                ...
 
-                def get_test_data(
-                    self,
-                    table_name: str,
-                ) -> t.SequenceOf[t.JsonMapping]:
-                    """Get test data for a table."""
-                    ...
+        @runtime_checkable
+        class TestAssertion(Protocol):
+            """Protocol for test assertions."""
 
-                def get_test_config(self) -> t.JsonMapping:
-                    """Get test configuration."""
-                    ...
+            def assert_oracle_connection_successful(
+                self,
+                settings: t.JsonMapping,
+            ) -> None:
+                """Assert Oracle connection was successful."""
+                ...
 
-            @runtime_checkable
-            class TestAssertion(Protocol):
-                """Protocol for test assertions."""
+            def assert_singer_stream_valid(
+                self,
+                stream: t.JsonMapping,
+            ) -> None:
+                """Assert Singer stream is valid."""
+                ...
 
-                def assert_oracle_connection_successful(
-                    self,
-                    settings: t.JsonMapping,
-                ) -> None:
-                    """Assert Oracle connection was successful."""
-                    ...
-
-                def assert_singer_stream_valid(
-                    self,
-                    stream: t.JsonMapping,
-                ) -> None:
-                    """Assert Singer stream is valid."""
-                    ...
-
-                def assert_extraction_results_match(
-                    self,
-                    expected: t.SequenceOf[t.JsonMapping],
-                    actual: t.SequenceOf[t.JsonMapping],
-                ) -> None:
-                    """Assert extraction results match expected data."""
-                    ...
+            def assert_extraction_results_match(
+                self,
+                expected: t.SequenceOf[t.JsonMapping],
+                actual: t.SequenceOf[t.JsonMapping],
+            ) -> None:
+                """Assert extraction results match expected data."""
+                ...
 
 
 p = TestsFlextTapOracleProtocols
+
 __all__: list[str] = ["TestsFlextTapOracleProtocols", "p"]

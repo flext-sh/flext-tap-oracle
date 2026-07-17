@@ -30,7 +30,7 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities, FlextTapOracleUtilities)
     - Generic utilities accessed via Tests namespace
     """
 
-    class TapOracle(FlextTapOracleUtilities.TapOracle):
+    class Tests(FlextTestsUtilities.Tests):
         """Tap Oracle test utilities - domain-specific for Oracle tap testing.
 
         Contains test utilities specific to Oracle tap functionality including:
@@ -107,4 +107,5 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities, FlextTapOracleUtilities)
 
 
 u = TestsFlextTapOracleUtilities
+
 __all__: list[str] = ["TestsFlextTapOracleUtilities", "u"]
