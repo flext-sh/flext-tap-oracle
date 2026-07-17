@@ -7,14 +7,17 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import (
-    MutableSequence,
-)
-from typing import Annotated, Self
+from typing import TYPE_CHECKING, Annotated, Self
 
 from flext_db_oracle import FlextDbOracleModels
 from flext_meltano import FlextMeltanoModels, m, u
-from flext_tap_oracle import t
+
+if TYPE_CHECKING:
+    from collections.abc import (
+        MutableSequence,
+    )
+
+    from flext_tap_oracle import t
 
 
 class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):

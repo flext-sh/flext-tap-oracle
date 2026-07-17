@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from typing import TYPE_CHECKING
 
 import pytest
 from pydantic import ValidationError
 
 from flext_tap_oracle import FlextTapOracleSettings
 from tests import c, m, p, u
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 
 class TestsFlextTapOracleEnterpriseTap:
