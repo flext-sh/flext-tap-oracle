@@ -3,7 +3,7 @@
 # flext-tap-oracle API Overview
 
 - Package: `flext_tap_oracle`
-- Version: `0.12.0`
+- Version: `0.20.0`
 - Description: FLEXT Tap Oracle - Modern Singer Tap for Oracle Database
 - Doc summary: Flext Tap Oracle package.
 - Classifiers: `Development Status :: 3 - Alpha`, `Intended Audience :: Developers`, `Operating System :: OS Independent`, `Programming Language :: Python :: 3 :: Only`, `Programming Language :: Python :: 3.13`, `Topic :: Database` (+4 more)
