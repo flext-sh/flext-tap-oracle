@@ -13,15 +13,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
-from flext_db_oracle import FlextDbOracleProtocols
-from flext_meltano import FlextMeltanoProtocols, p as meltano_p
-from flext_tap_oracle import p
+from flext_db_oracle import p
+from flext_meltano import FlextMeltanoProtocols
 
 if TYPE_CHECKING:
     from flext_tap_oracle import t
 
 
-class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
+class FlextTapOracleProtocols(FlextMeltanoProtocols, p):
     """Singer Oracle tap protocols facade — composes Meltano + Oracle protocols."""
 
     class TapOracle:
@@ -31,7 +30,7 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
         class CommandRunner(Protocol):
             """Structural protocol for Oracle tap command execution."""
 
-            def execute(self) -> meltano_p.Result[t.JsonMapping]:
+            def execute(self) -> p.Result[t.JsonMapping]:
                 """Execute the Oracle tap command and return results."""
                 ...
 
@@ -43,4 +42,5 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
 
 
 p = FlextTapOracleProtocols
+
 __all__: list[str] = ["FlextTapOracleProtocols", "p"]
