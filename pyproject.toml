@@ -22,17 +22,17 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "fastapi>=0.136.1",
-  "flext-core",
-  "flext-db-oracle",
-  "flext-meltano",
-  "flext-observability",
-  "prometheus-client>=0.25.0",
-  "pydantic-core>=2.46.3",
-  "pydantic>=2.13.3",
-  "setuptools>=82.0.1",
-  "singer-sdk>=0.53.7",
-  "uvicorn>=0.46.0",
+    "fastapi>=0.136.1",
+    "flext-core @ git+https://github.com/flext-sh/flext-core.git@0.12.0-dev",
+    "flext-db-oracle @ git+https://github.com/flext-sh/flext-db-oracle.git@0.12.0-dev",
+    "flext-meltano @ git+https://github.com/flext-sh/flext-meltano.git@0.12.0-dev",
+    "flext-observability @ git+https://github.com/flext-sh/flext-observability.git@0.12.0-dev",
+    "prometheus-client>=0.25.0",
+    "pydantic-core>=2.46.3",
+    "pydantic>=2.13.3",
+    "setuptools>=82.0.1",
+    "singer-sdk>=0.53.7",
+    "uvicorn>=0.46.0",
 ]
 description = "FLEXT Tap Oracle - Modern Singer Tap for Oracle Database"
 keywords = [ "database", "enterprise", "etl", "flext", "integration", "oracle", "singer", "tap" ]
@@ -40,7 +40,7 @@ license = "MIT"
 name = "flext-tap-oracle"
 readme = "README.md"
 requires-python = ">=3.13,<3.14"
-version = "0.12.0"
+version = "0.12.0.rc0"
 
 [[project.authors]]
 email = "team@flext.sh"
@@ -751,19 +751,6 @@ all = true
 in_place = true
 sort_first = [ "build-system", "dependency-groups", "project", "tool" ]
 
-[tool.uv.sources.flext-core]
-workspace = true
-
-[tool.uv.sources.flext-db-oracle]
-workspace = true
-
-[tool.uv.sources.flext-meltano]
-workspace = true
-
-[tool.uv.sources.flext-observability]
-workspace = true
-
-# [MANAGED] yamlfix
 [tool.yamlfix]
 explicit_start = false
 line_length = 88
