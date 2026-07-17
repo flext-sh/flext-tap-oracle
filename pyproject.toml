@@ -221,24 +221,23 @@ project-excludes = [
   "**/typings/**",
   "**/vendor/**",
   "**/venv/**",
-  ".flext-deps/**",
   ".venv/**",
   "typings/**",
   "vendor/**",
 ]
-project-includes = [ "src/**/*.py*", "tests/**/*.py*" ]
+project-includes = [
+  "examples/**/*.py*",
+  "src/**/*.py*",
+  "tests/**/*.py*",
+]
 python-interpreter-path = "../.venv/bin/python"
 python-version = "3.13"
 search-path = [
   ".",
-  # mro-f1fe (agent: kimi-sweep): removed stale search-path to migrated examples (legado/)
   "../flext-cli/src",
-  "../flext-core/examples",
-  "../flext-core/scripts",
   "../flext-core/src",
   "../flext-db-oracle/src",
   "../flext-infra/src",
-  "../flext-infra/tmp_flow_test",
   "../flext-meltano/src",
   "../flext-observability/src",
   "../flext-tests/src",
