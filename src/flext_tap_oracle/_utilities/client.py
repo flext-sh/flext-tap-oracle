@@ -9,9 +9,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import (
-    Sequence,
-)
+from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
 from flext_db_oracle import FlextDbOracleApi, FlextDbOracleModels

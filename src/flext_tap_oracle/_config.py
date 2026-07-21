@@ -28,7 +28,7 @@ class FlextTapOracleConfig(FlextMeltanoConfig):
     )
 
     @cached_property
-    def TapOracle(self) -> FlextTapOracleConfigModels.TapOracle:  # noqa: N802
+    def TapOracle(self) -> FlextTapOracleConfigModels.TapOracle:
         """Validated ``TapOracle`` business-rule config namespace."""
         root = FlextTapOracleConfigModels.Root.model_validate(
             dict(self.model_extra or {}),

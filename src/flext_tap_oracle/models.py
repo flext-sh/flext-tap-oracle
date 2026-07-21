@@ -13,9 +13,7 @@ from flext_db_oracle import m, u
 from flext_meltano import FlextMeltanoModels
 
 if TYPE_CHECKING:
-    from collections.abc import (
-        MutableSequence,
-    )
+    from collections.abc import MutableSequence
 
     from flext_tap_oracle import t
 

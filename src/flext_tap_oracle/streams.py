@@ -12,12 +12,7 @@ from typing import TYPE_CHECKING
 from flext_tap_oracle import c, m, p, t, u
 
 if TYPE_CHECKING:
-    from collections.abc import (
-        Iterable,
-        Mapping,
-        MutableMapping,
-        Sequence,
-    )
+    from collections.abc import Iterable, Mapping, MutableMapping, Sequence
 
     from flext_db_oracle import FlextDbOracleApi
 
