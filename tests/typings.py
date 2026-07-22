@@ -9,10 +9,9 @@ from __future__ import annotations
 
 from typing import Literal
 
-from flext_tests import FlextTestsTypes
-
 from flext_core import FlextTypes
 from flext_tap_oracle import FlextTapOracleTypes
+from flext_tests import FlextTestsTypes
 
 
 class TestsFlextTapOracleTypes(FlextTestsTypes, FlextTapOracleTypes):
@@ -46,8 +45,7 @@ class TestsFlextTapOracleTypes(FlextTestsTypes, FlextTapOracleTypes):
         type MockOracleTable = t.SequenceOf[MockOracleRecord]
         type TestScenario = FlextTestsTypes.JsonMapping
         type TestValidationResult = t.MappingKV[
-            str,
-            bool | str | FlextTestsTypes.StrSequence,
+            str, bool | str | FlextTestsTypes.StrSequence
         ]
         type TestPerformanceResult = t.MappingKV[str, float | int | str]
 

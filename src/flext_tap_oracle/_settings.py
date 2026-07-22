@@ -22,9 +22,7 @@ class FlextTapOracleSettings(FlextMeltanoSettings):
     """Oracle Singer tap settings; fields under ``settings.TapOracle.*``."""
 
     model_config = SettingsConfigDict(
-        env_prefix="FLEXT_TAP_ORACLE_",
-        env_nested_delimiter="__",
-        extra="ignore",
+        env_prefix="FLEXT_TAP_ORACLE_", env_nested_delimiter="__", extra="ignore"
     )
 
     class _TapOracle(BaseModel):
@@ -54,8 +52,7 @@ class FlextTapOracleSettings(FlextMeltanoSettings):
         TapOracle: _TapOracle
     else:
         TapOracle: _TapOracle = Field(
-            default_factory=_TapOracle,
-            description="Namespaced Oracle tap settings.",
+            default_factory=_TapOracle, description="Namespaced Oracle tap settings."
         )
 
 

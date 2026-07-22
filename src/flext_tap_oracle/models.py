@@ -13,9 +13,7 @@ from flext_db_oracle import FlextDbOracleModels
 from flext_meltano import FlextMeltanoModels, m, u
 
 if TYPE_CHECKING:
-    from collections.abc import (
-        MutableSequence,
-    )
+    from collections.abc import MutableSequence
 
     from flext_tap_oracle import t
 
@@ -40,32 +38,25 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             """Shared metrics fields for Oracle tap operations."""
 
             total_records: Annotated[
-                t.NonNegativeInt,
-                u.Field(description="Total records extracted"),
+                t.NonNegativeInt, u.Field(description="Total records extracted")
             ] = 0
             total_bytes: Annotated[
-                t.NonNegativeInt,
-                u.Field(description="Total bytes processed"),
+                t.NonNegativeInt, u.Field(description="Total bytes processed")
             ] = 0
             streams_processed: Annotated[
-                t.NonNegativeInt,
-                u.Field(description="Number of streams processed"),
+                t.NonNegativeInt, u.Field(description="Number of streams processed")
             ] = 0
             avg_records_per_second: Annotated[
-                t.NonNegativeFloat,
-                u.Field(description="Average records per second"),
+                t.NonNegativeFloat, u.Field(description="Average records per second")
             ] = 0.0
             avg_bytes_per_second: Annotated[
-                t.NonNegativeFloat,
-                u.Field(description="Average bytes per second"),
+                t.NonNegativeFloat, u.Field(description="Average bytes per second")
             ] = 0.0
             oracle_connection_time: Annotated[
-                t.NonNegativeFloat,
-                u.Field(description="Oracle connection time"),
+                t.NonNegativeFloat, u.Field(description="Oracle connection time")
             ] = 0.0
             oracle_query_time: Annotated[
-                t.NonNegativeFloat,
-                u.Field(description="Total Oracle query time"),
+                t.NonNegativeFloat, u.Field(description="Total Oracle query time")
             ] = 0.0
 
         class OracleTapExecutionStats(_MetricsBase):
@@ -77,46 +68,31 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Execution metadata
             execution_id: Annotated[
-                t.NonEmptyStr,
-                u.Field(..., description="Unique execution identifier"),
+                t.NonEmptyStr, u.Field(..., description="Unique execution identifier")
             ]
             start_timestamp: Annotated[
-                str,
-                u.Field(..., description="Execution start time"),
+                str, u.Field(..., description="Execution start time")
             ]
             end_timestamp: Annotated[
-                str | None,
-                u.Field(None, description="Execution end time"),
+                str | None, u.Field(None, description="Execution end time")
             ]
 
             # Execution-specific metrics
             duration_seconds: Annotated[
-                t.NonNegativeFloat,
-                u.Field(
-                    description="Total execution duration",
-                ),
+                t.NonNegativeFloat, u.Field(description="Total execution duration")
             ] = 0.0
 
             # Error tracking
             errors_encountered: Annotated[
-                t.NonNegativeInt,
-                u.Field(
-                    description="Number of errors encountered",
-                ),
+                t.NonNegativeInt, u.Field(description="Number of errors encountered")
             ] = 0
             failed_streams: Annotated[
-                MutableSequence[str],
-                u.Field(
-                    description="Names of failed streams",
-                ),
+                MutableSequence[str], u.Field(description="Names of failed streams")
             ] = u.Field(default_factory=list)
 
             # Oracle-specific execution metrics
             oracle_result_processing_time: Annotated[
-                t.NonNegativeFloat,
-                u.Field(
-                    description="Result processing time",
-                ),
+                t.NonNegativeFloat, u.Field(description="Result processing time")
             ] = 0.0
 
             @u.computed_field()
@@ -126,7 +102,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 success_rate = 0.0
                 if self.streams_processed > 0:
                     successful_streams = self.streams_processed - len(
-                        self.failed_streams,
+                        self.failed_streams
                     )
                     success_rate = successful_streams / self.streams_processed
 
@@ -170,10 +146,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 }
 
             def add_stream_stats(
-                self,
-                records: int,
-                bytes_processed: int,
-                processing_time: float,
+                self, records: int, bytes_processed: int, processing_time: float
             ) -> FlextTapOracleModels.TapOracle.OracleTapExecutionStats:
                 """Return new instance with added statistics for a processed stream."""
                 updated: FlextTapOracleModels.TapOracle.OracleTapExecutionStats = self.model_copy(
@@ -183,13 +156,12 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                         "total_bytes": self.total_bytes + bytes_processed,
                         "oracle_result_processing_time": self.oracle_result_processing_time
                         + processing_time,
-                    },
+                    }
                 )
                 return updated.update_performance_metrics()
 
             def mark_stream_error(
-                self,
-                stream_name: str,
+                self, stream_name: str
             ) -> FlextTapOracleModels.TapOracle.OracleTapExecutionStats:
                 """Return new instance with marked stream error."""
                 new_failed_streams: MutableSequence[str] = (
@@ -202,7 +174,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                         update={
                             "errors_encountered": self.errors_encountered + 1,
                             "failed_streams": new_failed_streams,
-                        },
+                        }
                     )
                 )
                 return updated
@@ -235,7 +207,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                                 / self.duration_seconds,
                                 "avg_bytes_per_second": self.total_bytes
                                 / self.duration_seconds,
-                            },
+                            }
                         )
                     )
                     return updated
@@ -249,8 +221,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 u.Field(description="Path to configuration file", default=None),
             ]
             output_file: Annotated[
-                str | None,
-                u.Field(description="Path to output file", default=None),
+                str | None, u.Field(description="Path to output file", default=None)
             ]
 
             @classmethod
@@ -271,12 +242,10 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 u.Field(description="Path to configuration file", default=None),
             ]
             catalog_file: Annotated[
-                str | None,
-                u.Field(description="Path to catalog file", default=None),
+                str | None, u.Field(description="Path to catalog file", default=None)
             ]
             state_file: Annotated[
-                str | None,
-                u.Field(description="Path to state file", default=None),
+                str | None, u.Field(description="Path to state file", default=None)
             ]
 
             @classmethod

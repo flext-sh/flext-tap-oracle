@@ -10,9 +10,8 @@ from __future__ import annotations
 
 from typing import Final
 
-from flext_tests import FlextTestsConstants
-
 from flext_tap_oracle import FlextTapOracleConstants
+from flext_tests import FlextTestsConstants
 
 
 class TestsFlextTapOracleConstants(FlextTestsConstants, FlextTapOracleConstants):

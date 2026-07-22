@@ -12,12 +12,7 @@ from typing import TYPE_CHECKING
 from flext_tap_oracle import c, m, p, t, u
 
 if TYPE_CHECKING:
-    from collections.abc import (
-        Iterable,
-        Mapping,
-        MutableMapping,
-        Sequence,
-    )
+    from collections.abc import Iterable, Mapping, MutableMapping, Sequence
 
     from flext_db_oracle import FlextDbOracleApi
 
@@ -71,8 +66,7 @@ class FlextTapOracleStreams:
                 )
                 if not self.table_name or not cleaned_name.isalnum():
                     FlextTapOracleStreams.logger.warning(
-                        "Invalid table name for count estimation: %s",
-                        self.table_name,
+                        "Invalid table name for count estimation: %s", self.table_name
                     )
                     return None
                 safe_table_name = self.table_name.replace('"', '""')
@@ -83,8 +77,7 @@ class FlextTapOracleStreams:
                     first_row: m.Dict = result_rows[0]
                     first_val = next(iter(first_row.root.values()), None)
                     if isinstance(first_val, t.NUMERIC_TYPES) and not isinstance(
-                        first_val,
-                        bool,
+                        first_val, bool
                     ):
                         return int(first_val)
                     match first_val:
@@ -99,31 +92,26 @@ class FlextTapOracleStreams:
             except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
                 err_msg = str(e)
                 FlextTapOracleStreams.logger.warning(
-                    "Failed to estimate row count for %s: %s",
-                    self.table_name,
-                    err_msg,
+                    "Failed to estimate row count for %s: %s", self.table_name, err_msg
                 )
                 return None
 
         def get_records(
-            self,
-            context: t.MappingKV[str, t.TapOracle.OracleValue] | None = None,
+            self, context: t.MappingKV[str, t.TapOracle.OracleValue] | None = None
         ) -> Iterable[Mapping[str, t.TapOracle.OracleValue]]:
             """Get records from Oracle table using flext-db-oracle exclusively - NO direct SQLAlchemy."""
             try:
                 rows, table_metadata = self._fetch_rows_with_table_metadata(context)
             except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
                 FlextTapOracleStreams.logger.exception(
-                    "Error getting records from %s",
-                    self.table_name,
+                    "Error getting records from %s", self.table_name
                 )
                 msg = f"Failed to get records: {e}"
                 raise RuntimeError(msg) from e
             yield from self._process_results_with_table_metadata(rows, table_metadata)
 
         def _fetch_rows_with_table_metadata(
-            self,
-            context: t.MappingKV[str, t.TapOracle.OracleValue] | None,
+            self, context: t.MappingKV[str, t.TapOracle.OracleValue] | None
         ) -> tuple[t.SequenceOf[m.Dict], m.DbOracle.TableMetadata]:
             """Fetch Oracle rows and table metadata for this stream."""
             _ = context
@@ -156,7 +144,7 @@ class FlextTapOracleStreams:
             """Get Oracle table information using flext-db-oracle metadata."""
             try:
                 table_metadata_result = self.oracle_api.fetch_table_metadata(
-                    self.table_name,
+                    self.table_name
                 )
                 if table_metadata_result.success:
                     table = table_metadata_result.value
@@ -166,9 +154,7 @@ class FlextTapOracleStreams:
                         "stream_name": self.name,
                         "column_count": len(columns) if u.list_like(columns) else 0,
                         "oracle_schema": getattr(
-                            table,
-                            "schema_name",
-                            c.TapOracle.DEFAULT_OPERATION_NAME,
+                            table, "schema_name", c.TapOracle.DEFAULT_OPERATION_NAME
                         ),
                         "table_type": getattr(table, "table_type", "TABLE"),
                     }
@@ -229,9 +215,7 @@ class FlextTapOracleStreams:
             meta_lookup: MutableMapping[str, m.DbOracle.ColumnMetadata] = {}
             for col_meta_value in column_metadata:
                 col_name = getattr(col_meta_value, "name", None) or getattr(
-                    col_meta_value,
-                    "column_name",
-                    None,
+                    col_meta_value, "column_name", None
                 )
                 if isinstance(col_name, str) and col_name:
                     meta_lookup[col_name] = col_meta_value
@@ -243,9 +227,7 @@ class FlextTapOracleStreams:
                 oracle_type = None
                 if col_meta is not None:
                     oracle_type = getattr(col_meta, "data_type", None) or getattr(
-                        col_meta,
-                        "type",
-                        None,
+                        col_meta, "type", None
                     )
                 oracle_type_str = str(oracle_type) if oracle_type else ""
                 if oracle_type_str and oracle_type_str.upper().startswith((

@@ -8,9 +8,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
-from flext_tests import reset_settings as _shared_reset_settings, tk
 
 from flext_tap_oracle import FlextTapOracleSettings
+from flext_tests import reset_settings as _shared_reset_settings, tk
 from tests import c, u
 from tests.settings import TestsFlextTapOracleSettings
 
@@ -39,7 +39,7 @@ def shared_oracle_container(docker_control: tk) -> Generator[str]:
             or (
                 "Oracle container "
                 f"{c.TapOracle.Tests.SHARED_CONTAINER_NAME} is unavailable"
-            ),
+            )
         )
     resolved_port = next(
         (
@@ -68,14 +68,8 @@ def oracle_shared_container_environment(
     """Set up Oracle environment variables for shared container."""
     _ = shared_oracle_container
     oracle_env_names: tuple[tuple[str, str], ...] = (
-        (
-            c.TapOracle.Tests.ORACLE_HOST_ENV,
-            c.TapOracle.Tests.SHARED_ORACLE_HOST_ENV,
-        ),
-        (
-            c.TapOracle.Tests.ORACLE_PORT_ENV,
-            c.TapOracle.Tests.SHARED_ORACLE_PORT_ENV,
-        ),
+        (c.TapOracle.Tests.ORACLE_HOST_ENV, c.TapOracle.Tests.SHARED_ORACLE_HOST_ENV),
+        (c.TapOracle.Tests.ORACLE_PORT_ENV, c.TapOracle.Tests.SHARED_ORACLE_PORT_ENV),
         (
             c.TapOracle.Tests.ORACLE_USERNAME_ENV,
             c.TapOracle.Tests.SHARED_ORACLE_USER_ENV,
@@ -158,8 +152,7 @@ def skip_e2e_if_no_oracle() -> None:
         port = c.TapOracle.Tests.UNIT_ORACLE_PORT
     try:
         with socket.create_connection(
-            (host, port),
-            timeout=c.TapOracle.Tests.SOCKET_TIMEOUT_SECONDS,
+            (host, port), timeout=c.TapOracle.Tests.SOCKET_TIMEOUT_SECONDS
         ):
             return
     except OSError:
@@ -180,7 +173,7 @@ def tap_oracle_settings_overrides() -> dict[str, dict[str, str | int]]:
             "oracle_user": c.TapOracle.Tests.UNIT_ORACLE_USER,
             "oracle_password": c.TapOracle.Tests.UNIT_ORACLE_PASSWORD,
             "batch_size": c.TapOracle.Tests.UNIT_BATCH_SIZE,
-        },
+        }
     }
 
 
