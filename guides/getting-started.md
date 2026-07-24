@@ -108,7 +108,7 @@ container = FlextContainer()
 # Register services (example)
 # container.bind(IService, ServiceImplementation())
 
-u.Cli.print("FLEXT application initialized!")
+u.Cli.info("FLEXT application initialized!")
 ```
 
 ### 2. Using flext-ldif for LDIF Processing
@@ -124,12 +124,12 @@ cn: test
 sn: user
 objectClass: inetOrgPerson"""
 
-result = ldif.parse(ldif_content)
+result = ldif.parse_string(ldif_content)
 if result.success:
     entries = result.unwrap()
-    u.Cli.print(f"Successfully parsed {len(entries)} LDIF entries")
+    u.Cli.info(f"Successfully parsed {len(entries)} LDIF entries")
 else:
-    u.Cli.print(f"Failed to parse LDIF: {result.failure()}")
+    u.Cli.info(f"Failed to parse LDIF: {result.error}")
 ```
 
 ### 3. Railway-Oriented Error Handling
@@ -140,20 +140,20 @@ from flext_cli import u
 from flext_core import FlextSettings
 
 
-def process_ldif_data(content: str) -> p.Result[str, Exception]:
+def process_ldif_data(content: str) -> p.Result[str]:
     # Parse LDIF
-    parse_result = ldif.parse(content)
+    parse_result = ldif.parse_string(content)
     if parse_result.failure:
-        return r.failure(parse_result.failure())
+        return r.fail(parse_result.error)
 
     entries = parse_result.unwrap()
 
     # Process entries
     try:
         processed_data = process_entries(entries)
-        return r.success(processed_data)
+        return r.ok(processed_data)
     except Exception as e:
-        return r.failure(e)
+        return r.fail(e)
 
 
 def process_entries(entries: list) -> str:
@@ -164,9 +164,9 @@ def process_entries(entries: list) -> str:
 # Usage
 result = process_ldif_data(ldif_content)
 if result.success:
-    u.Cli.print(f"Success: {result.unwrap()}")
+    u.Cli.info(f"Success: {result.unwrap()}")
 else:
-    u.Cli.print(f"Error: {result.failure()}")
+    u.Cli.info(f"Error: {result.error}")
 ```
 
 ### 4. CQRS Pattern with Commands and Queries
@@ -190,13 +190,13 @@ class GetUserQuery:
 
 
 class UserService:
-    def create_user(self, cmd: CreateUserCommand) -> p.Result[str, Exception]:
+    def create_user(self, cmd: CreateUserCommand) -> p.Result[str]:
         # Create user logic
-        return r.success(f"User {cmd.username} created")
+        return r.ok(f"User {cmd.username} created")
 
-    def get_user(self, query: GetUserQuery) -> p.Result[str, Exception]:
+    def get_user(self, query: GetUserQuery) -> p.Result[str]:
         # Get user logic
-        return r.success(f"User {query.user_id} data")
+        return r.ok(f"User {query.user_id} data")
 
 
 # Setup dispatcher

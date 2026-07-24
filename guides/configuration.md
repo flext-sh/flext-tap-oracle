@@ -220,7 +220,7 @@ try:
         log_level="INVALID_LEVEL"  # This will raise ValidationError
     )
 except c.ValidationError as e:
-    u.Cli.print(f"Configuration error: {e}")
+    u.Cli.info(f"Configuration error: {e}")
 ```
 
 ## Configuration Inheritance
@@ -265,7 +265,7 @@ def main():
     settings = FlextSettings()
 
     if not settings.is_valid():
-        u.Cli.print("Invalid configuration")
+        u.Cli.info("Invalid configuration")
         return 1
 
     # Continue with application logic
@@ -342,13 +342,13 @@ from flext_core import FlextSettings
 settings = FlextSettings(debug=True)
 
 # Print configuration
-u.Cli.print(settings.dict())
+u.Cli.info(settings.model_dump())
 
 # Validate configuration
 if settings.is_valid():
-    u.Cli.print("Configuration is valid")
+    u.Cli.info("Configuration is valid")
 else:
-    u.Cli.print("Configuration has errors")
+    u.Cli.info("Configuration has errors")
 ```
 
 ## Examples
@@ -385,10 +385,10 @@ def main():
         timeout=int(os.getenv("FLEXT_API_TIMEOUT", "30")),
     )
 
-    u.Cli.print("Configuration loaded successfully")
-    u.Cli.print(f"Log level: {settings.log_level}")
-    u.Cli.print(f"LDIF batch size: {ldif_config.batch_size}")
-    u.Cli.print(f"API base URL: {api_config.base_url}")
+    u.Cli.info("Configuration loaded successfully")
+    u.Cli.info(f"Log level: {settings.log_level}")
+    u.Cli.info(f"LDIF batch size: {ldif_config.batch_size}")
+    u.Cli.info(f"API base URL: {api_config.base_url}")
 
 
 if __name__ == "__main__":

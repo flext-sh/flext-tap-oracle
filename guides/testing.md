@@ -88,7 +88,7 @@ class TestLdifParsing:
 cn: test
 objectClass: inetOrgPerson"""
 
-        result = ldif.parse(content)
+        result = ldif.parse_string(content)
 
         assert result.success
         entries = result.unwrap()
@@ -99,10 +99,10 @@ objectClass: inetOrgPerson"""
         """Test parsing invalid LDIF content."""
                 content = "invalid ldif content"
 
-        result = ldif.parse(content)
+        result = ldif.parse_string(content)
 
         assert result.failure
-        assert "parsing" in str(result.failure()).lower()
+        assert "parsing" in str(result.error).lower()
 ```
 
 ### Integration Tests
@@ -391,7 +391,7 @@ def test_concurrent_processing():
         content = "dn: test\ncn: test"
 
     def process_entry():
-        return ldif.parse(content)
+        return ldif.parse_string(content)
 
     # Run concurrent processing
     start_time = time.time()
@@ -427,7 +427,7 @@ def test_memory_usage():
     # Process large dataset
         large_content = "dn: test\ncn: test\n" * 10000
 
-    result = ldif.parse(large_content)
+    result = ldif.parse_string(large_content)
     assert result.success
 
     # Check memory usage (should not exceed 100MB)
@@ -592,7 +592,7 @@ from __future__ import annotations
 
 # ✅ GOOD - Specific assertions
 def test_parse_result():
-    result = ldif.parse(content)
+    result = ldif.parse_string(content)
 
     assert result.success
     entries = result.unwrap()
@@ -603,7 +603,7 @@ def test_parse_result():
 
 # ❌ BAD - Vague assertions
 def test_parse_result():
-    result = ldif.parse(content)
+    result = ldif.parse_string(content)
     assert result  # Too vague
 ```
 
@@ -616,13 +616,13 @@ from __future__ import annotations
 # ✅ GOOD - Independent tests
 def test_parse_valid_ldif():
     ldif = ldif()  # Fresh instance
-    result = ldif.parse("dn: test")
+    result = ldif.parse_string("dn: test")
     assert result.success
 
 
 def test_parse_invalid_ldif():
     ldif = ldif()  # Fresh instance
-    result = ldif.parse("invalid")
+    result = ldif.parse_string("invalid")
     assert result.failure
 
 
@@ -631,12 +631,12 @@ ldif = ldif()  # Shared instance
 
 
 def test_parse_valid_ldif():
-    result = ldif.parse("dn: test")
+    result = ldif.parse_string("dn: test")
     assert result.success
 
 
 def test_parse_invalid_ldif():
-    result = ldif.parse("invalid")
+    result = ldif.parse_string("invalid")
     assert result.failure
 ```
 

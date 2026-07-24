@@ -255,7 +255,7 @@ class TestDataProcessing:
         result = process_data(None)
 
         assert result.failure
-        assert "Data required" in result.failure()
+        assert "Data required" in result.error
 ```
 
 ## Quality Gates
@@ -369,7 +369,7 @@ pytest tests/unit/test_module.py --pdb
 ```bash
 # Verify PYTHONPATH
 export PYTHONPATH=src
-python -c "import flext_core; u.Cli.print(flext_core.__file__)"
+python -c "import flext_core; u.Cli.info(flext_core.__file__)"
 
 # Check poetry environment
 poetry env info
