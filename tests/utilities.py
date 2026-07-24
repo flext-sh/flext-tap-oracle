@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+import os
 from typing import TYPE_CHECKING
 
 from flext_tap_oracle import FlextTapOracleUtilities
@@ -49,7 +50,7 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities, FlextTapOracleUtilities)
             port: int = 1521,
             service_name: str = "XE",
             username: str = "test",
-            password: str = "test",
+            password: str = os.getenv("ORACLE_PASSWORD", ""),
             **kwargs: t.JsonValue,
         ) -> t.JsonMapping:
             """Create test Oracle configuration."""
