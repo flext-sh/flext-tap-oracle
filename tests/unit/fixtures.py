@@ -24,8 +24,7 @@ reset_settings = _shared_reset_settings
 def docker_control() -> tk:
     """Provide Docker control instance for tests."""
     return tk.shared(
-        c.Test.SHARED_CONTAINER_NAME,
-        workspace_root=Path(__file__).resolve().parents[2],
+        c.Test.SHARED_CONTAINER_NAME, workspace_root=Path(__file__).resolve().parents[2]
     )
 
 
@@ -36,7 +35,7 @@ def shared_oracle_container(docker_control: tk) -> Generator[str]:
     if ensure_result.failure:
         pytest.skip(
             ensure_result.error
-            or (f"Oracle container {c.Test.SHARED_CONTAINER_NAME} is unavailable"),
+            or (f"Oracle container {c.Test.SHARED_CONTAINER_NAME} is unavailable")
         )
     resolved_port = next(
         (
@@ -65,26 +64,11 @@ def oracle_shared_container_environment(
     """Set up Oracle environment variables for shared container."""
     _ = shared_oracle_container
     oracle_env_names: tuple[tuple[str, str], ...] = (
-        (
-            c.Test.ORACLE_HOST_ENV,
-            c.Test.SHARED_ORACLE_HOST_ENV,
-        ),
-        (
-            c.Test.ORACLE_PORT_ENV,
-            c.Test.SHARED_ORACLE_PORT_ENV,
-        ),
-        (
-            c.Test.ORACLE_USERNAME_ENV,
-            c.Test.SHARED_ORACLE_USER_ENV,
-        ),
-        (
-            c.Test.ORACLE_PASSWORD_ENV,
-            c.Test.SHARED_ORACLE_PASSWORD_ENV,
-        ),
-        (
-            c.Test.ORACLE_SERVICE_NAME_ENV,
-            c.Test.SHARED_ORACLE_SERVICE_ENV,
-        ),
+        (c.Test.ORACLE_HOST_ENV, c.Test.SHARED_ORACLE_HOST_ENV),
+        (c.Test.ORACLE_PORT_ENV, c.Test.SHARED_ORACLE_PORT_ENV),
+        (c.Test.ORACLE_USERNAME_ENV, c.Test.SHARED_ORACLE_USER_ENV),
+        (c.Test.ORACLE_PASSWORD_ENV, c.Test.SHARED_ORACLE_PASSWORD_ENV),
+        (c.Test.ORACLE_SERVICE_NAME_ENV, c.Test.SHARED_ORACLE_SERVICE_ENV),
     )
     with u.Tests.env_vars_context({
         env_name: os.environ.get(env_name, os.environ[fallback_name])
@@ -135,17 +119,11 @@ def skip_e2e_if_no_oracle() -> None:
         return
     host = os.environ.get(
         c.Test.ORACLE_HOST_ENV,
-        os.environ.get(
-            c.Test.SHARED_ORACLE_HOST_ENV,
-            c.Test.SHARED_CONTAINER_HOST,
-        ),
+        os.environ.get(c.Test.SHARED_ORACLE_HOST_ENV, c.Test.SHARED_CONTAINER_HOST),
     )
     port_str = os.environ.get(
         c.Test.ORACLE_PORT_ENV,
-        os.environ.get(
-            c.Test.SHARED_ORACLE_PORT_ENV,
-            str(c.Test.UNIT_ORACLE_PORT),
-        ),
+        os.environ.get(c.Test.SHARED_ORACLE_PORT_ENV, str(c.Test.UNIT_ORACLE_PORT)),
     )
     try:
         port = int(port_str)
@@ -153,8 +131,7 @@ def skip_e2e_if_no_oracle() -> None:
         port = c.Test.UNIT_ORACLE_PORT
     try:
         with socket.create_connection(
-            (host, port),
-            timeout=c.Test.SOCKET_TIMEOUT_SECONDS,
+            (host, port), timeout=c.Test.SOCKET_TIMEOUT_SECONDS
         ):
             return
     except OSError:
@@ -175,7 +152,7 @@ def tap_oracle_settings_overrides() -> dict[str, dict[str, str | int]]:
             "oracle_user": c.Test.UNIT_ORACLE_USER,
             "oracle_password": c.Test.UNIT_ORACLE_PASSWORD,
             "batch_size": c.Test.UNIT_BATCH_SIZE,
-        },
+        }
     }
 
 

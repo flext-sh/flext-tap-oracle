@@ -46,8 +46,7 @@ class TestsFlextTapOracleTypes(FlextTestsTypes, t):
         type MockOracleTable = t.SequenceOf[MockOracleRecord]
         type TestScenario = FlextTestsTypes.JsonMapping
         type TestValidationResult = t.MappingKV[
-            str,
-            bool | str | FlextTestsTypes.StrSequence,
+            str, bool | str | FlextTestsTypes.StrSequence
         ]
         type TestPerformanceResult = t.MappingKV[str, float | int | str]
 

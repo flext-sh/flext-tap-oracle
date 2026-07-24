@@ -50,9 +50,7 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols, p):
                 ...
 
             def execute_query(
-                self,
-                query: str,
-                parameters: t.JsonMapping | None = None,
+                self, query: str, parameters: t.JsonMapping | None = None
             ) -> t.SequenceOf[t.JsonMapping]:
                 """Execute query on mock database."""
                 ...
@@ -65,10 +63,7 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols, p):
                 """Get test table definitions."""
                 ...
 
-            def get_test_data(
-                self,
-                table_name: str,
-            ) -> t.SequenceOf[t.JsonMapping]:
+            def get_test_data(self, table_name: str) -> t.SequenceOf[t.JsonMapping]:
                 """Get test data for a table."""
                 ...
 
@@ -81,16 +76,12 @@ class TestsFlextTapOracleProtocols(FlextTestsProtocols, p):
             """Protocol for test assertions."""
 
             def assert_oracle_connection_successful(
-                self,
-                settings: t.JsonMapping,
+                self, settings: t.JsonMapping
             ) -> None:
                 """Assert Oracle connection was successful."""
                 ...
 
-            def assert_singer_stream_valid(
-                self,
-                stream: t.JsonMapping,
-            ) -> None:
+            def assert_singer_stream_valid(self, stream: t.JsonMapping) -> None:
                 """Assert Singer stream is valid."""
                 ...
 

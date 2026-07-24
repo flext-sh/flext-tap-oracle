@@ -23,15 +23,13 @@ from flext_tap_oracle._models.config import FlextTapOracleConfigModels
 class FlextTapOracleConfig(FlextMeltanoConfig):
     """Tap-oracle config auto-loaded from ``config/*.yaml`` and validated via models."""
 
-    CONFIG_DIR: ClassVar[str] = str(
-        Path(__file__).resolve().parents[2] / "config",
-    )
+    CONFIG_DIR: ClassVar[str] = str(Path(__file__).resolve().parents[2] / "config")
 
     @cached_property
     def TapOracle(self) -> FlextTapOracleConfigModels.TapOracle:
         """Validated ``TapOracle`` business-rule config namespace."""
         root = FlextTapOracleConfigModels.Root.model_validate(
-            dict(self.model_extra or {}),
+            dict(self.model_extra or {})
         )
         return root.TapOracle
 

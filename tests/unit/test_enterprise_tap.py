@@ -18,11 +18,10 @@ class TestsFlextTapOracleEnterpriseTap:
     """Validate observable settings behavior through the public API only."""
 
     def test_fetch_global_applies_overrides_to_public_fields(
-        self,
-        tap_oracle_settings_overrides: dict[str, dict[str, str | int]],
+        self, tap_oracle_settings_overrides: dict[str, dict[str, str | int]]
     ) -> None:
         config = FlextTapOracleSettings.fetch_global(
-            overrides=tap_oracle_settings_overrides,
+            overrides=tap_oracle_settings_overrides
         )
         assert config.TapOracle.oracle_host == c.Test.UNIT_ORACLE_HOST
         assert config.TapOracle.oracle_port == c.Test.UNIT_ORACLE_PORT
@@ -30,11 +29,10 @@ class TestsFlextTapOracleEnterpriseTap:
         assert config.TapOracle.batch_size == c.Test.UNIT_BATCH_SIZE
 
     def test_oracle_namespace_exposes_full_connection_contract(
-        self,
-        tap_oracle_settings_overrides: dict[str, dict[str, str | int]],
+        self, tap_oracle_settings_overrides: dict[str, dict[str, str | int]]
     ) -> None:
         config = FlextTapOracleSettings.fetch_global(
-            overrides=tap_oracle_settings_overrides,
+            overrides=tap_oracle_settings_overrides
         )
         oracle = config.TapOracle
         assert oracle.oracle_host == c.Test.UNIT_ORACLE_HOST
@@ -44,11 +42,10 @@ class TestsFlextTapOracleEnterpriseTap:
         assert oracle.oracle_password == c.Test.UNIT_ORACLE_PASSWORD
 
     def test_oracle_credentials_are_plaintext_scalars(
-        self,
-        tap_oracle_settings_overrides: dict[str, dict[str, str | int]],
+        self, tap_oracle_settings_overrides: dict[str, dict[str, str | int]]
     ) -> None:
         config = FlextTapOracleSettings.fetch_global(
-            overrides=tap_oracle_settings_overrides,
+            overrides=tap_oracle_settings_overrides
         )
         # Namespaced credential fields are plain scalars, not SecretStr wrappers.
         assert isinstance(config.TapOracle.oracle_user, str)
@@ -62,39 +59,34 @@ class TestsFlextTapOracleEnterpriseTap:
         )
 
     def test_model_validate_returns_validated_settings(
-        self,
-        tap_oracle_create_params: dict[str, str | int],
+        self, tap_oracle_create_params: dict[str, str | int]
     ) -> None:
-        config = FlextTapOracleSettings.model_validate(
-            {"TapOracle": tap_oracle_create_params},
-        )
+        config = FlextTapOracleSettings.model_validate({
+            "TapOracle": tap_oracle_create_params
+        })
         assert config.TapOracle.oracle_host == c.Test.CREATE_CONFIG_HOST
         assert config.TapOracle.oracle_port == c.Test.CREATE_CONFIG_PORT
         assert config.TapOracle.oracle_service_name == c.Test.CREATE_CONFIG_SERVICE_NAME
 
     def test_model_validate_applies_default_batch_and_prefix(
-        self,
-        tap_oracle_create_params: dict[str, str | int],
+        self, tap_oracle_create_params: dict[str, str | int]
     ) -> None:
-        config = FlextTapOracleSettings.model_validate(
-            {"TapOracle": tap_oracle_create_params},
-        )
+        config = FlextTapOracleSettings.model_validate({
+            "TapOracle": tap_oracle_create_params
+        })
         # Grouped defaults are part of the settings contract, not caller-supplied.
         assert config.TapOracle.batch_size == 1000
         assert config.TapOracle.stream_prefix == ""
 
     def test_model_validate_rejects_out_of_range_port(self) -> None:
         with pytest.raises(ValidationError):
-            FlextTapOracleSettings.model_validate(
-                {"TapOracle": {"oracle_port": 0}},
-            )
+            FlextTapOracleSettings.model_validate({"TapOracle": {"oracle_port": 0}})
 
     def test_filter_tables_returns_configured_table_names(
-        self,
-        tap_oracle_settings_overrides: dict[str, dict[str, str | int]],
+        self, tap_oracle_settings_overrides: dict[str, dict[str, str | int]]
     ) -> None:
         config = FlextTapOracleSettings.fetch_global(
-            overrides=tap_oracle_settings_overrides,
+            overrides=tap_oracle_settings_overrides
         )
         discovered_tables: Sequence[p.DbOracle.Table] = [
             m.DbOracle.Table(
@@ -108,22 +100,19 @@ class TestsFlextTapOracleEnterpriseTap:
             ),
         ]
         result = u.TapOracle.tap_oracle_client_filter_tables(
-            tap_config=config,
-            discovered_tables=discovered_tables,
+            tap_config=config, discovered_tables=discovered_tables
         )
         assert result.success
         assert result.value == ["USERS", "ORDERS", "PRODUCTS"]
 
     def test_filter_tables_on_empty_discovery_reports_not_found(
-        self,
-        tap_oracle_settings_overrides: dict[str, dict[str, str | int]],
+        self, tap_oracle_settings_overrides: dict[str, dict[str, str | int]]
     ) -> None:
         config = FlextTapOracleSettings.fetch_global(
-            overrides=tap_oracle_settings_overrides,
+            overrides=tap_oracle_settings_overrides
         )
         result = u.TapOracle.tap_oracle_client_filter_tables(
-            tap_config=config,
-            discovered_tables=[],
+            tap_config=config, discovered_tables=[]
         )
         # No discovered tables is a failure, not a silent empty success.
         assert result.failure

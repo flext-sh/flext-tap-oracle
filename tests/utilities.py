@@ -82,9 +82,7 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities, FlextTapOracleUtilities)
             return stream
 
         @staticmethod
-        def validate_oracle_connection_config(
-            settings: t.JsonMapping,
-        ) -> bool:
+        def validate_oracle_connection_config(settings: t.JsonMapping) -> bool:
             """Validate Oracle connection configuration for testing."""
             required_fields = ["host", "port", "service_name", "username", "password"]
             return all(
@@ -93,9 +91,7 @@ class TestsFlextTapOracleUtilities(FlextTestsUtilities, FlextTapOracleUtilities)
 
         @staticmethod
         def generate_mock_oracle_data(
-            table_name: str,
-            row_count: int = 10,
-            **kwargs: t.JsonValue,
+            table_name: str, row_count: int = 10, **kwargs: t.JsonValue
         ) -> t.SequenceOf[t.JsonMapping]:
             """Generate mock Oracle data for testing."""
             data: list[t.JsonMapping] = []

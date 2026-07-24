@@ -39,7 +39,7 @@ class FlextTapOracleDiscoverCommand:
         def _run_execute() -> p.Result[t.JsonMapping]:
             if not self.params.config_file:
                 return r[t.JsonMapping].fail(
-                    "Configuration file is required for discovery",
+                    "Configuration file is required for discovery"
                 )
             config_read = u.Cli.files_read_text(Path(self.params.config_file))
             if config_read.failure:
@@ -57,13 +57,11 @@ class FlextTapOracleDiscoverCommand:
             if self.params.output_file:
                 output_path = Path(self.params.output_file)
                 catalog_write = u.Cli.json_write(
-                    output_path,
-                    catalog_dict,
-                    options=m.Cli.JsonWriteOptions(indent=2),
+                    output_path, catalog_dict, options=m.Cli.JsonWriteOptions(indent=2)
                 )
                 if catalog_write.failure:
                     return r[t.JsonMapping].fail(
-                        f"Catalog write error: {catalog_write.error}",
+                        f"Catalog write error: {catalog_write.error}"
                     )
                 self.logger.info("Catalog written to %s", output_path)
             self.logger.info("Oracle schema discovery completed")
@@ -79,9 +77,7 @@ class FlextTapOracleDiscoverCommand:
         """Validate business rules for Oracle tap discovery."""
         if self.params.config_file and (not Path(self.params.config_file).exists()):
             return e.fail_not_found(
-                "Configuration file",
-                self.params.config_file,
-                result_type=r[bool],
+                "Configuration file", self.params.config_file, result_type=r[bool]
             )
         return r[bool].ok(value=True)
 
@@ -100,9 +96,7 @@ class FlextTapOracleSyncCommand:
 
         def _run_execute() -> p.Result[t.JsonMapping]:
             if not self.params.config_file:
-                return r[t.JsonMapping].fail(
-                    "Configuration file is required for sync",
-                )
+                return r[t.JsonMapping].fail("Configuration file is required for sync")
             config_read = u.Cli.files_read_text(Path(self.params.config_file))
             if config_read.failure:
                 return r[t.JsonMapping].fail(f"Sync error: {config_read.error}")
@@ -143,21 +137,15 @@ class FlextTapOracleSyncCommand:
         """Validate business rules for Oracle tap sync."""
         if self.params.config_file and (not Path(self.params.config_file).exists()):
             return e.fail_not_found(
-                "Configuration file",
-                self.params.config_file,
-                result_type=r[bool],
+                "Configuration file", self.params.config_file, result_type=r[bool]
             )
         if self.params.catalog_file and (not Path(self.params.catalog_file).exists()):
             return e.fail_not_found(
-                "Catalog file",
-                self.params.catalog_file,
-                result_type=r[bool],
+                "Catalog file", self.params.catalog_file, result_type=r[bool]
             )
         if self.params.state_file and (not Path(self.params.state_file).exists()):
             return e.fail_not_found(
-                "State file",
-                self.params.state_file,
-                result_type=r[bool],
+                "State file", self.params.state_file, result_type=r[bool]
             )
         return r[bool].ok(value=True)
 
@@ -193,9 +181,7 @@ class FlextTapOracleCli:
             return r[t.JsonValue].fail(error_message)
 
     @staticmethod
-    def handle_discover_command(
-        **kwargs: t.Scalar,
-    ) -> p.Result[t.JsonValue]:
+    def handle_discover_command(**kwargs: t.Scalar) -> p.Result[t.JsonValue]:
         """Handle discover command using flext-meltano patterns."""
         return FlextTapOracleCli.run_tap_command(
             kwargs=kwargs,

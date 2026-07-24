@@ -57,50 +57,19 @@ if TYPE_CHECKING:
     )
 _LAZY_IMPORTS = merge_lazy_imports(
     (".unit",),
-    build_lazy_import_map(
-        {
-            ".base": (
-                "TestsFlextTapOracleServiceBase",
-                "s",
-            ),
-            ".conftest": ("conftest",),
-            ".constants": (
-                "TestsFlextTapOracleConstants",
-                "c",
-            ),
-            ".models": (
-                "TestsFlextTapOracleModels",
-                "m",
-            ),
-            ".protocols": (
-                "TestsFlextTapOracleProtocols",
-                "p",
-            ),
-            ".settings": ("TestsFlextTapOracleSettings",),
-            ".typings": (
-                "TestsFlextTapOracleTypes",
-                "t",
-            ),
-            ".unit": ("unit",),
-            ".unit.test_enterprise_tap": ("TestsFlextTapOracleEnterpriseTap",),
-            ".utilities": (
-                "TestsFlextTapOracleUtilities",
-                "u",
-            ),
-            "flext_tests": (
-                "d",
-                "e",
-                "h",
-                "r",
-                "td",
-                "tf",
-                "tk",
-                "tm",
-                "tv",
-                "x",
-            ),
-        },
-    ),
+    build_lazy_import_map({
+        ".base": ("TestsFlextTapOracleServiceBase", "s"),
+        ".conftest": ("conftest",),
+        ".constants": ("TestsFlextTapOracleConstants", "c"),
+        ".models": ("TestsFlextTapOracleModels", "m"),
+        ".protocols": ("TestsFlextTapOracleProtocols", "p"),
+        ".settings": ("TestsFlextTapOracleSettings",),
+        ".typings": ("TestsFlextTapOracleTypes", "t"),
+        ".unit": ("unit",),
+        ".unit.test_enterprise_tap": ("TestsFlextTapOracleEnterpriseTap",),
+        ".utilities": ("TestsFlextTapOracleUtilities", "u"),
+        "flext_tests": ("d", "e", "h", "r", "td", "tf", "tk", "tm", "tv", "x"),
+    }),
     exclude_names=(
         "cleanup_submodule_namespace",
         "install_lazy_exports",
@@ -124,9 +93,4 @@ _LAZY_IMPORTS = merge_lazy_imports(
 )
 
 
-install_lazy_exports(
-    __name__,
-    globals(),
-    _LAZY_IMPORTS,
-    publish_all=False,
-)
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, publish_all=False)

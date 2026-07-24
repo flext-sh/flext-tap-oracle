@@ -23,13 +23,9 @@ class FlextTapOracleConfigModels:
 
         oracle_host: str = Field(description="Default Oracle host.")
         oracle_port: int = Field(
-            ge=1,
-            le=65535,
-            description="Default Oracle listener port.",
+            ge=1, le=65535, description="Default Oracle listener port."
         )
-        oracle_service_name: str = Field(
-            description="Default Oracle service/SID.",
-        )
+        oracle_service_name: str = Field(description="Default Oracle service/SID.")
         oracle_user: str = Field(description="Default Oracle username.")
         oracle_password: str = Field(description="Default Oracle password.")
 
@@ -38,18 +34,13 @@ class FlextTapOracleConfigModels:
 
         model_config = ConfigDict(frozen=True, extra="forbid")
 
-        batch_size: int = Field(
-            ge=1,
-            description="Default rows per extraction batch.",
-        )
-        stream_prefix: str = Field(
-            description="Default Singer stream name prefix.",
-        )
+        batch_size: int = Field(ge=1, description="Default rows per extraction batch.")
+        stream_prefix: str = Field(description="Default Singer stream name prefix.")
         test_query: str = Field(
-            description="Lightweight query used to verify connectivity.",
+            description="Lightweight query used to verify connectivity."
         )
         initial_record_count: int = Field(
-            description="Initial record count before extraction starts.",
+            description="Initial record count before extraction starts."
         )
 
     class Replication(BaseModel):
@@ -67,11 +58,10 @@ class FlextTapOracleConfigModels:
         model_config = ConfigDict(frozen=True, extra="forbid")
 
         operation_name: str = Field(
-            description="Default operation name for unclassified records.",
+            description="Default operation name for unclassified records."
         )
         max_identifier_length: int = Field(
-            ge=1,
-            description="Maximum Oracle identifier length.",
+            ge=1, description="Maximum Oracle identifier length."
         )
 
     class TapOracle(BaseModel):
@@ -80,16 +70,16 @@ class FlextTapOracleConfigModels:
         model_config = ConfigDict(frozen=True, extra="forbid")
 
         connection: FlextTapOracleConfigModels.Connection = Field(
-            description="Default Oracle connection scalars.",
+            description="Default Oracle connection scalars."
         )
         extraction: FlextTapOracleConfigModels.Extraction = Field(
-            description="Tap extraction defaults.",
+            description="Tap extraction defaults."
         )
         replication: FlextTapOracleConfigModels.Replication = Field(
-            description="Supported replication methods.",
+            description="Supported replication methods."
         )
         defaults: FlextTapOracleConfigModels.Defaults = Field(
-            description="Miscellaneous tap defaults.",
+            description="Miscellaneous tap defaults."
         )
 
     class Root(BaseModel):
@@ -98,7 +88,7 @@ class FlextTapOracleConfigModels:
         model_config = ConfigDict(frozen=True, extra="ignore")
 
         TapOracle: FlextTapOracleConfigModels.TapOracle = Field(
-            description="Tap-oracle business-rule config namespace.",
+            description="Tap-oracle business-rule config namespace."
         )
 
 
