@@ -95,7 +95,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 t.NonNegativeFloat, u.Field(description="Result processing time")
             ] = 0.0
 
-            @u.computed_field()
+            @u.computed_field
             @property
             def execution_stats_summary(self) -> t.TapOracle.SummaryData:
                 """Oracle tap execution statistics summary."""
