@@ -1,6 +1,6 @@
 """FLEXT service orchestrator for tap-oracle.
 
-from flext_tap_oracle.utilities import u
+from flext_tap_oracle import u
 Thin facade — all infrastructure from ``FlextMeltanoTapServiceBase`` via MRO.
 The tap uses FlextMeltanoAbstractions (CLI dispatch), not singer_sdk.Tap.
 ``create_tap_instance`` returns ``r[T].fail()`` — use CLI dispatch instead.
@@ -16,28 +16,23 @@ from typing import Annotated, Never, override
 from flext_meltano.services.consumer_bases.tap_service_base import (
     FlextMeltanoTapServiceBase,
 )
-from flext_tap_oracle import FlextTapOracleSettings, t, u
+from flext_tap_oracle import FlextTapOracleSettings, p, t, u
 
 
 class FlextTapOracleService(FlextMeltanoTapServiceBase):
     """Orchestrator for tap-oracle. CLI dispatch, not Singer SDK."""
 
     tap_name: Annotated[
-        t.NonEmptyStr,
-        u.Field(description="Canonical Singer tap identifier."),
+        t.NonEmptyStr, u.Field(description="Canonical Singer tap identifier.")
     ] = "tap-oracle"
 
-    def __init__(
-        self,
-        settings: FlextTapOracleSettings | None = None,
-    ) -> None:
+    def __init__(self, settings: FlextTapOracleSettings | None = None) -> None:
         """Expose the canonical settings bootstrap on the concrete tap facade."""
         super().__init__(settings=settings)
 
     @override
     def create_tap_instance(
-        self,
-        settings: t.JsonMapping | None = None,
+        self, settings: p.Settings | t.JsonMapping | None = None
     ) -> Never:
         """Not supported — use CLI dispatch via FlextTapOracleCli."""
         msg = "tap-oracle uses CLI dispatch, not singer_sdk.Tap"

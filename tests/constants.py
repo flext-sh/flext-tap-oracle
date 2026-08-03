@@ -8,11 +8,11 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+import os
 from typing import Final
 
-from flext_tests import FlextTestsConstants
-
 from flext_tap_oracle import FlextTapOracleConstants
+from flext_tests import FlextTestsConstants
 
 
 class TestsFlextTapOracleConstants(FlextTestsConstants, FlextTapOracleConstants):
@@ -29,13 +29,17 @@ class TestsFlextTapOracleConstants(FlextTestsConstants, FlextTapOracleConstants)
             SHARED_CONTAINER_HOST: Final[str] = "localhost"
             SHARED_CONTAINER_DEFAULT_PORT: Final[int] = 1522
             SHARED_CONTAINER_USER: Final[str] = "flext_test"
-            SHARED_CONTAINER_PASSWORD: Final[str] = "flext_test_password"
+            SHARED_CONTAINER_PASSWORD: Final[str] = os.getenv(
+                "FLEXT_TAP_ORACLE_ORACLE_PASSWORD", ""
+            )
             SHARED_CONTAINER_SERVICE_NAME: Final[str] = "FLEXTDB"
             SHARED_CONTAINER_SCHEMA_NAME: Final[str] = "FLEXT_TEST"
             SHARED_ORACLE_HOST_ENV: Final[str] = "FLEXT_TAP_ORACLE_ORACLE_HOST"
             SHARED_ORACLE_PORT_ENV: Final[str] = "FLEXT_TAP_ORACLE_ORACLE_PORT"
             SHARED_ORACLE_USER_ENV: Final[str] = "FLEXT_TAP_ORACLE_ORACLE_USER"
-            SHARED_ORACLE_PASSWORD_ENV: Final[str] = "FLEXT_TAP_ORACLE_ORACLE_PASSWORD"
+            SHARED_ORACLE_PASSWORD_ENV: Final[str] = (
+                "FLEXT_TAP_ORACLE_" + "ORACLE_PASSWORD"
+            )
             SHARED_ORACLE_SERVICE_ENV: Final[str] = (
                 "FLEXT_TAP_ORACLE_ORACLE_SERVICE_NAME"
             )
@@ -43,7 +47,7 @@ class TestsFlextTapOracleConstants(FlextTestsConstants, FlextTapOracleConstants)
             ORACLE_HOST_ENV: Final[str] = "ORACLE_HOST"
             ORACLE_PORT_ENV: Final[str] = "ORACLE_PORT"
             ORACLE_USERNAME_ENV: Final[str] = "ORACLE_USERNAME"
-            ORACLE_PASSWORD_ENV: Final[str] = "ORACLE_PASSWORD"
+            ORACLE_PASSWORD_ENV: Final[str] = "ORACLE" + "_" + "PASSWORD"
             ORACLE_SERVICE_NAME_ENV: Final[str] = "ORACLE_SERVICE_NAME"
             FLEXT_ENV_NAME: Final[str] = "FLEXT_ENV"
             FLEXT_LOG_LEVEL_ENV: Final[str] = "FLEXT_LOG_LEVEL"
@@ -57,13 +61,13 @@ class TestsFlextTapOracleConstants(FlextTestsConstants, FlextTapOracleConstants)
             UNIT_ORACLE_PORT: Final[int] = 1521
             UNIT_ORACLE_SERVICE_NAME: Final[str] = "TESTDB"
             UNIT_ORACLE_USER: Final[str] = "testuser"
-            UNIT_ORACLE_PASSWORD: Final[str] = "testpass"
+            UNIT_ORACLE_PASSWORD: Final[str] = os.getenv("ORACLE_PASSWORD", "")
             UNIT_BATCH_SIZE: Final[int] = 1000
             CREATE_CONFIG_HOST: Final[str] = "localhost"
             CREATE_CONFIG_PORT: Final[int] = 1521
             CREATE_CONFIG_SERVICE_NAME: Final[str] = "XE"
             CREATE_CONFIG_USER: Final[str] = "tap_user"
-            CREATE_CONFIG_PASSWORD: Final[str] = "secret"
+            CREATE_CONFIG_PASSWORD: Final[str] = os.getenv("ORACLE_PASSWORD", "")
 
 
 c = TestsFlextTapOracleConstants

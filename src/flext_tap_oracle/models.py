@@ -1,6 +1,5 @@
 """Models for flext-tap-oracle.
 
-from flext_tap_oracle.utilities import u
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
 
@@ -8,15 +7,15 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import (
-    MutableSequence,
-)
-from typing import Annotated, Self
+from typing import TYPE_CHECKING, Annotated, Self
 
 from flext_db_oracle import FlextDbOracleModels
-from flext_meltano import FlextMeltanoModels, m, r, u
-from flext_tap_oracle.protocols import p
-from flext_tap_oracle.typings import t
+from flext_meltano import FlextMeltanoModels, m, u
+
+if TYPE_CHECKING:
+    from collections.abc import MutableSequence
+
+    from flext_tap_oracle import t
 
 
 class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
@@ -34,56 +33,6 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
     class TapOracle:
         """Tap Oracle  namespace for cross-project access."""
-
-        # Oracle Tap Domain - namespace metadata as static methods on plain class
-
-        @staticmethod
-        def get_active_model_names() -> t.StrSequence:
-            """List of active Oracle tap model names."""
-            return [
-                "OracleTapStreamMetadata",
-                "OracleTapDiscoveryConfig",
-                "OracleTapExtractionConfig",
-                "OracleTapPerformanceMetrics",
-                "OracleTapStreamInfo",
-                "OracleTapDiscoveryResult",
-                "OracleTapExecutionStats",
-                "OracleConnection",
-                "OracleQuery",
-                "OracleRecord",
-            ]
-
-        @staticmethod
-        def get_system_summary() -> t.TapOracle.SummaryData:
-            """Complete Singer Oracle tap system summary with database extraction capabilities."""
-            return {
-                "total_models": len(
-                    FlextTapOracleModels.TapOracle.get_active_model_names(),
-                ),
-                "tap_type": "singer_oracle_database_extractor",
-                "extraction_features": [
-                    "oracle_table_discovery",
-                    "incremental_replication",
-                    "full_table_extraction",
-                    "schema_introspection",
-                    "performance_monitoring",
-                    "connection_pooling",
-                ],
-                "singer_compliance": {
-                    "protocol_version": "singer_v1",
-                    "stream_discovery": True,
-                    "catalog_generation": True,
-                    "state_management": True,
-                    "incremental_bookmarking": True,
-                },
-                "oracle_capabilities": {
-                    "connection_pooling": True,
-                    "query_optimization": True,
-                    "batch_processing": True,
-                    "type_mapping": True,
-                    "schema_discovery": True,
-                },
-            }
 
         class _MetricsBase(m.Entity):
             """Shared metrics fields for Oracle tap operations."""
@@ -119,56 +68,41 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
 
             # Execution metadata
             execution_id: Annotated[
-                t.NonEmptyStr,
-                u.Field(..., description="Unique execution identifier"),
+                t.NonEmptyStr, u.Field(..., description="Unique execution identifier")
             ]
             start_timestamp: Annotated[
-                str,
-                u.Field(..., description="Execution start time"),
+                str, u.Field(..., description="Execution start time")
             ]
             end_timestamp: Annotated[
-                str | None,
-                u.Field(None, description="Execution end time"),
+                str | None, u.Field(None, description="Execution end time")
             ]
 
             # Execution-specific metrics
             duration_seconds: Annotated[
-                t.NonNegativeFloat,
-                u.Field(
-                    description="Total execution duration",
-                ),
+                t.NonNegativeFloat, u.Field(description="Total execution duration")
             ] = 0.0
 
             # Error tracking
             errors_encountered: Annotated[
-                t.NonNegativeInt,
-                u.Field(
-                    description="Number of errors encountered",
-                ),
+                t.NonNegativeInt, u.Field(description="Number of errors encountered")
             ] = 0
             failed_streams: Annotated[
-                MutableSequence[str],
-                u.Field(
-                    description="Names of failed streams",
-                ),
+                MutableSequence[str], u.Field(description="Names of failed streams")
             ] = u.Field(default_factory=list)
 
             # Oracle-specific execution metrics
             oracle_result_processing_time: Annotated[
-                t.NonNegativeFloat,
-                u.Field(
-                    description="Result processing time",
-                ),
+                t.NonNegativeFloat, u.Field(description="Result processing time")
             ] = 0.0
 
-            @u.computed_field()
+            @u.computed_field
             @property
             def execution_stats_summary(self) -> t.TapOracle.SummaryData:
                 """Oracle tap execution statistics summary."""
                 success_rate = 0.0
                 if self.streams_processed > 0:
                     successful_streams = self.streams_processed - len(
-                        self.failed_streams,
+                        self.failed_streams
                     )
                     success_rate = successful_streams / self.streams_processed
 
@@ -212,10 +146,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 }
 
             def add_stream_stats(
-                self,
-                records: int,
-                bytes_processed: int,
-                processing_time: float,
+                self, records: int, bytes_processed: int, processing_time: float
             ) -> FlextTapOracleModels.TapOracle.OracleTapExecutionStats:
                 """Return new instance with added statistics for a processed stream."""
                 updated: FlextTapOracleModels.TapOracle.OracleTapExecutionStats = self.model_copy(
@@ -225,13 +156,12 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                         "total_bytes": self.total_bytes + bytes_processed,
                         "oracle_result_processing_time": self.oracle_result_processing_time
                         + processing_time,
-                    },
+                    }
                 )
                 return updated.update_performance_metrics()
 
             def mark_stream_error(
-                self,
-                stream_name: str,
+                self, stream_name: str
             ) -> FlextTapOracleModels.TapOracle.OracleTapExecutionStats:
                 """Return new instance with marked stream error."""
                 new_failed_streams: MutableSequence[str] = (
@@ -244,7 +174,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                         update={
                             "errors_encountered": self.errors_encountered + 1,
                             "failed_streams": new_failed_streams,
-                        },
+                        }
                     )
                 )
                 return updated
@@ -277,15 +207,11 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                                 / self.duration_seconds,
                                 "avg_bytes_per_second": self.total_bytes
                                 / self.duration_seconds,
-                            },
+                            }
                         )
                     )
                     return updated
                 return self
-
-            def validate_business_rules(self) -> p.Result[bool]:
-                """Validate execution stats business rules."""
-                return r[bool].ok(value=True)
 
         class OracleTapDiscoverParams(m.Entity):
             """Parameters for Oracle tap discover command."""
@@ -295,8 +221,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 u.Field(description="Path to configuration file", default=None),
             ]
             output_file: Annotated[
-                str | None,
-                u.Field(description="Path to output file", default=None),
+                str | None, u.Field(description="Path to output file", default=None)
             ]
 
             @classmethod
@@ -309,10 +234,6 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     output_file=str(output_file_value) if output_file_value else None,
                 )
 
-            def validate_business_rules(self) -> p.Result[bool]:
-                """Validate discover params business rules."""
-                return r[bool].ok(value=True)
-
         class OracleTapSyncParams(m.Entity):
             """Parameters for Oracle tap sync command."""
 
@@ -321,12 +242,10 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                 u.Field(description="Path to configuration file", default=None),
             ]
             catalog_file: Annotated[
-                str | None,
-                u.Field(description="Path to catalog file", default=None),
+                str | None, u.Field(description="Path to catalog file", default=None)
             ]
             state_file: Annotated[
-                str | None,
-                u.Field(description="Path to state file", default=None),
+                str | None, u.Field(description="Path to state file", default=None)
             ]
 
             @classmethod
@@ -342,10 +261,6 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
                     else None,
                     state_file=str(state_file_value) if state_file_value else None,
                 )
-
-            def validate_business_rules(self) -> p.Result[bool]:
-                """Validate sync params business rules."""
-                return r[bool].ok(value=True)
 
 
 m = FlextTapOracleModels

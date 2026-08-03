@@ -4,16 +4,18 @@ from __future__ import annotations
 
 import os
 import socket
-from collections.abc import Generator
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
-from flext_tests import reset_settings as _shared_reset_settings, tk
 
 from flext_tap_oracle import FlextTapOracleSettings
-from tests.constants import c
+from flext_tests import reset_settings as _shared_reset_settings, tk
+from tests import c, u
 from tests.settings import TestsFlextTapOracleSettings
-from tests.utilities import u
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 reset_settings = _shared_reset_settings
 
@@ -29,7 +31,7 @@ def docker_control() -> tk:
 
 @pytest.fixture(scope="session")
 def shared_oracle_container(docker_control: tk) -> Generator[str]:
-    """Managed Oracle container using tk with auto-start."""
+    """Manage the Oracle container using tk with auto-start."""
     ensure_result = docker_control.execute()
     if ensure_result.failure:
         pytest.skip(
@@ -37,7 +39,7 @@ def shared_oracle_container(docker_control: tk) -> Generator[str]:
             or (
                 "Oracle container "
                 f"{c.TapOracle.Tests.SHARED_CONTAINER_NAME} is unavailable"
-            ),
+            )
         )
     resolved_port = next(
         (
@@ -59,21 +61,15 @@ def shared_oracle_container(docker_control: tk) -> Generator[str]:
         yield c.TapOracle.Tests.SHARED_CONTAINER_NAME
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="session")
 def oracle_shared_container_environment(
     shared_oracle_container: str,
 ) -> Generator[None]:
-    """Setup Oracle environment variables for shared container."""
+    """Set up Oracle environment variables for shared container."""
     _ = shared_oracle_container
     oracle_env_names: tuple[tuple[str, str], ...] = (
-        (
-            c.TapOracle.Tests.ORACLE_HOST_ENV,
-            c.TapOracle.Tests.SHARED_ORACLE_HOST_ENV,
-        ),
-        (
-            c.TapOracle.Tests.ORACLE_PORT_ENV,
-            c.TapOracle.Tests.SHARED_ORACLE_PORT_ENV,
-        ),
+        (c.TapOracle.Tests.ORACLE_HOST_ENV, c.TapOracle.Tests.SHARED_ORACLE_HOST_ENV),
+        (c.TapOracle.Tests.ORACLE_PORT_ENV, c.TapOracle.Tests.SHARED_ORACLE_PORT_ENV),
         (
             c.TapOracle.Tests.ORACLE_USERNAME_ENV,
             c.TapOracle.Tests.SHARED_ORACLE_USER_ENV,
@@ -94,7 +90,7 @@ def oracle_shared_container_environment(
         yield
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def reset_tap_oracle_settings(reset_settings: None) -> Generator[None]:
     """Reset the concrete tap settings singletons around every test.
 
@@ -113,7 +109,7 @@ def reset_tap_oracle_settings(reset_settings: None) -> Generator[None]:
         TestsFlextTapOracleSettings.reset_for_testing()
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def set_test_environment(reset_tap_oracle_settings: None) -> Generator[None]:
     """Set test environment variables."""
     _ = reset_tap_oracle_settings
@@ -130,7 +126,7 @@ def set_test_environment(reset_tap_oracle_settings: None) -> Generator[None]:
         yield
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def skip_e2e_if_no_oracle() -> None:
     """Skip E2E tests gracefully when Oracle is not available locally."""
     fspath = os.environ.get("PYTEST_CURRENT_TEST", "")
@@ -156,8 +152,7 @@ def skip_e2e_if_no_oracle() -> None:
         port = c.TapOracle.Tests.UNIT_ORACLE_PORT
     try:
         with socket.create_connection(
-            (host, port),
-            timeout=c.TapOracle.Tests.SOCKET_TIMEOUT_SECONDS,
+            (host, port), timeout=c.TapOracle.Tests.SOCKET_TIMEOUT_SECONDS
         ):
             return
     except OSError:
@@ -168,21 +163,23 @@ def skip_e2e_if_no_oracle() -> None:
 
 
 @pytest.fixture
-def tap_oracle_settings_overrides() -> dict[str, str | int]:
-    """Canonical test overrides for tap settings fixtures."""
+def tap_oracle_settings_overrides() -> dict[str, dict[str, str | int]]:
+    """Canonical nested test overrides for the ``TapOracle`` settings namespace."""
     return {
-        "oracle_host": c.TapOracle.Tests.UNIT_ORACLE_HOST,
-        "oracle_port": c.TapOracle.Tests.UNIT_ORACLE_PORT,
-        "oracle_service_name": c.TapOracle.Tests.UNIT_ORACLE_SERVICE_NAME,
-        "oracle_user": c.TapOracle.Tests.UNIT_ORACLE_USER,
-        "oracle_password": c.TapOracle.Tests.UNIT_ORACLE_PASSWORD,
-        "batch_size": c.TapOracle.Tests.UNIT_BATCH_SIZE,
+        "TapOracle": {
+            "oracle_host": c.TapOracle.Tests.UNIT_ORACLE_HOST,
+            "oracle_port": c.TapOracle.Tests.UNIT_ORACLE_PORT,
+            "oracle_service_name": c.TapOracle.Tests.UNIT_ORACLE_SERVICE_NAME,
+            "oracle_user": c.TapOracle.Tests.UNIT_ORACLE_USER,
+            "oracle_password": c.TapOracle.Tests.UNIT_ORACLE_PASSWORD,
+            "batch_size": c.TapOracle.Tests.UNIT_BATCH_SIZE,
+        }
     }
 
 
 @pytest.fixture
 def tap_oracle_create_params() -> dict[str, str | int]:
-    """Canonical create_oracle_tap_config params for tests."""
+    """Canonical ``TapOracle`` namespace payload for model-validate tests."""
     return {
         "oracle_host": c.TapOracle.Tests.CREATE_CONFIG_HOST,
         "oracle_port": c.TapOracle.Tests.CREATE_CONFIG_PORT,

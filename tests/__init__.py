@@ -24,7 +24,6 @@ if TYPE_CHECKING:
         tv as tv,
         x as x,
     )
-
     from tests.base import (
         TestsFlextTapOracleServiceBase as TestsFlextTapOracleServiceBase,
         s as s,
@@ -39,7 +38,7 @@ if TYPE_CHECKING:
     )
     from tests.protocols import (
         TestsFlextTapOracleProtocols as TestsFlextTapOracleProtocols,
-        p as p,
+        p,
     )
     from tests.settings import (
         TestsFlextTapOracleSettings as TestsFlextTapOracleSettings,
@@ -48,55 +47,28 @@ if TYPE_CHECKING:
         TestsFlextTapOracleTypes as TestsFlextTapOracleTypes,
         t as t,
     )
+    from tests.unit.test_enterprise_tap import (
+        TestsFlextTapOracleEnterpriseTap as TestsFlextTapOracleEnterpriseTap,
+    )
     from tests.utilities import (
         TestsFlextTapOracleUtilities as TestsFlextTapOracleUtilities,
-        u as u,
+        u,
     )
 _LAZY_IMPORTS = merge_lazy_imports(
     (".unit",),
-    build_lazy_import_map(
-        {
-            ".base": (
-                "TestsFlextTapOracleServiceBase",
-                "s",
-            ),
-            ".conftest": ("conftest",),
-            ".constants": (
-                "TestsFlextTapOracleConstants",
-                "c",
-            ),
-            ".models": (
-                "TestsFlextTapOracleModels",
-                "m",
-            ),
-            ".protocols": (
-                "TestsFlextTapOracleProtocols",
-                "p",
-            ),
-            ".settings": ("TestsFlextTapOracleSettings",),
-            ".typings": (
-                "TestsFlextTapOracleTypes",
-                "t",
-            ),
-            ".unit": ("unit",),
-            ".utilities": (
-                "TestsFlextTapOracleUtilities",
-                "u",
-            ),
-            "flext_tests": (
-                "d",
-                "e",
-                "h",
-                "r",
-                "td",
-                "tf",
-                "tk",
-                "tm",
-                "tv",
-                "x",
-            ),
-        },
-    ),
+    build_lazy_import_map({
+        ".base": ("TestsFlextTapOracleServiceBase", "s"),
+        ".conftest": ("conftest",),
+        ".constants": ("TestsFlextTapOracleConstants", "c"),
+        ".models": ("TestsFlextTapOracleModels", "m"),
+        ".protocols": ("TestsFlextTapOracleProtocols", "p"),
+        ".settings": ("TestsFlextTapOracleSettings",),
+        ".typings": ("TestsFlextTapOracleTypes", "t"),
+        ".unit": ("unit",),
+        ".unit.test_enterprise_tap": ("TestsFlextTapOracleEnterpriseTap",),
+        ".utilities": ("TestsFlextTapOracleUtilities", "u"),
+        "flext_tests": ("d", "e", "h", "r", "td", "tf", "tk", "tm", "tv", "x"),
+    }),
     exclude_names=(
         "cleanup_submodule_namespace",
         "install_lazy_exports",
@@ -120,9 +92,4 @@ _LAZY_IMPORTS = merge_lazy_imports(
 )
 
 
-install_lazy_exports(
-    __name__,
-    globals(),
-    _LAZY_IMPORTS,
-    publish_all=False,
-)
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, publish_all=False)

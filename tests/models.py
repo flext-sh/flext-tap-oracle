@@ -9,10 +9,9 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from flext_tests import FlextTestsModels
-
 from flext_tap_oracle import FlextTapOracleModels
-from tests.utilities import u
+from flext_tests import FlextTestsModels
+from tests import u
 
 
 class TestsFlextTapOracleModels(FlextTestsModels, FlextTapOracleModels):
@@ -60,7 +59,7 @@ class TestsFlextTapOracleModels(FlextTestsModels, FlextTapOracleModels):
 
                 @property
                 def connection_string(self) -> str:
-                    """Get Oracle connection string."""
+                    """The Oracle connection string."""
                     return f"oracle://{self.username}:***@{self.host}:{self.port}/{self.service_name}"
 
             class TestSingerStream(FlextTapOracleModels.Entity):
@@ -73,8 +72,7 @@ class TestsFlextTapOracleModels(FlextTestsModels, FlextTapOracleModels):
                     str, u.Field(description="Name of the source table")
                 ]
                 replication_method: Annotated[
-                    str,
-                    u.Field(description="Replication method for the stream"),
+                    str, u.Field(description="Replication method for the stream")
                 ]
                 is_selected: Annotated[
                     bool, u.Field(description="Whether the stream is selected")
@@ -93,8 +91,7 @@ class TestsFlextTapOracleModels(FlextTestsModels, FlextTapOracleModels):
                     int, u.Field(description="Number of columns in the table")
                 ]
                 row_count: Annotated[
-                    int | None,
-                    u.Field(description="Number of rows in the table"),
+                    int | None, u.Field(description="Number of rows in the table")
                 ] = None
 
             class TestExtractionConfig(FlextTapOracleModels.Entity):
@@ -108,18 +105,13 @@ class TestsFlextTapOracleModels(FlextTestsModels, FlextTapOracleModels):
                     u.Field(description="Number of parallel streams for extraction"),
                 ]
                 timeout_seconds: Annotated[
-                    int,
-                    u.Field(description="Query timeout in seconds"),
+                    int, u.Field(description="Query timeout in seconds")
                 ]
                 max_rows: Annotated[
-                    int | None,
-                    u.Field(description="Maximum number of rows to extract"),
+                    int | None, u.Field(description="Maximum number of rows to extract")
                 ] = None
 
 
 m = TestsFlextTapOracleModels
 
-__all__: list[str] = [
-    "TestsFlextTapOracleModels",
-    "m",
-]
+__all__: list[str] = ["TestsFlextTapOracleModels", "m"]
