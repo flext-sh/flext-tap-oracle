@@ -1,9 +1,11 @@
 # AGENTS.md — flext-tap-oracle
 
-> **General FLEXT law & workspace conventions live in the root [`../AGENTS.md`](../AGENTS.md) — read it first.** SSOT for facade layering, config/settings, `make`-only workflow, testing law, git discipline. This file adds ONLY `flext-tap-oracle`-specific knowledge.
+> **Parent workspace law** lives in [`../AGENTS.md`](../AGENTS.md) — read it first.
+> Universal engineering core: `~/.agents/UNIVERSAL_CORE.md`. Composition: global skills + parent/root `AGENTS.md` + this scope delta. Do not re-embed universal law.
 >
-> **Standalone / independent mode:** if this package is checked out on its own (imported as a dependency, vendored, or cloned solo) there is no parent workspace, so `../AGENTS.md` does not resolve. Then read the root law from the raw file on the SAME branch/release the project is on: <https://raw.githubusercontent.com/flext-sh/flext/0.12.0-dev/AGENTS.md> (pin the branch/tag to your working line, never `main`).
+> **Standalone / independent mode:** when `../AGENTS.md` does not resolve, pin the parent raw `AGENTS.md` URL to the same branch/release as this package (never `main`).
 
+<!-- AIHUB-AGENTS-SCOPE-LOCAL-BEGIN -->
 **Package:** `flext_tap_oracle` · deps: `flext-core`, `flext-db-oracle`, `flext-meltano`, `flext-observability`
 
 ## Overview
@@ -12,7 +14,7 @@ Singer **tap** (extractor) for Oracle Database. Thin driver over `flext-meltano`
 
 ## Structure
 
-```
+```text
 src/flext_tap_oracle/
 ├── api.py            # FlextTapOracleService(FlextMeltanoTapServiceBase)
 ├── tap.py            # discovery commands + catalog generation
@@ -39,3 +41,4 @@ src/flext_tap_oracle/
 make check PROJECT=flext-tap-oracle
 make test  PROJECT=flext-tap-oracle       # tests/unit
 ```
+<!-- AIHUB-AGENTS-SCOPE-LOCAL-END -->
