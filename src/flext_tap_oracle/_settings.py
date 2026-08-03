@@ -12,10 +12,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Annotated
 
-from pydantic import BaseModel, Field
 from pydantic_settings import SettingsConfigDict
 
-from flext_meltano import FlextMeltanoSettings
+from flext_meltano import FlextMeltanoSettings, m
 
 
 class FlextTapOracleSettings(FlextMeltanoSettings):
@@ -25,33 +24,33 @@ class FlextTapOracleSettings(FlextMeltanoSettings):
         env_prefix="FLEXT_TAP_ORACLE_", env_nested_delimiter="__", extra="ignore"
     )
 
-    class _TapOracle(BaseModel):
+    class _TapOracle(m.BaseModel):
         """Namespaced Oracle tap settings."""
 
         oracle_host: Annotated[
-            str, Field(default="localhost", description="Oracle host")
+            str, m.Field(default="localhost", description="Oracle host")
         ]
         oracle_port: Annotated[
-            int, Field(default=1521, ge=1, le=65535, description="Oracle port")
+            int, m.Field(default=1521, ge=1, le=65535, description="Oracle port")
         ]
         oracle_service_name: Annotated[
-            str, Field(default="XEPDB1", description="Oracle service/SID")
+            str, m.Field(default="XEPDB1", description="Oracle service/SID")
         ]
-        oracle_user: Annotated[str, Field(default="", description="Oracle username")]
+        oracle_user: Annotated[str, m.Field(default="", description="Oracle username")]
         oracle_password: Annotated[
-            str, Field(default="", description="Oracle password")
+            str, m.Field(default="", description="Oracle password")
         ]
         batch_size: Annotated[
-            int, Field(default=1000, ge=1, description="Extraction batch size")
+            int, m.Field(default=1000, ge=1, description="Extraction batch size")
         ]
         stream_prefix: Annotated[
-            str, Field(default="", description="Singer stream name prefix")
+            str, m.Field(default="", description="Singer stream name prefix")
         ]
 
     if TYPE_CHECKING:
         TapOracle: _TapOracle
     else:
-        TapOracle: _TapOracle = Field(
+        TapOracle: _TapOracle = m.Field(
             default_factory=_TapOracle, description="Namespaced Oracle tap settings."
         )
 
