@@ -2,6 +2,10 @@
 
 # flext_tap_oracle.typings
 
+<!-- TOC START -->
+- No sections found
+<!-- TOC END -->
+
 ::: flext_tap_oracle.typings
     options:
       show_root_heading: true
