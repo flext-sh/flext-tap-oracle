@@ -17,11 +17,18 @@
 - Project class: `integration`
 - Keywords: `database`, `enterprise`, `etl`, `flext`, `integration`, `oracle`,
   `singer`, `tap`
-- Main facades: _none_
-- Alias exports: _none_
-- Public symbol exports: _none_
+- Main facades: `FlextTapOracleCli`, `FlextTapOracleConfig`,
+  `FlextTapOracleConstants`, `FlextTapOracleDiscoverCommand`,
+  `FlextTapOracleModels`, `FlextTapOracleProtocols`, `FlextTapOracleService`,
+  `FlextTapOracleSettings` (+3 more)
+- Alias exports: `c`, `d`, `e`, `h`, `m`, `p`, `r`, `s`, `t`, `u`, `x`
+- Public symbol exports: `FlextTapOracleCli`, `FlextTapOracleConfig`,
+  `FlextTapOracleConstants`, `FlextTapOracleDiscoverCommand`,
+  `FlextTapOracleModels`, `FlextTapOracleProtocols`, `FlextTapOracleService`,
+  `FlextTapOracleSettings`, `FlextTapOracleSyncCommand`, `FlextTapOracleTypes`
+  (+4 more)
 - Exported module shortcuts: _none_
-- Generated module pages: `0`
+- Generated module pages: `7`
 
 ## Next Pages
 
