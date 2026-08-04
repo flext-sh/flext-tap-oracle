@@ -2,6 +2,10 @@
 
 # flext_tap_oracle.streams
 
+<!-- TOC START -->
+- No sections found
+<!-- TOC END -->
+
 ::: flext_tap_oracle.streams
     options:
       show_root_heading: true
