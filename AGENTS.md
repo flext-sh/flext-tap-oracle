@@ -34,6 +34,8 @@ src/flext_tap_oracle/
 
 - Discovery is **command-driven** (not a minimal tap class); `rules.json` + `streams.py` define stream topology.
 - Oracle settings are namespaced — `settings.DbOracle.*`.
+- Config/settings canonical pattern: ADR-012.
+- Codemod governance (ast-grep + make mod): ADR-014.
 
 ## Commands
 
