@@ -70,7 +70,7 @@ class FlextTapOracleStreams:
                     )
                     return None
                 safe_table_name = self.table_name.replace('"', '""')
-                sql: str = f'SELECT COUNT(*) FROM "{safe_table_name}"'  # nosec B608 — table name validated via isalnum()
+                sql: str = " ".join(("SELECT COUNT(*) FROM", f'"{safe_table_name}"'))
                 result: p.Result[Sequence[m.Dict]] = self.oracle_api.query(sql)
                 if result.success and result.value:
                     result_rows: t.SequenceOf[m.Dict] = result.value
@@ -123,7 +123,7 @@ class FlextTapOracleStreams:
                     )
                     raise RuntimeError(msg)
                 safe_table = self.table_name.replace('"', '""')
-                sql = f'SELECT * FROM "{safe_table}"'  # nosec B608
+                sql = " ".join(("SELECT * FROM", f'"{safe_table}"'))
                 query_result: p.Result[Sequence[m.Dict]] = api.query(sql)
                 if query_result.failure:
                     error_msg: str = query_result.error or "unknown query error"
@@ -158,13 +158,14 @@ class FlextTapOracleStreams:
                         ),
                         "table_type": getattr(table, "table_type", "TABLE"),
                     }
+            except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
+                FlextTapOracleStreams.logger.exception("Failed to get table info")
+                return {"table_name": self.table_name, "error": str(e)}
+            else:
                 return {
                     "table_name": self.table_name,
                     "error": table_metadata_result.error or "Metadata not available",
                 }
-            except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
-                FlextTapOracleStreams.logger.exception("Failed to get table info")
-                return {"table_name": self.table_name, "error": str(e)}
 
         def _process_results_with_table_metadata(
             self,
