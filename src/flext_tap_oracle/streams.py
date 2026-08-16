@@ -230,16 +230,13 @@ class FlextTapOracleStreams:
                         col_meta, "type", None
                     )
                 oracle_type_str = str(oracle_type) if oracle_type else ""
-                if (
-                    oracle_type_str
-                    and oracle_type_str.upper().startswith((
-                        "DATE",
-                        "TIMESTAMP",
-                        "CLOB",
-                        "NCLOB",
-                        "BLOB",
-                    ))
-                ):
+                if oracle_type_str and oracle_type_str.upper().startswith((
+                    "DATE",
+                    "TIMESTAMP",
+                    "CLOB",
+                    "NCLOB",
+                    "BLOB",
+                )):
                     transformed_record[column_name] = str(value)
                 else:
                     transformed_record[column_name] = value
