@@ -10,14 +10,12 @@ from typing import TYPE_CHECKING
 import pytest
 
 from flext_tap_oracle import FlextTapOracleSettings
-from flext_tests import reset_settings as _shared_reset_settings, tk
+from flext_tests import tk
 from tests import c, u
 from tests.settings import TestsFlextTapOracleSettings
 
 if TYPE_CHECKING:
     from collections.abc import Generator
-
-reset_settings = _shared_reset_settings
 
 
 @pytest.fixture(scope="session")

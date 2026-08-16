@@ -6,7 +6,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from datetime import datetime
 from typing import TYPE_CHECKING
 
 from flext_tap_oracle import c, m, p, t, u
@@ -204,10 +203,10 @@ class FlextTapOracleStreams:
             if missing_columns:
                 msg = f"Oracle row is missing expected columns: {missing_columns}"
                 raise RuntimeError(msg)
-            return self._transform_oracle_types(record, columns)
+            return self.transform_oracle_types(record, columns)
 
-        def _transform_oracle_types(
-            self,
+        @staticmethod
+        def transform_oracle_types(
             record: t.JsonMapping,
             column_metadata: t.SequenceOf[m.DbOracle.ColumnMetadata],
         ) -> t.JsonMapping:
@@ -231,18 +230,16 @@ class FlextTapOracleStreams:
                         col_meta, "type", None
                     )
                 oracle_type_str = str(oracle_type) if oracle_type else ""
-                if oracle_type_str and oracle_type_str.upper().startswith((
-                    "DATE",
-                    "TIMESTAMP",
-                )):
-                    if isinstance(value, datetime):
-                        transformed_record[column_name] = value.isoformat()
-                    else:
-                        transformed_record[column_name] = str(value)
-                elif (
+                if (
                     oracle_type_str
-                    and oracle_type_str.upper().startswith(("CLOB", "BLOB"))
-                ) or getattr(value, "__str__", None) is not None:
+                    and oracle_type_str.upper().startswith((
+                        "DATE",
+                        "TIMESTAMP",
+                        "CLOB",
+                        "NCLOB",
+                        "BLOB",
+                    ))
+                ):
                     transformed_record[column_name] = str(value)
                 else:
                     transformed_record[column_name] = value
