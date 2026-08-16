@@ -8,6 +8,7 @@ import pytest
 from pydantic import ValidationError
 
 from flext_tap_oracle import FlextTapOracleSettings
+from flext_tap_oracle.streams import FlextTapOracleStreams
 from tests.constants import c
 from tests.models import m
 from tests.utilities import u
@@ -122,3 +123,24 @@ class TestsFlextTapOracleEnterpriseTap:
         # No discovered tables is a failure, not a silent empty success.
         assert result.failure
         assert "not found" in str(result.error).lower()
+
+
+class TestsFlextTapOracleStreams:
+    @pytest.mark.parametrize(
+        ("oracle_type", "value", "expected"),
+        [
+            ("NUMBER", 42, 42),
+            ("CLOB", 42, "42"),
+            ("NCLOB", 42, "42"),
+            ("BLOB", 42, "42"),
+        ],
+    )
+    def test_transform_oracle_types_converts_only_declared_textual_values(
+        self, oracle_type: str, value: int, expected: int | str
+    ) -> None:
+        transformed = FlextTapOracleStreams.OracleStream.transform_oracle_types(
+            {"VALUE": value},
+            [m.DbOracle.ColumnMetadata(name="VALUE", data_type=oracle_type)],
+        )
+
+        assert transformed["VALUE"] == expected

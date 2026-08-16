@@ -203,10 +203,10 @@ class FlextTapOracleStreams:
             if missing_columns:
                 msg = f"Oracle row is missing expected columns: {missing_columns}"
                 raise RuntimeError(msg)
-            return self._transform_oracle_types(record, columns)
+            return self.transform_oracle_types(record, columns)
 
-        def _transform_oracle_types(
-            self,
+        @staticmethod
+        def transform_oracle_types(
             record: t.JsonMapping,
             column_metadata: t.SequenceOf[m.DbOracle.ColumnMetadata],
         ) -> t.JsonMapping:
@@ -236,9 +236,10 @@ class FlextTapOracleStreams:
                         "DATE",
                         "TIMESTAMP",
                         "CLOB",
+                        "NCLOB",
                         "BLOB",
                     ))
-                ) or getattr(value, "__str__", None) is not None:
+                ):
                     transformed_record[column_name] = str(value)
                 else:
                     transformed_record[column_name] = value
