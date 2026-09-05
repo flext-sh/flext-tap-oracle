@@ -19,7 +19,9 @@ from .__version__ import __version__ as __version__
 from .__version__ import __version_info__ as __version_info__
 
 if TYPE_CHECKING:
-    from flext_db_oracle import d, e, h, r, s, x
+    from enum import StrEnum, unique
+    from flext_db_oracle import FlextDbOracleConstants, d, e, h, r, s, x
+    from typing import Final, TYPE_CHECKING
 
     from ._config import FlextTapOracleConfig, config
     from ._settings import FlextTapOracleSettings, settings
@@ -27,25 +29,23 @@ if TYPE_CHECKING:
     from .constants import FlextTapOracleConstants, FlextTapOracleConstants as c
     from .models import FlextTapOracleModels, FlextTapOracleModels as m
     from .protocols import FlextTapOracleProtocols, FlextTapOracleProtocols as p
-    from .tap import (
-        FlextTapOracleCli,
-        FlextTapOracleDiscoverCommand,
-        FlextTapOracleSyncCommand,
-    )
+    from .streams import FlextTapOracleStreams
     from .typings import FlextTapOracleTypes, FlextTapOracleTypes as t
     from .utilities import FlextTapOracleUtilities, FlextTapOracleUtilities as u
 __all__: tuple[str, ...] = (
-    "FlextTapOracleCli",
+    "TYPE_CHECKING",
+    "Final",
+    "FlextDbOracleConstants",
     "FlextTapOracleConfig",
     "FlextTapOracleConstants",
-    "FlextTapOracleDiscoverCommand",
     "FlextTapOracleModels",
     "FlextTapOracleProtocols",
     "FlextTapOracleService",
     "FlextTapOracleSettings",
-    "FlextTapOracleSyncCommand",
+    "FlextTapOracleStreams",
     "FlextTapOracleTypes",
     "FlextTapOracleUtilities",
+    "StrEnum",
     "__author__",
     "__author_email__",
     "__description__",
@@ -67,33 +67,29 @@ __all__: tuple[str, ...] = (
     "t",
     "tap_oracle",
     "u",
+    "unique",
     "x",
 )
 
-install_lazy_exports(
-    __name__,
-    globals(),
-    MappingProxyType(
-        build_lazy_import_map(
-            MappingProxyType({
-                "._config": ("FlextTapOracleConfig", "config"),
-                "._settings": ("FlextTapOracleSettings", "settings"),
-                ".api": ("FlextTapOracleService", "tap_oracle"),
-                ".constants": ("FlextTapOracleConstants", "c"),
-                ".models": ("FlextTapOracleModels", "m"),
-                ".protocols": ("FlextTapOracleProtocols", "p"),
-                ".tap": (
-                    "FlextTapOracleCli",
-                    "FlextTapOracleDiscoverCommand",
-                    "FlextTapOracleSyncCommand",
-                ),
-                ".typings": ("FlextTapOracleTypes", "t"),
-                ".utilities": ("FlextTapOracleUtilities", "u"),
-                "flext_db_oracle": ("d", "e", "h", "r", "s", "x"),
-            }),
-            alias_groups=MappingProxyType({}),
-            sort_keys=False,
-        )
-    ),
-    public_exports=__all__,
+_LAZY_IMPORTS = MappingProxyType(
+    build_lazy_import_map(
+        MappingProxyType({
+            "._config": ("FlextTapOracleConfig", "config"),
+            "._settings": ("FlextTapOracleSettings", "settings"),
+            ".api": ("FlextTapOracleService", "tap_oracle"),
+            ".constants": ("FlextTapOracleConstants", "c"),
+            ".models": ("FlextTapOracleModels", "m"),
+            ".protocols": ("FlextTapOracleProtocols", "p"),
+            ".streams": ("FlextTapOracleStreams",),
+            ".typings": ("FlextTapOracleTypes", "t"),
+            ".utilities": ("FlextTapOracleUtilities", "u"),
+            "enum": ("StrEnum", "unique"),
+            "flext_db_oracle": ("FlextDbOracleConstants", "d", "e", "h", "r", "s", "x"),
+            "typing": ("Final", "TYPE_CHECKING"),
+        }),
+        alias_groups=MappingProxyType({}),
+        sort_keys=False,
+    )
 )
+
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, public_exports=__all__)
