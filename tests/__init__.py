@@ -3,18 +3,18 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from types import MappingProxyType
+from typing import TYPE_CHECKING
 
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
-    from . import unit as unit
-    from flext_tap_oracle import FlextTapOracleConstants
-    from flext_tests import FlextTestsConstants, d, e, h, r, td, tf, tk, tm, tv, x
     from typing import Final
 
+    from flext_tap_oracle import FlextTapOracleConstants
+    from flext_tests import FlextTestsConstants, d, e, h, r, td, tf, tk, tm, tv, x
+
+    from . import unit as unit
     from .base import (
         TestsFlextTapOracleServiceBase,
         TestsFlextTapOracleServiceBase as s,
@@ -30,16 +30,6 @@ if TYPE_CHECKING:
     )
     from .settings import TestsFlextTapOracleSettings
     from .typings import TestsFlextTapOracleTypes, TestsFlextTapOracleTypes as t
-    from .unit.fixtures import (
-        docker_control,
-        oracle_shared_container_environment,
-        reset_tap_oracle_settings,
-        set_test_environment,
-        shared_oracle_container,
-        skip_e2e_if_no_oracle,
-        tap_oracle_create_params,
-        tap_oracle_settings_overrides,
-    )
     from .utilities import (
         TestsFlextTapOracleUtilities,
         TestsFlextTapOracleUtilities as u,
@@ -57,21 +47,13 @@ __all__: tuple[str, ...] = (
     "TestsFlextTapOracleUtilities",
     "c",
     "d",
-    "docker_control",
     "e",
     "h",
     "m",
-    "oracle_shared_container_environment",
     "p",
     "r",
-    "reset_tap_oracle_settings",
     "s",
-    "set_test_environment",
-    "shared_oracle_container",
-    "skip_e2e_if_no_oracle",
     "t",
-    "tap_oracle_create_params",
-    "tap_oracle_settings_overrides",
     "td",
     "tf",
     "tk",
@@ -92,16 +74,6 @@ _LAZY_IMPORTS = MappingProxyType(
             ".settings": ("TestsFlextTapOracleSettings",),
             ".typings": ("TestsFlextTapOracleTypes", "t"),
             ".unit": ("unit",),
-            ".unit.fixtures": (
-                "docker_control",
-                "oracle_shared_container_environment",
-                "reset_tap_oracle_settings",
-                "set_test_environment",
-                "shared_oracle_container",
-                "skip_e2e_if_no_oracle",
-                "tap_oracle_create_params",
-                "tap_oracle_settings_overrides",
-            ),
             ".utilities": ("TestsFlextTapOracleUtilities", "u"),
             "flext_tap_oracle": ("FlextTapOracleConstants",),
             "flext_tests": (
