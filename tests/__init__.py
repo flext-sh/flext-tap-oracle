@@ -9,8 +9,6 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
-    from typing import Final
-
     from flext_tap_oracle import FlextTapOracleConstants
     from flext_tests import FlextTestsConstants, d, e, h, r, td, tf, tk, tm, tv, x
 
@@ -35,7 +33,6 @@ if TYPE_CHECKING:
         TestsFlextTapOracleUtilities as u,
     )
 __all__: tuple[str, ...] = (
-    "Final",
     "FlextTapOracleConstants",
     "FlextTestsConstants",
     "TestsFlextTapOracleConstants",
@@ -89,7 +86,6 @@ _LAZY_IMPORTS = MappingProxyType(
                 "tv",
                 "x",
             ),
-            "typing": ("Final",),
         }),
         alias_groups=MappingProxyType({}),
         sort_keys=False,
