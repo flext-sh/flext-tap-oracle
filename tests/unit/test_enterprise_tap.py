@@ -50,9 +50,7 @@ class TestsFlextTapOracleEnterpriseTap:
         tm.ok(result)
         tm.that(result.unwrap().get("service"), eq=tap_oracle_service.tap_name)
 
-    def test_stream_transform_preserves_numeric_and_converts_oracle_lobs(
-        self,
-    ) -> None:
+    def test_stream_transform_preserves_numeric_and_converts_oracle_lobs(self) -> None:
         """The public stream facade applies Oracle's observable type contract."""
         cases = (
             ("NUMBER", 42, 42),
@@ -61,15 +59,9 @@ class TestsFlextTapOracleEnterpriseTap:
             ("BLOB", 42, "42"),
         )
         for oracle_type, value, expected in cases:
-            transformed = (
-                FlextTapOracleStreams.OracleStream.transform_oracle_types(
-                    {"VALUE": value},
-                    [
-                        m.DbOracle.ColumnMetadata(
-                            name="VALUE", data_type=oracle_type
-                        )
-                    ],
-                )
+            transformed = FlextTapOracleStreams.OracleStream.transform_oracle_types(
+                {"VALUE": value},
+                [m.DbOracle.ColumnMetadata(name="VALUE", data_type=oracle_type)],
             )
 
             tm.that(transformed["VALUE"], eq=expected)
