@@ -17,7 +17,7 @@ from flext_meltano import e, p, r, t, u
 from flext_tap_oracle import c
 
 if TYPE_CHECKING:
-    from flext_tap_oracle._settings import FlextTapOracleSettings
+    from flext_tap_oracle import FlextTapOracleSettings
 
 logger = u.fetch_logger(__name__)
 
