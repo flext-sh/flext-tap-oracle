@@ -1,4 +1,4 @@
 version: 1
-workspace: flext-tap-oracle
-database: flext-tap-oracle
-issue_prefix: flext-tap-oracle
+workspace: flext
+database: flext
+issue_prefix: flext

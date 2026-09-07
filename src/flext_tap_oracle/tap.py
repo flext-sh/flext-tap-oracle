@@ -71,7 +71,7 @@ class FlextTapOracleDiscoverCommand:
             return _run_execute()
         except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
             logger.exception("Oracle discovery failed")
-            return r[t.JsonMapping].fail(f"Discovery error: {e}")
+            return r[t.JsonMapping].fail(f"Discovery error: {e}", exception=e)
 
     def validate_business_rules(self) -> p.Result[bool]:
         """Validate business rules for Oracle tap discovery."""
@@ -131,7 +131,7 @@ class FlextTapOracleSyncCommand:
             return _run_execute()
         except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
             logger.exception("Oracle sync failed")
-            return r[t.JsonMapping].fail(f"Sync error: {e}")
+            return r[t.JsonMapping].fail(f"Sync error: {e}", exception=e)
 
     def validate_business_rules(self) -> p.Result[bool]:
         """Validate business rules for Oracle tap sync."""

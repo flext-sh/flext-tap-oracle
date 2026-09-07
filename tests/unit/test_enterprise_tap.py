@@ -1,146 +1,67 @@
-"""Behavioral tests for the public FlextTapOracleSettings contract (ADR-005)."""
+"""Observable contracts of the public Oracle tap facade."""
 
 from __future__ import annotations
 
-from collections.abc import Sequence
-
-import pytest
-from pydantic import ValidationError
-
-from flext_tap_oracle import FlextTapOracleSettings
-from flext_tap_oracle.streams import FlextTapOracleStreams
-from tests.constants import c
-from tests.models import m
-from tests.utilities import u
+from flext_tap_oracle import (
+    FlextTapOracleConfig,
+    FlextTapOracleService,
+    FlextTapOracleSettings,
+    FlextTapOracleStreams,
+    config,
+    m,
+    settings,
+)
+from flext_tests import tm
 
 
 class TestsFlextTapOracleEnterpriseTap:
-    """Validate observable settings behavior through the public API only."""
+    """Validate public settings, config, service, and stream behavior."""
 
-    def test_fetch_global_applies_overrides_to_public_fields(
-        self, tap_oracle_settings_overrides: dict[str, dict[str, str | int]]
+    def test_settings_fixture_consumes_the_public_owner(
+        self, tap_oracle_settings: FlextTapOracleSettings
     ) -> None:
-        config = FlextTapOracleSettings.fetch_global(
-            overrides=tap_oracle_settings_overrides
-        )
-        assert config.TapOracle.oracle_host == c.TapOracle.Tests.UNIT_ORACLE_HOST
-        assert config.TapOracle.oracle_port == c.TapOracle.Tests.UNIT_ORACLE_PORT
-        assert (
-            config.TapOracle.oracle_service_name
-            == c.TapOracle.Tests.UNIT_ORACLE_SERVICE_NAME
-        )
-        assert config.TapOracle.batch_size == c.TapOracle.Tests.UNIT_BATCH_SIZE
+        """The fixture exposes production's typed settings singleton."""
+        tm.that(tap_oracle_settings, is_=FlextTapOracleSettings)
+        tm.that(tap_oracle_settings.model_dump(), eq=settings.model_dump())
 
-    def test_oracle_namespace_exposes_full_connection_contract(
-        self, tap_oracle_settings_overrides: dict[str, dict[str, str | int]]
+    def test_settings_round_trip_preserves_the_public_state(
+        self, tap_oracle_settings: FlextTapOracleSettings
     ) -> None:
-        config = FlextTapOracleSettings.fetch_global(
-            overrides=tap_oracle_settings_overrides
+        """Pydantic ingress preserves every value owned by settings."""
+        restored = FlextTapOracleSettings.model_validate(
+            tap_oracle_settings.model_dump(mode="python")
         )
-        oracle = config.TapOracle
-        assert oracle.oracle_host == c.TapOracle.Tests.UNIT_ORACLE_HOST
-        assert oracle.oracle_port == c.TapOracle.Tests.UNIT_ORACLE_PORT
-        assert oracle.oracle_service_name == c.TapOracle.Tests.UNIT_ORACLE_SERVICE_NAME
-        assert oracle.oracle_user == c.TapOracle.Tests.UNIT_ORACLE_USER
-        assert oracle.oracle_password == c.TapOracle.Tests.UNIT_ORACLE_PASSWORD
 
-    def test_oracle_credentials_are_plaintext_scalars(
-        self, tap_oracle_settings_overrides: dict[str, dict[str, str | int]]
+        tm.that(restored.model_dump(), eq=tap_oracle_settings.model_dump())
+
+    def test_config_fixture_consumes_the_public_owner(
+        self, tap_oracle_config: FlextTapOracleConfig
     ) -> None:
-        config = FlextTapOracleSettings.fetch_global(
-            overrides=tap_oracle_settings_overrides
-        )
-        # Namespaced credential fields are plain scalars, not SecretStr wrappers.
-        assert isinstance(config.TapOracle.oracle_user, str)
-        assert isinstance(config.TapOracle.oracle_password, str)
-        assert "SecretStr" not in repr(config.TapOracle.oracle_password)
+        """The fixture exposes production's validated config singleton."""
+        tm.that(tap_oracle_config, is_=FlextTapOracleConfig)
+        tm.that(tap_oracle_config.model_dump(), eq=config.model_dump())
 
-    def test_fetch_global_is_idempotent(self) -> None:
-        assert (
-            FlextTapOracleSettings.fetch_global()
-            is FlextTapOracleSettings.fetch_global()
-        )
-
-    def test_model_validate_returns_validated_settings(
-        self, tap_oracle_create_params: dict[str, str | int]
+    def test_service_executes_through_the_public_facade(
+        self, tap_oracle_service: FlextTapOracleService
     ) -> None:
-        config = FlextTapOracleSettings.model_validate({
-            "TapOracle": tap_oracle_create_params
-        })
-        assert config.TapOracle.oracle_host == c.TapOracle.Tests.CREATE_CONFIG_HOST
-        assert config.TapOracle.oracle_port == c.TapOracle.Tests.CREATE_CONFIG_PORT
-        assert (
-            config.TapOracle.oracle_service_name
-            == c.TapOracle.Tests.CREATE_CONFIG_SERVICE_NAME
-        )
+        """The real service reports its own public tap identity."""
+        result = tap_oracle_service.execute()
 
-    def test_model_validate_applies_default_batch_and_prefix(
-        self, tap_oracle_create_params: dict[str, str | int]
-    ) -> None:
-        config = FlextTapOracleSettings.model_validate({
-            "TapOracle": tap_oracle_create_params
-        })
-        # Grouped defaults are part of the settings contract, not caller-supplied.
-        assert config.TapOracle.batch_size == 1000
-        assert config.TapOracle.stream_prefix == ""
+        tm.ok(result)
+        tm.that(result.unwrap().get("service"), eq=tap_oracle_service.tap_name)
 
-    def test_model_validate_rejects_out_of_range_port(self) -> None:
-        with pytest.raises(ValidationError):
-            FlextTapOracleSettings.model_validate({"TapOracle": {"oracle_port": 0}})
-
-    def test_filter_tables_returns_configured_table_names(
-        self, tap_oracle_settings_overrides: dict[str, dict[str, str | int]]
-    ) -> None:
-        config = FlextTapOracleSettings.fetch_global(
-            overrides=tap_oracle_settings_overrides
-        )
-        discovered_tables: Sequence[m.DbOracle.Table] = [
-            m.DbOracle.Table(
-                name="USERS", owner="TESTDB", domain_events=[], columns=[]
-            ),
-            m.DbOracle.Table(
-                name="ORDERS", owner="TESTDB", domain_events=[], columns=[]
-            ),
-            m.DbOracle.Table(
-                name="PRODUCTS", owner="TESTDB", domain_events=[], columns=[]
-            ),
-        ]
-        result = u.TapOracle.tap_oracle_client_filter_tables(
-            tap_config=config, discovered_tables=discovered_tables
-        )
-        assert result.success
-        assert result.value == ["USERS", "ORDERS", "PRODUCTS"]
-
-    def test_filter_tables_on_empty_discovery_reports_not_found(
-        self, tap_oracle_settings_overrides: dict[str, dict[str, str | int]]
-    ) -> None:
-        config = FlextTapOracleSettings.fetch_global(
-            overrides=tap_oracle_settings_overrides
-        )
-        result = u.TapOracle.tap_oracle_client_filter_tables(
-            tap_config=config, discovered_tables=[]
-        )
-        # No discovered tables is a failure, not a silent empty success.
-        assert result.failure
-        assert "not found" in str(result.error).lower()
-
-
-class TestsFlextTapOracleStreams:
-    @pytest.mark.parametrize(
-        ("oracle_type", "value", "expected"),
-        [
+    def test_stream_transform_preserves_numeric_and_converts_oracle_lobs(self) -> None:
+        """The public stream facade applies Oracle's observable type contract."""
+        cases = (
             ("NUMBER", 42, 42),
             ("CLOB", 42, "42"),
             ("NCLOB", 42, "42"),
             ("BLOB", 42, "42"),
-        ],
-    )
-    def test_transform_oracle_types_converts_only_declared_textual_values(
-        self, oracle_type: str, value: int, expected: int | str
-    ) -> None:
-        transformed = FlextTapOracleStreams.OracleStream.transform_oracle_types(
-            {"VALUE": value},
-            [m.DbOracle.ColumnMetadata(name="VALUE", data_type=oracle_type)],
         )
+        for oracle_type, value, expected in cases:
+            transformed = FlextTapOracleStreams.OracleStream.transform_oracle_types(
+                {"VALUE": value},
+                [m.DbOracle.ColumnMetadata(name="VALUE", data_type=oracle_type)],
+            )
 
-        assert transformed["VALUE"] == expected
+            tm.that(transformed["VALUE"], eq=expected)

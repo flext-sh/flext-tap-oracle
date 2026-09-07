@@ -3,93 +3,93 @@
 
 from __future__ import annotations
 
+from types import MappingProxyType
 from typing import TYPE_CHECKING
 
-from flext_core.lazy import (
-    build_lazy_import_map,
-    install_lazy_exports,
-    merge_lazy_imports,
-)
+from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_tests import (
-        d as d,
-        e as e,
-        h as h,
-        r as r,
-        td as td,
-        tf as tf,
-        tk as tk,
-        tm as tm,
-        tv as tv,
-        x as x,
+    from flext_tap_oracle import FlextTapOracleConstants
+    from flext_tests import FlextTestsConstants, d, e, h, r, td, tf, tk, tm, tv, x
+
+    from . import unit as unit
+    from .base import (
+        TestsFlextTapOracleServiceBase,
+        TestsFlextTapOracleServiceBase as s,
     )
-    from tests.base import (
-        TestsFlextTapOracleServiceBase as TestsFlextTapOracleServiceBase,
-        s as s,
+    from .constants import (
+        TestsFlextTapOracleConstants,
+        TestsFlextTapOracleConstants as c,
     )
-    from tests.constants import (
-        TestsFlextTapOracleConstants as TestsFlextTapOracleConstants,
-        c as c,
+    from .models import TestsFlextTapOracleModels, TestsFlextTapOracleModels as m
+    from .protocols import (
+        TestsFlextTapOracleProtocols,
+        TestsFlextTapOracleProtocols as p,
     )
-    from tests.models import (
-        TestsFlextTapOracleModels as TestsFlextTapOracleModels,
-        m as m,
+    from .settings import TestsFlextTapOracleSettings
+    from .typings import TestsFlextTapOracleTypes, TestsFlextTapOracleTypes as t
+    from .utilities import (
+        TestsFlextTapOracleUtilities,
+        TestsFlextTapOracleUtilities as u,
     )
-    from tests.protocols import (
-        TestsFlextTapOracleProtocols as TestsFlextTapOracleProtocols,
-        p,
-    )
-    from tests.settings import (
-        TestsFlextTapOracleSettings as TestsFlextTapOracleSettings,
-    )
-    from tests.typings import (
-        TestsFlextTapOracleTypes as TestsFlextTapOracleTypes,
-        t as t,
-    )
-    from tests.unit.test_enterprise_tap import (
-        TestsFlextTapOracleEnterpriseTap as TestsFlextTapOracleEnterpriseTap,
-    )
-    from tests.utilities import (
-        TestsFlextTapOracleUtilities as TestsFlextTapOracleUtilities,
-        u,
-    )
-_LAZY_IMPORTS = merge_lazy_imports(
-    (".unit",),
-    build_lazy_import_map({
-        ".base": ("TestsFlextTapOracleServiceBase", "s"),
-        ".conftest": ("conftest",),
-        ".constants": ("TestsFlextTapOracleConstants", "c"),
-        ".models": ("TestsFlextTapOracleModels", "m"),
-        ".protocols": ("TestsFlextTapOracleProtocols", "p"),
-        ".settings": ("TestsFlextTapOracleSettings",),
-        ".typings": ("TestsFlextTapOracleTypes", "t"),
-        ".unit": ("unit",),
-        ".unit.test_enterprise_tap": ("TestsFlextTapOracleEnterpriseTap",),
-        ".utilities": ("TestsFlextTapOracleUtilities", "u"),
-        "flext_tests": ("d", "e", "h", "r", "td", "tf", "tk", "tm", "tv", "x"),
-    }),
-    exclude_names=(
-        "cleanup_submodule_namespace",
-        "install_lazy_exports",
-        "lazy_getattr",
-        "logger",
-        "merge_lazy_imports",
-        "output",
-        "output_reporting",
-        "pytest_addoption",
-        "pytest_collect_file",
-        "pytest_collection_modifyitems",
-        "pytest_configure",
-        "pytest_runtest_setup",
-        "pytest_runtest_teardown",
-        "pytest_sessionfinish",
-        "pytest_sessionstart",
-        "pytest_terminal_summary",
-        "pytest_warning_recorded",
-    ),
-    module_name=__name__,
+__all__: tuple[str, ...] = (
+    "FlextTapOracleConstants",
+    "FlextTestsConstants",
+    "TestsFlextTapOracleConstants",
+    "TestsFlextTapOracleModels",
+    "TestsFlextTapOracleProtocols",
+    "TestsFlextTapOracleServiceBase",
+    "TestsFlextTapOracleSettings",
+    "TestsFlextTapOracleTypes",
+    "TestsFlextTapOracleUtilities",
+    "c",
+    "d",
+    "e",
+    "h",
+    "m",
+    "p",
+    "r",
+    "s",
+    "t",
+    "td",
+    "tf",
+    "tk",
+    "tm",
+    "tv",
+    "u",
+    "unit",
+    "x",
 )
 
+_LAZY_IMPORTS = MappingProxyType(
+    build_lazy_import_map(
+        MappingProxyType({
+            ".base": ("TestsFlextTapOracleServiceBase", "s"),
+            ".constants": ("TestsFlextTapOracleConstants", "c"),
+            ".models": ("TestsFlextTapOracleModels", "m"),
+            ".protocols": ("TestsFlextTapOracleProtocols", "p"),
+            ".settings": ("TestsFlextTapOracleSettings",),
+            ".typings": ("TestsFlextTapOracleTypes", "t"),
+            ".unit": ("unit",),
+            ".utilities": ("TestsFlextTapOracleUtilities", "u"),
+            "flext_tap_oracle": ("FlextTapOracleConstants",),
+            "flext_tests": (
+                "FlextTestsConstants",
+                "d",
+                "e",
+                "h",
+                "r",
+                "td",
+                "tf",
+                "tk",
+                "tm",
+                "tv",
+                "x",
+            ),
+        }),
+        alias_groups=MappingProxyType({}),
+        sort_keys=False,
+    )
+)
 
-install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, publish_all=False)
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, public_exports=__all__)

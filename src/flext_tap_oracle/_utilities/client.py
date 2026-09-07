@@ -17,7 +17,7 @@ from flext_meltano import e, p, r, t, u
 from flext_tap_oracle import c
 
 if TYPE_CHECKING:
-    from flext_tap_oracle._settings import FlextTapOracleSettings
+    from flext_tap_oracle import FlextTapOracleSettings
 
 logger = u.fetch_logger(__name__)
 
@@ -84,7 +84,7 @@ class FlextTapOracleUtilitiesClientMixin:
             return _run_tap_oracle_client_test_connection()
         except c.Meltano.SINGER_SAFE_EXCEPTIONS as exc:
             logger.exception("Oracle connection test error")
-            return r[bool].fail(f"Connection test error: {exc}")
+            return r[bool].fail(f"Connection test error: {exc}", exception=exc)
 
     @staticmethod
     def tap_oracle_client_filter_tables(
