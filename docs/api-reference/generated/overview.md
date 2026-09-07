@@ -25,7 +25,7 @@
 - Public symbol exports: `FlextTapOracleConfig`, `FlextTapOracleConstants`,
   `FlextTapOracleModels`, `FlextTapOracleProtocols`, `FlextTapOracleService`,
   `FlextTapOracleSettings`, `FlextTapOracleStreams`, `FlextTapOracleTypes`,
-  `FlextTapOracleUtilities`, `config` (+2 more)
+  `FlextTapOracleUtilities`, `config` (+1 more)
 - Exported module shortcuts: _none_
 - Generated module pages: `7`
 
