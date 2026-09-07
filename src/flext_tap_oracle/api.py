@@ -39,4 +39,6 @@ class FlextTapOracleService(FlextMeltanoTapServiceBase):
         raise TypeError(msg)
 
 
-__all__: list[str] = ["FlextTapOracleService"]
+tap_oracle = FlextTapOracleService
+
+__all__: list[str] = ["FlextTapOracleService", "tap_oracle"]
