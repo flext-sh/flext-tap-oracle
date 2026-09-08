@@ -39,6 +39,7 @@ class FlextTapOracleService(FlextMeltanoTapServiceBase):
         raise TypeError(msg)
 
 
-tap_oracle = FlextTapOracleService
+tap_oracle: FlextTapOracleService = FlextTapOracleService.fetch_global()
+"""Process-wide tap-oracle facade singleton resolved from the global container."""
 
 __all__: list[str] = ["FlextTapOracleService", "tap_oracle"]

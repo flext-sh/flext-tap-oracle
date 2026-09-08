@@ -20,9 +20,6 @@ from .__version__ import (
 )
 
 if TYPE_CHECKING:
-    from enum import StrEnum, unique
-    from typing import TYPE_CHECKING, Final
-
     from flext_db_oracle import FlextDbOracleConstants, d, e, h, r, s, x
 
     from ._config import FlextTapOracleConfig, config
@@ -35,8 +32,6 @@ if TYPE_CHECKING:
     from .typings import FlextTapOracleTypes, FlextTapOracleTypes as t
     from .utilities import FlextTapOracleUtilities, FlextTapOracleUtilities as u
 __all__: tuple[str, ...] = (
-    "TYPE_CHECKING",
-    "Final",
     "FlextDbOracleConstants",
     "FlextTapOracleConfig",
     "FlextTapOracleConstants",
@@ -47,7 +42,6 @@ __all__: tuple[str, ...] = (
     "FlextTapOracleStreams",
     "FlextTapOracleTypes",
     "FlextTapOracleUtilities",
-    "StrEnum",
     "__author__",
     "__author_email__",
     "__description__",
@@ -69,7 +63,6 @@ __all__: tuple[str, ...] = (
     "t",
     "tap_oracle",
     "u",
-    "unique",
     "x",
 )
 
@@ -85,9 +78,7 @@ _LAZY_IMPORTS = MappingProxyType(
             ".streams": ("FlextTapOracleStreams",),
             ".typings": ("FlextTapOracleTypes", "t"),
             ".utilities": ("FlextTapOracleUtilities", "u"),
-            "enum": ("StrEnum", "unique"),
             "flext_db_oracle": ("FlextDbOracleConstants", "d", "e", "h", "r", "s", "x"),
-            "typing": ("Final", "TYPE_CHECKING"),
         }),
         alias_groups=MappingProxyType({}),
         sort_keys=False,
