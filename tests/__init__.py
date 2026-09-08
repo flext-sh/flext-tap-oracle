@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from flext_tap_oracle import FlextTapOracleConstants
     from flext_tests import FlextTestsConstants, d, e, h, r, td, tf, tk, tm, tv, x
 
-    from . import unit as unit
+    from . import unit
     from .base import (
         TestsFlextTapOracleServiceBase,
         TestsFlextTapOracleServiceBase as s,
