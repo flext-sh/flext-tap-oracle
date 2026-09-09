@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING
 
 from flext_db_oracle import FlextDbOracleApi, FlextDbOracleModels
 from flext_meltano import e, p, r, t, u
+
 from flext_tap_oracle import c
 
 if TYPE_CHECKING:

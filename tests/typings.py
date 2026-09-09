@@ -7,8 +7,9 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_tap_oracle import FlextTapOracleTypes
 from flext_tests import FlextTestsTypes
+
+from flext_tap_oracle import FlextTapOracleTypes
 
 
 class TestsFlextTapOracleTypes(FlextTestsTypes, FlextTapOracleTypes):

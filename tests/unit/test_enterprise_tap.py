@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from flext_tests import tm
+
 from flext_tap_oracle import (
     FlextTapOracleConfig,
     FlextTapOracleService,
@@ -11,7 +13,6 @@ from flext_tap_oracle import (
     m,
     settings,
 )
-from flext_tests import tm
 
 
 class TestsFlextTapOracleEnterpriseTap:
