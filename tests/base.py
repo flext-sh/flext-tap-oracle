@@ -4,9 +4,10 @@ from __future__ import annotations
 
 from typing import override
 
-from flext_tap_oracle import m
 from flext_tests import s as tests_s
-from tests.settings import TestsFlextTapOracleSettings
+
+from flext_tap_oracle import m
+from tests import TestsFlextTapOracleSettings
 
 
 class TestsFlextTapOracleServiceBase(tests_s):

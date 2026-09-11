@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from flext_tap_oracle import FlextTapOracleSettings
 from flext_tests import FlextTestsSettings
+
+from flext_tap_oracle import FlextTapOracleSettings
 
 
 class TestsFlextTapOracleSettings(FlextTapOracleSettings, FlextTestsSettings):

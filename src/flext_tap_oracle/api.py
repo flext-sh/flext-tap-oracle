@@ -16,6 +16,7 @@ from typing import Annotated, Never, override
 from flext_meltano.services.consumer_bases.tap_service_base import (
     FlextMeltanoTapServiceBase,
 )
+
 from flext_tap_oracle import FlextTapOracleSettings, p, t, u
 
 
@@ -39,6 +40,7 @@ class FlextTapOracleService(FlextMeltanoTapServiceBase):
         raise TypeError(msg)
 
 
-tap_oracle = FlextTapOracleService
+tap_oracle: FlextTapOracleService = FlextTapOracleService.fetch_global()
+"""Process-wide tap-oracle facade singleton resolved from the global container."""
 
 __all__: list[str] = ["FlextTapOracleService", "tap_oracle"]

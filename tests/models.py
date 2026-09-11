@@ -9,8 +9,9 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from flext_tap_oracle import FlextTapOracleModels
 from flext_tests import FlextTestsModels
+
+from flext_tap_oracle import FlextTapOracleModels
 from tests import u
 
 
