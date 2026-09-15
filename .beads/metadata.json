@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "server",
+  "dolt_database": "flext_tap_oracle",
+  "project_id": "50a728f7-b7d5-4db7-9478-f1bfff0d393a"
+}
