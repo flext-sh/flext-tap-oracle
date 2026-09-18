@@ -9,7 +9,7 @@
 <!-- AUTO-GENERATED — DO NOT EDIT MANUALLY -->
 
 - Package: `flext_tap_oracle`
-- Version: `0.12.0rc0`
+- Version: `0.12.0`
 - Description: FLEXT Tap Oracle - Modern Singer Tap for Oracle Database
 - Doc summary: Flext Tap Oracle package.
 - Classifiers: `Development Status :: 3 - Alpha`, `Intended Audience :: Developers`,
