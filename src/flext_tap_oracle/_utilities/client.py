@@ -20,10 +20,10 @@ from flext_tap_oracle import c
 if TYPE_CHECKING:
     from flext_tap_oracle import FlextTapOracleSettings
 
-logger = u.fetch_logger(__name__)
-
 
 class FlextTapOracleUtilitiesClientMixin:
+    logger = u.fetch_logger(__name__)
+
     """Mixin providing Oracle tap client utility methods."""
 
     @staticmethod

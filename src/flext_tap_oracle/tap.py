@@ -18,10 +18,9 @@ from flext_tap_oracle import FlextTapOracleSettings, c, e, m, p, r, t, u
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-logger = u.fetch_logger(__name__)
-
 
 class FlextTapOracleDiscoverCommand:
+    logger = u.fetch_logger(__name__)
     """Oracle tap discovery command using flext-meltano patterns.
 
     Provides discovery of Oracle database schema and Singer catalog generation.
