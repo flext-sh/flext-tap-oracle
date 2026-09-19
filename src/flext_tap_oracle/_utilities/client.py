@@ -36,11 +36,15 @@ class FlextTapOracleUtilitiesClientMixin:
             Sequence[FlextDbOracleModels.DbOracle.Table]
         ]:
             target_schema = schema_name or "USER"
-            logger.info("Discovering Oracle tables in schema: %s", target_schema)
+            FlextTapOracleUtilitiesClientMixin.logger.info(
+                "Discovering Oracle tables in schema: %s", target_schema
+            )
             tables_result = oracle_api.fetch_tables(schema=target_schema)
             if tables_result.failure:
                 error_msg = tables_result.error or "Table discovery failed"
-                logger.warning("Oracle table discovery failed: %s", error_msg)
+                FlextTapOracleUtilitiesClientMixin.logger.warning(
+                    "Oracle table discovery failed: %s", error_msg
+                )
                 return r[Sequence[FlextDbOracleModels.DbOracle.Table]].fail(error_msg)
 
             table_names = tables_result.value or []
@@ -51,7 +55,7 @@ class FlextTapOracleUtilitiesClientMixin:
                 for name in table_names
             ]
 
-            logger.info(
+            FlextTapOracleUtilitiesClientMixin.logger.info(
                 "Discovered %d Oracle tables in schema %s", len(tables), target_schema
             )
             return r[Sequence[FlextDbOracleModels.DbOracle.Table]].ok(tables)
@@ -59,7 +63,9 @@ class FlextTapOracleUtilitiesClientMixin:
         try:
             return _run_tap_oracle_client_discover_tables()
         except c.Meltano.SINGER_SAFE_EXCEPTIONS as exc:
-            logger.exception("Oracle table discovery error")
+            FlextTapOracleUtilitiesClientMixin.logger.exception(
+                "Oracle table discovery error"
+            )
             return r[Sequence[FlextDbOracleModels.DbOracle.Table]].fail(
                 f"Table discovery error in schema {schema_name}: {exc}"
             )
@@ -71,20 +77,26 @@ class FlextTapOracleUtilitiesClientMixin:
         """Execute Oracle connection test using Layer 2 flext-db-oracle API."""
 
         def _run_tap_oracle_client_test_connection() -> p.Result[bool]:
-            logger.info("Testing Oracle connection")
+            FlextTapOracleUtilitiesClientMixin.logger.info("Testing Oracle connection")
             test_result = oracle_api.test_connection()
             if test_result.success:
-                logger.info("Oracle connection test successful")
+                FlextTapOracleUtilitiesClientMixin.logger.info(
+                    "Oracle connection test successful"
+                )
                 return r[bool].ok(value=True)
 
             error_msg = test_result.error or "Connection test failed"
-            logger.error("Oracle connection test failed: %s", error_msg)
+            FlextTapOracleUtilitiesClientMixin.logger.error(
+                "Oracle connection test failed: %s", error_msg
+            )
             return r[bool].fail(error_msg)
 
         try:
             return _run_tap_oracle_client_test_connection()
         except c.Meltano.SINGER_SAFE_EXCEPTIONS as exc:
-            logger.exception("Oracle connection test error")
+            FlextTapOracleUtilitiesClientMixin.logger.exception(
+                "Oracle connection test error"
+            )
             return r[bool].fail(f"Connection test error: {exc}", exception=exc)
 
     @staticmethod
@@ -112,7 +124,9 @@ class FlextTapOracleUtilitiesClientMixin:
         """Initialize Oracle tap by testing connection and discovering tables."""
 
         def _run_tap_oracle_client_initialize_tap() -> p.Result[bool]:
-            logger.info("Initializing Oracle tap service")
+            FlextTapOracleUtilitiesClientMixin.logger.info(
+                "Initializing Oracle tap service"
+            )
             connection_result = (
                 FlextTapOracleUtilitiesClientMixin.tap_oracle_client_test_connection(
                     oracle_api
@@ -129,13 +143,17 @@ class FlextTapOracleUtilitiesClientMixin:
             if discovery_result.failure:
                 return r[bool].fail_op("Table discovery", discovery_result.error)
 
-            logger.info("Oracle tap initialization completed successfully")
+            FlextTapOracleUtilitiesClientMixin.logger.info(
+                "Oracle tap initialization completed successfully"
+            )
             return r[bool].ok(value=True)
 
         try:
             return _run_tap_oracle_client_initialize_tap()
         except c.Meltano.SINGER_SAFE_EXCEPTIONS as exc:
-            logger.exception("Oracle tap initialization failed")
+            FlextTapOracleUtilitiesClientMixin.logger.exception(
+                "Oracle tap initialization failed"
+            )
             return r[bool].fail_op("Initialization", exc)
 
 
