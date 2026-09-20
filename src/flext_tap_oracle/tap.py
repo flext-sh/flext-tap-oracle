@@ -18,14 +18,14 @@ from flext_tap_oracle import FlextTapOracleSettings, c, e, m, p, r, t, u
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-logger = u.fetch_logger(__name__)
-
 
 class FlextTapOracleDiscoverCommand:
     """Oracle tap discovery command using flext-meltano patterns.
 
     Provides discovery of Oracle database schema and Singer catalog generation.
     """
+
+    logger = u.fetch_logger(__name__)
 
     def __init__(self, params: m.TapOracle.OracleTapDiscoverParams) -> None:
         """Initialize command with parameter object pattern."""
@@ -70,7 +70,7 @@ class FlextTapOracleDiscoverCommand:
         try:
             return _run_execute()
         except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
-            logger.exception("Oracle discovery failed")
+            FlextTapOracleDiscoverCommand.logger.exception("Oracle discovery failed")
             return r[t.JsonMapping].fail(f"Discovery error: {e}", exception=e)
 
     def validate_business_rules(self) -> p.Result[bool]:
@@ -84,6 +84,8 @@ class FlextTapOracleDiscoverCommand:
 
 class FlextTapOracleSyncCommand:
     """Oracle tap sync command using flext-meltano patterns."""
+
+    logger = u.fetch_logger(__name__)
 
     def __init__(self, params: m.TapOracle.OracleTapSyncParams) -> None:
         """Initialize command with parameter object pattern."""
@@ -130,7 +132,7 @@ class FlextTapOracleSyncCommand:
         try:
             return _run_execute()
         except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
-            logger.exception("Oracle sync failed")
+            self.logger.exception("Oracle sync failed")
             return r[t.JsonMapping].fail(f"Sync error: {e}", exception=e)
 
     def validate_business_rules(self) -> p.Result[bool]:
@@ -153,6 +155,8 @@ class FlextTapOracleSyncCommand:
 class FlextTapOracleCli:
     """Facade for Oracle tap CLI operations using flext-meltano abstractions."""
 
+    logger = u.fetch_logger(__name__)
+
     @staticmethod
     def run_tap_command[TParams](
         *,
@@ -169,7 +173,9 @@ class FlextTapOracleCli:
             result = command.execute()
             if result.failure:
                 error_message = result.error or f"{operation_name} failed"
-                logger.error("%s failed: %s", operation_name, error_message)
+                FlextTapOracleCli.logger.error(
+                    "%s failed: %s", operation_name, error_message
+                )
                 return r[t.JsonValue].fail(error_message)
             return r[t.JsonValue].ok(value=True)
 
@@ -177,7 +183,7 @@ class FlextTapOracleCli:
             return _run_run_tap_command()
         except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
             error_message = f"{operation_name} error: {e}"
-            logger.exception(error_message)
+            FlextTapOracleCli.logger.exception(error_message)
             return r[t.JsonValue].fail(error_message)
 
     @staticmethod
@@ -203,6 +209,7 @@ class FlextTapOracleCli:
 
 def run_cli() -> int:
     """Run main CLI entry point using flext-meltano abstractions."""
+    logger = u.fetch_logger(__name__)
     if "--discover" in sys.argv:
         result = FlextTapOracleCli.handle_discover_command()
         return 0 if result.success else 1
@@ -215,6 +222,7 @@ def run_cli() -> int:
 
 def main() -> None:
     """Provide CLI entry point using flext-meltano patterns."""
+    logger = u.fetch_logger(__name__)
     try:
         exit_code = run_cli()
         raise SystemExit(exit_code)

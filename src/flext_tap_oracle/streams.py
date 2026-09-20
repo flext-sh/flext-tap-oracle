@@ -86,14 +86,15 @@ class FlextTapOracleStreams:
                             return None
                 return None
 
+            estimate: int | None = None
             try:
-                return _run_estimate_row_count()
+                estimate = _run_estimate_row_count()
             except c.Meltano.SINGER_SAFE_EXCEPTIONS as e:
                 err_msg = str(e)
                 FlextTapOracleStreams.logger.warning(
                     "Failed to estimate row count for %s: %s", self.table_name, err_msg
                 )
-                return None
+            return estimate
 
         def get_records(
             self, context: t.MappingKV[str, t.TapOracle.OracleValue] | None = None
