@@ -13,13 +13,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Annotated
 
 from flext_meltano import FlextMeltanoSettings, m
-from pydantic_settings import SettingsConfigDict
 
 
 class FlextTapOracleSettings(FlextMeltanoSettings):
     """Oracle Singer tap settings; fields under ``settings.TapOracle.*``."""
 
-    model_config = SettingsConfigDict(
+    model_config = m.SettingsConfigDict(
         env_prefix="FLEXT_TAP_ORACLE_", env_nested_delimiter="__", extra="ignore"
     )
 
