@@ -13,14 +13,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
-from flext_db_oracle import FlextDbOracleProtocols
-from flext_meltano import FlextMeltanoProtocols, p as meltano_p
+from flext_db_oracle import p as _db_oracle_p
+from flext_meltano import p as meltano_p
 
 if TYPE_CHECKING:
     from flext_tap_oracle import t
 
 
-class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
+class FlextTapOracleProtocols(meltano_p, _db_oracle_p):
     """Singer Oracle tap protocols facade — composes Meltano + Oracle protocols."""
 
     class TapOracle:

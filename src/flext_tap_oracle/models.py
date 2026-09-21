@@ -9,8 +9,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Annotated, Self
 
-from flext_db_oracle import FlextDbOracleModels
-from flext_meltano import FlextMeltanoModels, m, u
+from flext_db_oracle import m as _db_oracle_m
+from flext_meltano import m, u
 
 if TYPE_CHECKING:
     from collections.abc import MutableSequence
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from flext_tap_oracle import t
 
 
-class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
+class FlextTapOracleModels(m, _db_oracle_m):
     """Complete models for Oracle tap operations extending m.
 
     Provides standardized models for all Oracle tap domain entities including:
