@@ -20,7 +20,9 @@ from .__version__ import (
 )
 
 if TYPE_CHECKING:
-    from flext_db_oracle import FlextDbOracleConstants, d, e, h, r, s, x
+    from flext_db_oracle import e, s
+
+    from flext_core import d, h, r, x
 
     from .__version__ import FlextTapOracleVersion
     from ._config import FlextTapOracleConfig, config
@@ -30,25 +32,16 @@ if TYPE_CHECKING:
     from .models import FlextTapOracleModels, FlextTapOracleModels as m
     from .protocols import FlextTapOracleProtocols, FlextTapOracleProtocols as p
     from .streams import FlextTapOracleStreams
-    from .tap import (
-        FlextTapOracleCli,
-        FlextTapOracleDiscoverCommand,
-        FlextTapOracleSyncCommand,
-    )
     from .typings import FlextTapOracleTypes, FlextTapOracleTypes as t
     from .utilities import FlextTapOracleUtilities, FlextTapOracleUtilities as u
 __all__: tuple[str, ...] = (
-    "FlextDbOracleConstants",
-    "FlextTapOracleCli",
     "FlextTapOracleConfig",
     "FlextTapOracleConstants",
-    "FlextTapOracleDiscoverCommand",
     "FlextTapOracleModels",
     "FlextTapOracleProtocols",
     "FlextTapOracleService",
     "FlextTapOracleSettings",
     "FlextTapOracleStreams",
-    "FlextTapOracleSyncCommand",
     "FlextTapOracleTypes",
     "FlextTapOracleUtilities",
     "FlextTapOracleVersion",
@@ -87,14 +80,10 @@ _LAZY_IMPORTS = MappingProxyType(
             ".models": ("FlextTapOracleModels", "m"),
             ".protocols": ("FlextTapOracleProtocols", "p"),
             ".streams": ("FlextTapOracleStreams",),
-            ".tap": (
-                "FlextTapOracleCli",
-                "FlextTapOracleDiscoverCommand",
-                "FlextTapOracleSyncCommand",
-            ),
             ".typings": ("FlextTapOracleTypes", "t"),
             ".utilities": ("FlextTapOracleUtilities", "u"),
-            "flext_db_oracle": ("FlextDbOracleConstants", "d", "e", "h", "r", "s", "x"),
+            "flext_core": ("d", "h", "r", "x"),
+            "flext_db_oracle": ("e", "s"),
         }),
         alias_groups=MappingProxyType({}),
         sort_keys=False,
