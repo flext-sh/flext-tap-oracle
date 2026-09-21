@@ -20,7 +20,8 @@ from .__version__ import (
 )
 
 if TYPE_CHECKING:
-    from flext_db_oracle import d, e, h, r, s, x
+    from flext_core import d, h, r, x
+    from flext_db_oracle import e, s
 
     from .__version__ import FlextTapOracleVersion
     from ._config import FlextTapOracleConfig, config
@@ -33,14 +34,38 @@ if TYPE_CHECKING:
     from .typings import FlextTapOracleTypes, FlextTapOracleTypes as t
     from .utilities import FlextTapOracleUtilities, FlextTapOracleUtilities as u
 __all__: tuple[str, ...] = (
-    "FlextTapOracleConfig", "FlextTapOracleConstants", "FlextTapOracleModels", "FlextTapOracleProtocols",
-    "FlextTapOracleService", "FlextTapOracleSettings", "FlextTapOracleStreams", "FlextTapOracleTypes",
-    "FlextTapOracleUtilities", "FlextTapOracleVersion", "__author__", "__author_email__",
-    "__description__", "__license__", "__title__", "__url__",
-    "__version__", "__version_info__", "c", "config",
-    "d", "e", "h", "m",
-    "p", "r", "s", "settings",
-    "t", "tap_oracle", "u", "x",
+    "FlextTapOracleConfig",
+    "FlextTapOracleConstants",
+    "FlextTapOracleModels",
+    "FlextTapOracleProtocols",
+    "FlextTapOracleService",
+    "FlextTapOracleSettings",
+    "FlextTapOracleStreams",
+    "FlextTapOracleTypes",
+    "FlextTapOracleUtilities",
+    "FlextTapOracleVersion",
+    "__author__",
+    "__author_email__",
+    "__description__",
+    "__license__",
+    "__title__",
+    "__url__",
+    "__version__",
+    "__version_info__",
+    "c",
+    "config",
+    "d",
+    "e",
+    "h",
+    "m",
+    "p",
+    "r",
+    "s",
+    "settings",
+    "t",
+    "tap_oracle",
+    "u",
+    "x",
 )
 
 _LAZY_IMPORTS = MappingProxyType(
@@ -56,7 +81,8 @@ _LAZY_IMPORTS = MappingProxyType(
             ".streams": ("FlextTapOracleStreams",),
             ".typings": ("FlextTapOracleTypes", "t"),
             ".utilities": ("FlextTapOracleUtilities", "u"),
-            "flext_db_oracle": ("d", "e", "h", "r", "s", "x"),
+            "flext_core": ("d", "h", "r", "x"),
+            "flext_db_oracle": ("e", "s"),
         }),
         alias_groups=MappingProxyType({}),
         sort_keys=False,
