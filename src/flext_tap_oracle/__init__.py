@@ -22,15 +22,16 @@ from .__version__ import (
 if TYPE_CHECKING:
     from flext_db_oracle import d, e, h, r, s, x
 
+    from .__version__ import FlextTapOracleVersion
     from ._config import FlextTapOracleConfig, config
     from ._settings import FlextTapOracleSettings, settings
     from .api import FlextTapOracleService, tap_oracle
-    from .constants import FlextTapOracleConstants, c
-    from .models import FlextTapOracleModels, m
+    from .constants import FlextTapOracleConstants, FlextTapOracleConstants as c
+    from .models import FlextTapOracleModels, FlextTapOracleModels as m
     from .protocols import FlextTapOracleProtocols, FlextTapOracleProtocols as p
     from .streams import FlextTapOracleStreams
-    from .typings import FlextTapOracleTypes, t
-    from .utilities import FlextTapOracleUtilities, u
+    from .typings import FlextTapOracleTypes, FlextTapOracleTypes as t
+    from .utilities import FlextTapOracleUtilities, FlextTapOracleUtilities as u
 __all__: tuple[str, ...] = (
     "FlextTapOracleConfig",
     "FlextTapOracleConstants",
@@ -41,6 +42,7 @@ __all__: tuple[str, ...] = (
     "FlextTapOracleStreams",
     "FlextTapOracleTypes",
     "FlextTapOracleUtilities",
+    "FlextTapOracleVersion",
     "__author__",
     "__author_email__",
     "__description__",
@@ -50,26 +52,17 @@ __all__: tuple[str, ...] = (
     "__version__",
     "__version_info__",
     "c",
-    "cli",
     "config",
-    "core",
     "d",
-    "db_oracle",
     "e",
-    "from_json",
     "h",
-    "lazy_attribute",
     "m",
-    "main",
-    "meltano",
     "p",
     "r",
     "s",
     "settings",
     "t",
     "tap_oracle",
-    "to_json",
-    "to_jsonable_python",
     "u",
     "x",
 )
@@ -77,6 +70,7 @@ __all__: tuple[str, ...] = (
 _LAZY_IMPORTS = MappingProxyType(
     build_lazy_import_map(
         MappingProxyType({
+            ".__version__": ("FlextTapOracleVersion",),
             "._config": ("FlextTapOracleConfig", "config"),
             "._settings": ("FlextTapOracleSettings", "settings"),
             ".api": ("FlextTapOracleService", "tap_oracle"),
