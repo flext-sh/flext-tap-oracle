@@ -13,6 +13,8 @@ from typing import TYPE_CHECKING, Final
 from flext_db_oracle import c as _db_oracle_c
 from flext_meltano import c
 
+from ._constants.values import FlextTapOracleConstantsValues
+
 if TYPE_CHECKING:
     from flext_meltano import t
 
@@ -26,10 +28,9 @@ class FlextTapOracleConstants(c, _db_oracle_c):
     Composes with FlextDbOracleConstants to avoid duplication and ensure consistency.
     """
 
-    class TapOracle:
+    class TapOracle(FlextTapOracleConstantsValues.TapOracle):
         """Tap Oracle  namespace for cross-project access."""
 
-        MAX_PORT_NUMBER = 65535
         MAX_IDENTIFIER_LENGTH: Final[int] = 255
         DEFAULT_STREAM_PREFIX: Final[str] = "oracle"
         DEFAULT_OPERATION_NAME: Final[str] = "unknown"
@@ -52,10 +53,8 @@ class FlextTapOracleConstants(c, _db_oracle_c):
                 INCREMENTAL = "INCREMENTAL"
                 LOG_BASED = "LOG_BASED"
 
-        class Extraction:
+        class Extraction(FlextTapOracleConstantsValues.TapOracle.Extraction):
             """Tap-specific extraction configuration."""
-
-            TEST_QUERY: Final[str] = "SELECT 1 FROM DUAL"
 
 
 c = FlextTapOracleConstants
