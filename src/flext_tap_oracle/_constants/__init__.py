@@ -14,9 +14,7 @@ __all__: tuple[str, ...] = ("FlextTapOracleConstantsValues",)
 
 _LAZY_IMPORTS = MappingProxyType(
     build_lazy_import_map(
-        MappingProxyType({
-            ".values": ("FlextTapOracleConstantsValues",),
-        }),
+        MappingProxyType({".values": ("FlextTapOracleConstantsValues",)}),
         alias_groups=MappingProxyType({}),
         sort_keys=False,
     )
