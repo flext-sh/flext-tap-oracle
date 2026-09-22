@@ -23,7 +23,7 @@ class _TapOracleNamespace(m.BaseModel):
     model_config = m.ConfigDict(extra="allow", frozen=True)
 
 
-class FlextTapOracleConfig(FlextSettings, FlextMeltanoConfig):
+class FlextTapOracleConfig(FlextMeltanoConfig):
     """TapOracle config auto-loaded model-less from ``config/*.yaml``.
 
     MRO carries ``FlextSettings`` FIRST (ENFORCE-042); the class stays a frozen,
