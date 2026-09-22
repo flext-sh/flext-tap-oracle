@@ -12,20 +12,22 @@
 - Version: `0.12.0`
 - Description: FLEXT Tap Oracle - Modern Singer Tap for Oracle Database
 - Doc summary: Flext Tap Oracle package.
-- Classifiers: `Development Status :: 3 - Alpha`, `Intended Audience :: Developers`,
-  `Operating System :: OS Independent`, `Programming Language :: Python :: 3 :: Only`,
-  `Programming Language :: Python :: 3.13`, `Topic :: Database` (+4 more)
+- Classifiers: Development Status :: 3 - Alpha, Intended Audience :: Developers,
+  Operating System :: OS Independent, Programming Language :: Python :: 3 :: Only,
+  Programming Language :: Python :: 3.13, Topic :: Database, Topic :: Office/Business,
+  Topic :: Software Development :: Libraries :: Python Modules, Topic :: System ::
+  Systems Administration, Typing :: Typed
 - Project class: `integration`
 - Keywords: `database`, `enterprise`, `etl`, `flext`, `integration`, `oracle`, `singer`,
   `tap`
 - Main facades: `FlextTapOracleConfig`, `FlextTapOracleConstants`,
   `FlextTapOracleModels`, `FlextTapOracleProtocols`, `FlextTapOracleService`,
-  `FlextTapOracleSettings`, `FlextTapOracleStreams`, `FlextTapOracleTypes` (+1 more)
+  `FlextTapOracleSettings`, `FlextTapOracleStreams`, `FlextTapOracleTypes` (+2 more)
 - Alias exports: `c`, `d`, `e`, `h`, `m`, `p`, `r`, `s`, `t`, `u`, `x`
 - Public symbol exports: `FlextTapOracleConfig`, `FlextTapOracleConstants`,
   `FlextTapOracleModels`, `FlextTapOracleProtocols`, `FlextTapOracleService`,
   `FlextTapOracleSettings`, `FlextTapOracleStreams`, `FlextTapOracleTypes`,
-  `FlextTapOracleUtilities`, `config` (+2 more)
+  `FlextTapOracleUtilities`, `FlextTapOracleVersion` (+3 more)
 - Exported module shortcuts: _none_
 - Generated module pages: `7`
 
