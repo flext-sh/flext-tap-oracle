@@ -20,7 +20,9 @@ from .__version__ import (
 )
 
 if TYPE_CHECKING:
-    from flext_db_oracle import d, e, h, r, s, x
+    from flext_db_oracle import e, s
+
+    from flext_core import d, h, r, x
 
     from .__version__ import FlextTapOracleVersion
     from ._config import FlextTapOracleConfig, config
@@ -80,7 +82,8 @@ _LAZY_IMPORTS = MappingProxyType(
             ".streams": ("FlextTapOracleStreams",),
             ".typings": ("FlextTapOracleTypes", "t"),
             ".utilities": ("FlextTapOracleUtilities", "u"),
-            "flext_db_oracle": ("d", "e", "h", "r", "s", "x"),
+            "flext_core": ("d", "h", "r", "x"),
+            "flext_db_oracle": ("e", "s"),
         }),
         alias_groups=MappingProxyType({}),
         sort_keys=False,
