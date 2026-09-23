@@ -10,7 +10,7 @@ from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
     from flext_db_oracle import db_oracle, e
-    from flext_meltano import main, meltano
+    from flext_meltano import meltano
     from flext_tests import (
         api,
         cli,
@@ -32,7 +32,7 @@ if TYPE_CHECKING:
         x,
     )
 
-    from flext_tap_oracle import tap_oracle
+    from flext_tap_oracle import main, tap_oracle
 
     from . import unit
     from .base import (
@@ -108,8 +108,8 @@ _LAZY_IMPORTS = MappingProxyType(
             ".unit": ("unit",),
             ".utilities": ("TestsFlextTapOracleUtilities", "u"),
             "flext_db_oracle": ("db_oracle", "e"),
-            "flext_meltano": ("main", "meltano"),
-            "flext_tap_oracle": ("tap_oracle",),
+            "flext_meltano": ("meltano",),
+            "flext_tap_oracle": ("main", "tap_oracle"),
             "flext_tests": (
                 "api",
                 "cli",

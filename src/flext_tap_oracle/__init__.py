@@ -27,7 +27,6 @@ if TYPE_CHECKING:
         d,
         h,
         lazy_attribute,
-        main,
         meltano,
         r,
         s,
@@ -38,6 +37,7 @@ if TYPE_CHECKING:
     from ._config import FlextTapOracleConfig, config
     from ._settings import FlextTapOracleSettings, settings
     from .api import FlextTapOracleService, tap_oracle
+    from .cli import main
     from .constants import FlextTapOracleConstants, c
     from .models import FlextTapOracleModels, m
     from .protocols import FlextTapOracleProtocols, FlextTapOracleProtocols as p
@@ -93,6 +93,7 @@ _LAZY_IMPORTS = MappingProxyType(
             "._config": ("FlextTapOracleConfig", "config"),
             "._settings": ("FlextTapOracleSettings", "settings"),
             ".api": ("FlextTapOracleService", "tap_oracle"),
+            ".cli": ("main",),
             ".constants": ("FlextTapOracleConstants", "c"),
             ".models": ("FlextTapOracleModels", "m"),
             ".protocols": ("FlextTapOracleProtocols", "p"),
@@ -106,7 +107,6 @@ _LAZY_IMPORTS = MappingProxyType(
                 "d",
                 "h",
                 "lazy_attribute",
-                "main",
                 "meltano",
                 "r",
                 "s",
