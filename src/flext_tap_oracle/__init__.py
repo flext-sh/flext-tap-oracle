@@ -22,13 +22,14 @@ from .__version__ import (
 if TYPE_CHECKING:
     from flext_cli import cli
     from flext_db_oracle import db_oracle, e
-    from flext_meltano import main, meltano, s
+    from flext_meltano import meltano, s
 
     from flext_core import core, d, h, lazy_attribute, r, x
 
     from ._config import FlextTapOracleConfig, config
     from ._settings import FlextTapOracleSettings, settings
     from .api import FlextTapOracleService, tap_oracle
+    from .cli import main
     from .constants import FlextTapOracleConstants, c
     from .models import FlextTapOracleModels, m
     from .protocols import FlextTapOracleProtocols, FlextTapOracleProtocols as p
@@ -93,7 +94,7 @@ _LAZY_IMPORTS = MappingProxyType(
             "flext_cli": ("cli",),
             "flext_core": ("core", "d", "h", "lazy_attribute", "r", "x"),
             "flext_db_oracle": ("db_oracle", "e"),
-            "flext_meltano": ("main", "meltano", "s"),
+            "flext_meltano": ("meltano", "s"),
         }),
         alias_groups=MappingProxyType({}),
         sort_keys=False,
