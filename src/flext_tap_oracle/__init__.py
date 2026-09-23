@@ -20,11 +20,20 @@ from .__version__ import (
 )
 
 if TYPE_CHECKING:
-    from flext_cli import cli
     from flext_db_oracle import db_oracle, e
-    from flext_meltano import main, meltano, s
-
-    from flext_core import core, d, h, lazy_attribute, r, x
+    from flext_meltano import (
+        cli,
+        core,
+        d,
+        h,
+        lazy_attribute,
+        main,
+        meltano,
+        r,
+        s,
+        services,
+        x,
+    )
 
     from ._config import FlextTapOracleConfig, config
     from ._settings import FlextTapOracleSettings, settings
@@ -70,6 +79,7 @@ __all__: tuple[str, ...] = (
     "p",
     "r",
     "s",
+    "services",
     "settings",
     "t",
     "tap_oracle",
@@ -89,10 +99,20 @@ _LAZY_IMPORTS = MappingProxyType(
             ".streams": ("FlextTapOracleStreams",),
             ".typings": ("FlextTapOracleTypes", "t"),
             ".utilities": ("FlextTapOracleUtilities", "u"),
-            "flext_cli": ("cli",),
-            "flext_core": ("core", "d", "h", "lazy_attribute", "r", "x"),
             "flext_db_oracle": ("db_oracle", "e"),
-            "flext_meltano": ("main", "meltano", "s"),
+            "flext_meltano": (
+                "cli",
+                "core",
+                "d",
+                "h",
+                "lazy_attribute",
+                "main",
+                "meltano",
+                "r",
+                "s",
+                "services",
+                "x",
+            ),
         }),
         alias_groups=MappingProxyType({}),
         sort_keys=False,
