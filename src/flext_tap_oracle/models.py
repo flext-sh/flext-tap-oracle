@@ -9,8 +9,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Annotated, Self
 
-from flext_db_oracle import m as _db_oracle_m
-from flext_meltano import m, u
+from flext_db_oracle import FlextDbOracleModels
+from flext_meltano import FlextMeltanoModels, u
 
 if TYPE_CHECKING:
     from collections.abc import MutableSequence
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from flext_tap_oracle import t
 
 
-class FlextTapOracleModels(m, _db_oracle_m):
+class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
     """Complete models for Oracle tap operations extending m.
 
     Provides standardized models for all Oracle tap domain entities including:
@@ -34,7 +34,7 @@ class FlextTapOracleModels(m, _db_oracle_m):
     class TapOracle:
         """Tap Oracle  namespace for cross-project access."""
 
-        class _MetricsBase(m.Entity):
+        class _MetricsBase(FlextMeltanoModels.Entity):
             """Shared metrics fields for Oracle tap operations."""
 
             total_records: Annotated[
@@ -213,7 +213,7 @@ class FlextTapOracleModels(m, _db_oracle_m):
                     return updated
                 return self
 
-        class OracleTapDiscoverParams(m.Entity):
+        class OracleTapDiscoverParams(FlextMeltanoModels.Entity):
             """Parameters for Oracle tap discover command."""
 
             config_file: Annotated[
@@ -234,7 +234,7 @@ class FlextTapOracleModels(m, _db_oracle_m):
                     output_file=str(output_file_value) if output_file_value else None,
                 )
 
-        class OracleTapSyncParams(m.Entity):
+        class OracleTapSyncParams(FlextMeltanoModels.Entity):
             """Parameters for Oracle tap sync command."""
 
             config_file: Annotated[
