@@ -8,7 +8,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from enum import StrEnum, unique
-from typing import TYPE_CHECKING, Final
+from typing import TYPE_CHECKING
 
 from flext_db_oracle import FlextDbOracleConstants
 from flext_meltano import FlextMeltanoConstants
@@ -30,12 +30,6 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
 
     class TapOracle(FlextTapOracleConstantsValues.TapOracle):
         """Tap Oracle  namespace for cross-project access."""
-
-        MAX_IDENTIFIER_LENGTH: Final[int] = 255
-        DEFAULT_STREAM_PREFIX: Final[str] = "oracle"
-        DEFAULT_OPERATION_NAME: Final[str] = "unknown"
-
-        INITIAL_RECORD_COUNT: Final[int] = 0
 
         class Replication:
             """Oracle replication method constants."""
