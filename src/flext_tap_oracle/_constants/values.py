@@ -21,6 +21,10 @@ class FlextTapOracleConstantsValues:
     class TapOracle:
         """Tap Oracle scalar constants."""
 
+        MAX_IDENTIFIER_LENGTH: Final[int] = 255
+        DEFAULT_STREAM_PREFIX: Final[str] = "oracle"
+        DEFAULT_OPERATION_NAME: Final[str] = "unknown"
+        INITIAL_RECORD_COUNT: Final[int] = 0
         MAX_PORT_NUMBER: Final[int] = 65535
 
         class Extraction:
