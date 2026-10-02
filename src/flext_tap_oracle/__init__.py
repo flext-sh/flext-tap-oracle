@@ -1,38 +1,41 @@
 # AUTO-GENERATED FILE — Regenerate with: make gen
-"""Flext Tap Oracle package."""
+"""Flext Tap Oracle package.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
 from types import MappingProxyType
 from typing import TYPE_CHECKING
 
-from flext_core.lazy import build_lazy_import_map, install_lazy_exports
-
-from .__version__ import (
-    __author__ as __author__,
-    __author_email__ as __author_email__,
-    __description__ as __description__,
-    __license__ as __license__,
-    __title__ as __title__,
-    __url__ as __url__,
-    __version__ as __version__,
-    __version_info__ as __version_info__,
+from flext_core import build_lazy_import_map, install_lazy_exports
+from flext_tap_oracle.__version__ import (
+    __author__,
+    __author_email__,
+    __description__,
+    __license__,
+    __title__,
+    __url__,
+    __version__,
+    __version_info__,
 )
 
 if TYPE_CHECKING:
     from flext_db_oracle import e
     from flext_meltano import d, h, r, s, x
 
-    from ._config import FlextTapOracleConfig, config
-    from ._settings import FlextTapOracleSettings, settings
-    from .api import FlextTapOracleService, tap_oracle
-    from .cli import main
-    from .constants import FlextTapOracleConstants, FlextTapOracleConstants as c
-    from .models import FlextTapOracleModels, FlextTapOracleModels as m
-    from .protocols import FlextTapOracleProtocols, FlextTapOracleProtocols as p
-    from .streams import FlextTapOracleStreams
-    from .typings import FlextTapOracleTypes, FlextTapOracleTypes as t
-    from .utilities import FlextTapOracleUtilities, FlextTapOracleUtilities as u
+    from flext_tap_oracle._config import FlextTapOracleConfig, config
+    from flext_tap_oracle._settings import FlextTapOracleSettings, settings
+    from flext_tap_oracle.api import FlextTapOracleService, tap_oracle
+    from flext_tap_oracle.cli import main
+    from flext_tap_oracle.constants import FlextTapOracleConstants, c
+    from flext_tap_oracle.models import FlextTapOracleModels, m
+    from flext_tap_oracle.protocols import FlextTapOracleProtocols, p
+    from flext_tap_oracle.streams import FlextTapOracleStreams
+    from flext_tap_oracle.typings import FlextTapOracleTypes, t
+    from flext_tap_oracle.utilities import FlextTapOracleUtilities, u
 
 
 __all__: tuple[str, ...] = (
@@ -88,7 +91,7 @@ _LAZY_IMPORTS = MappingProxyType(
         }),
         alias_groups=MappingProxyType({}),
         sort_keys=False,
-    )
+    ),
 )
 
 install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, public_exports=__all__)
