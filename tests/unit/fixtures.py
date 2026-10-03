@@ -1,4 +1,8 @@
-"""Typed fixtures backed by the public tap-oracle owners."""
+"""Typed fixtures backed by the public tap-oracle owners.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 

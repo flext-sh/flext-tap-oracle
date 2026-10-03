@@ -38,18 +38,22 @@ class FlextTapOracleCli:
             self.logger = u.fetch_logger(__name__)
 
         def execute(self) -> p.Result[t.JsonMapping]:
-            """Execute Oracle tap discovery using modern patterns."""
+            """Execute Oracle tap discovery using modern patterns.
+
+            Returns:
+                The resulting ``p.Result[t.JsonMapping]``.
+            """
             self.logger.info("Starting Oracle database discovery")
 
             def _run_execute() -> p.Result[t.JsonMapping]:
                 if not self.params.config_file:
                     return r[t.JsonMapping].fail(
-                        "Configuration file is required for discovery"
+                        "Configuration file is required for discovery",
                     )
                 config_read = u.Cli.files_read_text(Path(self.params.config_file))
                 if config_read.failure:
                     return r[t.JsonMapping].fail(
-                        f"Discovery error: {config_read.error}"
+                        f"Discovery error: {config_read.error}",
                     )
                 config_data: str = config_read.value
                 # Validate the settings shape eagerly; downstream uses constants only.
@@ -70,7 +74,7 @@ class FlextTapOracleCli:
                     )
                     if catalog_write.failure:
                         return r[t.JsonMapping].fail(
-                            f"Catalog write error: {catalog_write.error}"
+                            f"Catalog write error: {catalog_write.error}",
                         )
                     self.logger.info("Catalog written to %s", output_path)
                 self.logger.info("Oracle schema discovery completed")
@@ -83,10 +87,14 @@ class FlextTapOracleCli:
                 return r[t.JsonMapping].fail(f"Discovery error: {e}", exception=e)
 
         def validate_business_rules(self) -> p.Result[bool]:
-            """Validate business rules for Oracle tap discovery."""
+            """Validate business rules for Oracle tap discovery.
+
+            Returns:
+                The resulting ``p.Result[bool]``.
+            """
             if self.params.config_file and (not Path(self.params.config_file).exists()):
                 return e.fail_not_found(
-                    "Configuration file", self.params.config_file, result_type=r[bool]
+                    "Configuration file", self.params.config_file, result_type=r[bool],
                 )
             return r[bool].ok(value=True)
 
@@ -101,13 +109,17 @@ class FlextTapOracleCli:
             self.logger = u.fetch_logger(__name__)
 
         def execute(self) -> p.Result[t.JsonMapping]:
-            """Execute Oracle tap sync using modern patterns."""
+            """Execute Oracle tap sync using modern patterns.
+
+            Returns:
+                The resulting ``p.Result[t.JsonMapping]``.
+            """
             self.logger.info("Starting Oracle data extraction")
 
             def _run_execute() -> p.Result[t.JsonMapping]:
                 if not self.params.config_file:
                     return r[t.JsonMapping].fail(
-                        "Configuration file is required for sync"
+                        "Configuration file is required for sync",
                     )
                 config_read = u.Cli.files_read_text(Path(self.params.config_file))
                 if config_read.failure:
@@ -118,7 +130,7 @@ class FlextTapOracleCli:
                     catalog_read = u.Cli.files_read_text(Path(self.params.catalog_file))
                     if catalog_read.failure:
                         return r[t.JsonMapping].fail(
-                            f"Sync error: {catalog_read.error}"
+                            f"Sync error: {catalog_read.error}",
                         )
                     self.logger.info(f"Loaded catalog from {self.params.catalog_file}")
                 if self.params.state_file:
@@ -148,20 +160,24 @@ class FlextTapOracleCli:
                 return r[t.JsonMapping].fail(f"Sync error: {e}", exception=e)
 
         def validate_business_rules(self) -> p.Result[bool]:
-            """Validate business rules for Oracle tap sync."""
+            """Validate business rules for Oracle tap sync.
+
+            Returns:
+                The resulting ``p.Result[bool]``.
+            """
             if self.params.config_file and (not Path(self.params.config_file).exists()):
                 return e.fail_not_found(
-                    "Configuration file", self.params.config_file, result_type=r[bool]
+                    "Configuration file", self.params.config_file, result_type=r[bool],
                 )
             if self.params.catalog_file and (
                 not Path(self.params.catalog_file).exists()
             ):
                 return e.fail_not_found(
-                    "Catalog file", self.params.catalog_file, result_type=r[bool]
+                    "Catalog file", self.params.catalog_file, result_type=r[bool],
                 )
             if self.params.state_file and (not Path(self.params.state_file).exists()):
                 return e.fail_not_found(
-                    "State file", self.params.state_file, result_type=r[bool]
+                    "State file", self.params.state_file, result_type=r[bool],
                 )
             return r[bool].ok(value=True)
 
@@ -173,7 +189,11 @@ class FlextTapOracleCli:
         command_factory: Callable[[TParams], p.TapOracle.CommandRunner],
         operation_name: str,
     ) -> p.Result[t.JsonValue]:
-        """Run a tap command with params factory and command factory."""
+        """Run a tap command with params factory and command factory.
+
+        Returns:
+            The resulting ``p.Result[t.JsonValue]``.
+        """
 
         def _run_run_tap_command() -> p.Result[t.JsonValue]:
             params = params_factory(**dict(kwargs))
@@ -182,7 +202,7 @@ class FlextTapOracleCli:
             if result.failure:
                 error_message = result.error or f"{operation_name} failed"
                 FlextTapOracleCli.logger.error(
-                    "%s failed: %s", operation_name, error_message
+                    "%s failed: %s", operation_name, error_message,
                 )
                 return r[t.JsonValue].fail(error_message)
             return r[t.JsonValue].ok(value=True)
@@ -196,7 +216,11 @@ class FlextTapOracleCli:
 
     @staticmethod
     def handle_discover_command(**kwargs: t.Scalar) -> p.Result[t.JsonValue]:
-        """Handle discover command using flext-meltano patterns."""
+        """Handle discover command using flext-meltano patterns.
+
+        Returns:
+            The resulting ``p.Result[t.JsonValue]``.
+        """
         return FlextTapOracleCli.run_tap_command(
             kwargs=kwargs,
             params_factory=m.TapOracle.OracleTapDiscoverParams.from_click_args,
@@ -208,19 +232,27 @@ class FlextTapOracleCli:
 
     @staticmethod
     def handle_sync_command(**kwargs: t.Scalar) -> p.Result[t.JsonValue]:
-        """Handle sync command using flext-meltano patterns."""
+        """Handle sync command using flext-meltano patterns.
+
+        Returns:
+            The resulting ``p.Result[t.JsonValue]``.
+        """
         return FlextTapOracleCli.run_tap_command(
             kwargs=kwargs,
             params_factory=m.TapOracle.OracleTapSyncParams.from_click_args,
             command_factory=lambda params: FlextTapOracleCli.FlextTapOracleSyncCommand(
-                params=params
+                params=params,
             ),
             operation_name="Sync",
         )
 
 
 def run_cli() -> int:
-    """Run main CLI entry point using flext-meltano abstractions."""
+    """Run main CLI entry point using flext-meltano abstractions.
+
+    Returns:
+        The resulting ``int``.
+    """
     logger = u.fetch_logger(__name__)
     if "--discover" in sys.argv:
         result = FlextTapOracleCli.handle_discover_command()
@@ -233,7 +265,12 @@ def run_cli() -> int:
 
 
 def main() -> None:
-    """Provide CLI entry point using flext-meltano patterns."""
+    """Provide CLI entry point using flext-meltano patterns.
+
+    Raises:
+        SystemExit: Always; or if a ``KeyboardInterrupt`` is caught; or if a
+            ``c.Meltano.SINGER_SAFE_EXCEPTIONS`` is caught.
+    """
     logger = u.fetch_logger(__name__)
     try:
         exit_code = run_cli()
