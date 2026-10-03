@@ -8,16 +8,18 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from enum import StrEnum, unique
-from typing import TYPE_CHECKING, Final
+from typing import TYPE_CHECKING
 
 from flext_db_oracle import FlextDbOracleConstants
-from flext_meltano import c
+from flext_meltano import FlextMeltanoConstants
+
+from flext_tap_oracle._constants.values import FlextTapOracleConstantsValues
 
 if TYPE_CHECKING:
     from flext_meltano import t
 
 
-class FlextTapOracleConstants(c, FlextDbOracleConstants):
+class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
     """Oracle tap extraction-specific constants following FLEXT unified pattern.
 
     Inherits from FlextMeltanoConstants for universal constants, defines only
@@ -26,15 +28,8 @@ class FlextTapOracleConstants(c, FlextDbOracleConstants):
     Composes with FlextDbOracleConstants to avoid duplication and ensure consistency.
     """
 
-    class TapOracle:
+    class TapOracle(FlextTapOracleConstantsValues.TapOracle):
         """Tap Oracle  namespace for cross-project access."""
-
-        MAX_PORT_NUMBER = 65535
-        MAX_IDENTIFIER_LENGTH: Final[int] = 255
-        DEFAULT_STREAM_PREFIX: Final[str] = "oracle"
-        DEFAULT_OPERATION_NAME: Final[str] = "unknown"
-
-        INITIAL_RECORD_COUNT: Final[int] = 0
 
         class Replication:
             """Oracle replication method constants."""
@@ -52,10 +47,8 @@ class FlextTapOracleConstants(c, FlextDbOracleConstants):
                 INCREMENTAL = "INCREMENTAL"
                 LOG_BASED = "LOG_BASED"
 
-        class Extraction:
+        class Extraction(FlextTapOracleConstantsValues.TapOracle.Extraction):
             """Tap-specific extraction configuration."""
-
-            TEST_QUERY: Final[str] = "SELECT 1 FROM DUAL"
 
 
 c = FlextTapOracleConstants

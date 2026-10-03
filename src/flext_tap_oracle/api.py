@@ -16,6 +16,7 @@ from typing import Annotated, Never, override
 from flext_meltano.services.consumer_bases.tap_service_base import (
     FlextMeltanoTapServiceBase,
 )
+
 from flext_tap_oracle import FlextTapOracleSettings, p, t, u
 
 
@@ -23,7 +24,7 @@ class FlextTapOracleService(FlextMeltanoTapServiceBase):
     """Orchestrator for tap-oracle. CLI dispatch, not Singer SDK."""
 
     tap_name: Annotated[
-        t.NonEmptyStr, u.Field(description="Canonical Singer tap identifier.")
+        t.NonEmptyStr, u.Field(description="Canonical Singer tap identifier."),
     ] = "tap-oracle"
 
     def __init__(self, settings: FlextTapOracleSettings | None = None) -> None:
@@ -32,13 +33,18 @@ class FlextTapOracleService(FlextMeltanoTapServiceBase):
 
     @override
     def create_tap_instance(
-        self, settings: p.Settings | t.JsonMapping | None = None
+        self, settings: p.Settings | t.JsonMapping | None = None,
     ) -> Never:
-        """Not supported — use CLI dispatch via FlextTapOracleCli."""
+        """Not supported — use CLI dispatch via FlextTapOracleCli.
+
+        Raises:
+            TypeError: If tap-oracle uses CLI dispatch, not singer_sdk.Tap.
+        """
         msg = "tap-oracle uses CLI dispatch, not singer_sdk.Tap"
         raise TypeError(msg)
 
 
-tap_oracle = FlextTapOracleService
+tap_oracle: FlextTapOracleService = FlextTapOracleService.fetch_global()
+"""Process-wide tap-oracle facade singleton resolved from the global container."""
 
 __all__: list[str] = ["FlextTapOracleService", "tap_oracle"]
