@@ -14,7 +14,7 @@ from __future__ import annotations
 from flext_db_oracle import FlextDbOracleUtilities
 from flext_meltano import FlextMeltanoUtilities
 
-from ._utilities.client import FlextTapOracleUtilitiesClientMixin
+from flext_tap_oracle._utilities.client import FlextTapOracleUtilitiesClientMixin
 
 
 class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):

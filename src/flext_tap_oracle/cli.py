@@ -14,7 +14,11 @@ from flext_tap_oracle.tap import run_cli
 
 
 def main(args: t.StrSequence | None = None) -> int:
-    """Run the canonical tap-oracle Singer CLI."""
+    """Run the canonical tap-oracle Singer CLI.
+
+    Returns:
+        The resulting ``int``.
+    """
     _ = args
     exit_code: int = run_cli()
     return exit_code
