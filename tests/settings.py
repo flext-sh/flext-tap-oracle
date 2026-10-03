@@ -14,8 +14,8 @@ from flext_tap_oracle import FlextTapOracleSettings
 class TestsFlextTapOracleSettings(FlextTapOracleSettings, FlextTestsSettings):
     """Tap Oracle settings extended with the shared test namespace.
 
-    Oracle credentials live under ``settings.TapOracle.*`` (ADR-005) with
-    non-secret defaults, so no flat legacy overrides are declared here.
+    Oracle credentials live under ``settings.DbOracle.*`` (ADR-005/ADR-006)
+    with non-secret defaults, so no flat legacy overrides are declared here.
     """
 
 

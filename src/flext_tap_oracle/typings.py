@@ -17,7 +17,6 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
     class TapOracle:
         """Tap Oracle domain namespace (flat members per AGENTS.md §149)."""
 
-        type SummaryData = FlextMeltanoTypes.JsonMapping
         type OracleValue = FlextMeltanoTypes.JsonValue | None
 
 
