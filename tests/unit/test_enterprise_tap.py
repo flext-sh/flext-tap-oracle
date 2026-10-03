@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from flext_db_oracle import FlextDbOracleSettings
 from flext_tests import tm
 
 from flext_tap_oracle import (
@@ -40,6 +41,17 @@ class TestsFlextTapOracleEnterpriseTap:
         )
 
         tm.that(restored.model_dump(), eq=tap_oracle_settings.model_dump())
+
+    @staticmethod
+    def test_settings_reuse_the_db_oracle_connection_owner(
+        tap_oracle_settings: FlextTapOracleSettings,
+    ) -> None:
+        """Oracle connection scalars come from the flext-db-oracle owner by MRO."""
+        tm.that(tap_oracle_settings, is_=FlextDbOracleSettings)
+        connection = tap_oracle_settings.DbOracle.model_dump()
+        restored = FlextTapOracleSettings.model_validate({"DbOracle": connection})
+
+        tm.that(restored.DbOracle.model_dump(), eq=connection)
 
     @staticmethod
     def test_config_fixture_consumes_the_public_owner(

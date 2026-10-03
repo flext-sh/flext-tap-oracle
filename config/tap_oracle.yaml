@@ -1,10 +1,4 @@
 TapOracle:
-  connection:
-    oracle_host: "localhost"
-    oracle_port: 1521
-    oracle_service_name: "XEPDB1"
-    oracle_user: ""
-    oracle_password: ""
   extraction:
     batch_size: 1000
     stream_prefix: ""
