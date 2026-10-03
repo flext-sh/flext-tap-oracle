@@ -1,0 +1,19 @@
+TapOracle:
+  connection:
+    oracle_host: "localhost"
+    oracle_port: 1521
+    oracle_service_name: "XEPDB1"
+    oracle_user: ""
+    oracle_password: ""
+  extraction:
+    batch_size: 1000
+    stream_prefix: ""
+    test_query: "SELECT 1 FROM DUAL"
+    initial_record_count: 0
+  replication:
+    full_table: "FULL_TABLE"
+    incremental: "INCREMENTAL"
+    log_based: "LOG_BASED"
+  defaults:
+    operation_name: "unknown"
+    max_identifier_length: 255
