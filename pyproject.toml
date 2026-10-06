@@ -458,6 +458,7 @@ runtime-evaluated-base-classes = [
   "flext_meltano.services.consumer_bases.tap_service_base.FlextMeltanoTapServiceBase",
   "flext_tap_oracle.FlextTapOracleModels.Entity",
   "flext_tap_oracle.FlextTapOracleSettings",
+  "flext_tap_oracle.m.BaseModel",
   "flext_tests.FlextTestsServiceBase",
   "flext_tests.FlextTestsSettings",
   "pydantic.BaseModel",
