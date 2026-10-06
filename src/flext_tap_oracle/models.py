@@ -10,7 +10,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Annotated, Self
 
 from flext_db_oracle import FlextDbOracleModels
-from flext_meltano import FlextMeltanoModels, u
+from flext_meltano import FlextMeltanoModels
+
+from flext_tap_oracle import u
 
 if TYPE_CHECKING:
     from flext_tap_oracle import t
