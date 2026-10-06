@@ -111,7 +111,9 @@ class FlextTapOracleStreams:
             self,
             context: t.MappingKV[str, t.TapOracle.OracleValue] | None = None,
         ) -> Iterable[Mapping[str, t.TapOracle.OracleValue]]:
-            """Get records from Oracle table using flext-db-oracle exclusively - NO direct SQLAlchemy.
+            """Get records from Oracle table using flext-db-oracle exclusively.
+
+            NO direct SQLAlchemy.
 
             Yields:
                 Each ``Mapping[str, t.TapOracle.OracleValue]``.

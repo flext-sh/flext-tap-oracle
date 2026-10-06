@@ -134,12 +134,15 @@ class FlextTapOracleCli:
                         return r[t.JsonMapping].fail(
                             f"Sync error: {catalog_read.error}",
                         )
-                    self.logger.info(f"Loaded catalog from {self.params.catalog_file}")
+                    self.logger.info(
+                        "Loaded catalog from %s",
+                        self.params.catalog_file,
+                    )
                 if self.params.state_file:
                     state_read = u.Cli.files_read_text(Path(self.params.state_file))
                     if state_read.failure:
                         return r[t.JsonMapping].fail(f"Sync error: {state_read.error}")
-                    self.logger.info(f"Loaded state from {self.params.state_file}")
+                    self.logger.info("Loaded state from %s", self.params.state_file)
                 self.logger.info("Preparing extraction from Oracle database...")
                 schema_name = "USER"
                 record_count = c.TapOracle.INITIAL_RECORD_COUNT
