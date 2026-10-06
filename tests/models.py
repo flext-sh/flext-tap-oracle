@@ -18,13 +18,14 @@ from tests import u
 class TestsFlextTapOracleModels(FlextTestsModels, FlextTapOracleModels):
     """Models for flext-tap-oracle tests - uses composition with TestsFlextModels.
 
-    Architecture: Uses composition (not inheritance) with TestsFlextModels and FlextTapOracleModels
-    for flext-tap-oracle-specific model definitions.
+    Architecture: Uses composition (not inheritance) with TestsFlextModels
+    and FlextTapOracleModels for flext-tap-oracle-specific model definitions.
 
     Access patterns:
     - TestsFlextTapOracleModels.Tests.* = flext_tests test models (via composition)
     - TestsFlextTapOracleModels.TapOracle.* = flext-tap-oracle-specific test models
-    - TestsFlextTapOracleModels.Entity, .Value, etc. = FlextTapOracleModels domain models (via composition)
+    - TestsFlextTapOracleModels.Entity, .Value, etc. =
+      FlextTapOracleModels domain models (via composition)
 
     Rules:
     - Use composition, not inheritance (TestsFlextModels deprecates subclassing)
