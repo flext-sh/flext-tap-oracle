@@ -47,12 +47,14 @@ class FlextTapOracleConfig(FlextMeltanoConfig):
     TapOracle: Annotated[
         _TapOracleNamespace,
         m.Field(
-            description="Open namespace exposing ``config/*.yaml`` under ``TapOracle``.",
+            description=(
+                "Open namespace exposing ``config/*.yaml`` under ``TapOracle``."
+            ),
         ),
     ] = _TapOracleNamespace()
 
 
 config: FlextTapOracleConfig = FlextTapOracleConfig.fetch_global()
-"""Pre-instantiated frozen config singleton — ``from flext_tap_oracle import config``."""
+"""Pre-instantiated frozen config — ``from flext_tap_oracle import config``."""
 
 __all__: list[str] = ["FlextTapOracleConfig", "config"]

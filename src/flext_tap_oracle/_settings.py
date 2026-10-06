@@ -17,7 +17,7 @@ from flext_meltano import FlextMeltanoSettings, m
 
 
 class FlextTapOracleSettings(FlextDbOracleSettings, FlextMeltanoSettings):
-    """Oracle Singer tap settings; connection via ``DbOracle.*``, tap knobs via ``TapOracle.*``."""
+    """Oracle tap settings; connection via ``DbOracle.*``, knobs via ``TapOracle.*``."""
 
     model_config = m.SettingsConfigDict(
         env_prefix="FLEXT_TAP_ORACLE_",
@@ -47,6 +47,6 @@ class FlextTapOracleSettings(FlextDbOracleSettings, FlextMeltanoSettings):
 
 
 settings: FlextTapOracleSettings = FlextTapOracleSettings.fetch_global()
-"""Pre-instantiated project settings singleton — ``from flext_tap_oracle import settings``."""
+"""Pre-instantiated settings singleton — ``from flext_tap_oracle import settings``."""
 
 __all__: list[str] = ["FlextTapOracleSettings", "settings"]

@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 
 class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
-    """Models facade for the Oracle tap composed from flext-meltano and flext-db-oracle."""
+    """Models facade for the Oracle tap (flext-meltano + flext-db-oracle)."""
 
     class TapOracle:
         """Tap Oracle  namespace for cross-project access."""
