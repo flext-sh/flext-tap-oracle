@@ -40,9 +40,13 @@ class FlextTapOracleConfig(FlextMeltanoConfig):
         _ = args, kwargs
         return object.__new__(cls)
 
-    __eq__ = object.__eq__
+    def __eq__(self, other: object) -> bool:
+        """Preserve identity equality for the config namespace holder."""
+        return object.__eq__(self, other)
 
-    __hash__ = object.__hash__
+    def __hash__(self) -> int:
+        """Preserve the identity hash paired with identity equality."""
+        return object.__hash__(self)
 
     TapOracle: Annotated[
         _TapOracleNamespace,
