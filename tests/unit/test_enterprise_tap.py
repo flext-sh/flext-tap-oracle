@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from flext_db_oracle import FlextDbOracleSettings
-from flext_tests import tm
 
 from flext_tap_oracle import (
     FlextTapOracleConfig,
@@ -18,6 +17,7 @@ from flext_tap_oracle import (
     m,
     settings,
 )
+from tests import tm
 
 
 class TestsFlextTapOracleEnterpriseTap:
