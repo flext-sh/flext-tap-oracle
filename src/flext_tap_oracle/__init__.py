@@ -11,21 +11,23 @@ from types import MappingProxyType
 from typing import TYPE_CHECKING
 
 from flext_core.lazy import install_lazy_exports
-from flext_tap_oracle.__version__ import (
-    __author__,
-    __author_email__,
-    __description__,
-    __license__,
-    __title__,
-    __url__,
-    __version__,
-    __version_info__,
-)
+from flext_tap_oracle.__version__ import __version__
 
 if TYPE_CHECKING:
     from flext_db_oracle import e
     from flext_meltano import d, h, r, s, x
 
+    from flext_tap_oracle import _constants, _utilities
+    from flext_tap_oracle.__version__ import (
+        FlextTapOracleVersion,
+        __author__,
+        __author_email__,
+        __description__,
+        __license__,
+        __title__,
+        __url__,
+        __version_info__,
+    )
     from flext_tap_oracle._config import FlextTapOracleConfig, config
     from flext_tap_oracle._settings import FlextTapOracleSettings, settings
     from flext_tap_oracle.api import FlextTapOracleService, tap_oracle
@@ -48,6 +50,7 @@ __all__: tuple[str, ...] = (
     "FlextTapOracleStreams",
     "FlextTapOracleTypes",
     "FlextTapOracleUtilities",
+    "FlextTapOracleVersion",
     "__author__",
     "__author_email__",
     "__description__",
@@ -56,6 +59,8 @@ __all__: tuple[str, ...] = (
     "__url__",
     "__version__",
     "__version_info__",
+    "_constants",
+    "_utilities",
     "c",
     "config",
     "d",
@@ -86,6 +91,16 @@ install_lazy_exports(
         "FlextTapOracleStreams": ".streams",
         "FlextTapOracleTypes": ".typings",
         "FlextTapOracleUtilities": ".utilities",
+        "FlextTapOracleVersion": ".__version__",
+        "__author__": ".__version__",
+        "__author_email__": ".__version__",
+        "__description__": ".__version__",
+        "__license__": ".__version__",
+        "__title__": ".__version__",
+        "__url__": ".__version__",
+        "__version_info__": ".__version__",
+        "_constants": "._constants",
+        "_utilities": "._utilities",
         "c": ".constants",
         "config": "._config",
         "d": "flext_meltano",
