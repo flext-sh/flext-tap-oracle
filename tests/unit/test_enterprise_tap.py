@@ -14,10 +14,9 @@ from flext_tap_oracle import (
     FlextTapOracleSettings,
     FlextTapOracleStreams,
     config,
-    m,
     settings,
 )
-from tests import tm
+from tests import m, tm
 
 
 class TestsFlextTapOracleEnterpriseTap:

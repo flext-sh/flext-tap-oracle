@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from flext_tap_oracle.tap import run_cli
+from flext_tap_oracle.tap import FlextTapOracleCli
 
 if TYPE_CHECKING:
     from flext_tap_oracle import t
@@ -24,7 +24,7 @@ def main(args: t.StrSequence | None = None) -> int:
         The resulting ``int``.
     """
     _ = args
-    exit_code: int = run_cli()
+    exit_code: int = FlextTapOracleCli.run_cli()
     return exit_code
 
 

@@ -259,22 +259,22 @@ class FlextTapOracleCli:
             operation_name="Sync",
         )
 
+    @staticmethod
+    def run_cli() -> int:
+        """Run main CLI entry point using flext-meltano abstractions.
 
-def run_cli() -> int:
-    """Run main CLI entry point using flext-meltano abstractions.
-
-    Returns:
-        The resulting ``int``.
-    """
-    logger = u.fetch_logger(__name__)
-    if "--discover" in sys.argv:
-        result = FlextTapOracleCli.handle_discover_command()
-        return 0 if result.success else 1
-    if "--sync" in sys.argv or len(sys.argv) <= 1:
-        result = FlextTapOracleCli.handle_sync_command()
-        return 0 if result.success else 1
-    logger.warning("Unknown command. Use --discover or --sync.")
-    return 1
+        Returns:
+            The resulting ``int``.
+        """
+        logger = u.fetch_logger(__name__)
+        if "--discover" in sys.argv:
+            result = FlextTapOracleCli.handle_discover_command()
+            return 0 if result.success else 1
+        if "--sync" in sys.argv or len(sys.argv) <= 1:
+            result = FlextTapOracleCli.handle_sync_command()
+            return 0 if result.success else 1
+        logger.warning("Unknown command. Use --discover or --sync.")
+        return 1
 
 
 def main() -> None:
@@ -286,7 +286,7 @@ def main() -> None:
     """
     logger = u.fetch_logger(__name__)
     try:
-        exit_code = run_cli()
+        exit_code = FlextTapOracleCli.run_cli()
         raise SystemExit(exit_code)
     except KeyboardInterrupt:
         logger.warning("Operation cancelled by user")

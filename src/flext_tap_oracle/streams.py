@@ -1,8 +1,5 @@
 """Oracle Tap Streams - Complete Stream Implementation.
 
-Copyright (c) 2025 FLEXT Contributors
-SPDX-License-Identifier: MIT
-
 Copyright (c) 2026 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
 """
@@ -54,7 +51,7 @@ class FlextTapOracleStreams:
         ) -> None:
             """Initialize Oracle stream with maximum flext-db-oracle integration."""
             self.name = name
-            self.schema = t.json_dict_adapter().validate_python(schema)
+            self.schema = u.json_dict_adapter().validate_python(schema)
             self.table_name: str = table_name
             self.oracle_api: FlextDbOracleApi = oracle_api
             _ = tap

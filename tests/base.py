@@ -10,8 +10,7 @@ from typing import override
 
 from flext_tests import FlextTestsServiceBase
 
-from flext_tap_oracle import m
-from tests import TestsFlextTapOracleSettings
+from tests import TestsFlextTapOracleSettings, m
 
 
 class TestsFlextTapOracleServiceBase(FlextTestsServiceBase):

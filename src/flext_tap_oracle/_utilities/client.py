@@ -3,9 +3,6 @@
 Utilities for Oracle tap operations: discovery, connection testing,
 table filtering.
 
-Copyright (c) 2025 FLEXT Contributors
-SPDX-License-Identifier: MIT
-
 Copyright (c) 2026 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
 """
