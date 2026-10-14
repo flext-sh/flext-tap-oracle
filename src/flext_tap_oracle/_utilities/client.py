@@ -5,6 +5,7 @@ table filtering.
 
 Copyright (c) 2026 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
+
 """
 
 from __future__ import annotations
@@ -22,9 +23,9 @@ if TYPE_CHECKING:
 
 
 class FlextTapOracleUtilitiesClientMixin:
-    logger = u.fetch_logger(__name__)
-
     """Mixin providing Oracle tap client utility methods."""
+
+    logger = u.fetch_logger(__name__)
 
     @staticmethod
     def tap_oracle_client_discover_tables(
@@ -33,8 +34,14 @@ class FlextTapOracleUtilitiesClientMixin:
     ) -> p.Result[Sequence[FlextDbOracleModels.DbOracle.Table]]:
         """Execute Oracle table discovery using Layer 2 flext-db-oracle API.
 
+        Args:
+            oracle_api: flext-db-oracle API facade used to fetch tables.
+            schema_name: Optional schema to discover; defaults to the
+                database ``USER`` schema.
+
         Returns:
             The resulting ``p.Result[Sequence[FlextDbOracleModels.DbOracle.Table]]``.
+
         """
 
         def _run_tap_oracle_client_discover_tables() -> p.Result[
@@ -87,8 +94,12 @@ class FlextTapOracleUtilitiesClientMixin:
     ) -> p.Result[bool]:
         """Execute Oracle connection test using Layer 2 flext-db-oracle API.
 
+        Args:
+            oracle_api: flext-db-oracle API facade used to test the connection.
+
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
 
         def _run_tap_oracle_client_test_connection() -> p.Result[bool]:
@@ -122,9 +133,17 @@ class FlextTapOracleUtilitiesClientMixin:
     ) -> p.Result[t.StrSequence]:
         """Return discovered Oracle table names.
 
+        Args:
+            tap_config: Unused tap settings; kept for the stable signature.
+            discovered_tables: Discovered Oracle tables to take names from.
+
+        Returns:
+            The resulting ``p.Result[t.StrSequence]``.
+
         FlextTapOracleSettings exposes no ``tables_filter`` / ``exclude_tables``
         fields, so the previous filter branches were unreachable — kept signature
         for stable API.
+
         """
         _ = tap_config
         if not discovered_tables:
@@ -139,8 +158,15 @@ class FlextTapOracleUtilitiesClientMixin:
     ) -> p.Result[bool]:
         """Initialize Oracle tap by testing connection and discovering tables.
 
+        Args:
+            oracle_api: flext-db-oracle API facade used for the checks.
+            _tap_config: Unused tap settings; kept for the stable signature.
+            schema_name: Optional schema to discover; defaults to the
+                database ``USER`` schema.
+
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
 
         def _run_tap_oracle_client_initialize_tap() -> p.Result[bool]:

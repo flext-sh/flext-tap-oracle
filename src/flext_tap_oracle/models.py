@@ -22,7 +22,7 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
     """Models facade for the Oracle tap (flext-meltano + flext-db-oracle)."""
 
     class TapOracle(FlextTapOracleModelsBase):
-        """Tap Oracle  namespace for cross-project access."""
+        """Tap Oracle namespace for cross-project access."""
 
         class OracleTapDiscoverParams(FlextMeltanoModels.Entity):
             """Parameters for Oracle tap discover command."""
@@ -40,8 +40,13 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             def from_click_args(cls, **kwargs: t.Scalar) -> Self:
                 """Create discover params from Click command arguments.
 
+                Args:
+                    kwargs: Click command arguments keyed by parameter name;
+                        ``config_file`` and ``output_file`` are consumed.
+
                 Returns:
                     The resulting ``Self``.
+
                 """
                 config_file_value: t.Scalar | None = kwargs.get("config_file")
                 output_file_value: t.Scalar | None = kwargs.get("output_file")
@@ -70,8 +75,14 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             def from_click_args(cls, **kwargs: t.Scalar) -> Self:
                 """Create sync params from Click command arguments.
 
+                Args:
+                    kwargs: Click command arguments keyed by parameter name;
+                        ``config_file``, ``catalog_file``, and ``state_file``
+                        are consumed.
+
                 Returns:
                     The resulting ``Self``.
+
                 """
                 config_file_value: t.Scalar | None = kwargs.get("config_file")
                 catalog_file_value: t.Scalar | None = kwargs.get("catalog_file")

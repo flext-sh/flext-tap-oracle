@@ -34,7 +34,7 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
         FlextTapOracleConstantsValues,
         FlextTapOracleConstantsBase,
     ):
-        """Tap Oracle  namespace for cross-project access."""
+        """Tap Oracle namespace for cross-project access."""
 
         class Replication:
             """Oracle replication method constants."""
