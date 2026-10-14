@@ -5,6 +5,7 @@ script resolves and behaves as the running tap.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
+
 """
 
 from __future__ import annotations
@@ -20,8 +21,13 @@ if TYPE_CHECKING:
 def main(args: t.StrSequence | None = None) -> int:
     """Run the canonical tap-oracle Singer CLI.
 
+    Args:
+        args: Accepted for the canonical bridge signature; ignored — the
+            underlying runner dispatches on ``sys.argv``.
+
     Returns:
         The resulting ``int``.
+
     """
     _ = args
     exit_code: int = FlextTapOracleCli.run_cli()

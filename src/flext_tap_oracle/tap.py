@@ -4,7 +4,7 @@ Singer Tap interface using flext-meltano patterns with zero boilerplate
 and maximum integration with FLEXT ecosystem.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
-SPDX-License-Identifier: MIT.
+SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
@@ -33,7 +33,11 @@ class FlextTapOracleCli:
         logger = u.fetch_logger(__name__)
 
         def __init__(self, params: m.TapOracle.OracleTapDiscoverParams) -> None:
-            """Initialize command with parameter object pattern."""
+            """Initialize command with parameter object pattern.
+
+            Args:
+                params: Discover command parameters (config and output paths).
+            """
             self.params = params
             self.logger = u.fetch_logger(__name__)
 
@@ -42,6 +46,7 @@ class FlextTapOracleCli:
 
             Returns:
                 The resulting ``p.Result[t.JsonMapping]``.
+
             """
             self.logger.info("Starting Oracle database discovery")
 
@@ -91,6 +96,7 @@ class FlextTapOracleCli:
 
             Returns:
                 The resulting ``p.Result[bool]``.
+
             """
             if self.params.config_file and (not Path(self.params.config_file).exists()):
                 return e.fail_not_found(
@@ -106,7 +112,11 @@ class FlextTapOracleCli:
         logger = u.fetch_logger(__name__)
 
         def __init__(self, params: m.TapOracle.OracleTapSyncParams) -> None:
-            """Initialize command with parameter object pattern."""
+            """Initialize command with parameter object pattern.
+
+            Args:
+                params: Sync command parameters (config, catalog, state paths).
+            """
             self.params = params
             self.logger = u.fetch_logger(__name__)
 
@@ -115,6 +125,7 @@ class FlextTapOracleCli:
 
             Returns:
                 The resulting ``p.Result[t.JsonMapping]``.
+
             """
             self.logger.info("Starting Oracle data extraction")
 
@@ -169,6 +180,7 @@ class FlextTapOracleCli:
 
             Returns:
                 The resulting ``p.Result[bool]``.
+
             """
             if self.params.config_file and (not Path(self.params.config_file).exists()):
                 return e.fail_not_found(
@@ -202,8 +214,15 @@ class FlextTapOracleCli:
     ) -> p.Result[t.JsonValue]:
         """Run a tap command with params factory and command factory.
 
+        Args:
+            kwargs: Raw CLI keyword arguments passed to ``params_factory``.
+            params_factory: Builds the command parameter object from kwargs.
+            command_factory: Builds the command runner from the parameters.
+            operation_name: Human-readable operation label for logging.
+
         Returns:
             The resulting ``p.Result[t.JsonValue]``.
+
         """
 
         def _run_run_tap_command() -> p.Result[t.JsonValue]:
@@ -231,8 +250,12 @@ class FlextTapOracleCli:
     def handle_discover_command(**kwargs: t.Scalar) -> p.Result[t.JsonValue]:
         """Handle discover command using flext-meltano patterns.
 
+        Args:
+            kwargs: Raw CLI keyword arguments forwarded to the params factory.
+
         Returns:
             The resulting ``p.Result[t.JsonValue]``.
+
         """
         return FlextTapOracleCli.run_tap_command(
             kwargs=kwargs,
@@ -247,8 +270,12 @@ class FlextTapOracleCli:
     def handle_sync_command(**kwargs: t.Scalar) -> p.Result[t.JsonValue]:
         """Handle sync command using flext-meltano patterns.
 
+        Args:
+            kwargs: Raw CLI keyword arguments forwarded to the params factory.
+
         Returns:
             The resulting ``p.Result[t.JsonValue]``.
+
         """
         return FlextTapOracleCli.run_tap_command(
             kwargs=kwargs,
@@ -265,6 +292,7 @@ class FlextTapOracleCli:
 
         Returns:
             The resulting ``int``.
+
         """
         logger = u.fetch_logger(__name__)
         if "--discover" in sys.argv:
@@ -278,11 +306,12 @@ class FlextTapOracleCli:
 
 
 def main() -> None:
-    """Provide CLI entry point using flext-meltano patterns.
+    """Run the CLI entry point and exit with the resulting status code.
 
     Raises:
         SystemExit: Always; or if a ``KeyboardInterrupt`` is caught; or if a
             ``c.Meltano.SINGER_SAFE_EXCEPTIONS`` is caught.
+
     """
     logger = u.fetch_logger(__name__)
     try:

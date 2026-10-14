@@ -1,12 +1,13 @@
 """FLEXT service orchestrator for tap-oracle.
 
-from flext_tap_oracle import u
 Thin facade — all infrastructure from ``FlextMeltanoTapServiceBase`` via MRO.
 The tap uses FlextMeltanoAbstractions (CLI dispatch), not singer_sdk.Tap.
-``create_tap_instance`` returns ``r[T].fail()`` — use CLI dispatch instead.
+``create_tap_instance`` is unsupported and raises ``TypeError`` — use CLI
+dispatch instead.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
+
 """
 
 from __future__ import annotations
@@ -29,7 +30,12 @@ class FlextTapOracleService(FlextMeltanoTapServiceBase):
     ] = "tap-oracle"
 
     def __init__(self, settings: FlextTapOracleSettings | None = None) -> None:
-        """Expose the canonical settings bootstrap on the concrete tap facade."""
+        """Expose the canonical settings bootstrap on the concrete tap facade.
+
+        Args:
+            settings: Optional concrete settings passed through to the service
+                base bootstrap.
+        """
         super().__init__(settings=settings)
 
     @override
@@ -41,6 +47,7 @@ class FlextTapOracleService(FlextMeltanoTapServiceBase):
 
         Raises:
             TypeError: If tap-oracle uses CLI dispatch, not singer_sdk.Tap.
+
         """
         msg = "tap-oracle uses CLI dispatch, not singer_sdk.Tap"
         raise TypeError(msg)

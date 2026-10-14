@@ -1,5 +1,8 @@
 """Oracle Tap Streams - Complete Stream Implementation.
 
+Stream implementation for the Oracle tap: the typed ``OracleStream``
+extraction pipeline plus factory helpers, built on flext-db-oracle.
+
 Copyright (c) 2026 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
 """
@@ -19,22 +22,24 @@ if TYPE_CHECKING:
 class FlextTapOracleStreams:
     """Unified streams class for Oracle tap operations with complete stream management.
 
-    Consolidates ALL Oracle tap stream-related functionality:
+    Consolidates all Oracle tap stream-related functionality:
     - OracleStream implementation for data extraction
     - Stream factory methods and utilities
     - Oracle metadata processing and type conversion
     - Performance optimization for large tables
     - Complete integration with flext-db-oracle infrastructure
 
-    All nested classes and methods follow SOLID principles and r patterns.
+    All nested classes and methods follow SOLID principles and the typed
+    ``r`` result pattern.
     """
 
     logger = u.fetch_logger(__name__)
 
     class OracleStream:
-        """Oracle stream using MAXIMUM flext-db-oracle infrastructure.
+        """Oracle stream using flext-db-oracle infrastructure.
 
-        This implementation leverages ALL available flext-db-oracle functionality:
+        This implementation leverages the available flext-db-oracle
+        functionality:
         - FlextDbOracleMetadataManager for schema information
         - FlextDbOracleObservabilityManager for monitoring
         - FlextDbOracleApi for optimized database operations
@@ -49,7 +54,16 @@ class FlextTapOracleStreams:
             schema: t.JsonMapping,
             oracle_api: FlextDbOracleApi,
         ) -> None:
-            """Initialize Oracle stream with maximum flext-db-oracle integration."""
+            """Initialize Oracle stream with maximum flext-db-oracle integration.
+
+            Args:
+                tap: Parent tap; accepted for the stream interface
+                    (currently unused).
+                name: Singer stream name.
+                table_name: Oracle table name the stream extracts.
+                schema: Stream JSON schema definition.
+                oracle_api: flext-db-oracle API used for all database work.
+            """
             self.name = name
             self.schema = u.json_dict_adapter().validate_python(schema)
             self.table_name: str = table_name
@@ -61,6 +75,7 @@ class FlextTapOracleStreams:
 
             Returns:
                 The resulting ``int | None``.
+
             """
 
             def _run_estimate_row_count() -> int | None:
@@ -110,13 +125,19 @@ class FlextTapOracleStreams:
         ) -> Iterable[Mapping[str, t.TapOracle.OracleValue]]:
             """Get records from Oracle table using flext-db-oracle exclusively.
 
-            NO direct SQLAlchemy.
+            No direct SQLAlchemy access.
+
+            Args:
+                context: Optional partition context forwarded to the row
+                    fetch.
 
             Yields:
                 Each ``Mapping[str, t.TapOracle.OracleValue]``.
 
             Raises:
-                RuntimeError: If Failed to get records.
+                RuntimeError: If fetching the table's rows or processing the
+                    results fails.
+
             """
             try:
                 rows, table_metadata = self._fetch_rows_with_table_metadata(context)
@@ -139,8 +160,9 @@ class FlextTapOracleStreams:
                 The resulting ``tuple[t.SequenceOf[m.Dict], m.DbOracle.TableMetadata]``.
 
             Raises:
-                RuntimeError: If ``table_metadata_result.failure``; or if
-                    ``query_result.failure``.
+                RuntimeError: If the table metadata fetch fails; or if the
+                    table query fails.
+
             """
             _ = context
             with self.oracle_api as api:
@@ -163,6 +185,7 @@ class FlextTapOracleStreams:
 
             Returns:
                 The resulting ``t.MappingKV[str, t.JsonValue | None]``.
+
             """
             return {
                 "name": self.name,
@@ -177,6 +200,7 @@ class FlextTapOracleStreams:
 
             Returns:
                 The resulting ``t.MappingKV[str, t.JsonValue | None]``.
+
             """
             try:
                 table_metadata_result = self.oracle_api.fetch_table_metadata(
@@ -216,9 +240,10 @@ class FlextTapOracleStreams:
                 Each ``t.JsonMapping``.
 
             Raises:
-                RuntimeError: If Table metadata is missing column definitions; or if
-                    Table metadata did not include usable column names; or if Failed to
-                    process Oracle record.
+                RuntimeError: If table metadata is missing column definitions;
+                    or if it lacks usable column names; or if processing an
+                    Oracle record fails.
+
             """
             columns = table_metadata.columns
             if not columns:
@@ -250,6 +275,7 @@ class FlextTapOracleStreams:
 
             Raises:
                 RuntimeError: If Oracle row is missing expected columns.
+
             """
             record = t.Cli.JSON_MAPPING_ADAPTER.validate_python(row_data.root)
             missing_columns = [
@@ -267,8 +293,14 @@ class FlextTapOracleStreams:
         ) -> t.JsonMapping:
             """Transform Oracle data types using flext-db-oracle type knowledge.
 
+            Args:
+                record: Raw Oracle row as a JSON mapping.
+                column_metadata: flext-db-oracle column metadata used to
+                    resolve each column's Oracle type.
+
             Returns:
                 The resulting ``t.JsonMapping``.
+
             """
             transformed_record: t.MutableJsonMapping = {}
             meta_lookup: MutableMapping[str, m.DbOracle.ColumnMetadata] = {}
