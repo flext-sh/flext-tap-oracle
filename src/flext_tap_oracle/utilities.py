@@ -18,7 +18,12 @@ from flext_tap_oracle._utilities.client import FlextTapOracleUtilitiesClientMixi
 
 
 class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
-    """Unified Oracle tap utilities class extending u classes."""
+    """Unified Oracle tap utilities over the Meltano and DbOracle facades.
+
+    Composes the tap's client mixin with the flext-meltano and flext-db-oracle
+    utility facades; consumers reach every helper via ``u.TapOracle.*``.
+
+    """
 
     class TapOracle(FlextTapOracleUtilitiesClientMixin):
         """Tap Oracle namespace for cross-project access."""

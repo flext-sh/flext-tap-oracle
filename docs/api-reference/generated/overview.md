@@ -22,12 +22,12 @@
   `tap`
 - Main facades: `FlextTapOracleConfig`, `FlextTapOracleConstants`,
   `FlextTapOracleModels`, `FlextTapOracleProtocols`, `FlextTapOracleService`,
-  `FlextTapOracleSettings`, `FlextTapOracleStreams`, `FlextTapOracleTypes` (+1 more)
+  `FlextTapOracleSettings`, `FlextTapOracleStreams`, `FlextTapOracleTypes` (+2 more)
 - Alias exports: `c`, `d`, `e`, `h`, `m`, `p`, `r`, `s`, `t`, `u`, `x`
 - Public symbol exports: `FlextTapOracleConfig`, `FlextTapOracleConstants`,
   `FlextTapOracleModels`, `FlextTapOracleProtocols`, `FlextTapOracleService`,
   `FlextTapOracleSettings`, `FlextTapOracleStreams`, `FlextTapOracleTypes`,
-  `FlextTapOracleUtilities`, `config` (+3 more)
+  `FlextTapOracleUtilities`, `FlextTapOracleVersion` (+4 more)
 - Exported module shortcuts: _none_
 - Generated module pages: `9`
 

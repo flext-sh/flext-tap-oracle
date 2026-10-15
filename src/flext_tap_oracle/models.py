@@ -10,9 +10,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Annotated, Self
 
 from flext_db_oracle import FlextDbOracleModels
-from flext_meltano import FlextMeltanoModels
+from flext_meltano import FlextMeltanoModels, u
 
-from flext_tap_oracle import u
+from flext_tap_oracle._models.base import FlextTapOracleModelsBase
 
 if TYPE_CHECKING:
     from flext_tap_oracle import t
@@ -21,8 +21,8 @@ if TYPE_CHECKING:
 class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
     """Models facade for the Oracle tap (flext-meltano + flext-db-oracle)."""
 
-    class TapOracle:
-        """Tap Oracle  namespace for cross-project access."""
+    class TapOracle(FlextTapOracleModelsBase):
+        """Tap Oracle namespace for cross-project access."""
 
         class OracleTapDiscoverParams(FlextMeltanoModels.Entity):
             """Parameters for Oracle tap discover command."""
@@ -40,8 +40,13 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             def from_click_args(cls, **kwargs: t.Scalar) -> Self:
                 """Create discover params from Click command arguments.
 
+                Args:
+                    kwargs: Click command arguments keyed by parameter name;
+                        ``config_file`` and ``output_file`` are consumed.
+
                 Returns:
                     The resulting ``Self``.
+
                 """
                 config_file_value: t.Scalar | None = kwargs.get("config_file")
                 output_file_value: t.Scalar | None = kwargs.get("output_file")
@@ -70,8 +75,14 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
             def from_click_args(cls, **kwargs: t.Scalar) -> Self:
                 """Create sync params from Click command arguments.
 
+                Args:
+                    kwargs: Click command arguments keyed by parameter name;
+                        ``config_file``, ``catalog_file``, and ``state_file``
+                        are consumed.
+
                 Returns:
                     The resulting ``Self``.
+
                 """
                 config_file_value: t.Scalar | None = kwargs.get("config_file")
                 catalog_file_value: t.Scalar | None = kwargs.get("catalog_file")

@@ -6,6 +6,7 @@ under ``settings.TapOracle.*``.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
+
 """
 
 from __future__ import annotations
@@ -29,13 +30,11 @@ class FlextTapOracleSettings(FlextDbOracleSettings, FlextMeltanoSettings):
         """Tap-specific knobs only (Oracle connection lives in ``DbOracle``)."""
 
         batch_size: Annotated[
-            int,
-            m.Field(default=1000, ge=1, description="Extraction batch size"),
-        ]
+            int, m.Field(ge=1, description="Extraction batch size")
+        ] = 1000
         stream_prefix: Annotated[
-            str,
-            m.Field(default="", description="Singer stream name prefix"),
-        ]
+            str, m.Field(description="Singer stream name prefix")
+        ] = ""
 
     if TYPE_CHECKING:
         TapOracle: _TapOracle
