@@ -35,6 +35,7 @@ class FlextTapOracleService(FlextMeltanoTapServiceBase):
         Args:
             settings: Optional concrete settings passed through to the service
                 base bootstrap.
+
         """
         super().__init__(settings=settings)
 

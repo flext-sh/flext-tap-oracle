@@ -63,6 +63,7 @@ class FlextTapOracleStreams:
                 table_name: Oracle table name the stream extracts.
                 schema: Stream JSON schema definition.
                 oracle_api: flext-db-oracle API used for all database work.
+
             """
             self.name = name
             self.schema = u.json_dict_adapter().validate_python(schema)

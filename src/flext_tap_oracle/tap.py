@@ -37,6 +37,7 @@ class FlextTapOracleCli:
 
             Args:
                 params: Discover command parameters (config and output paths).
+
             """
             self.params = params
             self.logger = u.fetch_logger(__name__)
@@ -116,6 +117,7 @@ class FlextTapOracleCli:
 
             Args:
                 params: Sync command parameters (config, catalog, state paths).
+
             """
             self.params = params
             self.logger = u.fetch_logger(__name__)
