@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from enum import StrEnum, unique
 from typing import TYPE_CHECKING
 
 from flext_db_oracle import FlextDbOracleConstants
@@ -15,6 +14,7 @@ from flext_meltano import FlextMeltanoConstants
 
 from flext_tap_oracle._constants import FlextTapOracleConstantsValues
 from flext_tap_oracle._constants.base import FlextTapOracleConstantsBase
+from flext_tap_oracle._constants.replication import FlextTapOracleConstantsReplication
 
 if TYPE_CHECKING:
     from flext_tap_oracle import t
@@ -36,21 +36,7 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
     ):
         """Tap Oracle namespace for cross-project access."""
 
-        class Replication:
-            """Oracle replication method constants."""
-
-            @unique
-            class Method(StrEnum):
-                """Oracle replication methods using StrEnum for type safety.
-
-                DRY Pattern:
-                    StrEnum is the single source of truth. Use Method.FULL_TABLE.value
-                    or Method.FULL_TABLE directly - no base strings needed.
-                """
-
-                FULL_TABLE = "FULL_TABLE"
-                INCREMENTAL = "INCREMENTAL"
-                LOG_BASED = "LOG_BASED"
+        Replication = FlextTapOracleConstantsReplication.Replication
 
         class Extraction(FlextTapOracleConstantsValues.TapOracle.Extraction):
             """Tap-specific extraction configuration."""

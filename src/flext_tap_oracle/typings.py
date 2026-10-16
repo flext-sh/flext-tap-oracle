@@ -10,6 +10,8 @@ from __future__ import annotations
 from flext_db_oracle import FlextDbOracleTypes
 from flext_meltano import FlextMeltanoTypes
 
+from flext_tap_oracle._typings.base import FlextTapOracleTypingsBase
+
 
 class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
     """MRO facade composing Meltano + DbOracle type namespaces."""
@@ -17,7 +19,7 @@ class FlextTapOracleTypes(FlextMeltanoTypes, FlextDbOracleTypes):
     class TapOracle:
         """Tap Oracle domain namespace (flat members per AGENTS.md §149)."""
 
-        type OracleValue = FlextMeltanoTypes.JsonValue | None
+        OracleValue = FlextTapOracleTypingsBase.OracleValue
 
 
 t = FlextTapOracleTypes
