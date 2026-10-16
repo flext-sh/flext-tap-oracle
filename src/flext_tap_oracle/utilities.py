@@ -1,3 +1,4 @@
+# AUTO-GENERATED FILE — Regenerate with: make gen
 """FLEXT Tap Oracle Utilities - Domain-specific utilities for Oracle tap operations.
 
 This module provides complete Oracle tap utilities extending u
@@ -14,7 +15,7 @@ from __future__ import annotations
 from flext_db_oracle import FlextDbOracleUtilities
 from flext_meltano import FlextMeltanoUtilities
 
-from flext_tap_oracle._utilities.client import FlextTapOracleUtilitiesClientMixin
+from flext_tap_oracle._utilities import FlextTapOracleUtilitiesClientMixin
 
 
 class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
