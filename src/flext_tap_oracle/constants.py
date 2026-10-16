@@ -13,10 +13,11 @@ from typing import TYPE_CHECKING
 from flext_db_oracle import FlextDbOracleConstants
 from flext_meltano import FlextMeltanoConstants
 
-from flext_tap_oracle._constants.values import FlextTapOracleConstantsValues
+from flext_tap_oracle._constants import FlextTapOracleConstantsValues
+from flext_tap_oracle._constants.base import FlextTapOracleConstantsBase
 
 if TYPE_CHECKING:
-    from flext_meltano import t
+    from flext_tap_oracle import t
 
 
 class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
@@ -28,8 +29,12 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
     Composes with FlextDbOracleConstants to avoid duplication and ensure consistency.
     """
 
-    class TapOracle(FlextTapOracleConstantsValues.TapOracle):
-        """Tap Oracle  namespace for cross-project access."""
+    class TapOracle(
+        FlextTapOracleConstantsValues.TapOracle,
+        FlextTapOracleConstantsValues,
+        FlextTapOracleConstantsBase,
+    ):
+        """Tap Oracle namespace for cross-project access."""
 
         class Replication:
             """Oracle replication method constants."""
