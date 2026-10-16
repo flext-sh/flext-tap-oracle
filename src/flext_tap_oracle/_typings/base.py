@@ -15,7 +15,4 @@ class FlextTapOracleTypingsBase:
     type OracleValue = FlextMeltanoTypes.JsonValue | None
 
 
-__all__: list[str] = [
-    "FlextTapOracleTypingsBase",
-    "OracleValue",
-]
+__all__: list[str] = ["FlextTapOracleTypingsBase"]
