@@ -89,6 +89,4 @@ class FlextTapOracleModelsParams:
 
 __all__: list[str] = [
     "FlextTapOracleModelsParams",
-    "OracleTapDiscoverParams",
-    "OracleTapSyncParams",
 ]
