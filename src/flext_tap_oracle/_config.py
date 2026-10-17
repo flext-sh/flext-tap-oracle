@@ -14,8 +14,7 @@ from __future__ import annotations
 from typing import Annotated
 
 from flext_meltano import FlextMeltanoConfig, m
-
-from flext_tap_oracle._models.base import FlextTapOracleModelsBase
+from flext_meltano.models import FlextMeltanoModelsConfig
 
 
 class FlextTapOracleConfig(FlextMeltanoConfig):
@@ -26,13 +25,13 @@ class FlextTapOracleConfig(FlextMeltanoConfig):
     """
 
     TapOracle: Annotated[
-        FlextTapOracleModelsBase.ConfigNamespace,
+        FlextMeltanoModelsConfig.MeltanoNamespace,
         m.Field(
             description=(
                 "Open namespace exposing ``config/*.yaml`` under ``TapOracle``."
             ),
         ),
-    ] = FlextTapOracleModelsBase.ConfigNamespace()
+    ] = FlextMeltanoModelsConfig.MeltanoNamespace()
 
 
 config: FlextTapOracleConfig = FlextTapOracleConfig.fetch_global()

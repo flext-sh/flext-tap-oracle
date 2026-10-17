@@ -16,7 +16,6 @@ if TYPE_CHECKING:
     from flext_tap_oracle._constants.base import FlextTapOracleConstantsBase
     from flext_tap_oracle._constants.replication import (
         FlextTapOracleConstantsReplication,
-        Replication,
     )
     from flext_tap_oracle._constants.values import FlextTapOracleConstantsValues
 
@@ -25,7 +24,6 @@ __all__: tuple[str, ...] = (
     "FlextTapOracleConstantsBase",
     "FlextTapOracleConstantsReplication",
     "FlextTapOracleConstantsValues",
-    "Replication",
 )
 
 install_lazy_exports(
@@ -35,7 +33,6 @@ install_lazy_exports(
         "FlextTapOracleConstantsBase": ".base",
         "FlextTapOracleConstantsReplication": ".replication",
         "FlextTapOracleConstantsValues": ".values",
-        "Replication": ".replication",
     }),
     public_exports=__all__,
 )
