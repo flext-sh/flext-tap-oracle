@@ -21,11 +21,8 @@ from flext_tap_oracle._protocols import FlextTapOracleProtocolsBase
 class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
     """Singer Oracle tap protocols facade — composes Meltano + Oracle protocols."""
 
-    class TapOracle:
+    class TapOracle(FlextTapOracleProtocolsBase):
         """Singer Tap Oracle structural protocols (consumer surface)."""
-
-        CommandRunner = FlextTapOracleProtocolsBase.CommandRunner
-        Tap = FlextTapOracleProtocolsBase.Tap
 
 
 p = FlextTapOracleProtocols
