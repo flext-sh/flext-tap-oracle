@@ -1,3 +1,4 @@
+# AUTO-GENERATED FILE — Regenerate with: make gen
 """Singer Oracle tap protocols for FLEXT ecosystem.
 
 Only ``TapOracle.Tap`` (consumed by ``streams.py``) and
@@ -14,7 +15,7 @@ from __future__ import annotations
 from flext_db_oracle import FlextDbOracleProtocols
 from flext_meltano import FlextMeltanoProtocols
 
-from flext_tap_oracle._protocols.base import FlextTapOracleProtocolsBase
+from flext_tap_oracle._protocols import FlextTapOracleProtocolsBase
 
 
 class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
