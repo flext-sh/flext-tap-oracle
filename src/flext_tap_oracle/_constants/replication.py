@@ -29,7 +29,4 @@ class FlextTapOracleConstantsReplication:
             LOG_BASED = "LOG_BASED"
 
 
-__all__: list[str] = [
-    "FlextTapOracleConstantsReplication",
-    "Replication",
-]
+__all__: list[str] = ["FlextTapOracleConstantsReplication"]
