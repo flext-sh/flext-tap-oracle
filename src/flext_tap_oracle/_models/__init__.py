@@ -14,13 +14,17 @@ from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
     from flext_tap_oracle._models.base import FlextTapOracleModelsBase
+    from flext_tap_oracle._models.params import FlextTapOracleModelsParams
 
 
-__all__: tuple[str, ...] = ("FlextTapOracleModelsBase",)
+__all__: tuple[str, ...] = ("FlextTapOracleModelsBase", "FlextTapOracleModelsParams")
 
 install_lazy_exports(
     __name__,
     globals(),
-    MappingProxyType({"FlextTapOracleModelsBase": ".base"}),
+    MappingProxyType({
+        "FlextTapOracleModelsBase": ".base",
+        "FlextTapOracleModelsParams": ".params",
+    }),
     public_exports=__all__,
 )
