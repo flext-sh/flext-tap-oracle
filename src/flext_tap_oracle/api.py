@@ -18,7 +18,7 @@ from flext_meltano.services.consumer_bases.tap_service_base import (
     FlextMeltanoTapServiceBase,
 )
 
-from flext_tap_oracle import FlextTapOracleSettings, p, t, u
+from flext_tap_oracle import FlextTapOracleSettings, m, p, t
 
 
 class FlextTapOracleService(FlextMeltanoTapServiceBase):
@@ -26,7 +26,7 @@ class FlextTapOracleService(FlextMeltanoTapServiceBase):
 
     tap_name: Annotated[
         t.NonEmptyStr,
-        u.Field(description="Canonical Singer tap identifier."),
+        m.Field(description="Canonical Singer tap identifier."),
     ] = "tap-oracle"
 
     def __init__(self, settings: FlextTapOracleSettings | None = None) -> None:

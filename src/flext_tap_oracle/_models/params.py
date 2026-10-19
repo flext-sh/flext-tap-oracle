@@ -8,7 +8,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Annotated, Self
 
-from flext_meltano import FlextMeltanoModels, u
+from flext_meltano import FlextMeltanoModels
+
+from flext_tap_oracle import m
 
 if TYPE_CHECKING:
     from flext_tap_oracle import t
@@ -22,11 +24,11 @@ class FlextTapOracleModelsParams:
 
         config_file: Annotated[
             str | None,
-            u.Field(description="Path to configuration file", default=None),
+            m.Field(description="Path to configuration file", default=None),
         ]
         output_file: Annotated[
             str | None,
-            u.Field(description="Path to output file", default=None),
+            m.Field(description="Path to output file", default=None),
         ]
 
         @classmethod
@@ -53,15 +55,15 @@ class FlextTapOracleModelsParams:
 
         config_file: Annotated[
             str | None,
-            u.Field(description="Path to configuration file", default=None),
+            m.Field(description="Path to configuration file", default=None),
         ]
         catalog_file: Annotated[
             str | None,
-            u.Field(description="Path to catalog file", default=None),
+            m.Field(description="Path to catalog file", default=None),
         ]
         state_file: Annotated[
             str | None,
-            u.Field(description="Path to state file", default=None),
+            m.Field(description="Path to state file", default=None),
         ]
 
         @classmethod
