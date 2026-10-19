@@ -278,7 +278,7 @@ class FlextTapOracleStreams:
                 RuntimeError: If Oracle row is missing expected columns.
 
             """
-            record = t.Cli.JSON_MAPPING_ADAPTER.validate_python(row_data.root)
+            record = u.Cli.JSON_MAPPING_ADAPTER.validate_python(row_data.root)
             missing_columns = [
                 column_name for column_name in column_names if column_name not in record
             ]
@@ -336,7 +336,7 @@ class FlextTapOracleStreams:
                     transformed_record[column_name] = str(value)
                 else:
                     transformed_record[column_name] = value
-            return t.Cli.JSON_MAPPING_ADAPTER.validate_python(transformed_record)
+            return u.Cli.JSON_MAPPING_ADAPTER.validate_python(transformed_record)
 
     class StreamFactory:
         """Factory class for creating Oracle streams with complete configuration."""
@@ -397,7 +397,7 @@ class FlextTapOracleStreams:
             )
             stream_name = f"{stream_prefix}_{table_name.lower()}"
             properties: t.JsonMapping = {}
-            schema = t.Cli.JSON_MAPPING_ADAPTER.validate_python({
+            schema = u.Cli.JSON_MAPPING_ADAPTER.validate_python({
                 "type": "object",
                 "properties": properties,
             })
