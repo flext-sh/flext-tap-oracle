@@ -42,7 +42,7 @@ class FlextTapOracleService(FlextMeltanoTapServiceBase):
     @override
     def create_tap_instance(
         self,
-        settings: p.Settings | t.JsonMapping | None = None,
+        _settings: p.Settings | t.JsonMapping | None = None,
     ) -> Never:
         """Not supported — use CLI dispatch via FlextTapOracleCli.
 
