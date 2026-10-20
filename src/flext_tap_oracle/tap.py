@@ -156,7 +156,7 @@ class FlextTapOracleCli:
                 result_data: t.JsonMapping = {
                     "records_extracted": record_count,
                     "schema_name": schema_name,
-                    "status": "completed",
+                    "status": c.Status.COMPLETED.value,
                 }
                 u.log(
                     "Sync completed for schema %s; records extracted: %s",

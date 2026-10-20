@@ -8,9 +8,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Annotated, Self
 
+from flext_core import m
 from flext_meltano import FlextMeltanoModels
-
-from flext_tap_oracle import m
 
 if TYPE_CHECKING:
     from flext_tap_oracle import t
