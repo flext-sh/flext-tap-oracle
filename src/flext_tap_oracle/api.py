@@ -50,7 +50,7 @@ class FlextTapOracleService(FlextMeltanoTapServiceBase):
             TypeError: If tap-oracle uses CLI dispatch, not singer_sdk.Tap.
 
         """
-        msg = "tap-oracle uses CLI dispatch, not singer_sdk.Tap"
+        msg = f"tap-oracle uses CLI dispatch, not singer_sdk.Tap: {_settings!r}"
         raise TypeError(msg)
 
 
