@@ -1,9 +1,9 @@
+# AUTO-GENERATED FILE — Regenerate with: make gen
 """Singer Oracle tap protocols for FLEXT ecosystem.
 
-Of the 9 inner ``TapOracle.*`` Protocol classes that previously lived here, 7
-had **zero workspace consumers** (per AGENTS.md §3.5 + STRICT YAGNI they
-were deleted). Only ``TapOracle.Tap`` (consumed by ``streams.py``) and
-``TapOracle.CommandRunner`` (consumed by ``tap.py``) remain.
+Only ``TapOracle.Tap`` (consumed by ``streams.py``) and
+``TapOracle.CommandRunner`` (consumed by ``tap.py``) are published here; the
+contracts themselves live in the ``_protocols`` family parts.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -12,34 +12,17 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Protocol, runtime_checkable
-
 from flext_db_oracle import FlextDbOracleProtocols
 from flext_meltano import FlextMeltanoProtocols
 
-if TYPE_CHECKING:
-    from flext_tap_oracle import t
+from flext_tap_oracle._protocols import FlextTapOracleProtocolsBase
 
 
 class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
     """Singer Oracle tap protocols facade — composes Meltano + Oracle protocols."""
 
-    class TapOracle:
+    class TapOracle(FlextTapOracleProtocolsBase):
         """Singer Tap Oracle structural protocols (consumer surface)."""
-
-        @runtime_checkable
-        class CommandRunner(Protocol):
-            """Structural protocol for Oracle tap command execution."""
-
-            def execute(self) -> FlextMeltanoProtocols.Result[t.JsonMapping]:
-                """Execute the Oracle tap command and return results."""
-                ...
-
-        @runtime_checkable
-        class Tap(Protocol):
-            """Structural protocol for Oracle tap value used in stream context."""
-
-            typed_config: t.JsonValue
 
 
 p = FlextTapOracleProtocols
