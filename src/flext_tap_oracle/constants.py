@@ -8,8 +8,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TypeAlias
-
 from flext_db_oracle import FlextDbOracleConstants
 from flext_meltano import FlextMeltanoConstants
 
@@ -36,11 +34,7 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
     ):
         """Tap Oracle namespace for cross-project access."""
 
-        Replication: TypeAlias = FlextTapOracleConstantsReplication.Replication
-
-        class Extraction(FlextTapOracleConstantsValues.TapOracle.Extraction):
-            """Tap-specific extraction configuration."""
-
 
 c = FlextTapOracleConstants
+
 __all__: list[str] = ["FlextTapOracleConstants", "c"]
