@@ -1,3 +1,4 @@
+# AUTO-GENERATED FILE — Regenerate with: make gen
 """FLEXT Tap Oracle Constants - Oracle tap extraction constants.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
@@ -7,17 +8,16 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TypeAlias
 
 from flext_db_oracle import FlextDbOracleConstants
 from flext_meltano import FlextMeltanoConstants
 
-from flext_tap_oracle._constants import FlextTapOracleConstantsValues
-from flext_tap_oracle._constants.base import FlextTapOracleConstantsBase
-from flext_tap_oracle._constants.replication import FlextTapOracleConstantsReplication
-
-if TYPE_CHECKING:
-    from flext_tap_oracle import t
+from flext_tap_oracle._constants import (
+    FlextTapOracleConstantsBase,
+    FlextTapOracleConstantsReplication,
+    FlextTapOracleConstantsValues,
+)
 
 
 class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
@@ -30,17 +30,17 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
     """
 
     class TapOracle(
-        FlextTapOracleConstantsValues.TapOracle,
-        FlextTapOracleConstantsValues,
         FlextTapOracleConstantsBase,
+        FlextTapOracleConstantsReplication,
+        FlextTapOracleConstantsValues.TapOracle,
     ):
         """Tap Oracle namespace for cross-project access."""
 
-        Replication = FlextTapOracleConstantsReplication.Replication
+        Replication: TypeAlias = FlextTapOracleConstantsReplication.Replication
 
         class Extraction(FlextTapOracleConstantsValues.TapOracle.Extraction):
             """Tap-specific extraction configuration."""
 
 
 c = FlextTapOracleConstants
-__all__: t.StrSequence = ("FlextTapOracleConstants", "c")
+__all__: list[str] = ["FlextTapOracleConstants", "c"]

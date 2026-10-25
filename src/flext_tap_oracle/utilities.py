@@ -31,5 +31,4 @@ class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
 
 
 u = FlextTapOracleUtilities
-
 __all__: list[str] = ["FlextTapOracleUtilities", "u"]

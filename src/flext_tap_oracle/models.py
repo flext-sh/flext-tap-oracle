@@ -23,10 +23,6 @@ class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
     class TapOracle(FlextTapOracleModelsBase, FlextTapOracleModelsParams):
         """Tap Oracle namespace for cross-project access."""
 
-        OracleTapDiscoverParams = FlextTapOracleModelsParams.OracleTapDiscoverParams
-        OracleTapSyncParams = FlextTapOracleModelsParams.OracleTapSyncParams
-
 
 m = FlextTapOracleModels
-
 __all__: list[str] = ["FlextTapOracleModels", "m"]
