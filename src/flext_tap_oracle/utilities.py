@@ -12,13 +12,13 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_db_oracle import FlextDbOracleUtilities
-from flext_meltano import FlextMeltanoUtilities
+from flext_db_oracle import u
+from flext_meltano import u as flext_meltano_u
 
 from flext_tap_oracle._utilities import FlextTapOracleUtilitiesClientMixin
 
 
-class FlextTapOracleUtilities(FlextMeltanoUtilities, FlextDbOracleUtilities):
+class FlextTapOracleUtilities(flext_meltano_u, u):
     """Unified Oracle tap utilities over the Meltano and DbOracle facades.
 
     Composes the tap's client mixin with the flext-meltano and flext-db-oracle

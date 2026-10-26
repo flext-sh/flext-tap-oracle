@@ -12,13 +12,13 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_db_oracle import FlextDbOracleProtocols
-from flext_meltano import FlextMeltanoProtocols
+from flext_db_oracle import p
+from flext_meltano import p as flext_meltano_p
 
 from flext_tap_oracle._protocols import FlextTapOracleProtocolsBase
 
 
-class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
+class FlextTapOracleProtocols(flext_meltano_p, p):
     """Singer Oracle tap protocols facade — composes Meltano + Oracle protocols."""
 
     class TapOracle(FlextTapOracleProtocolsBase):

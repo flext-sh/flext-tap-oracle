@@ -8,8 +8,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_db_oracle import FlextDbOracleModels
-from flext_meltano import FlextMeltanoModels
+from flext_db_oracle import m
+from flext_meltano import m as flext_meltano_m
 
 from flext_tap_oracle._models import (
     FlextTapOracleModelsBase,
@@ -17,7 +17,7 @@ from flext_tap_oracle._models import (
 )
 
 
-class FlextTapOracleModels(FlextMeltanoModels, FlextDbOracleModels):
+class FlextTapOracleModels(flext_meltano_m, m):
     """Models facade for the Oracle tap (flext-meltano + flext-db-oracle)."""
 
     class TapOracle(FlextTapOracleModelsBase, FlextTapOracleModelsParams):
