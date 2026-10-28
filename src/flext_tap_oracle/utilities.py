@@ -15,7 +15,7 @@ from __future__ import annotations
 from flext_db_oracle import u
 from flext_meltano import u as flext_meltano_u
 
-from flext_tap_oracle._utilities import FlextTapOracleUtilitiesClientMixin
+from flext_tap_oracle._utilities import FlextTapOracleUtilitiesClient
 
 
 class FlextTapOracleUtilities(flext_meltano_u, u):
@@ -26,7 +26,7 @@ class FlextTapOracleUtilities(flext_meltano_u, u):
 
     """
 
-    class TapOracle(FlextTapOracleUtilitiesClientMixin):
+    class TapOracle(FlextTapOracleUtilitiesClient):
         """Tap Oracle namespace for cross-project access."""
 
 

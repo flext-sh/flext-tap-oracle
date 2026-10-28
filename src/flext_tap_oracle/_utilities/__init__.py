@@ -13,14 +13,14 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_tap_oracle._utilities.client import FlextTapOracleUtilitiesClientMixin
+    from flext_tap_oracle._utilities.client import FlextTapOracleUtilitiesClient
 
 
-__all__: tuple[str, ...] = ("FlextTapOracleUtilitiesClientMixin",)
+__all__: tuple[str, ...] = ("FlextTapOracleUtilitiesClient",)
 
 install_lazy_exports(
     __name__,
     globals(),
-    MappingProxyType({"FlextTapOracleUtilitiesClientMixin": ".client"}),
+    MappingProxyType({"FlextTapOracleUtilitiesClient": ".client"}),
     public_exports=__all__,
 )
