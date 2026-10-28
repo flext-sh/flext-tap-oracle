@@ -5,25 +5,6 @@
 
 config_version = "0"
 
-exclude_patterns = [
-  "**/protos/**",
-  "**/conftest.py",
-  "**/src/flext_tap_oracle/__init__.py",
-  "**/src/flext_tap_oracle/__version__.py",
-  "**/src/flext_tap_oracle/_constants/__init__.py",
-  "**/src/flext_tap_oracle/_models/__init__.py",
-  "**/src/flext_tap_oracle/_protocols/__init__.py",
-  "**/src/flext_tap_oracle/_typings/__init__.py",
-  "**/src/flext_tap_oracle/_utilities/__init__.py",
-  "**/src/flext_tap_oracle/constants.py",
-  "**/src/flext_tap_oracle/models.py",
-  "**/src/flext_tap_oracle/protocols.py",
-  "**/src/flext_tap_oracle/typings.py",
-  "**/src/flext_tap_oracle/utilities.py",
-  "**/tests/__init__.py",
-  "**/tests/unit/__init__.py",
-]
-
 [smells]
 mode = "block"
 
