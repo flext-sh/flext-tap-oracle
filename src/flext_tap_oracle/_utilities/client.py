@@ -15,7 +15,7 @@ from collections.abc import Sequence
 from flext_db_oracle import FlextDbOracleApi, FlextModelsDbOracle
 from flext_meltano import u
 
-from flext_tap_oracle import c, e, p, r, t
+from flext_tap_oracle import c, e, p, r
 
 
 class FlextTapOracleUtilitiesClient:
@@ -58,7 +58,7 @@ class FlextTapOracleUtilitiesClient:
                 return r[Sequence[FlextModelsDbOracle.DbOracle.Table]].fail(error_msg)
 
             table_names = tables_result.value or []
-            tables: t.SequenceOf[FlextModelsDbOracle.DbOracle.Table] = [
+            tables: Sequence[FlextModelsDbOracle.DbOracle.Table] = [
                 FlextModelsDbOracle.DbOracle.Table(
                     name=name,
                     owner=target_schema,
@@ -124,15 +124,15 @@ class FlextTapOracleUtilitiesClient:
 
     @staticmethod
     def tap_oracle_client_filter_tables(
-        discovered_tables: t.SequenceOf[FlextModelsDbOracle.DbOracle.Table],
-    ) -> p.Result[t.StrSequence]:
+        discovered_tables: Sequence[FlextModelsDbOracle.DbOracle.Table],
+    ) -> p.Result[Sequence[str]]:
         """Return discovered Oracle table names.
 
         Args:
             discovered_tables: Discovered Oracle tables to take names from.
 
         Returns:
-            The resulting ``p.Result[t.StrSequence]``.
+            The resulting ``p.Result[Sequence[str]]``.
 
         FlextTapOracleSettings exposes no ``tables_filter`` / ``exclude_tables``
         fields, so the previous filter branches were unreachable — kept signature
@@ -141,7 +141,7 @@ class FlextTapOracleUtilitiesClient:
         """
         if not discovered_tables:
             return e.fail_not_found("oracle_tables", "discovered")
-        return r[t.StrSequence].ok([table.name for table in discovered_tables])
+        return r[Sequence[str]].ok([table.name for table in discovered_tables])
 
     @staticmethod
     def tap_oracle_client_initialize_tap(

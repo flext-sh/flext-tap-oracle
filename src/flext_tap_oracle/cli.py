@@ -10,15 +10,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from collections.abc import Sequence
 
 from flext_tap_oracle.tap import FlextTapOracleCli
 
-if TYPE_CHECKING:
-    from flext_tap_oracle import t
 
-
-def main(args: t.StrSequence | None = None) -> int:
+def main(args: Sequence[str] | None = None) -> int:
     """Run the canonical tap-oracle Singer CLI.
 
     Args:

@@ -10,6 +10,7 @@ SPDX-License-Identifier: MIT.
 from __future__ import annotations
 
 import sys
+from collections.abc import Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -283,7 +284,7 @@ class FlextTapOracleCli:
         )
 
     @staticmethod
-    def run_cli(args: t.StrSequence | None = None) -> int:
+    def run_cli(args: Sequence[str] | None = None) -> int:
         """Run main CLI entry point using flext-meltano abstractions.
 
         Args:
