@@ -14,13 +14,29 @@ from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
     from flext_tap_oracle._protocols.base import FlextTapOracleProtocolsBase
+    from flext_tap_oracle._protocols.generated_models_domainevent import (
+        FlextTapOracleProtocolsGeneratedModelsDomainEvent,
+    )
+    from flext_tap_oracle._protocols.generated_models_entity import (
+        FlextTapOracleProtocolsGeneratedModelsEntity,
+    )
 
 
-__all__: tuple[str, ...] = ("FlextTapOracleProtocolsBase",)
+__all__: tuple[str, ...] = (
+    "FlextTapOracleProtocolsBase",
+    "FlextTapOracleProtocolsGeneratedModelsDomainEvent",
+    "FlextTapOracleProtocolsGeneratedModelsEntity",
+)
 
 install_lazy_exports(
     __name__,
     globals(),
-    MappingProxyType({"FlextTapOracleProtocolsBase": ".base"}),
+    MappingProxyType({
+        "FlextTapOracleProtocolsBase": ".base",
+        "FlextTapOracleProtocolsGeneratedModelsDomainEvent": (
+            ".generated_models_domainevent"
+        ),
+        "FlextTapOracleProtocolsGeneratedModelsEntity": ".generated_models_entity",
+    }),
     public_exports=__all__,
 )
