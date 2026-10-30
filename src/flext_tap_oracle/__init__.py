@@ -12,13 +12,28 @@ from typing import TYPE_CHECKING
 
 from flext_core.lazy import install_lazy_exports
 
-from flext_tap_oracle.__version__ import __version__
-
 if TYPE_CHECKING:
-    from flext_db_oracle import e
-    from flext_meltano import d, h, r, s, x
+    from flext_db_oracle import db_oracle, e
+    from flext_meltano import (
+        build_lazy_import_map,
+        cleanup_submodule_namespace,
+        cli,
+        core,
+        d,
+        h,
+        install_lazy_exports,
+        lazy,
+        lazy_getattr,
+        lazy_member,
+        meltano,
+        merge_lazy_imports,
+        normalize_lazy_imports,
+        r,
+        resolve_lazy_members,
+        s,
+        x,
+    )
 
-    from flext_tap_oracle import _constants, _models, _utilities
     from flext_tap_oracle.__version__ import (
         FlextTapOracleVersion,
         __author__,
@@ -27,6 +42,7 @@ if TYPE_CHECKING:
         __license__,
         __title__,
         __url__,
+        __version__,
         __version_info__,
     )
     from flext_tap_oracle._config import FlextTapOracleConfig, config
@@ -60,18 +76,28 @@ __all__: tuple[str, ...] = (
     "__url__",
     "__version__",
     "__version_info__",
-    "_constants",
-    "_models",
-    "_utilities",
+    "build_lazy_import_map",
     "c",
+    "cleanup_submodule_namespace",
+    "cli",
     "config",
+    "core",
     "d",
+    "db_oracle",
     "e",
     "h",
+    "install_lazy_exports",
+    "lazy",
+    "lazy_getattr",
+    "lazy_member",
     "m",
     "main",
+    "meltano",
+    "merge_lazy_imports",
+    "normalize_lazy_imports",
     "p",
     "r",
+    "resolve_lazy_members",
     "s",
     "settings",
     "t",
@@ -101,18 +127,28 @@ install_lazy_exports(
         "__title__": ".__version__",
         "__url__": ".__version__",
         "__version_info__": ".__version__",
-        "_constants": "._constants",
-        "_models": "._models",
-        "_utilities": "._utilities",
+        "build_lazy_import_map": "flext_meltano",
         "c": ".constants",
+        "cleanup_submodule_namespace": "flext_meltano",
+        "cli": "flext_meltano",
         "config": "._config",
+        "core": "flext_meltano",
         "d": "flext_meltano",
+        "db_oracle": "flext_db_oracle",
         "e": "flext_db_oracle",
         "h": "flext_meltano",
+        "install_lazy_exports": "flext_meltano",
+        "lazy": "flext_meltano",
+        "lazy_getattr": "flext_meltano",
+        "lazy_member": "flext_meltano",
         "m": ".models",
         "main": ".cli",
+        "meltano": "flext_meltano",
+        "merge_lazy_imports": "flext_meltano",
+        "normalize_lazy_imports": "flext_meltano",
         "p": ".protocols",
         "r": "flext_meltano",
+        "resolve_lazy_members": "flext_meltano",
         "s": "flext_meltano",
         "settings": "._settings",
         "t": ".typings",
@@ -122,3 +158,6 @@ install_lazy_exports(
     }),
     public_exports=__all__,
 )
+
+if not TYPE_CHECKING:
+    from flext_tap_oracle.__version__ import __version__

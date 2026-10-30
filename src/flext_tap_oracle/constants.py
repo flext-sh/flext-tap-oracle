@@ -1,3 +1,4 @@
+# AUTO-GENERATED FILE — Regenerate with: make gen
 """FLEXT Tap Oracle Constants - Oracle tap extraction constants.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
@@ -7,20 +8,17 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from enum import StrEnum, unique
-from typing import TYPE_CHECKING
+from flext_db_oracle import c as flext_db_oracle_c
+from flext_meltano import c as flext_meltano_c
 
-from flext_db_oracle import FlextDbOracleConstants
-from flext_meltano import FlextMeltanoConstants
-
-from flext_tap_oracle._constants import FlextTapOracleConstantsValues
-from flext_tap_oracle._constants.base import FlextTapOracleConstantsBase
-
-if TYPE_CHECKING:
-    from flext_tap_oracle import t
+from flext_tap_oracle._constants import (
+    FlextTapOracleConstantsBase,
+    FlextTapOracleConstantsReplication,
+    FlextTapOracleConstantsValues,
+)
 
 
-class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
+class FlextTapOracleConstants(flext_meltano_c, flext_db_oracle_c):
     """Oracle tap extraction-specific constants following FLEXT unified pattern.
 
     Inherits from FlextMeltanoConstants for universal constants, defines only
@@ -30,31 +28,12 @@ class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
     """
 
     class TapOracle(
-        FlextTapOracleConstantsValues.TapOracle,
-        FlextTapOracleConstantsValues,
         FlextTapOracleConstantsBase,
+        FlextTapOracleConstantsReplication,
+        FlextTapOracleConstantsValues.TapOracle,
     ):
         """Tap Oracle namespace for cross-project access."""
 
-        class Replication:
-            """Oracle replication method constants."""
-
-            @unique
-            class Method(StrEnum):
-                """Oracle replication methods using StrEnum for type safety.
-
-                DRY Pattern:
-                    StrEnum is the single source of truth. Use Method.FULL_TABLE.value
-                    or Method.FULL_TABLE directly - no base strings needed.
-                """
-
-                FULL_TABLE = "FULL_TABLE"
-                INCREMENTAL = "INCREMENTAL"
-                LOG_BASED = "LOG_BASED"
-
-        class Extraction(FlextTapOracleConstantsValues.TapOracle.Extraction):
-            """Tap-specific extraction configuration."""
-
 
 c = FlextTapOracleConstants
-__all__: t.StrSequence = ("FlextTapOracleConstants", "c")
+__all__: list[str] = ["FlextTapOracleConstants", "c"]
