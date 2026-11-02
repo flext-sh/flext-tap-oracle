@@ -90,10 +90,10 @@ class FlextTapOracleStreams:
                     return None
                 safe_table_name = self.table_name.replace('"', '""')
                 sql: str = " ".join(("SELECT COUNT(*) FROM", f'"{safe_table_name}"'))
-                result: p.Result[Sequence[m.Dict]] = self.oracle_api.query(sql)
+                result: p.Result[Sequence[p.Dict]] = self.oracle_api.query(sql)
                 if result.success and result.value:
-                    result_rows: Sequence[m.Dict] = result.value
-                    first_row: m.Dict = result_rows[0]
+                    result_rows: Sequence[p.Dict] = result.value
+                    first_row: p.Dict = result_rows[0]
                     first_val = next(iter(first_row.root.values()), None)
                     if isinstance(first_val, c.NUMERIC_TYPES) and not isinstance(
                         first_val,
@@ -153,11 +153,11 @@ class FlextTapOracleStreams:
         def _fetch_rows_with_table_metadata(
             self,
             context: Mapping[str, t.TapOracle.OracleValue] | None,
-        ) -> tuple[Sequence[m.Dict], m.DbOracle.TableMetadata]:
+        ) -> tuple[Sequence[p.Dict], m.DbOracle.TableMetadata]:
             """Fetch Oracle rows and table metadata for this stream.
 
             Returns:
-                The resulting ``tuple[Sequence[m.Dict], m.DbOracle.TableMetadata]``.
+                The resulting ``tuple[Sequence[p.Dict], m.DbOracle.TableMetadata]``.
 
             Raises:
                 RuntimeError: If the table metadata fetch fails; or if the
@@ -174,7 +174,7 @@ class FlextTapOracleStreams:
                     raise RuntimeError(msg)
                 safe_table = self.table_name.replace('"', '""')
                 sql = " ".join(("SELECT * FROM", f'"{safe_table}"'))
-                query_result: p.Result[Sequence[m.Dict]] = api.query(sql)
+                query_result: p.Result[Sequence[p.Dict]] = api.query(sql)
                 if query_result.failure:
                     error_msg: str = query_result.error or "unknown query error"
                     raise RuntimeError(error_msg)
@@ -231,8 +231,8 @@ class FlextTapOracleStreams:
 
         def _process_results_with_table_metadata(
             self,
-            query_data: Sequence[m.Dict],
-            table_metadata: m.DbOracle.TableMetadata,
+            query_data: Sequence[p.Dict],
+            table_metadata: p.DbOracle.TableMetadata,
         ) -> Iterable[t.JsonMapping]:
             """Process results using flext-db-oracle table metadata.
 
@@ -264,9 +264,9 @@ class FlextTapOracleStreams:
 
         def _process_result_row(
             self,
-            row_data: m.Dict,
+            row_data: p.Dict,
             column_names: Sequence[str],
-            columns: Sequence[m.DbOracle.ColumnMetadata],
+            columns: Sequence[p.DbOracle.ColumnMetadata],
         ) -> t.JsonMapping:
             """Validate and transform one Oracle row.
 
@@ -289,7 +289,7 @@ class FlextTapOracleStreams:
         @staticmethod
         def transform_oracle_types(
             record: t.JsonMapping,
-            column_metadata: Sequence[m.DbOracle.ColumnMetadata],
+            column_metadata: Sequence[p.DbOracle.ColumnMetadata],
         ) -> t.JsonMapping:
             """Transform Oracle data types using flext-db-oracle type knowledge.
 

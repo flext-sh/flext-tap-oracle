@@ -31,7 +31,7 @@ class FlextTapOracleCli:
         Provides discovery of Oracle database schema and Singer catalog generation.
         """
 
-        def __init__(self, params: m.TapOracle.OracleTapDiscoverParams) -> None:
+        def __init__(self, params: p.TapOracle.OracleTapDiscoverParams) -> None:
             """Initialize command with parameter object pattern.
 
             Args:
@@ -108,7 +108,7 @@ class FlextTapOracleCli:
     class FlextTapOracleSyncCommand:
         """Oracle tap sync command using flext-meltano patterns."""
 
-        def __init__(self, params: m.TapOracle.OracleTapSyncParams) -> None:
+        def __init__(self, params: p.TapOracle.OracleTapSyncParams) -> None:
             """Initialize command with parameter object pattern.
 
             Args:
