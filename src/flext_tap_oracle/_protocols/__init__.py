@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from types import MappingProxyType
 from typing import TYPE_CHECKING
 
 from flext_core.lazy import install_lazy_exports
@@ -20,23 +19,26 @@ if TYPE_CHECKING:
     from flext_tap_oracle._protocols.generated_models_entity import (
         FlextTapOracleProtocolsGeneratedModelsEntity,
     )
+    from flext_tap_oracle._protocols.params import FlextTapOracleProtocolsParams
 
 
 __all__: tuple[str, ...] = (
     "FlextTapOracleProtocolsBase",
     "FlextTapOracleProtocolsGeneratedModelsDomainEvent",
     "FlextTapOracleProtocolsGeneratedModelsEntity",
+    "FlextTapOracleProtocolsParams",
 )
 
 install_lazy_exports(
     __name__,
     globals(),
-    MappingProxyType({
+    {
         "FlextTapOracleProtocolsBase": ".base",
         "FlextTapOracleProtocolsGeneratedModelsDomainEvent": (
             ".generated_models_domainevent"
         ),
         "FlextTapOracleProtocolsGeneratedModelsEntity": ".generated_models_entity",
-    }),
+        "FlextTapOracleProtocolsParams": ".params",
+    },
     public_exports=__all__,
 )

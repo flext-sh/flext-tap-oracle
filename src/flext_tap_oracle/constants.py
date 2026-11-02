@@ -28,9 +28,9 @@ class FlextTapOracleConstants(flext_meltano_c, flext_db_oracle_c):
     """
 
     class TapOracle(
+        FlextTapOracleConstantsValues.TapOracle,
         FlextTapOracleConstantsBase,
         FlextTapOracleConstantsReplication,
-        FlextTapOracleConstantsValues.TapOracle,
     ):
         """Tap Oracle namespace for cross-project access."""
 

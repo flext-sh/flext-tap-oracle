@@ -36,5 +36,9 @@ class FlextTapOracleProtocolsBase:
 
         typed_config: t.JsonValue
 
+    @runtime_checkable
+    class ConfigNamespace(FlextMeltanoProtocols.Model, Protocol):
+        """Structural data contract projected from the owning model."""
+
 
 __all__: list[str] = ["FlextTapOracleProtocolsBase"]

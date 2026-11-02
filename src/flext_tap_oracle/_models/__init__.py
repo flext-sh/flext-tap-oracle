@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from types import MappingProxyType
 from typing import TYPE_CHECKING
 
 from flext_core.lazy import install_lazy_exports
@@ -22,9 +21,6 @@ __all__: tuple[str, ...] = ("FlextTapOracleModelsBase", "FlextTapOracleModelsPar
 install_lazy_exports(
     __name__,
     globals(),
-    MappingProxyType({
-        "FlextTapOracleModelsBase": ".base",
-        "FlextTapOracleModelsParams": ".params",
-    }),
+    {"FlextTapOracleModelsBase": ".base", "FlextTapOracleModelsParams": ".params"},
     public_exports=__all__,
 )
