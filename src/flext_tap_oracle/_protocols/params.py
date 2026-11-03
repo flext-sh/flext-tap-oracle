@@ -21,7 +21,7 @@ class FlextTapOracleProtocolsParams:
     """Own the structural contracts declared by its model source."""
 
     @runtime_checkable
-    class OracleTapDiscoverParams(FlextMeltanoProtocols.Model, Protocol):
+    class OracleTapDiscoverParams(FlextMeltanoProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -29,18 +29,11 @@ class FlextTapOracleProtocolsParams:
             """List of uncommitted domain events for event sourcing."""
             ...
 
-        @property
-        def config_file(self) -> str | None:
-            """Path to configuration file."""
-            ...
-
-        @property
-        def output_file(self) -> str | None:
-            """Path to output file."""
-            ...
+        config_file: str | None
+        output_file: str | None
 
     @runtime_checkable
-    class OracleTapSyncParams(FlextMeltanoProtocols.Model, Protocol):
+    class OracleTapSyncParams(FlextMeltanoProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -48,20 +41,9 @@ class FlextTapOracleProtocolsParams:
             """List of uncommitted domain events for event sourcing."""
             ...
 
-        @property
-        def config_file(self) -> str | None:
-            """Path to configuration file."""
-            ...
-
-        @property
-        def catalog_file(self) -> str | None:
-            """Path to catalog file."""
-            ...
-
-        @property
-        def state_file(self) -> str | None:
-            """Path to state file."""
-            ...
+        config_file: str | None
+        catalog_file: str | None
+        state_file: str | None
 
 
 __all__: list[str] = [
