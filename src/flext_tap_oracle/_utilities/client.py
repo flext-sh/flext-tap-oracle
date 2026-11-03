@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
-from flext_db_oracle import FlextDbOracleApi, FlextModelsDbOracle
+from flext_db_oracle import FlextDbOracleApi, FlextDbOracleModels
 from flext_meltano import u
 
 from flext_tap_oracle import c, e, p, r
@@ -27,7 +27,7 @@ class FlextTapOracleUtilitiesClient:
     def tap_oracle_client_discover_tables(
         oracle_api: FlextDbOracleApi,
         schema_name: str | None = None,
-    ) -> p.Result[Sequence[FlextModelsDbOracle.DbOracle.Table]]:
+    ) -> p.Result[Sequence[FlextDbOracleModels.DbOracle.Table]]:
         """Execute Oracle table discovery using Layer 2 flext-db-oracle API.
 
         Args:
@@ -36,12 +36,12 @@ class FlextTapOracleUtilitiesClient:
                 database ``USER`` schema.
 
         Returns:
-            The resulting ``p.Result[Sequence[FlextModelsDbOracle.DbOracle.Table]]``.
+            The resulting ``p.Result[Sequence[FlextDbOracleModels.DbOracle.Table]]``.
 
         """
 
         def _run_tap_oracle_client_discover_tables() -> p.Result[
-            Sequence[FlextModelsDbOracle.DbOracle.Table]
+            Sequence[FlextDbOracleModels.DbOracle.Table]
         ]:
             target_schema = schema_name or "USER"
             FlextTapOracleUtilitiesClient.logger.info(
@@ -55,11 +55,11 @@ class FlextTapOracleUtilitiesClient:
                     "Oracle table discovery failed: %s",
                     error_msg,
                 )
-                return r[Sequence[FlextModelsDbOracle.DbOracle.Table]].fail(error_msg)
+                return r[Sequence[FlextDbOracleModels.DbOracle.Table]].fail(error_msg)
 
             table_names = tables_result.value or []
-            tables: Sequence[FlextModelsDbOracle.DbOracle.Table] = [
-                FlextModelsDbOracle.DbOracle.Table(
+            tables: Sequence[FlextDbOracleModels.DbOracle.Table] = [
+                FlextDbOracleModels.DbOracle.Table(
                     name=name,
                     owner=target_schema,
                     columns=[],
@@ -72,7 +72,7 @@ class FlextTapOracleUtilitiesClient:
                 len(tables),
                 target_schema,
             )
-            return r[Sequence[FlextModelsDbOracle.DbOracle.Table]].ok(tables)
+            return r[Sequence[FlextDbOracleModels.DbOracle.Table]].ok(tables)
 
         try:
             return _run_tap_oracle_client_discover_tables()
@@ -80,7 +80,7 @@ class FlextTapOracleUtilitiesClient:
             FlextTapOracleUtilitiesClient.logger.exception(
                 "Oracle table discovery error",
             )
-            return r[Sequence[FlextModelsDbOracle.DbOracle.Table]].fail(
+            return r[Sequence[FlextDbOracleModels.DbOracle.Table]].fail(
                 f"Table discovery error in schema {schema_name}: {exc}",
             )
 
@@ -124,7 +124,7 @@ class FlextTapOracleUtilitiesClient:
 
     @staticmethod
     def tap_oracle_client_filter_tables(
-        discovered_tables: Sequence[FlextModelsDbOracle.DbOracle.Table],
+        discovered_tables: Sequence[FlextDbOracleModels.DbOracle.Table],
     ) -> p.Result[Sequence[str]]:
         """Return discovered Oracle table names.
 

@@ -9,9 +9,8 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import TYPE_CHECKING, Protocol, Self, runtime_checkable
+from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
-from flext_core import t
 from flext_meltano import FlextMeltanoProtocols
 
 if TYPE_CHECKING:
@@ -40,10 +39,6 @@ class FlextTapOracleProtocolsParams:
             """Path to output file."""
             ...
 
-        @classmethod
-        def from_click_args(cls, **kwargs: t.Scalar) -> Self:
-            """Create discover params from Click command arguments."""
-
     @runtime_checkable
     class OracleTapSyncParams(FlextMeltanoProtocols.Model, Protocol):
         """Structural data contract projected from the owning model."""
@@ -67,10 +62,6 @@ class FlextTapOracleProtocolsParams:
         def state_file(self) -> str | None:
             """Path to state file."""
             ...
-
-        @classmethod
-        def from_click_args(cls, **kwargs: t.Scalar) -> Self:
-            """Create sync params from Click command arguments."""
 
 
 __all__: list[str] = [
