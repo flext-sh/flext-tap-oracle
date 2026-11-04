@@ -16,7 +16,7 @@ from flext_tap_oracle import (
     config,
     settings,
 )
-from tests import tm
+from tests import m, tm
 
 
 class TestsFlextTapOracleEnterpriseTap:
