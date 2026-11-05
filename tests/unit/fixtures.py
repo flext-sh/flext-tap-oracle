@@ -6,8 +6,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import pytest
-
 from flext_tap_oracle import (
     FlextTapOracleConfig,
     FlextTapOracleService,
@@ -15,21 +13,22 @@ from flext_tap_oracle import (
     config,
     settings,
 )
+from tests import u
 
 
-@pytest.fixture
+@u.Tests.fixture
 def tap_oracle_settings() -> FlextTapOracleSettings:
     """Return the settings singleton consumed by the runtime facade."""
     return settings
 
 
-@pytest.fixture
+@u.Tests.fixture
 def tap_oracle_config() -> FlextTapOracleConfig:
     """Return the validated public configuration singleton."""
     return config
 
 
-@pytest.fixture
+@u.Tests.fixture
 def tap_oracle_service(
     tap_oracle_settings: FlextTapOracleSettings,
 ) -> FlextTapOracleService:
