@@ -12,11 +12,7 @@ from __future__ import annotations
 from collections.abc import Iterable, Mapping, MutableMapping, Sequence
 from typing import TYPE_CHECKING
 
-from flext_tap_oracle.constants import c
-from flext_tap_oracle.models import m
-from flext_tap_oracle.protocols import p
-from flext_tap_oracle.typings import t
-from flext_tap_oracle.utilities import u
+from flext_tap_oracle import c, m, p, t, u
 
 if TYPE_CHECKING:
     from flext_db_oracle import FlextDbOracleApi
