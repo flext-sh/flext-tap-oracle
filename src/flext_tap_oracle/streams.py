@@ -12,7 +12,7 @@ from __future__ import annotations
 from collections.abc import Iterable, Mapping, MutableMapping, Sequence
 from typing import TYPE_CHECKING
 
-from flext_tap_oracle import c, m, p, t, u
+from flext_tap_oracle import c, p, t, u
 
 if TYPE_CHECKING:
     from flext_db_oracle import FlextDbOracleApi
@@ -153,11 +153,11 @@ class FlextTapOracleStreams:
         def _fetch_rows_with_table_metadata(
             self,
             context: Mapping[str, t.TapOracle.OracleValue] | None,
-        ) -> tuple[Sequence[p.Dict], m.DbOracle.TableMetadata]:
+        ) -> tuple[Sequence[p.Dict], p.DbOracle.TableMetadata]:
             """Fetch Oracle rows and table metadata for this stream.
 
             Returns:
-                The resulting ``tuple[Sequence[p.Dict], m.DbOracle.TableMetadata]``.
+                The resulting ``tuple[Sequence[p.Dict], p.DbOracle.TableMetadata]``.
 
             Raises:
                 RuntimeError: If the table metadata fetch fails; or if the
@@ -303,7 +303,7 @@ class FlextTapOracleStreams:
 
             """
             transformed_record: t.MutableJsonMapping = {}
-            meta_lookup: MutableMapping[str, m.DbOracle.ColumnMetadata] = {}
+            meta_lookup: MutableMapping[str, p.DbOracle.ColumnMetadata] = {}
             for col_meta_value in column_metadata:
                 col_name = getattr(col_meta_value, "name", None) or getattr(
                     col_meta_value,
