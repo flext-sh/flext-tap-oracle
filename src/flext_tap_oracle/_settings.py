@@ -26,7 +26,7 @@ class FlextTapOracleSettings(FlextDbOracleSettings, FlextMeltanoSettings):
         extra="ignore",
     )
 
-    class _TapOracle(m.BaseModel):
+    class _TapOracle(m.StrictModel):
         """Tap-specific knobs only (Oracle connection lives in ``DbOracle``)."""
 
         batch_size: Annotated[

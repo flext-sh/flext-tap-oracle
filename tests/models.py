@@ -12,7 +12,6 @@ from typing import Annotated
 from flext_tests import FlextTestsModels
 
 from flext_tap_oracle import FlextTapOracleModels
-from tests import u
 
 
 class TestsFlextTapOracleModels(FlextTestsModels, FlextTapOracleModels):
@@ -49,16 +48,16 @@ class TestsFlextTapOracleModels(FlextTestsModels, FlextTapOracleModels):
             class TestOracleConnection(FlextTapOracleModels.Entity):
                 """Test model for Oracle database connections."""
 
-                host: Annotated[str, u.Field(description="Oracle database hostname")]
-                port: Annotated[int, u.Field(description="Oracle database port")]
-                service_name: Annotated[str, u.Field(description="Oracle service name")]
+                host: Annotated[str, m.Field(description="Oracle database hostname")]
+                port: Annotated[int, m.Field(description="Oracle database port")]
+                service_name: Annotated[str, m.Field(description="Oracle service name")]
                 username: Annotated[
                     str,
-                    u.Field(description="Oracle database username"),
+                    m.Field(description="Oracle database username"),
                 ]
                 password: Annotated[
                     str,
-                    u.Field(description="Oracle database password"),
+                    m.Field(description="Oracle database password"),
                 ]
 
                 @property
@@ -71,19 +70,19 @@ class TestsFlextTapOracleModels(FlextTestsModels, FlextTapOracleModels):
 
                 stream_name: Annotated[
                     str,
-                    u.Field(description="Name of the Singer stream"),
+                    m.Field(description="Name of the Singer stream"),
                 ]
                 table_name: Annotated[
                     str,
-                    u.Field(description="Name of the source table"),
+                    m.Field(description="Name of the source table"),
                 ]
                 replication_method: Annotated[
                     str,
-                    u.Field(description="Replication method for the stream"),
+                    m.Field(description="Replication method for the stream"),
                 ]
                 is_selected: Annotated[
                     bool,
-                    u.Field(description="Whether the stream is selected"),
+                    m.Field(description="Whether the stream is selected"),
                 ] = True
 
             class TestOracleTable(FlextTapOracleModels.Entity):
@@ -91,19 +90,19 @@ class TestsFlextTapOracleModels(FlextTestsModels, FlextTapOracleModels):
 
                 table_name: Annotated[
                     str,
-                    u.Field(description="Name of the Oracle table"),
+                    m.Field(description="Name of the Oracle table"),
                 ]
                 schema_name: Annotated[
                     str,
-                    u.Field(description="Schema containing the table"),
+                    m.Field(description="Schema containing the table"),
                 ]
                 column_count: Annotated[
                     int,
-                    u.Field(description="Number of columns in the table"),
+                    m.Field(description="Number of columns in the table"),
                 ]
                 row_count: Annotated[
                     int | None,
-                    u.Field(description="Number of rows in the table"),
+                    m.Field(description="Number of rows in the table"),
                 ] = None
 
             class TestExtractionConfig(FlextTapOracleModels.Entity):
@@ -111,19 +110,19 @@ class TestsFlextTapOracleModels(FlextTestsModels, FlextTapOracleModels):
 
                 batch_size: Annotated[
                     int,
-                    u.Field(description="Number of rows per batch"),
+                    m.Field(description="Number of rows per batch"),
                 ]
                 parallel_streams: Annotated[
                     int,
-                    u.Field(description="Number of parallel streams for extraction"),
+                    m.Field(description="Number of parallel streams for extraction"),
                 ]
                 timeout_seconds: Annotated[
                     int,
-                    u.Field(description="Query timeout in seconds"),
+                    m.Field(description="Query timeout in seconds"),
                 ]
                 max_rows: Annotated[
                     int | None,
-                    u.Field(description="Maximum number of rows to extract"),
+                    m.Field(description="Maximum number of rows to extract"),
                 ] = None
 
 

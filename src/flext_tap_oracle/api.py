@@ -14,11 +14,9 @@ from __future__ import annotations
 
 from typing import Annotated, Never, override
 
-from flext_meltano.services.consumer_bases.tap_service_base import (
-    FlextMeltanoTapServiceBase,
-)
+from flext_meltano import FlextMeltanoTapServiceBase
 
-from flext_tap_oracle import FlextTapOracleSettings, p, t, u
+from flext_tap_oracle import FlextTapOracleSettings, m, p, t
 
 
 class FlextTapOracleService(FlextMeltanoTapServiceBase):
@@ -26,7 +24,7 @@ class FlextTapOracleService(FlextMeltanoTapServiceBase):
 
     tap_name: Annotated[
         t.NonEmptyStr,
-        u.Field(description="Canonical Singer tap identifier."),
+        m.Field(description="Canonical Singer tap identifier."),
     ] = "tap-oracle"
 
     def __init__(self, settings: FlextTapOracleSettings | None = None) -> None:
@@ -42,7 +40,7 @@ class FlextTapOracleService(FlextMeltanoTapServiceBase):
     @override
     def create_tap_instance(
         self,
-        settings: p.Settings | t.JsonMapping | None = None,
+        _settings: p.Settings | t.JsonMapping | None = None,
     ) -> Never:
         """Not supported — use CLI dispatch via FlextTapOracleCli.
 
@@ -50,7 +48,7 @@ class FlextTapOracleService(FlextMeltanoTapServiceBase):
             TypeError: If tap-oracle uses CLI dispatch, not singer_sdk.Tap.
 
         """
-        msg = "tap-oracle uses CLI dispatch, not singer_sdk.Tap"
+        msg = f"tap-oracle uses CLI dispatch, not singer_sdk.Tap: {_settings!r}"
         raise TypeError(msg)
 
 
