@@ -13,9 +13,9 @@ from __future__ import annotations
 from collections.abc import Sequence
 
 from flext_db_oracle import FlextDbOracleApi, FlextDbOracleModels
-from flext_meltano import u
+from flext_meltano import e, r, u
 
-from flext_tap_oracle import c, e, p, r
+from flext_tap_oracle import c, p
 
 
 class FlextTapOracleUtilitiesClient:

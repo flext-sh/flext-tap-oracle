@@ -12,14 +12,21 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
+    from flext_tap_oracle._utilities.base import FlextTapOracleUtilitiesBase
     from flext_tap_oracle._utilities.client import FlextTapOracleUtilitiesClient
 
 
-__all__: tuple[str, ...] = ("FlextTapOracleUtilitiesClient",)
+__all__: tuple[str, ...] = (
+    "FlextTapOracleUtilitiesBase",
+    "FlextTapOracleUtilitiesClient",
+)
 
 install_lazy_exports(
     __name__,
     globals(),
-    {"FlextTapOracleUtilitiesClient": ".client"},
+    {
+        "FlextTapOracleUtilitiesBase": ".base",
+        "FlextTapOracleUtilitiesClient": ".client",
+    },
     public_exports=__all__,
 )

@@ -7,7 +7,9 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_meltano import m
+from typing import ClassVar
+
+from flext_meltano import m, t
 
 
 class FlextTapOracleModelsBase:
@@ -16,7 +18,7 @@ class FlextTapOracleModelsBase:
     class ConfigNamespace(m.BaseModel):
         """Open, frozen namespace exposing every ``config/*.yaml`` domain."""
 
-        model_config = m.ConfigDict(extra="allow", frozen=True)
+        model_config: ClassVar[t.ConfigDict] = m.ConfigDict(extra="allow", frozen=True)
 
 
 __all__: list[str] = ["FlextTapOracleModelsBase"]
