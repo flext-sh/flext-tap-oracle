@@ -11,19 +11,17 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Annotated
+from typing import TYPE_CHECKING, Annotated, ClassVar
 
 from flext_db_oracle import FlextDbOracleSettings
-from flext_meltano import FlextMeltanoSettings, m
+from flext_meltano import FlextMeltanoSettings, m, t
 
 
 class FlextTapOracleSettings(FlextDbOracleSettings, FlextMeltanoSettings):
     """Oracle tap settings; connection via ``DbOracle.*``, knobs via ``TapOracle.*``."""
 
-    model_config = m.SettingsConfigDict(
-        env_prefix="FLEXT_TAP_ORACLE_",
-        env_nested_delimiter="__",
-        extra="ignore",
+    model_config: ClassVar[t.SettingsConfigDict] = m.SettingsConfigDict(
+        env_prefix="FLEXT_TAP_ORACLE_", env_nested_delimiter="__", extra="ignore"
     )
 
     class _TapOracle(m.StrictModel):
