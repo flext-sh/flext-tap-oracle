@@ -16,7 +16,7 @@ from flext_tap_oracle import (
     config,
     settings,
 )
-from tests import p, tm
+from tests import m, tm
 
 
 class TestsFlextTapOracleEnterpriseTap:
@@ -82,7 +82,7 @@ class TestsFlextTapOracleEnterpriseTap:
         for oracle_type, value, expected in cases:
             transformed = FlextTapOracleStreams.OracleStream.transform_oracle_types(
                 {"VALUE": value},
-                [p.DbOracle.ColumnMetadata(name="VALUE", data_type=oracle_type)],
+                [m.DbOracle.ColumnMetadata(name="VALUE", data_type=oracle_type)],
             )
 
             tm.that(transformed["VALUE"], eq=expected)
