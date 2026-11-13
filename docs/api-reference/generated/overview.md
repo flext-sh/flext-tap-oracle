@@ -28,7 +28,7 @@
   `FlextTapOracleModels`, `FlextTapOracleProtocols`, `FlextTapOracleService`,
   `FlextTapOracleSettings`, `FlextTapOracleStreams`, `FlextTapOracleTypes`,
   `FlextTapOracleUtilities`, `FlextTapOracleVersion` (+4 more)
-- Exported module shortcuts: _none_
+- Exported module shortcuts: *none*
 - Generated module pages: `9`
 
 ## Next Pages

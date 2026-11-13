@@ -8,8 +8,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_db_oracle import c as flext_db_oracle_c
-from flext_meltano import c as flext_meltano_c
+from flext_db_oracle import FlextDbOracleConstants
+from flext_meltano import FlextMeltanoConstants
 
 from flext_tap_oracle._constants import (
     FlextTapOracleConstantsBase,
@@ -18,7 +18,7 @@ from flext_tap_oracle._constants import (
 )
 
 
-class FlextTapOracleConstants(flext_meltano_c, flext_db_oracle_c):
+class FlextTapOracleConstants(FlextMeltanoConstants, FlextDbOracleConstants):
     """Oracle tap extraction-specific constants following FLEXT unified pattern.
 
     Inherits from FlextMeltanoConstants for universal constants, defines only
