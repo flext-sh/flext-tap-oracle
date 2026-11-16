@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import Final
+from typing import ClassVar
 
 
 class FlextTapOracleConstantsValues:
@@ -21,16 +21,16 @@ class FlextTapOracleConstantsValues:
     class TapOracle:
         """Tap Oracle scalar constants."""
 
-        MAX_IDENTIFIER_LENGTH: Final[int] = 255
-        DEFAULT_STREAM_PREFIX: Final[str] = "oracle"
-        DEFAULT_OPERATION_NAME: Final[str] = "unknown"
-        INITIAL_RECORD_COUNT: Final[int] = 0
-        MAX_PORT_NUMBER: Final[int] = 65535
+        MAX_IDENTIFIER_LENGTH: ClassVar[int] = 255
+        DEFAULT_STREAM_PREFIX: ClassVar[str] = "oracle"
+        DEFAULT_OPERATION_NAME: ClassVar[str] = "unknown"
+        INITIAL_RECORD_COUNT: ClassVar[int] = 0
+        MAX_PORT_NUMBER: ClassVar[int] = 65535
 
         class Extraction:
             """Tap-specific extraction configuration."""
 
-            TEST_QUERY: Final[str] = "SELECT 1 FROM DUAL"
+            TEST_QUERY: ClassVar[str] = "SELECT 1 FROM DUAL"
 
 
 __all__: list[str] = ["FlextTapOracleConstantsValues"]
