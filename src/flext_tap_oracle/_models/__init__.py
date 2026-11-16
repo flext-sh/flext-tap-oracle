@@ -23,4 +23,11 @@ install_lazy_exports(
     globals(),
     {"FlextTapOracleModelsBase": ".base", "FlextTapOracleModelsParams": ".params"},
     public_exports=__all__,
+    deferred_members={
+        "FlextTapOracleModelsBase": ("ConfigNamespace",),
+        "FlextTapOracleModelsParams": (
+            "OracleTapDiscoverParams",
+            "OracleTapSyncParams",
+        ),
+    },
 )

@@ -34,4 +34,7 @@ install_lazy_exports(
         "FlextTapOracleConstantsValues": ".values",
     },
     public_exports=__all__,
+    deferred_members={
+        "FlextTapOracleConstantsReplication": ("Replication",),
+    },
 )
