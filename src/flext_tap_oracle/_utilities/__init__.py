@@ -29,4 +29,13 @@ install_lazy_exports(
         "FlextTapOracleUtilitiesClient": ".client",
     },
     public_exports=__all__,
+    deferred_members={
+        "FlextTapOracleUtilitiesClient": (
+            "logger",
+            "tap_oracle_client_discover_tables",
+            "tap_oracle_client_test_connection",
+            "tap_oracle_client_filter_tables",
+            "tap_oracle_client_initialize_tap",
+        ),
+    },
 )
