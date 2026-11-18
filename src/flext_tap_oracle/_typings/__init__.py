@@ -22,7 +22,5 @@ install_lazy_exports(
     globals(),
     {"FlextTapOracleTypingsBase": ".base"},
     public_exports=__all__,
-    deferred_members={
-        "FlextTapOracleTypingsBase": ("OracleValue",),
-    },
+    deferred_members=("FlextTapOracleTypingsBase",),
 )

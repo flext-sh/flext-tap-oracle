@@ -41,17 +41,10 @@ install_lazy_exports(
         "FlextTapOracleProtocolsParams": ".params",
     },
     public_exports=__all__,
-    deferred_members={
-        "FlextTapOracleProtocolsBase": (
-            "CommandRunner",
-            "Tap",
-            "ConfigNamespace",
-        ),
-        "FlextTapOracleProtocolsGeneratedModelsDomainEvent": ("DomainEvent",),
-        "FlextTapOracleProtocolsGeneratedModelsEntity": ("Entity",),
-        "FlextTapOracleProtocolsParams": (
-            "OracleTapDiscoverParams",
-            "OracleTapSyncParams",
-        ),
-    },
+    deferred_members=(
+        "FlextTapOracleProtocolsBase",
+        "FlextTapOracleProtocolsGeneratedModelsDomainEvent",
+        "FlextTapOracleProtocolsGeneratedModelsEntity",
+        "FlextTapOracleProtocolsParams",
+    ),
 )
