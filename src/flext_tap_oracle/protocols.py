@@ -17,8 +17,6 @@ from flext_meltano import FlextMeltanoProtocols
 
 from flext_tap_oracle._protocols import (
     FlextTapOracleProtocolsBase,
-    FlextTapOracleProtocolsGeneratedModelsDomainEvent,
-    FlextTapOracleProtocolsGeneratedModelsEntity,
     FlextTapOracleProtocolsParams,
 )
 
@@ -28,8 +26,6 @@ class FlextTapOracleProtocols(FlextMeltanoProtocols, FlextDbOracleProtocols):
 
     class TapOracle(
         FlextTapOracleProtocolsBase,
-        FlextTapOracleProtocolsGeneratedModelsDomainEvent,
-        FlextTapOracleProtocolsGeneratedModelsEntity,
         FlextTapOracleProtocolsParams,
     ):
         """Singer Tap Oracle structural protocols (consumer surface)."""

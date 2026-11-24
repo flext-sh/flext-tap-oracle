@@ -37,7 +37,6 @@ if TYPE_CHECKING:
     from tests.protocols import TestsFlextTapOracleProtocols, p
     from tests.settings import TestsFlextTapOracleSettings
     from tests.typings import TestsFlextTapOracleTypes, t
-    from tests.unit import TestsFlextTapOracleEnterpriseTap
     from tests.utilities import TestsFlextTapOracleUtilities, u
 
 
@@ -53,7 +52,6 @@ __all__: tuple[str, ...] = (
     "FlextTapOracleUtilities",
     "FlextTapOracleVersion",
     "TestsFlextTapOracleConstants",
-    "TestsFlextTapOracleEnterpriseTap",
     "TestsFlextTapOracleModels",
     "TestsFlextTapOracleProtocols",
     "TestsFlextTapOracleServiceBase",
@@ -97,7 +95,6 @@ install_lazy_exports(
         "FlextTapOracleUtilities": "flext_tap_oracle",
         "FlextTapOracleVersion": "flext_tap_oracle",
         "TestsFlextTapOracleConstants": ".constants",
-        "TestsFlextTapOracleEnterpriseTap": ".unit",
         "TestsFlextTapOracleModels": ".models",
         "TestsFlextTapOracleProtocols": ".protocols",
         "TestsFlextTapOracleServiceBase": ".base",
