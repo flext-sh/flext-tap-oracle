@@ -1,0 +1,1 @@
+{"id":"exports--flext_tap_oracle._protocols","language":"Python","rule":{"regex":"^(?:FlextTapOracleProtocolsBase|FlextTapOracleProtocolsGeneratedModelsDomainEvent|FlextTapOracleProtocolsGeneratedModelsEntity|FlextTapOracleProtocolsParams)$"}}

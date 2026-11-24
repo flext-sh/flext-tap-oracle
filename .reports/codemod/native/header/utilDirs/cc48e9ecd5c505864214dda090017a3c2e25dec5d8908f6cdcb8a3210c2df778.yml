@@ -1,0 +1,1 @@
+{"id":"exports--flext_tap_oracle._utilities","language":"Python","rule":{"regex":"^(?:FlextTapOracleUtilitiesBase|FlextTapOracleUtilitiesClient)$"}}
